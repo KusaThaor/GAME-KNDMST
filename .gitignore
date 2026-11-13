@@ -1,0 +1,12 @@
+node_modules
+dist
+.vercel
+.env*
+!.env.example
+shots
+test-results
+playwright-report
+*.log
+service-account*.json
+.firebase
+firebase-debug.log

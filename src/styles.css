@@ -1,0 +1,46 @@
+:root {
+  --ink: #3a2c26;
+  --paper: #f6efe1;
+  --accent: #d8332a;
+  font-family: Nunito, 'DejaVu Sans', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+* { box-sizing: border-box; }
+html, body, #app { margin: 0; height: 100%; }
+body.lab #app { position: relative; overflow: hidden; }
+body.lab canvas { display: block; }
+
+/* --- trang chủ tạm --- */
+.home { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+.home h1 { font-weight: 800; font-size: 40px; margin: 0 0 8px; }
+.home .sub { font-size: 18px; margin: 0 0 4px; }
+.home .build { opacity: .6; font-size: 13px; }
+.home .dev { margin-top: 32px; padding: 16px 20px; border: 2px dashed #c9b994; border-radius: 12px; }
+.home .dev h2 { font-size: 16px; margin: 12px 0 8px; }
+.home a { color: #1f5fa8; }
+.home button { font: inherit; font-weight: 700; padding: 8px 16px; border-radius: 10px; border: 2px solid var(--ink); background: #fff7e2; cursor: pointer; }
+.home pre { background: #fffaf0; padding: 12px; border-radius: 8px; font-size: 12px; white-space: pre-wrap; }
+
+/* --- bảng nhân vật --- */
+.sheet-title { position: absolute; left: 28px; top: 22px; display: flex; flex-direction: column; gap: 2px; pointer-events: none; }
+.sheet-title b { font-size: 26px; font-weight: 800; }
+.sheet-title span { font-size: 14px; opacity: .65; }
+.sheet-label { position: absolute; transform: translate(-50%, 0); text-align: center; display: flex; flex-direction: column; pointer-events: none; white-space: nowrap; }
+.sheet-label b { font-size: 17px; font-weight: 800; }
+.sheet-label span { font-size: 13px; opacity: .7; }
+
+/* --- HUD --- */
+.hud { position: absolute; inset: 0; pointer-events: none; font-family: Nunito, sans-serif; }
+.hud-objective { position: absolute; left: 24px; top: 20px; background: rgba(255, 250, 238, .92); padding: 8px 16px 8px 12px; border-radius: 999px; font-weight: 700; font-size: 17px; box-shadow: 0 2px 0 rgba(58,44,38,.25); display: flex; align-items: center; gap: 10px; }
+.hud-objective .dot { width: 12px; height: 12px; border-radius: 50%; background: #f2b53a; border: 2px solid var(--ink); }
+.hud-zone { position: absolute; left: 50%; top: 22px; transform: translateX(-50%); font-weight: 800; font-size: 22px; color: #fffdf6; text-shadow: 0 2px 0 rgba(58,44,38,.55), 0 0 12px rgba(58,44,38,.35); letter-spacing: .5px; }
+.hud-prompt { position: absolute; left: 50%; bottom: 196px; transform: translateX(-50%); background: rgba(255, 250, 238, .95); padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 16px; display: flex; gap: 8px; align-items: center; box-shadow: 0 2px 0 rgba(58,44,38,.25); }
+kbd { display: inline-block; min-width: 24px; text-align: center; padding: 1px 6px; border: 2px solid var(--ink); border-bottom-width: 3px; border-radius: 6px; background: #fff; font: 800 13px Nunito, sans-serif; }
+.hud-dialogue { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: min(820px, calc(100% - 48px)); min-height: 130px; background: rgba(255, 250, 238, .97); border: 3px solid var(--ink); border-radius: 18px; padding: 16px 24px 18px; box-shadow: 0 4px 0 rgba(58,44,38,.3); }
+.hud-dialogue .who { font-weight: 800; font-size: 20px; margin-bottom: 4px; }
+.hud-dialogue .text { font-size: 19px; line-height: 1.45; }
+.hud-dialogue .next { position: absolute; right: 20px; bottom: 10px; font-size: 13px; opacity: .55; font-weight: 700; }
+.hud-dialogue .choices { margin-top: 10px; display: grid; gap: 6px; }
+.hud-dialogue .choice { display: flex; gap: 8px; align-items: center; font-size: 17px; }
+.hud-debug { position: absolute; right: 12px; top: 12px; font: 12px ui-monospace, monospace; background: rgba(0,0,0,.55); color: #fff; padding: 4px 8px; border-radius: 6px; }

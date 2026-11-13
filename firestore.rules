@@ -1,0 +1,11 @@
+rules_version = '2';
+// Hành Trình Thanh Xuân — trình duyệt KHÔNG được đọc/ghi trực tiếp.
+// Mọi ghi dữ liệu đi qua Vercel Function (/api/collect) bằng khóa phía server,
+// khóa đó bỏ qua rules này. Dán nội dung file này vào Firebase Console → Firestore → Rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
