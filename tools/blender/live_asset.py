@@ -43,6 +43,13 @@ def build_vietnamese_school_desk():
         for obj in list(col.objects):
             bpy.data.objects.remove(obj, do_unlink=True)
 
+    def move_to_collection(obj, target_col):
+        if target_col not in obj.users_collection:
+            target_col.objects.link(obj)
+        for c in list(obj.users_collection):
+            if c != target_col:
+                c.objects.unlink(obj)
+
     # 2. Tạo các vật liệu chuẩn
     wood_mat = create_or_get_material(
         "Mat_School_Wood",
@@ -82,8 +89,7 @@ def build_vietnamese_school_desk():
             mod.segments = 2
         if mat:
             obj.data.materials.append(mat)
-        col.objects.link(obj)
-        bpy.context.scene.collection.objects.unlink(obj)
+        move_to_collection(obj, col)
         return obj
 
     # Helper tạo hình trụ tròn
@@ -100,8 +106,7 @@ def build_vietnamese_school_desk():
         if mat:
             obj.data.materials.append(mat)
         bpy.ops.object.shade_smooth()
-        col.objects.link(obj)
-        bpy.context.scene.collection.objects.unlink(obj)
+        move_to_collection(obj, col)
         return obj
 
     # ==============================
