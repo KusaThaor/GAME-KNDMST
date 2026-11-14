@@ -15,12 +15,12 @@ export interface GameEvents {
   day_end_answered: { day_id: string; answer: 'leave' | 'stay'; open_side_quests: number };
   day_completed: { day_id: string; is_replay: boolean };
   quest_state: { quest_id: string; state: QuestState; is_replay: boolean };
-  quest_started: { quest_id: string; quest_type: QuestType; is_replay: boolean };
-  quest_completed: { quest_id: string; quest_type: QuestType; is_replay: boolean };
+  quest_started: { quest_id: string; quest_type: QuestType; memory_day_id: string | null; is_replay: boolean };
+  quest_completed: { quest_id: string; quest_type: QuestType; memory_day_id: string | null; is_replay: boolean };
   part_started: { quest_id: string; part_id: string };
   step_activated: { quest_id: string; step_id: string; kind: StepKind; is_replay: boolean; resumed: boolean };
   step_progress: { quest_id: string; step_id: string; done: number; total: number };
-  step_completed: { quest_id: string; step_id: string; kind: StepKind; quest_type: QuestType; is_replay: boolean };
+  step_completed: { quest_id: string; step_id: string; kind: StepKind; quest_type: QuestType; memory_day_id: string | null; is_replay: boolean };
   choice_made: { step_id: string; choice_id: string; option_id: string; tone: Tone | null; measured: boolean; is_replay: boolean };
   message_sent: { quest_id: string; step_id: string; tone: Tone | null };
   photo_attempt: { step_id: string | null; mode: PhotoMode | 'free'; retry_index: number } & PhotoCriteria;

@@ -30,8 +30,13 @@ export class AlbumModel {
   constructor(deps: { idx: ContentIndex; save: SaveState; bus: EventBus; config: AlbumConfig }) {
     this.idx = deps.idx; this.save = deps.save; this.bus = deps.bus; this.config = deps.config;
     // Ô tùy chọn: xong quest nào thì nhận ô gắn với quest đó (lần đầu hay chơi lại đều bổ sung Album).
-    this.bus.on('quest_completed', ({ quest_id }) => {
-      for (const e of this.idx.pack.album_entries) if (e.unlock_quest_id === quest_id) this.grant(e.id);
+    // Daily dùng chung nhiều Ngày → chỉ nhận ô nằm trên trang của Ngày vừa chơi.
+    this.bus.on('quest_completed', ({ quest_id, memory_day_id }) => {
+      for (const e of this.idx.pack.album_entries) {
+        if (e.unlock_quest_id !== quest_id) continue;
+        const pageDay = this.idx.dayOfPage(e.page_id)?.id;
+        if (!memory_day_id || pageDay === memory_day_id) this.grant(e.id);
+      }
       for (const id of this.idx.quests.get(quest_id)?.rewards?.album_entry_ids ?? []) this.grant(id);
     });
   }

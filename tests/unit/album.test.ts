@@ -68,9 +68,23 @@ describe('trạng thái trang', () => {
 describe('ô tùy chọn từ quest', () => {
   it('xong Side → nhận ô gắn với quest đó (kể cả khi chơi lại)', () => {
     const t = setup();
-    t.bus.emit('quest_completed', { quest_id: 'q_m1_side_01', quest_type: 'side', is_replay: true });
+    t.bus.emit('quest_completed', { quest_id: 'q_m1_side_01', quest_type: 'side', memory_day_id: 'd.g06.01', is_replay: true });
     expect(t.album.owned('alb.d.g06.01.04')).toBe(true);
     expect(t.album.owned('alb.d.g06.01.01')).toBe(false);
+  });
+});
+
+describe('ô của Daily (dùng chung nhiều Ngày)', () => {
+  it('chỉ nhận ô nằm trên trang của Ngày vừa chơi', () => {
+    const t = setup();
+    t.idx.pack.album_entries.push(
+      { id: 'alb.d.g06.01.05', page_id: 'page.d.g06.01', slot_type: 'quest_record', slot_index: 4, fragment_id: 'frag.d.g06.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_daily_01' },
+      { id: 'alb.d.g07.03.03', page_id: 'page.d.g07.03', slot_type: 'quest_record', slot_index: 2, fragment_id: 'frag.d.g07.03.02', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_daily_01' },
+    );
+    for (const e of t.idx.pack.album_entries.slice(-2)) t.idx.entries.set(e.id, e);
+    t.bus.emit('quest_completed', { quest_id: 'q_m1_daily_01', quest_type: 'daily', memory_day_id: 'd.g07.03', is_replay: false });
+    expect(t.album.owned('alb.d.g07.03.03')).toBe(true);
+    expect(t.album.owned('alb.d.g06.01.05')).toBe(false);
   });
 });
 

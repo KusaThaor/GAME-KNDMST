@@ -264,7 +264,7 @@ export class QuestEngine {
 
   private startQuest(q: Quest) {
     this.setState(q, 'active');
-    this.bus.emit('quest_started', { quest_id: q.id, quest_type: q.type, is_replay: this.isReplay });
+    this.bus.emit('quest_started', { quest_id: q.id, quest_type: q.type, memory_day_id: this.dayId, is_replay: this.isReplay });
     if (q.steps[0]) this.activateStep(q, q.steps[0]);
   }
 
@@ -278,7 +278,7 @@ export class QuestEngine {
   }
 
   private finishStep(q: Quest, s: Step) {
-    this.bus.emit('step_completed', { quest_id: q.id, step_id: s.id, kind: s.kind, quest_type: q.type, is_replay: this.isReplay });
+    this.bus.emit('step_completed', { quest_id: q.id, step_id: s.id, kind: s.kind, quest_type: q.type, memory_day_id: this.dayId, is_replay: this.isReplay });
     const next = q.steps[q.steps.indexOf(s) + 1];
     if (next) this.activateStep(q, next); else this.completeQuest(q);
     this.refreshAvailability();
@@ -290,7 +290,7 @@ export class QuestEngine {
     this.setState(q, 'completed');
     // Chơi lại: Side/Daily vừa làm xong được ghi vào câu chuyện (bổ sung, không đổi flag).
     if (this.isReplay && (q.type === 'side' || q.type === 'daily')) this.save.quests[this.key(q)] = { state: 'completed', step_id: null, progress: [] };
-    this.bus.emit('quest_completed', { quest_id: q.id, quest_type: q.type, is_replay: this.isReplay });
+    this.bus.emit('quest_completed', { quest_id: q.id, quest_type: q.type, memory_day_id: this.dayId, is_replay: this.isReplay });
     this.refreshAvailability();
     if (this.ctx?.kind === 'day' && (q.type === 'main' || q.type === 'event')) {
       const chain = this.ctx.day.main_chain;
