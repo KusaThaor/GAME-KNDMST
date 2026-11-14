@@ -69,10 +69,12 @@ export class Tracker {
 
   setAttempt(id: string | null) { this.attemptId = id; }
 
+  private memVisitor: string | null = null;
   private visitorId(): string {
-    // Chưa đồng ý thì chỉ dùng ID tạm trong bộ nhớ, không ghi xuống máy.
+    // Chưa đồng ý thì chỉ dùng MỘT ID tạm trong bộ nhớ (không ghi xuống máy); khi đồng ý, chính ID đó được giữ lại
+    // để các event xếp hàng trước lúc hỏi (game_load_started…) không mang ID lạc loài.
     let v = safeGet(localStorage, K.visitor);
-    if (!v) { v = uuid(); if (this.consent === 'granted') safeSet(localStorage, K.visitor, v); }
+    if (!v) { v = (this.memVisitor ??= uuid()); if (this.consent === 'granted') safeSet(localStorage, K.visitor, v); }
     return v;
   }
 
