@@ -6,10 +6,15 @@ import { CharacterAnimator, type Motion } from '../actors/character/animate';
 import type { CharacterId, Grade } from '../actors/character/presets';
 import { mountHud } from '../ui/Hud';
 import { exposeLab } from './labHooks';
+import { createFx, type SunMotes } from '../render/fx';
+import { cameraGlide } from '../ui/motion';
+import { loadProp } from '../render/assets';
 
 /**
  * Cảnh thử: nhóm năm đứa dưới gốc phượng, sáng tháng 9/2012 (Ch1). Camera thứ ba sau lưng Player.
  * ?lab=yard&view=third|wide&grade=6|9&hud=1&t=1.5
+ * Thử nghiệm S2: &fx=dust (bụi nắng, three.quarks) · &intro=1 (camera lướt vào, GSAP) · &tweak=1 (bảng chỉnh, Tweakpane)
+ *   &asset=desk (bàn học dựng bằng Blender → GLB, kiểm tra quy trình asset)
  */
 export function runYardScene(container: HTMLElement, params: URLSearchParams) {
   const grade = (Number(params.get('grade')) === 9 ? 9 : 6) as Grade;
@@ -17,7 +22,7 @@ export function runYardScene(container: HTMLElement, params: URLSearchParams) {
   const stage = createStage(container, { preserve: true, fov: view === 'wide' ? 42 : 50 });
   const { scene, camera } = stage;
   scene.fog = new THREE.Fog('#e6eef0', 45, 140);
-  const { sun } = addDaylight(scene, { sun: new THREE.Vector3(-14, 22, 12), shadowSize: 22 });
+  const { hemi, sun } = addDaylight(scene, { sun: new THREE.Vector3(-14, 22, 12), shadowSize: 22 });
   sun.target.position.set(-2, 0, -2);
 
   const yard = buildYardCorner();
@@ -46,14 +51,40 @@ export function runYardScene(container: HTMLElement, params: URLSearchParams) {
   const playerRig = actors[actors.length - 1].rig;
 
   // Camera thứ ba: sau lưng Player 5,5 m, nhìn chéo xuống ~28° (GDD 3)
+  const widePos = new THREE.Vector3(13, 13, 22), wideLook = new THREE.Vector3(-1.5, 1.5, -3);
   if (view === 'wide') {
-    camera.position.set(13, 13, 22);
-    camera.lookAt(-1.5, 1.5, -3);
+    camera.position.copy(widePos);
+    camera.lookAt(wideLook);
   } else {
     const fwd = new THREE.Vector3(Math.sin(player.face), 0, Math.cos(player.face));
     const pp = playerRig.root.position;
-    camera.position.copy(pp).addScaledVector(fwd, -5.5).add(new THREE.Vector3(0, 3.6, 0));
-    camera.lookAt(pp.clone().addScaledVector(fwd, 2.6).add(new THREE.Vector3(0, 0.9, 0)));
+    const thirdPos = pp.clone().addScaledVector(fwd, -5.5).add(new THREE.Vector3(0, 3.6, 0));
+    const thirdLook = pp.clone().addScaledVector(fwd, 2.6).add(new THREE.Vector3(0, 0.9, 0));
+    camera.position.copy(thirdPos);
+    camera.lookAt(thirdLook);
+    // Thử nghiệm: mở cảnh bằng cú lướt từ toàn cảnh về sau lưng Player
+    if (params.get('intro') === '1' && !params.has('t')) {
+      cameraGlide(camera, thirdPos, thirdLook, { from: widePos, fromLook: wideLook, duration: 2.2 });
+    }
+  }
+
+  // Thử nghiệm: bụi nắng quanh gốc phượng (Ch1 tháng 9 → không dùng hoa phượng rơi)
+  const fx = params.get('fx') === 'dust' ? createFx(scene) : null;
+  let motes: SunMotes | undefined;
+  if (fx) motes = fx.addSunMotes({ center: new THREE.Vector3(p.x + 1.5, 0, p.z + 2.5), width: 12, depth: 9, height: 3 });
+
+  // Thử nghiệm quy trình Blender → GLB: đặt bàn học mẫu cạnh nhóm bạn
+  const assetReady = params.get('asset') === 'desk'
+    ? loadProp(`${import.meta.env.BASE_URL}assets/props/prp_desk_2seat.glb`).then((desk) => {
+      desk.position.set(p.x + 4.6, 0, p.z + 3.2);
+      desk.rotation.y = -0.5;
+      scene.add(desk);
+      stage.render();
+    })
+    : Promise.resolve();
+
+  if (params.get('tweak') === '1') {
+    void import('./tweaks').then(({ mountTweaks }) => mountTweaks({ stage, hemi, sun, motes }));
   }
 
   if (params.get('hud') !== '0') {
@@ -70,8 +101,8 @@ export function runYardScene(container: HTMLElement, params: URLSearchParams) {
     });
   }
 
-  const setTime = (t: number) => { actors.forEach((a, i) => a.pose(t + i * 0.21)); yard.update(t); stage.render(); };
+  const setTime = (t: number) => { actors.forEach((a, i) => a.pose(t + i * 0.21)); yard.update(t); fx?.update(1 / 60); stage.render(); };
   if (params.has('t')) setTime(Number(params.get('t')));
-  else stage.start((dt, t) => { actors.forEach((a) => a.update(dt)); yard.update(t); });
-  exposeLab(stage, { setTime });
+  else stage.start((dt, t) => { actors.forEach((a) => a.update(dt)); yard.update(t); fx?.update(dt); });
+  exposeLab(stage, { setTime }, assetReady);
 }

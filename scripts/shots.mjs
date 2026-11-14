@@ -21,6 +21,9 @@ const SHOTS = [
   { name: 'yard-dialogue', q: 'lab=yard&t=1.2&dialogue=1', w: 1600, h: 900 },
   { name: 'yard-third-nohud', q: 'lab=yard&t=1.2&hud=0', w: 1600, h: 900 },
   { name: 'yard-wide', q: 'lab=yard&view=wide&hud=0&t=1.2', w: 1600, h: 900 },
+  { name: 'yard-fx', q: 'lab=yard&hud=0&fx=dust&t=1.2', w: 1600, h: 900 },
+  { name: 'yard-desk', q: 'lab=yard&hud=0&asset=desk&t=1.2', w: 1600, h: 900 },
+  { name: 'yard-tweak', q: 'lab=yard&hud=0&fx=dust&tweak=1&t=1.2', w: 1600, h: 900 },
 ];
 const GIFS = [
   { name: 'walk-g6', q: 'lab=sheet&grade=6&motion=walk&t=0', w: 1200, h: 560, frames: 24, dt: 1 / 15 },

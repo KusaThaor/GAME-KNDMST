@@ -15,7 +15,7 @@ test('trang chủ hiện build và môi trường test', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-for (const q of ['lab=sheet&grade=6', 'lab=sheet&grade=9&motion=mix', 'lab=yard', 'lab=yard&view=wide']) {
+for (const q of ['lab=sheet&grade=6', 'lab=sheet&grade=9&motion=mix', 'lab=yard', 'lab=yard&view=wide', 'lab=yard&fx=dust&intro=1&tweak=1', 'lab=yard&asset=desk']) {
   test(`trang thử dựng được: ${q}`, async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto(`/?${q}`);

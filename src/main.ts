@@ -41,6 +41,7 @@ function renderHome() {
         <ul>
           <li><a href="?lab=sheet&grade=6">Bảng nhân vật lớp 6</a> · <a href="?lab=sheet&grade=9">lớp 9</a> · <a href="?lab=sheet&grade=6&motion=mix">các dáng</a> · <a href="?lab=sheet&grade=6&motion=walk">đi bộ</a></li>
           <li><a href="?lab=yard">Góc sân trường — camera thứ ba</a> · <a href="?lab=yard&view=wide">toàn cảnh</a></li>
+          <li>Thử nghiệm S2: <a href="?lab=yard&fx=dust&intro=1&tweak=1">bụi nắng + camera lướt + bảng chỉnh</a> · <a href="?lab=yard&asset=desk">bàn học từ Blender</a></li>
         </ul>
         <h2>Kiểm tra đường ống dữ liệu</h2>
         <button id="pipe">Gửi 1 event thử</button>

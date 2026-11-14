@@ -9,12 +9,12 @@ export interface LabApi {
 
 declare global { interface Window { __lab?: LabApi } }
 
-export function exposeLab(stage: Stage, api: { setTime: (t: number) => void }) {
+export function exposeLab(stage: Stage, api: { setTime: (t: number) => void }, loading: Promise<unknown> = Promise.resolve()) {
   window.__lab = {
     ready: false,
     setTime: api.setTime,
     stats: () => ({ ...stage.stats, geometries: stage.renderer.info.memory.geometries, textures: stage.renderer.info.memory.textures }),
   };
-  // đợi font tiếng Việt tải xong rồi mới báo sẵn sàng (texture chữ vẽ bằng canvas cần font)
-  document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => { window.__lab!.ready = true; })));
+  // đợi font tiếng Việt (và asset GLB nếu có) tải xong rồi mới báo sẵn sàng (texture chữ vẽ bằng canvas cần font)
+  Promise.all([document.fonts.ready, loading]).then(() => requestAnimationFrame(() => requestAnimationFrame(() => { window.__lab!.ready = true; })));
 }

@@ -10,3 +10,5 @@ playwright-report
 service-account*.json
 .firebase
 firebase-debug.log
+__pycache__
+*.blend1

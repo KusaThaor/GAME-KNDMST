@@ -1,0 +1,21 @@
+{
+  "_ghi_chu": "Sổ asset 3D. Mỗi asset quan trọng có 1 dòng. status: PROPOSED → IN_REVIEW → APPROVED (chỉ chủ dự án duyệt).",
+  "assets": [
+    {
+      "id": "PRP_DESK_2SEAT",
+      "ten": "Bàn học sinh 2 chỗ + ghế băng",
+      "nhom": "A (dựng bằng script)",
+      "dung_o": "Lớp học Ch1–Ch3 (dự kiến); hiện chỉ ở trang thử ?lab=yard&asset=desk",
+      "nguon_script": "tools/blender/props/desk_2seat.py",
+      "file_blend": "tools/blender/props/prp_desk_2seat.blend",
+      "file_glb": "public/assets/props/prp_desk_2seat.glb",
+      "tam_giac": 232,
+      "dung_luong_glb_byte": 16680,
+      "giay_phep": "Tự tạo cho dự án (không dùng tài nguyên bên ngoài)",
+      "tac_gia": "Claude (script) — dự án KNĐMST",
+      "status": "PROPOSED",
+      "kiem_thu": "Unit test kích thước/trục/vật liệu (tests/unit/assets.test.ts); ảnh chụp trong cảnh yard-desk 14/11/2026",
+      "chua_ro": "Kích thước và màu chưa đối chiếu Visual Bible / ảnh tham chiếu bàn học 2012"
+    }
+  ]
+}
