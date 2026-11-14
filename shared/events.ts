@@ -1,17 +1,20 @@
 /**
  * Định nghĩa event analytics dùng chung cho trình duyệt (client) và Vercel Function (server).
- * Nguồn yêu cầu: 07_ANALYTICS_REQUIREMENTS v0.5 + GDD mục 14.
+ * Nguồn yêu cầu: 07_ANALYTICS_RULES_DEV (rút từ 07 v0.6) + FRAMEWORK_IMPLEMENTATION_HANDOFF_v1 F8.
  * Quy tắc riêng tư: không gửi tên người chơi, email, IP hay nội dung tự do trong event.
  */
 
 export const EVENT_NAMES = [
   'landing_view', 'cta_click',
   'game_load_started', 'game_ready', 'game_started', 'game_resumed',
-  'chapter_started', 'quest_started', 'quest_step_completed', 'quest_completed',
-  'chapter_completed', 'milestone_completed', 'public_demo_completed',
-  'photo_attempt', 'photo_kept', 'free_photo_taken',
-  'active_heartbeat', 'zone_entered', 'interactable_viewed', 'skip_prompt_answered',
   'appearance_selected',
+  // GDD v1: Ngày ký ức thay cho chapter (chapter_id ch1–ch6 → memory_day_id + chapter_label)
+  'artifact_opened', 'memory_day_started', 'memory_day_completed', 'milestone_completed', 'public_demo_completed',
+  'quest_started', 'quest_step_completed', 'quest_completed', 'choice_made',
+  'photo_attempt', 'photo_kept', 'free_photo_taken',
+  'zone_entered', 'interactable_viewed', 'skip_prompt_answered',
+  'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step',
+  'active_heartbeat',
   'feedback_shown', 'feedback_submitted', 'feedback_skipped',
   'game_error',
   // Chỉ dùng ở môi trường test để kiểm tra đường ống dữ liệu.
@@ -48,9 +51,11 @@ export const LIMITS = {
   maxKeyLength: 40,
 } as const;
 
-/** Khóa bị cấm trong props — chặn rò rỉ thông tin cá nhân (07: không gửi tên/email/IP). */
+/** Khóa bị cấm trong props — chặn rò rỉ thông tin cá nhân và nội dung tự do (07: không gửi tên/email/IP/nội dung tin nhắn, ghi chú). */
 export const FORBIDDEN_PROP_KEYS = new Set([
   'player_name', 'playername', 'name', 'full_name', 'email', 'phone', 'ip', 'ip_address', 'address',
+  // không gửi nội dung tự do: tin nhắn, ghi chú, câu trả lời
+  'message', 'message_text', 'note', 'note_text', 'text', 'content', 'free_text',
 ]);
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

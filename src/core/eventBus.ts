@@ -7,6 +7,7 @@ export interface PhotoCriteria { all_in_frame: boolean; player_in_zone: boolean;
 export interface GameEvents {
   flow_changed: { from: string; to: string };
   hub_entered: { first: boolean };
+  game_resumed: { memory_day_id: string | null; step_id: string | null };
   profile_set: { gender: 'male' | 'female' };
   artifact_opened: { artifact_id: string; memory_day_id: string; is_replay: boolean };
   day_started: { day_id: string; is_replay: boolean; resumed: boolean };

@@ -5,7 +5,7 @@ import { makeCollectHandler, type BatchStore, type StoredBatch } from '../../api
 const u = () => crypto.randomUUID();
 const ev = (over: Record<string, unknown> = {}) => ({
   event_id: u(), name: 'pipeline_test', client_time: new Date().toISOString(),
-  visitor_id: u(), session_id: u(), props: { note: 'hello', n: 1 }, ...over,
+  visitor_id: u(), session_id: u(), props: { label: 'hello', n: 1 }, ...over,
 });
 const batch = (events: unknown[], over: Record<string, unknown> = {}) => ({
   batch_id: u(), build_version: '20261113-abc1234', release_stage: 'prototype', events, ...over,
