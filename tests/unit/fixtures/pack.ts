@@ -92,7 +92,6 @@ export function makePack(): ContentPack {
       },
       {
         id: 'q_hub_pd_02', type: 'pd', scope: 'hub', title: `${P} Tìm lại nhóm chat`, owner: 'TBD', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0.1', blocks_main: false,
-        available_when: { flag: 'hub.contact_m1' },
         steps: [
           { id: 'q_hub_pd_02.s01', kind: 'phone_ui', screen: 'group_chat', thread_id: 'thread.group' },
           { id: 'q_hub_pd_02.s02', kind: 'compose_message', thread_id: 'thread.group', openers: [

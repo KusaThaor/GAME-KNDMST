@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MemoryKv, MemoryPhotoStore, PLAYER_NAME_MAX, SAVE_KEY, SaveStore, newSave, reconcileSave, sanitizePlayerName } from '../../src/core/save';
+import { MemoryKv, MemoryPhotoStore, PLAYER_NAME_MAX, SAVE_KEY, SaveStore, attachAutosave, newSave, reconcileSave, sanitizePlayerName } from '../../src/core/save';
+import { EventBus } from '../../src/core/eventBus';
 import { indexContent } from '../../src/content/indexContent';
 import { makeConfig, makePack } from './fixtures/pack';
 
@@ -111,9 +112,33 @@ describe('MemoryPhotoStore', () => {
   it('lưu, đọc, xóa theo khóa', async () => {
     const p = new MemoryPhotoStore();
     await p.put('auto:alb.d.g06.01.01', new Uint8Array([9]));
-    expect((await p.get('auto:alb.d.g06.01.01'))?.[0]).toBe(9);
+    expect(((await p.get('auto:alb.d.g06.01.01')) as Uint8Array)[0]).toBe(9);
     expect(await p.get('nope')).toBeNull();
     await p.delete('auto:alb.d.g06.01.01');
     expect(await p.keys()).toEqual([]);
+  });
+});
+
+describe('tự lưu', () => {
+  it('ghi xuống máy mỗi khi engine báo checkpoint, và khi về Hub', () => {
+    const kv = new MemoryKv();
+    const s = new SaveStore(kv, () => 'a');
+    const save = s.load().save;
+    const bus = new EventBus();
+    const stop = attachAutosave(bus, s, () => save);
+    expect(kv.getItem(SAVE_KEY)).toBeNull();
+    save.flags['m1.x'] = 1;
+    bus.emit('save_requested', { reason: 'step_boundary' });
+    expect(JSON.parse(kv.getItem(SAVE_KEY)!).flags['m1.x']).toBe(1);
+    save.flags['m1.x'] = 2;
+    bus.emit('hub_entered', { first: false });
+    expect(JSON.parse(kv.getItem(SAVE_KEY)!).flags['m1.x']).toBe(2);
+    save.flags['m1.x'] = 3;
+    bus.emit('part_started', { quest_id: 'q_m2_event_01', part_id: 'p2' });
+    expect(JSON.parse(kv.getItem(SAVE_KEY)!).flags['m1.x']).toBe(3);
+    stop();
+    save.flags['m1.x'] = 4;
+    bus.emit('save_requested', { reason: 'x' });
+    expect(JSON.parse(kv.getItem(SAVE_KEY)!).flags['m1.x']).toBe(3);
   });
 });

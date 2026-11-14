@@ -153,3 +153,10 @@ export function reconcileSave(save: SaveState, idx: ContentIndex): SaveState {
   }
   return save;
 }
+
+/** Tự lưu: ranh giới bước (engine báo `save_requested`), đầu mỗi phần của Event Quest, khi về Hub. */
+export function attachAutosave(bus: import('./eventBus').EventBus, store: SaveStore, getSave: () => SaveState): () => void {
+  const write = () => { store.persist(getSave()); };
+  const offs = [bus.on('save_requested', write), bus.on('hub_entered', write), bus.on('part_started', write)];
+  return () => offs.forEach((off) => off());
+}
