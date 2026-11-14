@@ -34,7 +34,7 @@ Phần khung F0–F10 đã chạy từ đầu tới cuối với nội dung gi�
 ## Lưu ý
 - Chạy Emulator không cần firebase-tools: tải `cloud-firestore-emulator-v1.19.8.jar` rồi `java -jar … --host=127.0.0.1 --port=8085`.
 - Link deploy hook Vercel từng lộ trong chat: nên xóa, tạo mới.
-- D-01, D-03, D-04, D-12, D-13, D-19, D-20 đang dùng phương án khuyến nghị làm giá trị tạm trong file cấu hình.
+- D-01, D-04, D-12, D-13, D-19, D-20 đang dùng phương án khuyến nghị làm giá trị tạm trong file cấu hình; D-03 (phạm vi public) còn để trống.
 
 ## Một bước tiếp theo
 Chủ dự án mở link preview chơi thử và kiểm Firestore có event `environment=test`. Phiên code sau: bắt đầu S2 (bản đồ 6 khu, va chạm, camera A/B) thay phần điều khiển tạm.
