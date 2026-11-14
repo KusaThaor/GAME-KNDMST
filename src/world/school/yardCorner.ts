@@ -15,10 +15,10 @@ export interface YardCorner {
   update(t: number): void;
 }
 
-function skyDome(): THREE.Mesh {
+function skyDome(sky: [string, string, string] = ['#8fc4ef', '#bfe0f7', '#f3ecd9']): THREE.Mesh {
   const tex = canvasTexture(4, 256, (g) => {
     const grd = g.createLinearGradient(0, 0, 0, 256);
-    grd.addColorStop(0, '#8fc4ef'); grd.addColorStop(0.45, '#bfe0f7'); grd.addColorStop(0.62, '#f3ecd9'); grd.addColorStop(1, '#f3ecd9');
+    grd.addColorStop(0, sky[0]); grd.addColorStop(0.45, sky[1]); grd.addColorStop(0.62, sky[2]); grd.addColorStop(1, sky[2]);
     g.fillStyle = grd; g.fillRect(0, 0, 4, 256);
   });
   const m = new THREE.Mesh(new THREE.SphereGeometry(180, 24, 16), new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false, depthWrite: false }));
@@ -43,9 +43,12 @@ function clouds(): THREE.Group {
   return g;
 }
 
-export function buildYardCorner(): YardCorner {
+/** Móc biến thể theo năm học (xem world/variants.ts): mức hoa phượng, màu trời. Không truyền = như bản S1. */
+export interface YardVariantOpts { phuongBloom?: number; sky?: [string, string, string] }
+
+export function buildYardCorner(variant: YardVariantOpts = {}): YardCorner {
   const root = new THREE.Group(); root.name = 'yard-corner';
-  root.add(skyDome(), clouds());
+  root.add(skyDome(variant.sky), clouds());
 
   // mặt sân xi măng + dải cỏ ngoài
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshToonMaterial({ map: concreteTexture(), color: '#ffffff' }));
@@ -63,7 +66,7 @@ export function buildYardCorner(): YardCorner {
   const cap = box(0.45, 0.14, 26.2, PAL.trim); cap.position.set(-18, 2.15, 1); statics.add(cap);
   for (let z = -11; z <= 13; z += 3) { const p = box(0.55, 2.4, 0.55, PAL.trim, 0.04); p.position.set(-18, 1.2, z); statics.add(p); }
 
-  const phuong = phuongTree({ bloom: 0 }); phuong.position.set(-5, 0, -1.2); phuong.rotation.y = 0.4; statics.add(phuong);
+  const phuong = phuongTree({ bloom: variant.phuongBloom ?? 0 }); phuong.position.set(-5, 0, -1.2); phuong.rotation.y = 0.4; statics.add(phuong);
   const bang = bangTree(); bang.position.set(10, 0, -3.5); statics.add(bang);
   const benches: [number, number, number][] = [[-8.6, 1.4, 1.1], [-2.6, -4.2, 0.2], [11.8, 0.2, -1.3], [4.2, -6.4, 0]];
   for (const [x, z, r] of benches) { const b = bench(); b.position.set(x, 0, z); b.rotation.y = r; statics.add(b); }

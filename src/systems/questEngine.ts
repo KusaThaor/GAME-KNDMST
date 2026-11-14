@@ -102,6 +102,8 @@ export class QuestEngine {
       this.save.current.replay = { memory_day_id: dayId, quests, flags: {} };
     } else {
       this.save.current.replay = null;
+      // ảnh chụp câu chuyện lúc vào Ngày — để "Chơi lại Ngày từ đầu" khi đang dở không cộng dồn flag/sắc thái
+      this.save.current.day_start = JSON.parse(JSON.stringify({ flags: this.save.flags, relationships: this.save.relationships }));
       this.save.days[dayId] = { state: 'in_progress', replayed: false };
       for (const id of [...day.main_chain, ...day.side_quests]) delete this.save.quests[id];
       for (const id of day.daily_pool) delete this.save.quests[`${id}@${dayId}`];
@@ -137,6 +139,17 @@ export class QuestEngine {
     else if (!this.mainStep()) { const next = day.main_chain.map((id) => this.idx.quests.get(id)!).find((q) => this.rec(q).state !== 'completed'); if (next) this.startQuest(next); }
     this.updatePointer();
     return 'day';
+  }
+
+  /** Menu "Chơi lại Ngày từ đầu" khi đang ở trong một Ngày (lần đầu hoặc lượt xem lại). */
+  restartDay(): boolean {
+    if (this.ctx?.kind !== 'day') return false;
+    const { day, replay } = this.ctx;
+    const snap = this.save.current.day_start;
+    if (!replay && snap) { this.save.flags = JSON.parse(JSON.stringify(snap.flags)); this.save.relationships = JSON.parse(JSON.stringify(snap.relationships)); }
+    this.ctx = null;
+    this.startDay(day.id, { replay });
+    return true;
   }
 
   enterHub(): void {
@@ -188,12 +201,39 @@ export class QuestEngine {
     return null;
   }
 
+  /** Tương tác này có tác dụng không? (để hiện gợi ý phím) — không đổi trạng thái. */
+  peek(kind: TriggerKind, target: string): boolean {
+    if (!this.ctx || this.phase === 'ended') return false;
+    return this.contextQuests().some((q) => {
+      const r = this.records[this.key(q)];
+      const s = r?.state === 'active' ? q.steps.find((x) => x.id === r.step_id) : r?.state === 'available' && (q.type === 'side' || q.type === 'daily') ? q.steps[0] : undefined;
+      return !!s && this.matchesWith(s, kind, target, r?.progress ?? []);
+    });
+  }
+
+  /** Các đích đang "có việc": đích của bước đang chờ + bước đầu của Side/Daily đang mở (để đánh dấu trong cảnh). */
+  targetsOfInterest(): string[] {
+    const out = new Set<string>();
+    for (const q of this.contextQuests()) {
+      const r = this.records[this.key(q)];
+      const s = r?.state === 'active' ? q.steps.find((x) => x.id === r.step_id) : r?.state === 'available' && (q.type === 'side' || q.type === 'daily') ? q.steps[0] : undefined;
+      if (!s) continue;
+      if (s.kind === 'goto' || s.kind === 'interact' || s.kind === 'place') out.add(s.target);
+      else if (s.kind === 'talk') out.add(s.with);
+      else if (s.kind === 'collect') s.targets.filter((x) => !(r?.progress ?? []).includes(x)).forEach((x) => out.add(x));
+    }
+    return [...out];
+  }
+
   private matches(q: Quest, s: Step, kind: TriggerKind, target: string): boolean {
+    return this.matchesWith(s, kind, target, this.rec(q).progress);
+  }
+  private matchesWith(s: Step, kind: TriggerKind, target: string, progress: string[]): boolean {
     switch (s.kind) {
       case 'goto': return kind === 'arrive' && s.target === target;
       case 'interact': case 'place': return kind === 'interact' && s.target === target;
       case 'talk': return kind === 'interact' && s.with === target;
-      case 'collect': return kind === 'interact' && s.targets.includes(target) && !this.rec(q).progress.includes(target);
+      case 'collect': return kind === 'interact' && s.targets.includes(target) && !progress.includes(target);
       default: return false;
     }
   }

@@ -380,3 +380,41 @@ describe('QuestEngine — Hub', () => {
     expect(t.engine.questState('q_hub_pd_02')).toBe('active');
   });
 });
+
+describe('QuestEngine — truy vấn cho cảnh 3D và menu', () => {
+  it('peek: biết trước tương tác có tác dụng không, mà không đổi trạng thái', () => {
+    const t = setup();
+    t.engine.startDay('d.g06.01');
+    const before = JSON.stringify(t.save);
+    expect(t.engine.peek('interact', 'NPC_A')).toBe(true);        // bước Main
+    expect(t.engine.peek('interact', 'NPC_B')).toBe(true);        // Side đang available
+    expect(t.engine.peek('interact', 'itr.thcs.desk')).toBe(false);
+    expect(t.engine.peek('arrive', 'NPC_A')).toBe(false);
+    expect(JSON.stringify(t.save)).toBe(before);
+  });
+  it('targetsOfInterest: đích của bước đang chờ + bước đầu của Side/Daily đang mở', () => {
+    const t = setup();
+    t.engine.startDay('d.g06.01');
+    expect(t.engine.targetsOfInterest().sort()).toEqual(['NPC_A', 'NPC_B', 'itr.thcs.board']);
+    t.engine.trigger('interact', 'itr.thcs.board');
+    expect(t.engine.targetsOfInterest().sort()).toEqual(['NPC_A', 'NPC_B']);
+  });
+  it('restartDay: chơi lại Ngày đang dở từ đầu — flag và số đếm sắc thái quay về lúc vào Ngày', () => {
+    const t = setup();
+    t.save.flags['m1.before'] = 'giữ';
+    t.engine.startDay('d.g06.01');
+    t.engine.trigger('interact', 'NPC_A'); t.engine.complete('q_m1_main_01.s01');
+    t.engine.complete('q_m1_main_01.s02', { option_id: 'b' });
+    expect(t.save.relationships['chr_duc'].tone_counts.gentle).toBe(1);
+    expect(t.engine.restartDay()).toBe(true);
+    expect(t.engine.mainStep()?.step.id).toBe('q_m1_main_01.s01');
+    expect(t.save.flags).toEqual({ 'm1.before': 'giữ' });
+    expect(t.save.relationships['chr_duc']?.tone_counts.gentle ?? 0).toBe(0);
+    t.engine.trigger('interact', 'NPC_A'); t.engine.complete('q_m1_main_01.s01');
+    t.engine.complete('q_m1_main_01.s02', { option_id: 'b' });
+    expect(t.save.relationships['chr_duc'].tone_counts.gentle).toBe(1);
+  });
+  it('restartDay khi không ở trong Ngày → không làm gì', () => {
+    expect(setup().engine.restartDay()).toBe(false);
+  });
+});
