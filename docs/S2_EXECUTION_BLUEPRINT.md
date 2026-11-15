@@ -59,14 +59,16 @@ File nguồn nằm ở `tools/blender/world/map_thcs/`, file game ở `public/as
 - **TẠM:** vị trí, kích thước, hình khối từng khu. GDD chưa có bản vẽ mặt bằng nên bố cục là blockout do Fable tự đặt (khoảng 86 × 66 m; GDD ghi "khoảng 110 × 80 m"). Tham số bố cục gom ở đầu `tools/blender/world/gen_map_thcs.py` (biến `L`).
 - **TẠM:** khu nào mở ở Ngày nào (`open_zones` trong `src/content/days/*.ts`, nội dung giả). Khu không mở bị chặn bằng vật có nhãn `htx_gate_zone` dựng sẵn trong Blender.
 
-### 2.2 Camera A/B (nguồn: GDD v0.3 §3)
-Cả hai đều là **camera thứ ba** bám sau nhân vật, nhìn chéo xuống 25–40°, cách 5,5 m (phóng 3,5–8 m), tự kéo gần khi bị che. Khác nhau ở cách xoay:
+### 2.2 Camera: Chuẩn (mặc định) + A/B nâng cao (nguồn: GDD v0.3 §3; D-S2-01 chốt 15/11)
+Cả ba đều là **camera thứ ba** bám sau nhân vật, nhìn chéo xuống 25–40°, cách 5,5 m (phóng 3,5–8 m), tự kéo gần khi bị che. Khác nhau ở cách xoay:
+- **Chuẩn (`standard`, mặc định — kiểu Play Together):** kéo chuột trái hoặc phải trên vùng trống (quá 6 px mới xoay; bấm nhanh vẫn là bấm); touchpad kéo một ngón, cuộn/chụm 2 ngón để phóng; cảm ứng: nút tròn để đi, kéo màn hình để xoay, chụm để phóng, nút E ảo.
 - **A:** giữ chuột phải rồi rê.
 - **B:** khóa con trỏ, rê chuột là xoay, Esc để thả.
+Cảm ứng (kéo xoay, chụm) chạy ở cả ba kiểu. Số chỉnh được ở `POINTER_INPUT` (`src/config/camera.ts`).
 
 Master prompt S2 có ghi phương án dự phòng "A = góc nhìn thứ nhất, B = thứ ba" **chỉ dùng khi tài liệu không có đặc tả**. Tài liệu có đặc tả nên phương án đó **không được dùng**. Muốn có góc nhìn thứ nhất là thay đổi thiết kế, cần chủ dự án quyết.
 
-Phím: `V` đổi A ↔ B. `C` để dành cho máy ảnh cầm tay/cuộn phim (chưa làm, không gán việc khác). Phòng 2026 vẫn là góc cố định.
+Phím: `V` (hoặc nút trong Menu) xoay vòng Chuẩn → A → B; người chơi cũ đã lưu A/B giữ nguyên. `C` để dành cho máy ảnh cầm tay/cuộn phim (chưa làm, không gán việc khác). Phòng 2026 vẫn là góc cố định.
 
 ### 2.3 Quyết định liên quan
 | Mã | Nội dung | Trạng thái | Nằm ở đâu trong code |
@@ -131,7 +133,9 @@ flowchart LR
 | C | `src/world/validate.ts` | Kiểm manifest, index và tham chiếu từ nội dung |
 | C | `src/actors/player/controller.ts`, `avatar.ts` | Đi lại + va chạm; lớp bọc hình nhân vật (thay model không đụng controller) |
 | C | `src/actors/camera/cameraManager.ts` | Bám theo, tránh che, khóa/trả cho cutscene và khung ngắm |
-| C | `src/game/input.ts` | Một bộ listener duy nhất; kiểu rê chuột và kiểu khóa con trỏ |
+| C | `src/game/input.ts` | Một bộ listener duy nhất (Pointer Events): chuột, touchpad, cảm ứng; kiểu Chuẩn/rê chuột phải/khóa con trỏ |
+| C | `src/game/gestures.ts` | Logic thuần: kéo/bấm, chụm, wheel touchpad, nút tròn (có test đơn vị) |
+| C | `src/ui/game/TouchControls.tsx` | Nút tròn + nút E ảo (chỉ hiện khi dùng cảm ứng) |
 | C | `src/render/style.ts` | Phong cách hình ảnh (`toon_outline`, `soft_pbr`), tách khỏi bản đồ |
 | D | `src/world/dayBindings.ts` | Đổi ID trong nội dung (marker) ra tọa độ. Đây là lớp nối duy nhất giữa nội dung và hình học |
 | D | `src/game/scenes/dayScene.ts` | Ráp `World` + controller + camera + tracker cho một Ngày. Không chứa tọa độ, tên mesh hay phím |
@@ -175,7 +179,8 @@ class PlayerController { state: 'idle' | 'walk' | 'run'; teleport(x, z, facing?,
 // src/actors/camera/cameraManager.ts
 class CameraManager { camera; setPreset(p); snapBehind(facing, target); lock(pose); release(); update(dt, target, look: LookInput | null) }
 // src/game/input.ts
-interface GameInput { held(action); takeLook(); setLookMode('drag' | 'lock'); releasePointer(); setLockGuard(fn); onLockChange(fn); listenerCount; dispose() }
+interface GameInput { held(action); takeLook(); setLookMode('free' | 'drag' | 'lock'); releasePointer(); setLockGuard(fn); onLockChange(fn);
+  stick; setStick(v); device; onDeviceChange(fn); listenerCount; dispose() }   // chuột + touchpad + cảm ứng, một bộ listener
 // src/game/scenes/dayScene.ts
 buildDayScene(day, idx, gender, { style?, startZone?, fetchAsset? }): Promise<DayScene>
 interface DayScene { zone; onZoneChange; problems; placeholder; update(dt, t, ctl); teleport(); toSpawn(id?); portalPrompt(); usePortal();
@@ -271,21 +276,22 @@ Cốt truyện/thoại thật; chốt bất kỳ quyết định D-xx nào; nố
 
 ## 7. Bảng nghiệm thu S2
 
-| Tiêu chí | Trạng thái (cập nhật sau Chặng 1, 15/11) | Bằng chứng / còn thiếu |
+| Tiêu chí | Trạng thái (cập nhật sau Chặng 2 Phần A, 16/11) | Bằng chứng / còn thiếu |
 |---|---|---|
 | Có 6 khu theo tài liệu, blockout ghi chú rõ | ĐẠT | `validate:world`; §2.1 |
 | Các khu nạp được | ĐẠT | `world.test.ts`; bot đi tới điểm tương tác ở cả 6 khu |
 | Đi lại được | ĐẠT một phần | unit + test giữ `W`; thiếu ca 1 |
 | Đường nối/đổi khu | ĐẠT một phần | `travel.test.ts`; thiếu ca 2, 3 trên trình duyệt |
 | Thêm khu bằng cấu hình + file | ĐẠT | `expand.test.ts` + mục 7 `test_pipeline.py`; 15/11 thử tay trọn quy trình khu thứ 7 trong worktree bỏ đi, chơi thử bằng phím thật (vào portal, bấm E ra) — `docs/HOW_TO_EXPAND_WORLD.md` |
-| Camera A, B, đổi kiểu | ĐẠT một phần | `camera.test.ts`; thiếu ca 4, 5, 6 |
+| Camera Chuẩn/A/B, đổi kiểu | ĐẠT một phần | `camera.test.ts`, `gestures.test.ts`; e2e ca 4, 5, 12 đạt; thiếu ca 6 (kiểu B) |
+| Chơi bằng touchpad / cảm ứng (D-S2-01) | ĐẠT một phần (mô phỏng) | e2e ca 11a/b/c, 12 trên mô phỏng Chrome; CHƯA KIỂM trên điện thoại thật, touchpad thật |
 | Camera không xuyên vật | ĐẠT một phần | unit; thiếu ca 7 |
 | Va chạm | ĐẠT một phần | `collision.test.ts`, `controller.test.ts`; thiếu ca 1 |
 | Input không nhân đôi | CHƯA KIỂM trên trình duyệt | thiếu ca 9 |
-| `.blend` sửa được + `.glb` tương ứng + script xuất + collection | ĐẠT | §1; Chặng 1 chạy lại `test_pipeline.py` 61/61 trên `bpy` 4.5.16 và 5.2.4. `blender.exe` trên Windows: CHƯA KIỂM |
+| `.blend` sửa được + `.glb` tương ứng + script xuất + collection | ĐẠT | §1; Chặng 1 chạy lại `test_pipeline.py` 61/61 trên `bpy` 4.5.16 (bản chuẩn, D-S2-05) và 5.2.4. `blender.exe` trên Windows: CHƯA KIỂM |
 | Màu Blender ↔ game | ĐẠT một phần | Chặng 1: màu trong `.glb` trùng đúng bảng màu; ảnh preview Blender bạc màu (AgX); game buổi chiều ngả cam do ánh sáng `late_afternoon`. Chưa sửa (art style chưa khóa, D-S2-04). Ảnh: `docs/images/s2_color_compare.jpg`; số đo: `docs/S2_TEST_REPORT.md` |
 | Giữ ID ổn định sau khi sửa phần nhìn | ĐẠT | mục 4 `test_pipeline.py` |
-| Luồng cũ, quest, checkpoint, phòng 2026 | ĐẠT | Playwright 13 đạt |
+| Luồng cũ, quest, checkpoint, phòng 2026 | ĐẠT | Playwright 19 đạt (13 cũ + 6 mới), 16/11 |
 | Analytics, đồng ý thu thập | ĐẠT một phần | chưa chạy lại phần Emulator |
 | Hướng dẫn sửa Blender, thêm khu, đổi art style, đổi model | ĐẠT một phần | Có `docs/BLENDER_PIPELINE.md`, `docs/HOW_TO_EXPAND_WORLD.md` (Chặng 1). Còn thiếu đổi art style, đổi model (Chặng 2–3) |
 | Preset camera chỉnh trong cấu hình | ĐẠT | `src/config/camera.ts` |
