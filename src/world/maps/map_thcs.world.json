@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "map_id": "map_thcs",
+  "title": "Trường THCS + ngõ quà vặt + bãi đất + căn cứ",
+  "asset_root": "/assets/world/map_thcs/",
+  "default_spawn": "spawn.thcs.yard",
+  "camera_preset": "follow_default",
+  "zones": [
+    {
+      "id": "zone.thcs.classroom",
+      "asset": "zone_classroom.glb",
+      "source": "tools/blender/world/map_thcs/zone_classroom.blend",
+      "connections": ["zone.thcs.corridor"],
+      "camera_preset": "follow_indoor"
+    },
+    {
+      "id": "zone.thcs.corridor",
+      "asset": "zone_corridor.glb",
+      "source": "tools/blender/world/map_thcs/zone_corridor.blend",
+      "connections": ["zone.thcs.classroom", "zone.thcs.yard"]
+    },
+    {
+      "id": "zone.thcs.yard",
+      "asset": "zone_yard.glb",
+      "source": "tools/blender/world/map_thcs/zone_yard.blend",
+      "connections": ["zone.thcs.corridor", "zone.thcs.gate"]
+    },
+    {
+      "id": "zone.thcs.gate",
+      "asset": "zone_gate.glb",
+      "source": "tools/blender/world/map_thcs/zone_gate.blend",
+      "connections": ["zone.thcs.yard", "zone.thcs.field"]
+    },
+    {
+      "id": "zone.thcs.field",
+      "asset": "zone_field.glb",
+      "source": "tools/blender/world/map_thcs/zone_field.blend",
+      "connections": ["zone.thcs.gate", "zone.thcs.base"]
+    },
+    {
+      "id": "zone.thcs.base",
+      "asset": "zone_base.glb",
+      "source": "tools/blender/world/map_thcs/zone_base.blend",
+      "connections": ["zone.thcs.field"]
+    }
+  ]
+}

@@ -3,6 +3,7 @@
  * Luồng: Boot → Hub(intro|idle) → chuyển cảnh → Ngày ký ức → kết Ngày → chuyển cảnh → Hub.
  * Hub và Ngày là 2 scene riêng; mỗi Ngày nạp 1 bản đồ + 1 biến thể; rời scene nào thì giải phóng scene đó.
  */
+import { CAMERA_MODES, isControl, type CameraModeId } from '../config/camera';
 import { GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
@@ -23,10 +24,12 @@ import { GameFlow } from '../systems/gameFlow';
 import { HubModel, type PdePresentation } from '../systems/hub';
 import { QuestEngine } from '../systems/questEngine';
 import { ReleaseTracker } from '../systems/release';
+import { ART_STYLES } from '../render/style';
 import { mountGameUi } from '../ui/game/GameUi';
 import { createUiStore, type AlbumView, type BoxView, type PhoneView, type UiActions, type UiState, type UiStore } from '../ui/game/store';
-import { createInput } from './input';
-import { buildDayScene, type DayScene } from './scenes/dayScene';
+import { formatProblems } from '../world/validate';
+import { createInput, type GameInput } from './input';
+import { buildDayScene, type DayControl, type DayScene } from './scenes/dayScene';
 import { buildHubScene, type HubScene } from './scenes/hubScene';
 import { playTransitionSound } from './sfx';
 import { createGameView, type GameView } from './view';
@@ -39,7 +42,7 @@ export function registerTransitionFx(hook: TransitionHook) { transitionHooks.pus
 /** Thứ công cụ test (bot, nhảy bước) được phép chạm vào. Không dùng ở production. */
 export interface GameHandle {
   idx: ContentIndex; save: SaveState; bus: EventBus; engine: QuestEngine; album: AlbumModel; hub: HubModel; flow: GameFlow;
-  ui: UiStore; actions: UiActions & { interact(): void }; view: GameView; photos: PhotoStore; tracker: Tracker;
+  ui: UiStore; actions: UiActions & { interact(): void }; view: GameView; photos: PhotoStore; tracker: Tracker; input: GameInput;
   day(): { scene: DayScene; def: MemoryDay } | null;
   /** Vị trí một vật của phòng 2026 trên trang (px) — để test bấm chuột thật. */
   hubPoint(id: string): { x: number; y: number } | null;
@@ -54,6 +57,8 @@ export interface RunOptions {
   /** Công cụ test sửa file lưu trước khi engine nạp (nhảy tới bước). */
   prepareSave?: (save: SaveState, idx: ContentIndex) => void;
   castName?: string;
+  /** Phong cách hình ảnh của bản đồ (khóa trong ART_STYLES). Mặc định: DEFAULT_ART_STYLE. */
+  artStyle?: string;
 }
 
 export async function runGame(container: HTMLElement, opts: RunOptions = {}): Promise<GameHandle> {
@@ -85,6 +90,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   container.appendChild(uiEl);
   const ui = createUiStore();
   const input = createInput(container);
+  const style = ART_STYLES[opts.artStyle ?? ''];        // undefined → phong cách mặc định
   const profile = () => ({ player_name: save.player_name, gender: save.appearance.gender });
   const fmt = (text: string) => formatText(text, profile());
   const introId = idx.pack.hub.intro_quest_id;
@@ -114,7 +120,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     for (const [slot, w] of [...waiters]) { waiters.delete(slot); w(CANCEL); }
     tickers.clear(); presented.clear(); inside.clear();
     ui.set({ dialogue: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
-    dayScene?.setStandZone(null); dayScene?.setPlayerMotion(null);
+    dayScene?.setStandZone(null); dayScene?.setPlayerMotion(null); dayScene?.lockCamera(null);
   };
 
   const locked = () => {
@@ -195,13 +201,18 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     const point = day?.cameras.find((c) => c.id === s.camera_id);
     if (!scene || !point) { engine.complete(s.id); return; }
     const cam = scene.cameraFor(point);
+    if (!cam) { engine.complete(s.id); return; }        // bản đồ thiếu marker máy ảnh: không chặn quest
+    const spot = scene.standSpot(s.stand_zone);
     const base = { mode: s.mode, url: null, marks: [], score: 0, display: PHOTO_CONFIG.quality_display, posed: false } as const;
     for (let retry = 0; ; retry++) {
       photoPosed = false;
       if (s.mode !== 'auto') {
-        scene.setStandZone(s.stand_zone ?? null);
+        scene.setStandZone(spot);
+        scene.lockCamera(point);                          // khung ngắm: nhìn qua máy ảnh đặt sẵn
         ui.set({ photo: { ...base, marks: [], phase: 'ready', seconds: s.mode === 'timer' ? PHOTO_CONFIG.timer_seconds : 0 } });
-        if ((await wait('photo_start')) === CANCEL || !alive()) return;
+        const started = await wait('photo_start');
+        scene.lockCamera(null);                           // hẹn giờ: về góc thứ ba để chạy vào vòng sáng
+        if (started === CANCEL || !alive()) return;
         if (s.mode === 'timer') {
           let left = PHOTO_CONFIG.timer_seconds;
           ui.set({ photo: { ...base, marks: [], phase: 'countdown', seconds: left } });
@@ -216,10 +227,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
           if ((await done) === CANCEL || !alive()) return;
         }
       }
-      const zone = s.stand_zone;
       const criteria: PhotoCriteria = {
         all_in_frame: scene.allInFrame(cam, s.subjects),
-        player_in_zone: zone ? Math.hypot(scene.playerPosition.x - zone.center[0], scene.playerPosition.z - zone.center[1]) <= zone.radius : true,
+        player_in_zone: spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true,
         posed_in_time: s.mode === 'timer' ? photoPosed : true,
       };
       scene.setGizmosVisible(false);
@@ -258,9 +268,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     for (const entry of idx.pack.album_entries) {
       if (entry.snapshot?.at_step_id !== e.step_id) continue;
       const point = day.cameras.find((c) => c.id === entry.snapshot!.camera_id);
-      if (!point) continue;
+      const cam = point && scene.cameraFor(point);
+      if (!cam) continue;
       scene.setGizmosVisible(false);
-      const shot = view.capture(scene.scene, scene.cameraFor(point), PHOTO_CONFIG.jpeg);
+      const shot = view.capture(scene.scene, cam, PHOTO_CONFIG.jpeg);
       scene.setGizmosVisible(true);
       void shot.then((blob) => photos.put(autoPhotoKey(entry.id), blob)).then(() => { photoUrls.delete(entry.id); }).catch(() => undefined);
     }
@@ -275,11 +286,14 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       const day = idx.dayOfPage(entry.page_id);
       const point = day?.cameras.find((c) => c.id === entry.snapshot!.camera_id);
       if (day && point) {
-        const tmp = buildDayScene(day, idx, save.appearance.gender);
-        tmp.update(0, 0, null); tmp.setGizmosVisible(false);
-        data = await view.capture(tmp.scene, tmp.cameraFor(point), PHOTO_CONFIG.jpeg);
+        const tmp = await buildDayScene(day, idx, save.appearance.gender, { style });
+        const cam = tmp.cameraFor(point);
+        if (cam) {
+          tmp.update(0, 0, { move: null, look: null }); tmp.setGizmosVisible(false);
+          data = await view.capture(tmp.scene, cam, PHOTO_CONFIG.jpeg);
+          await photos.put(autoPhotoKey(entry.id), data).catch(() => undefined);
+        }
         tmp.dispose();
-        await photos.put(autoPhotoKey(entry.id), data).catch(() => undefined);
       }
     }
     if (!data) return null;
@@ -326,6 +340,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     const first = !save.quests[introId];
     engine.enterHub();
     hub.refresh();
+    input.setLookMode('drag');                           // phòng 2026: góc cố định, chuột để chọn vật
     hubScene = buildHubScene(idx.pack.hub, HUB_CONFIG);
     refreshHubScene();
     view.setScene(hubScene.scene, hubScene.camera);
@@ -377,16 +392,47 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     cancelAll();
     await fadeTo(fmt(day.title), 'to_day', day);
     teardown();
-    if (!resume) engine.startDay(dayId, { replay });
-    currentDay = day;
-    dayScene = buildDayScene(day, idx, save.appearance.gender);
-    view.setScene(dayScene.scene, dayScene.camera);
-    const zone = idx.pack.maps.find((m) => m.id === day.map_id)?.zones.find((z) => z.zone_id === (day.open_zones?.[0] ?? ''));
-    ui.set({ mode: 'day', inReplay: replay, panel: null, toast: zone?.name ?? null, fade: { on: false, label: '' } });
-    if (zone && !resume) bus.emit('zone_entered', { memory_day_id: day.id, zone_id: zone.zone_id });
-    setTimeout(() => ui.set({ toast: null }), 2600);
+    if (!resume) { engine.startDay(dayId, { replay }); save.current.zone_id = null; }
+    const ep = epoch;
+    const scene = await buildDayScene(day, idx, save.appearance.gender, { style, startZone: resume ? save.current.zone_id : null });
+    if (ep !== epoch) { scene.dispose(); return; }       // người chơi đã rời đi trong lúc tải
+    currentDay = day; dayScene = scene;
+    if (scene.problems.length) console.warn(`[world] ${day.map_id}:\n${formatProblems(scene.problems)}`);
+    view.setScene(scene.scene, scene.camera);
+    input.setLookMode(CAMERA_MODES[save.settings.camera_mode].look);
+    // Tên khu hiện thoáng khi bước vào; `zone_entered` ghi một lần cho mỗi khu trong một lượt vào Ngày.
+    const zoneName = (id: string | null) => idx.pack.maps.find((m) => m.id === day.map_id)?.zones.find((z) => z.zone_id === id)?.name ?? null;
+    const seenZones = new Set<string>();
+    const enterZone = (id: string, record: boolean) => {
+      save.current.zone_id = id;
+      toast(zoneName(id));
+      if (record && !seenZones.has(id)) bus.emit('zone_entered', { memory_day_id: day.id, zone_id: id });
+      seenZones.add(id);
+    };
+    scene.onZoneChange = (to) => { enterZone(to, true); bus.emit('save_requested', { reason: 'zone' }); };
+    ui.set({ mode: 'day', inReplay: replay, panel: null, cameraMode: save.settings.camera_mode, fade: { on: false, label: '' } });
+    if (scene.zone) enterZone(scene.zone, !resume);
+    if (scene.placeholder) toast('[Bản đồ chưa tải được — đang dùng mặt bằng tạm]', 6000);
     if (flow.state === 'to_day') flow.dispatch('scene_ready');
     void enqueue(drain);
+  }
+
+  let toastTimer = 0;
+  function toast(text: string | null, ms = 2600) {
+    window.clearTimeout(toastTimer);
+    ui.set({ toast: text });
+    if (text) toastTimer = window.setTimeout(() => ui.set({ toast: null }), ms);
+  }
+
+  /** Đổi kiểu điều khiển camera A ↔ B (lưu cục bộ trong file lưu; không vào analytics). */
+  function toggleCameraMode() {
+    if (ui.get().mode !== 'day') return;
+    const next: CameraModeId = save.settings.camera_mode === 'A' ? 'B' : 'A';
+    save.settings.camera_mode = next;
+    input.setLookMode(CAMERA_MODES[next].look);
+    ui.set({ cameraMode: next });
+    toast(`${CAMERA_MODES[next].label}: ${CAMERA_MODES[next].hint}`, 3600);
+    bus.emit('save_requested', { reason: 'settings' });
   }
 
   // ---------- trong Ngày: lại gần, tương tác ----------
@@ -398,7 +444,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (near && !inside.has(t.id)) { inside.add(t.id); if (!locked() && engine.trigger('arrive', t.id)) void enqueue(drain); } else if (!near) inside.delete(t.id);
     }
     const tgt = locked() ? null : nearestUseful();
-    if ((tgt?.id ?? null) !== promptId) { promptId = tgt?.id ?? null; ui.set({ prompt: tgt ? { key: 'E', text: fmt(tgt.label) } : null }); }
+    const portal = tgt || locked() ? null : dayScene.portalPrompt();
+    const id = tgt?.id ?? portal?.id ?? null;
+    if (id !== promptId) { promptId = id; ui.set({ prompt: tgt ? { key: 'E', text: fmt(tgt.label) } : portal ? { key: 'E', text: fmt(portal.label) } : null }); }
   }
   function nearestUseful() {
     if (!dayScene) return null;
@@ -409,7 +457,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   function interact() {
     if (locked() || engine.context?.kind !== 'day') return;
     const tgt = nearestUseful();
-    if (!tgt) return;
+    if (!tgt) { dayScene?.usePortal(); return; }
     const r = engine.trigger('interact', tgt.id);
     if (!r) return;
     void enqueue(async () => {
@@ -568,8 +616,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (!currentDay || !dayScene) return;
       cancelAll();
       if (!engine.restartDay()) return;
-      const sp = idx.pack.maps.find((m) => m.id === currentDay!.map_id)?.spawn_points[0];
-      if (sp) dayScene.teleport(sp.position[0], sp.position[1], sp.facing);
+      dayScene.toSpawn();
       ui.set({ panel: null });
       void enqueue(drain);
     },
@@ -581,8 +628,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       void goHub();
     },
     menuSafeSpot() {
-      const sp = currentDay && idx.pack.maps.find((m) => m.id === currentDay!.map_id)?.spawn_points[0];
-      if (sp && dayScene) dayScene.teleport(sp.position[0], sp.position[1], sp.facing);
+      dayScene?.toSpawn();
       ui.set({ panel: null });
     },
     menuWipe() {
@@ -590,6 +636,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; });
     },
     feedbackSkip() { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
+    toggleCameraMode,
   };
 
   bus.on('day_end_prompt', (e) => ui.set({ endPrompt: { open: e.open_side_quests.length } }));
@@ -604,10 +651,17 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   input.onKey((code) => {
     const s = ui.get();
     if (code === 'Space' || code === 'Enter') { if (s.dialogue || s.notice) actions.next(); else actions.photoPose(); }
-    else if (code === 'KeyE') interact();
+    else if (isControl('interact', code)) interact();
     else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
-    else if (code === 'Escape') { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
-    else if ((code === 'KeyJ' || code === 'Tab') && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
+    else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
+    else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
+    else if (isControl('camera_mode', code) && !locked()) toggleCameraMode();
+    // Phím C (film_camera) để dành cho máy ảnh cầm tay/cuộn phim — chưa làm, không gán việc khác.
+  });
+  // Kiểu B: chỉ khóa con trỏ khi đang đi lại trong Ngày; có thoại/bảng thì thả. Người chơi bấm Esc để thả → mở menu.
+  input.setLockGuard(() => ui.get().mode === 'day' && !locked());
+  input.onLockChange((isLocked, byUser) => {
+    if (!isLocked && byUser && ui.get().mode === 'day' && !ui.get().panel) actions.openPanel('menu');
   });
   input.onPointer((kind, x, y) => {
     if (hubScene && engine.context?.kind === 'hub') {
@@ -632,12 +686,21 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   mountGameUi(uiEl, ui, actions);
   view.start((dt, t) => {
     for (const f of [...tickers]) f(dt);
-    if (dayScene) { dayScene.update(dt, t, locked() ? null : input); proximity(); }
+    if (dayScene) {
+      const free = !locked();
+      const look = input.takeLook();                    // luôn đọc để chuyển động chuột lúc đang khóa không dồn lại
+      const ctl: DayControl = free
+        ? { move: { forward: (input.held('forward') ? 1 : 0) - (input.held('back') ? 1 : 0), strafe: (input.held('right') ? 1 : 0) - (input.held('left') ? 1 : 0), run: input.held('run') }, look }
+        : { move: null, look: null };
+      if (!free && input.pointerLocked) input.releasePointer();
+      dayScene.update(dt, t, ctl);
+      proximity();
+    }
     hubScene?.update(dt, t);
   });
   ui.set({ ready: true, placeholderBanner: idx.releaseDays.some((d) => d.main_chain.some((q) => idx.quests.get(q)?.ownership_label === 'AI_PROPOSED')) });
 
-  const handle: GameHandle = { idx, save, bus, engine, album, hub, flow, ui, actions, view, photos, tracker, store,
+  const handle: GameHandle = { idx, save, bus, engine, album, hub, flow, ui, actions, view, photos, tracker, store, input,
     day: () => (dayScene && currentDay ? { scene: dayScene, def: currentDay } : null),
     hubPoint: (id) => {
       const p = hubScene?.screenPoint(id);

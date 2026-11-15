@@ -50,6 +50,8 @@ function playAll(t: ReturnType<typeof setup>) {
   album.markViewed(); album.markBackViewed('alb.d.g07.03.02');
   hub.openArtifact('art_m1_05');
   e.startDay('d.g07.03');
+  // Side giả 02 (thêm ở S2): đi một vòng 5 khu còn lại của bản đồ
+  for (const place of ['gutter', 'blackboard', 'snack_cart', 'marble_spot', 'old_table']) e.trigger('arrive', `itr.thcs.${place}`);
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_05.s01');
   e.complete('q_m1_main_05.s02', { option_id: 'gentle' });
   e.trigger('interact', 'itr.thcs.tripod_spot');

@@ -1,0 +1,615 @@
+{
+  "map_id": "map_thcs",
+  "zones": {
+    "zone.thcs.classroom": {
+      "asset": "zone_classroom.glb",
+      "markers": [
+        {
+          "id": "itr.thcs.blackboard",
+          "kind": "interact",
+          "position": [
+            0.1,
+            0.15,
+            -26
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.wall_news",
+          "kind": "interact",
+          "position": [
+            -6,
+            0.15,
+            -29.45
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.classroom",
+          "kind": "spawn",
+          "position": [
+            -1,
+            0.15,
+            -23
+          ],
+          "facing": -1.571
+        },
+        {
+          "id": "spot.thcs.class_front",
+          "kind": "spot",
+          "position": [
+            -0.6,
+            0.15,
+            -25
+          ],
+          "facing": -1.571
+        },
+        {
+          "id": "zone.thcs.classroom",
+          "kind": "zone",
+          "position": [
+            -4,
+            0,
+            -26
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 19,
+      "floors": 1,
+      "visuals": 53,
+      "triangles": 1778,
+      "materials": [
+        "board_green",
+        "door_green",
+        "floor_tile",
+        "glass",
+        "metal_green",
+        "paper",
+        "wall_inner",
+        "wall_main",
+        "wood",
+        "wood_dark"
+      ],
+      "gates": [
+        "zone.thcs.classroom"
+      ],
+      "portals": [],
+      "floor_bounds": [
+        -9.2,
+        -30,
+        1.2,
+        -21.7
+      ]
+    },
+    "zone.thcs.corridor": {
+      "asset": "zone_corridor.glb",
+      "markers": [
+        {
+          "id": "itr.thcs.gutter",
+          "kind": "interact",
+          "position": [
+            -14,
+            0,
+            -18.1
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.corridor",
+          "kind": "spawn",
+          "position": [
+            -6,
+            0.15,
+            -20.5
+          ],
+          "facing": 1.571
+        },
+        {
+          "id": "spot.thcs.corridor_door",
+          "kind": "spot",
+          "position": [
+            -1,
+            0.15,
+            -20.6
+          ],
+          "facing": 0
+        },
+        {
+          "id": "zone.thcs.corridor",
+          "kind": "zone",
+          "position": [
+            -4,
+            0,
+            -20.2
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 17,
+      "floors": 1,
+      "visuals": 24,
+      "triangles": 760,
+      "materials": [
+        "door_green",
+        "floor_tile",
+        "glass",
+        "ground_concrete_line",
+        "roof_tile",
+        "wall_main",
+        "wall_trim",
+        "water"
+      ],
+      "gates": [],
+      "portals": [],
+      "floor_bounds": [
+        -30,
+        -22.1,
+        22,
+        -19
+      ]
+    },
+    "zone.thcs.yard": {
+      "asset": "zone_yard.glb",
+      "markers": [
+        {
+          "id": "cam.thcs.yard_bench",
+          "kind": "camera",
+          "position": [
+            -10.4,
+            2.2,
+            4
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "cam.thcs.yard_group",
+          "kind": "camera",
+          "position": [
+            4,
+            1.3,
+            8.6
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.duty_spot",
+          "kind": "interact",
+          "position": [
+            8.8,
+            0,
+            -16.2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.flagpole",
+          "kind": "interact",
+          "position": [
+            0,
+            0,
+            -2.2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.shuttle_ring",
+          "kind": "interact",
+          "position": [
+            12,
+            0,
+            7
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.stone_bench",
+          "kind": "interact",
+          "position": [
+            -14.4,
+            0,
+            -2.2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.tripod_spot",
+          "kind": "interact",
+          "position": [
+            4,
+            0,
+            8.4
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.yard",
+          "kind": "spawn",
+          "position": [
+            3,
+            0,
+            11
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spot.thcs.yard_bench_1",
+          "kind": "spot",
+          "position": [
+            -12.7,
+            0,
+            -1.7
+          ],
+          "facing": 0.5
+        },
+        {
+          "id": "spot.thcs.yard_bench_2",
+          "kind": "spot",
+          "position": [
+            -11.2,
+            0,
+            -1.4
+          ],
+          "facing": -0.2
+        },
+        {
+          "id": "spot.thcs.yard_group",
+          "kind": "spot",
+          "position": [
+            4,
+            0,
+            2
+          ],
+          "facing": 0
+        },
+        {
+          "id": "spot.thcs.yard_group_1",
+          "kind": "spot",
+          "position": [
+            2.1,
+            0,
+            2.1
+          ],
+          "facing": 0.25
+        },
+        {
+          "id": "spot.thcs.yard_group_2",
+          "kind": "spot",
+          "position": [
+            3,
+            0,
+            1.7
+          ],
+          "facing": 0.1
+        },
+        {
+          "id": "spot.thcs.yard_group_3",
+          "kind": "spot",
+          "position": [
+            5,
+            0,
+            1.7
+          ],
+          "facing": -0.1
+        },
+        {
+          "id": "spot.thcs.yard_group_4",
+          "kind": "spot",
+          "position": [
+            5.9,
+            0,
+            2.1
+          ],
+          "facing": -0.25
+        },
+        {
+          "id": "cam.thcs.yard_bench.target",
+          "kind": "target",
+          "position": [
+            -12.6,
+            0.9,
+            -1.8
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "cam.thcs.yard_group.target",
+          "kind": "target",
+          "position": [
+            4,
+            0.85,
+            2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "zone.thcs.yard",
+          "kind": "zone",
+          "position": [
+            -4,
+            0,
+            -0.2
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 22,
+      "floors": 1,
+      "visuals": 52,
+      "triangles": 3246,
+      "materials": [
+        "cart",
+        "flag_red",
+        "flag_yellow",
+        "flower_red",
+        "ground_concrete",
+        "ground_concrete_line",
+        "ground_grass",
+        "leaf_a",
+        "leaf_b",
+        "leaf_dark",
+        "metal_green",
+        "paint_white",
+        "planter",
+        "pole",
+        "soil",
+        "stone",
+        "trunk",
+        "wall_main",
+        "wall_trim",
+        "water"
+      ],
+      "gates": [],
+      "portals": [],
+      "floor_bounds": [
+        -34,
+        -19.2,
+        26,
+        18.3
+      ]
+    },
+    "zone.thcs.gate": {
+      "asset": "zone_gate.glb",
+      "markers": [
+        {
+          "id": "itr.thcs.grocery",
+          "kind": "interact",
+          "position": [
+            -7.75,
+            0,
+            28.4
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.snack_cart",
+          "kind": "interact",
+          "position": [
+            7,
+            0,
+            22
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.gate",
+          "kind": "spawn",
+          "position": [
+            0,
+            0,
+            22.5
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spot.thcs.gate_front",
+          "kind": "spot",
+          "position": [
+            -1.5,
+            0,
+            20.2
+          ],
+          "facing": 0
+        },
+        {
+          "id": "zone.thcs.gate",
+          "kind": "zone",
+          "position": [
+            3,
+            0,
+            24
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 11,
+      "floors": 1,
+      "visuals": 48,
+      "triangles": 858,
+      "materials": [
+        "awning",
+        "cart",
+        "cart_top",
+        "door_green",
+        "glass",
+        "ground_asphalt",
+        "house_a",
+        "house_b",
+        "house_c",
+        "house_roof",
+        "metal_green",
+        "metal_grey",
+        "paper",
+        "wall_main",
+        "wall_trim",
+        "wood",
+        "wood_dark",
+        "wood_old"
+      ],
+      "gates": [
+        "zone.thcs.gate"
+      ],
+      "portals": [],
+      "floor_bounds": [
+        -34,
+        17.4,
+        40,
+        30
+      ]
+    },
+    "zone.thcs.field": {
+      "asset": "zone_field.glb",
+      "markers": [
+        {
+          "id": "itr.thcs.marble_spot",
+          "kind": "interact",
+          "position": [
+            38,
+            0,
+            4
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.field",
+          "kind": "spawn",
+          "position": [
+            33,
+            0,
+            15
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spot.thcs.field_log",
+          "kind": "spot",
+          "position": [
+            45,
+            0,
+            9.6
+          ],
+          "facing": 0.8
+        },
+        {
+          "id": "zone.thcs.field",
+          "kind": "zone",
+          "position": [
+            39.075,
+            0,
+            -2
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 9,
+      "floors": 1,
+      "visuals": 25,
+      "triangles": 2252,
+      "materials": [
+        "ground_asphalt",
+        "ground_dirt",
+        "ground_dirt_dark",
+        "ground_grass",
+        "ground_grass_dark",
+        "leaf_a",
+        "leaf_b",
+        "leaf_dark",
+        "rope",
+        "trunk",
+        "water",
+        "wood_old"
+      ],
+      "gates": [
+        "zone.thcs.field"
+      ],
+      "portals": [],
+      "floor_bounds": [
+        26.2,
+        -22.4,
+        52,
+        18.6
+      ]
+    },
+    "zone.thcs.base": {
+      "asset": "zone_base.glb",
+      "markers": [
+        {
+          "id": "itr.thcs.base_shelf",
+          "kind": "interact",
+          "position": [
+            47.6,
+            0,
+            -31.2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "itr.thcs.old_table",
+          "kind": "interact",
+          "position": [
+            43.4,
+            0,
+            -27.2
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spawn.thcs.base",
+          "kind": "spawn",
+          "position": [
+            45.5,
+            0,
+            -24.4
+          ],
+          "facing": 3.142
+        },
+        {
+          "id": "spot.thcs.base_table",
+          "kind": "spot",
+          "position": [
+            44.4,
+            0,
+            -28.6
+          ],
+          "facing": -2
+        },
+        {
+          "id": "zone.thcs.base",
+          "kind": "zone",
+          "position": [
+            45,
+            0,
+            -29
+          ],
+          "facing": 3.142
+        }
+      ],
+      "colliders": 9,
+      "floors": 1,
+      "visuals": 21,
+      "triangles": 1374,
+      "materials": [
+        "cart",
+        "ground_dirt",
+        "ground_grass_dark",
+        "leaf_a",
+        "leaf_dark",
+        "paper",
+        "tarp",
+        "tin",
+        "trunk",
+        "wood_old"
+      ],
+      "gates": [
+        "zone.thcs.base"
+      ],
+      "portals": [],
+      "floor_bounds": [
+        38,
+        -36,
+        52,
+        -21.4
+      ]
+    }
+  }
+}

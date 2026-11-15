@@ -9,19 +9,21 @@ const meta = { owner: 'TBD', ownership_label: 'AI_PROPOSED', status: 'DRAFT', ve
 
 export const day: MemoryDay = {
   id: 'd.g06.01', title: `${P} Ngày ký ức lớp 6 số 01`, school_year_id: 'g06', map_id: 'map_thcs', map_variant: 'g06',
-  open_zones: ['zone.thcs.yard'], spawn_point: 'spawn.yard',
+  // Khu mở trong Ngày này (bản giả): sân, hành lang, lớp học. Cổng/bãi đất/căn cứ bị chặn bằng vật chắn dựng trong Blender.
+  open_zones: ['zone.thcs.yard', 'zone.thcs.corridor', 'zone.thcs.classroom'], spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_01',
   main_chain: ['q_m1_main_01'], side_quests: ['q_m1_side_01'], daily_pool: ['q_m1_daily_01'],
+  // Vị trí lấy từ marker trong file Blender của bản đồ (SPOT_/ITR_/CAM_ có htx_id tương ứng) — không ghi số ở đây.
   npc_placements: [
-    { actor: 'NPC_A', position: [-5.4, 1.2], facing: 0.5, motion: 'idle' },
-    { actor: 'NPC_B', position: [-3.6, 1.5], facing: -0.2, motion: 'idle' },
+    { actor: 'NPC_A', marker: 'spot.thcs.yard_bench_1', motion: 'idle' },
+    { actor: 'NPC_B', marker: 'spot.thcs.yard_bench_2', motion: 'idle' },
   ],
   interactables: [
-    { id: 'itr.thcs.stone_bench', label: `${P} Ghế đá`, position: [-8.2, 2.6], zone_id: 'zone.thcs.yard', kind: 'object' },
-    { id: 'itr.thcs.flagpole', label: `${P} Cột cờ`, position: [6, 4.4], zone_id: 'zone.thcs.yard', kind: 'marker' },
-    { id: 'itr.thcs.duty_spot', label: `${P} Chỗ trực nhật`, position: [2, -6.2], zone_id: 'zone.thcs.yard', kind: 'object' },
+    { id: 'itr.thcs.stone_bench', label: `${P} Ghế đá`, zone_id: 'zone.thcs.yard', kind: 'object' },
+    { id: 'itr.thcs.flagpole', label: `${P} Cột cờ`, zone_id: 'zone.thcs.yard', kind: 'marker' },
+    { id: 'itr.thcs.duty_spot', label: `${P} Chỗ trực nhật`, zone_id: 'zone.thcs.yard', kind: 'object' },
   ],
-  cameras: [{ id: 'cam.d0601.bench', position: [-3.2, 2.2, 7.4], look_at: [-5.6, 0.9, 1.6], fov: 42 }],
+  cameras: [{ id: 'cam.d0601.bench', marker: 'cam.thcs.yard_bench', fov: 42 }],
   album_page_id: 'page.d.g06.01', completion: 'main_chain',
 };
 

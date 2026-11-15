@@ -70,7 +70,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   shelf.add(box(1.8, 0.05, 0.3, '#9a7650'));
   const plank2 = box(1.8, 0.05, 0.3, '#9a7650'); plank2.position.y = 0.55; shelf.add(plank2);
   items.set('itr.hub.shelf', put(shelf, 2.2, 1.45, -2.28));
-  for (const it of hub.interactables) if (!items.has(it.id)) items.set(it.id, put(box(0.3, 0.3, 0.3, '#c0b090'), it.position[0], 0.15, it.position[1]));
+  for (const it of hub.interactables) if (!items.has(it.id)) items.set(it.id, put(box(0.3, 0.3, 0.3, '#c0b090'), it.position?.[0] ?? 0, 0.15, it.position?.[1] ?? 0));
   const shelfItems = new THREE.Group(); shelfItems.position.set(2.2, 1.48, -2.28); room.add(shelfItems);
 
   const camera = new THREE.PerspectiveCamera(38, 16 / 9, 0.1, 60);

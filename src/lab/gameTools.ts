@@ -6,6 +6,7 @@
  *   ?play=1&bot=release                   bot tự chơi hết các Ngày khai trong content/release.ts
  *   ?play=1&cast=B                        đổi bảng vai (D-01) để thử
  *   &gender=female                        ngoại hình dùng khi nhảy bước (mặc định nam)
+ *   ?play=1&style=soft_pbr                đổi phong cách hình ảnh của bản đồ (khóa trong render/style.ts) để thử
  *
  * Bot bấm nút thật trên giao diện (data-act) và gõ phím thật; chỉ "đi tắt" ở việc di chuyển (dịch chuyển tới đích).
  */
@@ -84,6 +85,7 @@ export function runOptionsFromUrl(params: URLSearchParams): RunOptions {
   const day = params.get('day'), cast = params.get('cast');
   return {
     castName: cast ?? undefined,
+    artStyle: params.get('style') ?? undefined,
     prepareSave: day ? (save, idx) => {
       const err = jumpTo(save, idx, day, params.get('step'), params.get('gender') === 'female' ? 'female' : 'male');
       if (err) console.error(`[công cụ test] ${err}`);
@@ -102,6 +104,12 @@ export interface GameToolsApi {
   /** Một nhịp của bot. Trả nhãn việc vừa làm; 'done' khi không còn gì để chơi. */
   botStep(opts?: BotOptions): string;
   teleportTo(targetId: string): boolean;
+  /** Đặt người chơi tới một điểm (qua đúng hàm của game: bám sàn, đẩy khỏi vật cản). */
+  teleport(x: number, z: number, facing?: number): boolean;
+  /** Đưa người chơi tới điểm xuất hiện mang ID này. */
+  toSpawn(id: string): boolean;
+  /** Bản đồ đang nạp: khu, marker, lỗi — để test đối chiếu. */
+  world(): Record<string, unknown> | null;
   hubClick(id: string): void;
   hubPoint(id: string): { x: number; y: number } | null;
   flush(): Promise<unknown>;
@@ -119,7 +127,9 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
     const d = h.day();
     const t = d?.scene.targets.find((x) => x.id === targetId);
     if (!d || !t) return false;
-    d.scene.teleport(t.position.x + 0.55, t.position.z + 0.55);
+    // Marker tương tác đặt sẵn ở chỗ đứng được; nhân vật thì đứng lệch ra một chút (game tự đẩy khỏi vật cản).
+    const off = t.kind === 'npc' ? 0.6 : 0;
+    d.scene.teleport(t.position.x + off, t.position.z + off);
     return true;
   };
 
@@ -195,8 +205,8 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       if (s.photo.phase === 'countdown') {
         if (s.photo.posed) return 'photo-wait';
         const step = h.engine.mainStep()?.step;
-        const zone = step?.kind === 'photo' ? step.stand_zone : undefined;
-        if (zone) h.day()?.scene.teleport(zone.center[0], zone.center[1], 0);
+        const spot = step?.kind === 'photo' ? h.day()?.scene.standSpot(step.stand_zone) : null;
+        if (spot) h.day()?.scene.teleport(spot.center[0], spot.center[1], 0);
         key('Space');
         return 'photo-pose';
       }
@@ -230,7 +240,11 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       name_length: Array.from(h.save.player_name).length,
       cast: { ...h.idx.config.cast },
       attempt_id: h.save.attempt_id,
-      player: h.day() ? { x: h.day()!.scene.playerPosition.x, z: h.day()!.scene.playerPosition.z } : null,
+      player: h.day() ? { x: h.day()!.scene.playerPosition.x, y: h.day()!.scene.playerPosition.y, z: h.day()!.scene.playerPosition.z } : null,
+      zone: h.day()?.scene.zone ?? null,
+      camera: h.day() ? { mode: h.save.settings.camera_mode, look: h.input.lookMode, pointerLocked: h.input.pointerLocked, ...h.day()!.scene.debug() } : null,
+      listeners: h.input.listenerCount,
+      toast: h.ui.get().toast,
       ui: { panel: h.ui.get().panel, dialogue: h.ui.get().dialogue?.text ?? null, who: h.ui.get().dialogue?.who ?? null, objective: h.ui.get().objective, feedback: h.ui.get().feedback, prompt: h.ui.get().prompt?.text ?? null },
     }),
     stats: () => {
@@ -238,6 +252,17 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       return { ...h.view.stats(), heapMB: mem ? Math.round(mem.usedJSHeapSize / 1048576) : -1 };
     },
     botStep, teleportTo,
+    teleport: (x, z, facing) => { const d = h.day(); if (!d) return false; d.scene.teleport(x, z, facing); return true; },
+    toSpawn: (id) => { const d = h.day(); if (!d) return false; d.scene.toSpawn(id); return true; },
+    world: () => {
+      const d = h.day();
+      if (!d) return null;
+      return {
+        placeholder: d.scene.placeholder,
+        problems: d.scene.problems.map((p) => `${p.level}:${p.code}:${p.ref ?? ''}`),
+        targets: d.scene.targets.map((t) => ({ id: t.id, kind: t.kind, zone: t.zone, x: t.position.x, y: t.position.y, z: t.position.z, radius: t.radius })),
+      };
+    },
     hubClick: (id) => h.actions.hubClick(id),
     hubPoint: (id) => h.hubPoint(id),
     flush: () => h.tracker.flush(),

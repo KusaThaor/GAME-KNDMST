@@ -37,6 +37,8 @@ export interface UiState {
   quests: { title: string; type: string; state: string }[];
   prompt: { key: string; text: string } | null;
   toast: string | null;
+  /** Kiểu điều khiển camera đang dùng trong Ngày ký ức (A: giữ chuột phải · B: khóa con trỏ). */
+  cameraMode: 'A' | 'B';
   dialogue: { who: string; color: string; text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
@@ -58,7 +60,7 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null,
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: 'A',
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
@@ -84,6 +86,7 @@ export interface UiActions {
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   feedbackSkip(): void;
+  toggleCameraMode(): void;
 }
 
 export interface UiStore {

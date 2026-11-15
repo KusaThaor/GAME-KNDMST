@@ -68,7 +68,7 @@ export type Step =
   | (StepBase & { kind: 'choice'; choice_id: string; prompt?: DialogueLine; options: ChoiceOption[]; about?: ActorRef[]; measured?: boolean })
   | (StepBase & { kind: 'collect'; item: string; targets: string[]; count: number })
   | (StepBase & { kind: 'place'; item: string; target: string })
-  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: { center: [number, number]; radius: number } })
+  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone })
   | (StepBase & { kind: 'minigame'; game: string; level: 'min' })
   | (StepBase & { kind: 'cutscene'; lines: DialogueLine[] })
   | (StepBase & { kind: 'free'; prompt?: string })
@@ -115,15 +115,24 @@ export interface MapDef {
   id: string;                         // map_*
   zones: { zone_id: string; name: string; boundary?: string }[];
   variants: { variant_id: string; decor_set: string; lighting_preset: string }[];
-  spawn_points: { id: string; position: [number, number]; facing?: number }[];
+  /** Vị trí lấy từ marker SPAWN_ cùng ID trong file Blender của bản đồ; `position` chỉ dùng cho bản đồ chưa có file Blender. */
+  spawn_points: { id: string; position?: [number, number]; facing?: number }[];
 }
 
 /** Chương chỉ là nhãn gom danh sách Ngày (D-04). */
 export interface Chapter { id: string; label: string; memory_day_ids: string[] }
 
-export interface NpcPlacement { actor: ActorRef; position: [number, number]; facing?: number; motion?: string }
-export interface Interactable { id: string; label: string; position: [number, number]; zone_id?: string; kind: 'object' | 'marker' }
-export interface CameraPoint { id: string; position: [number, number, number]; look_at: [number, number, number]; fov?: number }
+/**
+ * Vị trí trong Ngày ký ức KHÔNG ghi bằng số trong nội dung: nội dung chỉ nêu ID ổn định, vị trí thật nằm ở marker trong file Blender
+ * (xem docs/S2_WORLD_ARCHITECTURE.md). Các trường `position`/`look_at`/`center` chỉ còn để dùng cho Hub và bản đồ chưa có file Blender.
+ */
+export interface NpcPlacement { actor: ActorRef; /** ID marker chỗ đứng (spot.<map>.<slug>). */ marker?: string; position?: [number, number]; facing?: number; motion?: string }
+/** Trong Ngày ký ức: vị trí = marker ITR_ có htx_id trùng `id`. */
+export interface Interactable { id: string; label: string; position?: [number, number]; zone_id?: string; kind: 'object' | 'marker' }
+/** `marker` = ID marker máy ảnh (cam.<map>.<slug>); điểm nhìn là marker `<marker>.target`. */
+export interface CameraPoint { id: string; marker?: string; position?: [number, number, number]; look_at?: [number, number, number]; fov?: number }
+/** Vòng đứng khi chụp ảnh: tâm lấy từ marker chỗ đứng (spot.*) hoặc ghi số. */
+export interface StandZone { marker?: string; center?: [number, number]; radius: number }
 
 export interface MemoryDay {
   id: string;                         // d.gNN.KK

@@ -42,5 +42,9 @@ export const MAPS: MapDef[] = [{
     { variant_id: 'g06', decor_set: 'g06', lighting_preset: 'morning_sun' },
     { variant_id: 'g07', decor_set: 'g07', lighting_preset: 'late_afternoon' },
   ],
-  spawn_points: [{ id: 'spawn.yard', position: [3, 9], facing: Math.PI }],
+  // Vị trí lấy từ marker SPAWN_ trong file Blender của từng khu (tools/blender/world/map_thcs/).
+  spawn_points: [
+    { id: 'spawn.thcs.yard' }, { id: 'spawn.thcs.classroom' }, { id: 'spawn.thcs.corridor' },
+    { id: 'spawn.thcs.gate' }, { id: 'spawn.thcs.field' }, { id: 'spawn.thcs.base' },
+  ],
 }];

@@ -41,6 +41,8 @@ export interface SaveState {
     memory_day_id: string | null; quest_id: string | null; step_id: string | null; replay: ReplayState | null;
     /** Câu chuyện lúc vào Ngày đang dở (để chơi lại Ngày từ đầu). */
     day_start?: { flags: Record<string, FlagValue>; relationships: Record<string, RelationshipState> };
+    /** Khu đang đứng trong Ngày đang dở — tải lại trang thì đứng lại ở điểm xuất hiện của khu này (S2). */
+    zone_id?: string | null;
   };
   days: Record<string, { state: DayState; replayed: boolean }>;
   quests: Record<string, QuestRecord>;
