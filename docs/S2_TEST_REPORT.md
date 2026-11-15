@@ -47,6 +47,29 @@ Nhận xét thật:
 5. Ở khoảng cách chụp này, `toon_outline` và `soft_pbr` trông gần như giống nhau (khó thấy viền trên vật của bản đồ). Ghi lại để Chặng 3 xem kỹ khi chụp đủ 6 khu × 2 phong cách.
 6. Không thấy vật nào mất màu, đen, hay sai vật liệu ở cả 6 khu.
 
+### Thử trọn quy trình "thêm khu thứ 7"
+Làm trong thư mục tạm `/tmp/zone7` (phần Blender) và một worktree dùng xong xóa (phần game). Bản đồ thật không đổi. Từng bước và kết quả thật: `docs/HOW_TO_EXPAND_WORLD.md`. Tóm tắt:
+- `new_zone.py` tạo được file; chạy lại không ghi đè.
+- Marker thiếu `htx_id` → exporter báo lỗi, mã 1, không ghi file. Có ID → xuất được, hộp `COLLIDER_` quên nhãn được tự gắn.
+- Texture ảnh gắn vào vật liệu được nhúng vào `.glb` (chưa xem trong game).
+- `world:index` 7 khu; `validate:world` báo đúng lỗi `zone_missing_in_content` trước khi khai tên khu, rồi ĐẠT (1 nhắc `closed_zone_no_gate`).
+- `npm test` với bản đồ 7 khu: 212 đạt, 10 đỏ, 1 bỏ qua. Cả 10 là test cố ý ghim bản đồ 6 khu (đã liệt kê lý do). Không có lỗi code.
+- Chơi thử bằng Chrome, phím thật: giữ `W` đi vào portal → sang khu mới, hiện tên khu; bấm `E` ở cửa ra → về Bãi đất. Không lỗi trang.
+- Thấy thêm: ở cửa sổ 960 px, tên khu hiện giữa trên đè một phần nút "Camera A". Chưa sửa.
+- Nhắc `closed_zone_no_gate` cũng hiện với khu chỉ vào bằng portal, dù portal đã tự tắt khi khu đóng. Đây là nhắc, không phải lỗi; chưa sửa.
+
+### Cuối chặng (HEAD `42b1308` + tài liệu)
+| Lệnh | Kết quả |
+|---|---|
+| `npx tsc --noEmit` | đạt |
+| `npm test` | 222 đạt, 1 bỏ qua (thêm 5 test quy ước) |
+| `npm run validate:world` | đạt — 0 lỗi, 0 nhắc |
+| `npm run test:e2e` | 13 đạt, 1 bỏ qua (cần Emulator) — 4,9 phút |
+| `VERCEL_ENV=production npm run build` | đạt; không thấy `botStep`, `__game`, `gameTools` trong `dist/assets/*.js` |
+| `test_pipeline.py` | 61/61 trên `bpy` 4.5.16 LTS; 61/61 trên `bpy` 5.2.4 LTS |
+
+Chặng 1 không sửa dòng code nào trong `src/` hay `tools/`: không test nào lộ lỗi.
+
 ### Chưa kiểm ở Chặng 1
 - `blender.exe` trên Windows của chủ dự án (chỉ chạy gói `bpy` trên Linux).
 - So màu trên màn hình thật / GPU thật (ảnh game ở đây vẽ bằng CPU).

@@ -1,16 +1,21 @@
 # DEV_SESSION_HANDOFF
 
-## S2 — tiến độ (cập nhật 15/11/2026, 22:30 UTC+7) — ĐỌC TRƯỚC
+## S2 — tiến độ (cập nhật 15/11/2026, 23:40 UTC+7, sau Chặng 1) — ĐỌC TRƯỚC
 Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
 
 - Nhánh `feature/s2-world-camera-blender` (tách từ `dev` @ `4f681cb`), đã push. Chưa gộp vào `dev`, chưa đụng `main`.
-- Đã có code: bản đồ 6 khu `map_thcs` (file `.blend` nguồn + `.glb`), va chạm, điều khiển nhân vật, camera A/B (phím V), pipeline Blender, nối vào Ngày ký ức. Bố cục 6 khu là blockout tạm.
-- Đã chạy thật 15/11 tối: `tsc` đạt; vitest 217 đạt, 1 bỏ qua (Emulator tắt); `validate:world` đạt; test pipeline Blender 61/61 trên 4.5.16 và 5.2.4; Playwright 13 đạt, 1 bỏ qua (Emulator tắt); build production không chứa công cụ test.
-- Chưa kiểm: test trình duyệt riêng cho S2 (đụng tường, đi qua ranh khu, đổi camera, khóa con trỏ); phần Firestore Emulator sau S2; so màu Blender với game; chạy bằng `blender.exe` trên Windows; FPS laptop thật; Edge.
-- Chưa có: bộ tài liệu S2 (kiến trúc, pipeline Blender, thêm khu, đổi art style, báo cáo test).
-- Việc kế tiếp: làm theo `docs/PROMPT_FOR_OPUS.md`, Chặng 1 → 2 → 3, mỗi phiên một chặng.
-- Chờ chủ dự án: D-S2-01 kiểu camera mặc định · D-S2-02 bố cục 6 khu · D-S2-05 bản Blender chuẩn (GDD ghi 5.2, máy đang cài 4.5.16).
-- Máy chủ dự án đang ở nhánh `feature/asset-workshop`, chưa có code F1–F10 và S2: cần `git fetch` rồi `git worktree add`, không đổi nhánh trong thư mục đó.
+- Đã có code: bản đồ 6 khu `map_thcs` (`.blend` nguồn + `.glb`), va chạm, điều khiển nhân vật, camera A/B (phím V), pipeline Blender, nối vào Ngày ký ức. Bố cục 6 khu là blockout tạm.
+- **Chặng 1 xong** (World & Blender Pipeline). Không sửa code trong `src/` hay `tools/` vì không test nào lộ lỗi. Đã thêm:
+  - `tests/unit/world/conventions.test.ts`: so quy ước Blender (`pipeline_config.py`) với game (`types.ts`); lệch là đỏ.
+  - So màu Blender ↔ game: màu trong `.glb` trùng bảng màu; ảnh preview Blender bạc màu (AgX); game buổi chiều ngả cam do ánh sáng. Ảnh `docs/images/s2_color_compare.jpg`.
+  - Thử trọn "thêm khu thứ 7" trong thư mục tạm + worktree bỏ đi, chơi thử bằng phím thật. Bản đồ thật không đổi.
+  - Tài liệu: `docs/BLENDER_PIPELINE.md`, `docs/HOW_TO_EXPAND_WORLD.md`, `docs/S2_TEST_REPORT.md` (mục Chặng 1).
+- Số chạy thật cuối Chặng 1: `tsc` đạt; vitest 222 đạt, 1 bỏ qua (Emulator tắt); `validate:world` 0 lỗi 0 nhắc; Playwright 13 đạt, 1 bỏ qua (Emulator tắt); build production sạch công cụ test; `test_pipeline.py` 61/61 trên `bpy` 4.5.16 và 5.2.4.
+- Chưa kiểm: `blender.exe` trên Windows; mở `.blend` bằng giao diện Blender; texture hiển thị trong game; test trình duyệt riêng cho S2 (Chặng 2); Firestore Emulator sau S2 (Chặng 3); FPS laptop thật; Edge.
+- Thấy khi thử, chưa sửa: tên khu dài đè nút "Camera A" ở cửa sổ 960 px; nhắc `closed_zone_no_gate` hiện cả với khu chỉ vào bằng portal.
+- Việc kế tiếp: **Chặng 2** (Controller & Camera) theo `docs/PROMPT_FOR_OPUS.md`.
+- Chờ chủ dự án: D-S2-01 kiểu camera mặc định · D-S2-02 bố cục 6 khu · D-S2-04 art style (màu chiều ngả cam) · D-S2-05 bản Blender chuẩn (GDD ghi 5.2, máy đang cài 4.5.16).
+- Máy chủ dự án đang ở nhánh `feature/asset-workshop`: cần `git fetch` rồi `git worktree add`, không đổi nhánh trong thư mục đó.
 
 ---
 

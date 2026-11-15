@@ -24,7 +24,7 @@ Mọi mô tả dưới đây lấy từ code tại thời điểm lập. Nếu t
 **Chưa kiểm** (đây chính là việc còn lại, xem §6):
 - Chưa có test trình duyệt riêng cho S2: đi bộ đụng tường, đi bộ qua ranh khu, đổi camera A ↔ B, khóa con trỏ kiểu B, khu đóng có chặn thật không. Các thứ này mới được kiểm ở mức unit test.
 - Chưa chạy lại phần Firestore Emulator sau khi có S2.
-- Chưa xem ảnh kết xuất từ Blender để so màu với trong game.
+- ~~Chưa xem ảnh kết xuất từ Blender để so màu với trong game.~~ Đã làm ở Chặng 1 (xem §7).
 - Chưa chạy bằng `blender.exe` trên máy Windows của chủ dự án (mới chạy bằng gói `bpy` trên Linux).
 - FPS trên laptop thật; trình duyệt Edge.
 
@@ -201,7 +201,7 @@ stand_zone: { marker: 'spot.thcs.yard_group', radius: 1.1 }
 - Object chưa có `htx_kind` thì exporter tự điền theo tiền tố tên: `COLLIDER_`, `FLOOR_`, `SPAWN_`, `ITR_` (hoặc `INTERACT_`), `SPOT_`, `CAM_`, `TARGET_`, `PORTAL_`, `ZONE_`, `TRIGGER_`.
 - Object không có nhãn là phần để nhìn: sửa, xóa, thêm thoải mái mà không ảnh hưởng gameplay.
 - Thiếu `htx_id` ở loại bắt buộc → exporter báo lỗi và **không ghi file**.
-- Bản đối ứng phía game ở `src/world/types.ts`. Sửa một bên phải sửa cả bên kia (chưa có test tự động so hai bên — xem §6, Chặng 1).
+- Bản đối ứng phía game ở `src/world/types.ts`. Sửa một bên phải sửa cả bên kia. Test `tests/unit/world/conventions.test.ts` (Chặng 1) đỏ nếu `NAME_PREFIX_KIND`, `KINDS_NEED_ID`, `KINDS` lệch nhau.
 
 ## 5. Quy trình Blender (đã chạy thật bằng gói `bpy`; lệnh `blender.exe` chưa chạy trên máy Windows)
 
@@ -269,31 +269,32 @@ Không sửa: `gen_map_thcs.py` (bố cục chờ D-S2-02), 6 file `.blend`.
 ### Không làm trong S2
 Cốt truyện/thoại thật; chốt bất kỳ quyết định D-xx nào; nối nhân vật `vietnamese_student.glb` của nhánh Antigravity (việc riêng, đi qua `rigAvatar` trong `src/actors/player/avatar.ts`); sửa `tools/asset-workshop/`; cuộn phim (phím C); minigame; form phản hồi; physics engine.
 
-## 7. Bảng nghiệm thu S2 (trạng thái lúc lập)
+## 7. Bảng nghiệm thu S2
 
-| Tiêu chí | Trạng thái | Bằng chứng / còn thiếu |
+| Tiêu chí | Trạng thái (cập nhật sau Chặng 1, 15/11) | Bằng chứng / còn thiếu |
 |---|---|---|
 | Có 6 khu theo tài liệu, blockout ghi chú rõ | ĐẠT | `validate:world`; §2.1 |
 | Các khu nạp được | ĐẠT | `world.test.ts`; bot đi tới điểm tương tác ở cả 6 khu |
 | Đi lại được | ĐẠT một phần | unit + test giữ `W`; thiếu ca 1 |
 | Đường nối/đổi khu | ĐẠT một phần | `travel.test.ts`; thiếu ca 2, 3 trên trình duyệt |
-| Thêm khu bằng cấu hình + file | ĐẠT (mức unit) | `expand.test.ts` + mục 7 `test_pipeline.py`; thiếu tài liệu |
+| Thêm khu bằng cấu hình + file | ĐẠT | `expand.test.ts` + mục 7 `test_pipeline.py`; 15/11 thử tay trọn quy trình khu thứ 7 trong worktree bỏ đi, chơi thử bằng phím thật (vào portal, bấm E ra) — `docs/HOW_TO_EXPAND_WORLD.md` |
 | Camera A, B, đổi kiểu | ĐẠT một phần | `camera.test.ts`; thiếu ca 4, 5, 6 |
 | Camera không xuyên vật | ĐẠT một phần | unit; thiếu ca 7 |
 | Va chạm | ĐẠT một phần | `collision.test.ts`, `controller.test.ts`; thiếu ca 1 |
 | Input không nhân đôi | CHƯA KIỂM trên trình duyệt | thiếu ca 9 |
-| `.blend` sửa được + `.glb` tương ứng + script xuất + collection | ĐẠT | §1 |
-| Màu Blender ↔ game | CHƯA KIỂM | Chặng 1 |
+| `.blend` sửa được + `.glb` tương ứng + script xuất + collection | ĐẠT | §1; Chặng 1 chạy lại `test_pipeline.py` 61/61 trên `bpy` 4.5.16 và 5.2.4. `blender.exe` trên Windows: CHƯA KIỂM |
+| Màu Blender ↔ game | ĐẠT một phần | Chặng 1: màu trong `.glb` trùng đúng bảng màu; ảnh preview Blender bạc màu (AgX); game buổi chiều ngả cam do ánh sáng `late_afternoon`. Chưa sửa (art style chưa khóa, D-S2-04). Ảnh: `docs/images/s2_color_compare.jpg`; số đo: `docs/S2_TEST_REPORT.md` |
 | Giữ ID ổn định sau khi sửa phần nhìn | ĐẠT | mục 4 `test_pipeline.py` |
 | Luồng cũ, quest, checkpoint, phòng 2026 | ĐẠT | Playwright 13 đạt |
 | Analytics, đồng ý thu thập | ĐẠT một phần | chưa chạy lại phần Emulator |
-| Hướng dẫn sửa Blender, thêm khu, đổi art style, đổi model | CHƯA CÓ | Chặng 1–3 |
+| Hướng dẫn sửa Blender, thêm khu, đổi art style, đổi model | ĐẠT một phần | Có `docs/BLENDER_PIPELINE.md`, `docs/HOW_TO_EXPAND_WORLD.md` (Chặng 1). Còn thiếu đổi art style, đổi model (Chặng 2–3) |
 | Preset camera chỉnh trong cấu hình | ĐẠT | `src/config/camera.ts` |
 | Quest không dính tên mesh/file | ĐẠT | nội dung chỉ nêu ID; `validate:world` |
 
 ## 8. Rủi ro và lưu ý
 
-- **Hai bản quy ước** (Python và TypeScript) có thể lệch nhau cho tới khi có test ở Chặng 1.
+- **Hai bản quy ước** (Python và TypeScript): đã có test so hai bên (`conventions.test.ts`, Chặng 1).
+- **Test ghim 6 khu**: thêm khu thật vào `map_thcs` làm đỏ 10 test cố ý ghim bản đồ hiện tại (danh sách và lý do: `docs/HOW_TO_EXPAND_WORLD.md` mục 8). Đó là đổi thiết kế, cần duyệt.
 - **Thay hình khối lớn** (dời tường, đổi kích thước sân) thì phải sửa cả khối `COLLIDER_`, `FLOOR_`, `ZONE_` tương ứng. Va chạm không tự sinh từ phần nhìn — đó là chủ ý, để đổi phần nhìn không làm hỏng gameplay.
 - Vật cản bị nghiêng (xoay quanh X/Y) được game coi là hộp thẳng trục; exporter có nhắc.
 - `map_thcs.index.json` phải sinh lại sau mỗi lần xuất GLB, nếu không `validate:world` báo `index_stale`.
