@@ -71,11 +71,11 @@ Phím: `V` đổi A ↔ B. `C` để dành cho máy ảnh cầm tay/cuộn phim 
 ### 2.3 Quyết định liên quan
 | Mã | Nội dung | Trạng thái | Nằm ở đâu trong code |
 |---|---|---|---|
-| D-S2-01 | Kiểu camera mặc định cho người chơi mới | **CHƯA CHỐT** — đang để A | `DEFAULT_CAMERA_MODE` trong `src/config/camera.ts` |
+| D-S2-01 | Kiểu camera mặc định cho người chơi mới | **ĐÃ CHỐT 15/11** — "Chuẩn" (kiểu Play Together: kéo chuột trái/phải, touchpad, cảm ứng); A/B là tùy chọn nâng cao | `DEFAULT_CAMERA_MODE = 'standard'` trong `src/config/camera.ts` |
 | D-S2-02 | Bố cục 6 khu | **CHƯA CHỐT** — blockout tạm | `gen_map_thcs.py` + 6 file `.blend` |
 | D-S2-03 | Khu nào mở ở Ngày nào | **CHƯA CHỐT** — nội dung giả | `open_zones` trong `src/content/days/*.ts` |
 | D-S2-04 | Art style | **CHƯA KHÓA** — mặc định toon + viền | `DEFAULT_ART_STYLE` trong `src/render/style.ts`; bảng màu ở `tools/blender/world/palettes/` |
-| D-S2-05 | Blender chuẩn của dự án: GDD ghi 5.2 LTS, máy chủ dự án cài 4.5.16 LTS | **CẦN CHỐT** — pipeline chạy được cả hai; file `.blend` hiện lưu bằng 4.5 | `BLENDER_TESTED` trong `pipeline_config.py` |
+| D-S2-05 | Blender chuẩn của dự án | **ĐÃ CHỐT 15/11** — 4.5.16 LTS (5.2.4 vẫn test, không phải chuẩn) | `BLENDER_STANDARD` trong `pipeline_config.py` |
 | D-01, D-04, D-12, D-13, D-19, D-20 | (xem `OPEN_DECISIONS_REGISTER_v1`) | **CHƯA CHỐT** — đang dùng phương án khuyến nghị làm giá trị tạm trong `src/content/` và `src/config/` | không đổi trong S2 |
 | D-03 | Phạm vi bản public 05–15/12 | **CHƯA CÓ CÂU TRẢ LỜI** — danh sách production để trống | `src/content/release.ts` |
 
@@ -117,7 +117,7 @@ flowchart LR
 | A | `src/world/maps/<map>.world.json` | Manifest viết tay: danh sách khu, file, đường nối, điểm xuất hiện mặc định, preset camera |
 | A | `src/world/maps/<map>.index.json` | Bảng tóm tắt marker **sinh tự động** (`npm run world:index`). Không sửa tay |
 | A | `src/world/maps/index.ts` | Sổ bản đồ: tự gom mọi file `*.world.json` trong thư mục. Thêm bản đồ không cần sửa code |
-| A | `src/config/camera.ts` | Preset camera, kiểu A/B, độ nhạy chuột, bảng phím |
+| A | `src/config/camera.ts` | Preset camera, kiểu Chuẩn/A/B, độ nhạy chuột, ngưỡng kéo/chụm/nút tròn (`POINTER_INPUT`), bảng phím |
 | A | `src/config/game.ts` | Tốc độ đi/chạy, bán kính tương tác |
 | B | `tools/blender/world/pipeline_config.py` | **Nơi duy nhất** khai quy ước phía Blender |
 | B | `tools/blender/world/htx_world.py` | Thư viện: dựng khối, gắn nhãn, kiểm quy ước, xuất GLB, nhận biết file đã sửa tay |

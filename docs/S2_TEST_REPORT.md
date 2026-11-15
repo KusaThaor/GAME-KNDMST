@@ -73,3 +73,64 @@ Chặng 1 không sửa dòng code nào trong `src/` hay `tools/`: không test n�
 ### Chưa kiểm ở Chặng 1
 - `blender.exe` trên Windows của chủ dự án (chỉ chạy gói `bpy` trên Linux).
 - So màu trên màn hình thật / GPU thật (ảnh game ở đây vẽ bằng CPU).
+
+## Chặng 2 — Phần A: kiểu điều khiển "Chuẩn" + touchpad + cảm ứng (16/11/2026, 00:00–01:10 UTC+7)
+
+Môi trường: máy Linux trong phiên Claude (không GPU), Node 22.23.4, Chrome cài sẵn (Playwright `channel: chrome`, vẽ bằng CPU).
+**Touchpad và cảm ứng ở đây đều là MÔ PHỎNG của Chrome** (CDP `Input.dispatchMouseEvent` / `Input.dispatchTouchEvent`, Playwright `hasTouch` + `isMobile`). Chưa thử trên điện thoại thật hay touchpad thật.
+
+### Mốc đầu chặng (HEAD `90ab8ca`, chạy trong worktree sạch)
+| Lệnh | Kết quả |
+|---|---|
+| `npx tsc --noEmit` | đạt |
+| `npm test` | 222 đạt, 1 bỏ qua (Emulator tắt) |
+| `npm run validate:world` | đạt — 0 lỗi, 0 nhắc |
+| `npm run test:e2e` | 13 đạt, 1 bỏ qua (Emulator tắt) — 8,0 phút |
+
+### Đã làm
+- Kiểu camera `standard` ("Chuẩn") là mặc định; phím V / nút trong Menu xoay vòng Chuẩn → A → B. Bản lưu cũ có A/B giữ nguyên; giá trị lạ → về Chuẩn. Không gửi kiểu camera/thiết bị đi đâu.
+- Chuẩn: kéo chuột trái hoặc phải trên vùng trống (quá 6 px mới xoay; bấm nhanh vẫn là bấm; kéo xong không bị coi là bấm vào vật). Kéo bắt đầu trên nút giao diện không xoay.
+- Zoom: lăn chuột, touchpad cuộn 2 ngón (zoom từ từ), touchpad chụm (`wheel` + ctrlKey, có `preventDefault` để trang không phóng), cảm ứng chụm 2 ngón. Luôn kẹp trong 3,5–8 m.
+- Cảm ứng: nút tròn góc dưới trái (kéo sát mép = chạy), kéo vùng trống để xoay (chạy song song với nút tròn, theo `pointerId`), nút E ảo khi có gợi ý, nút "Tạo dáng" cho ảnh hẹn giờ (máy tính cũng bấm được). Nút "Camera" thu vào Menu khi dùng cảm ứng; dòng hướng dẫn và chữ "Space ▸/Chạm ▸" đổi theo thiết bị.
+- Chặn trình duyệt: `touch-action: none` vùng chơi, không chọn chữ, không menu giữ lâu, `overscroll-behavior: none` (kéo-để-tải-lại), chặn `gesturestart` (Safari). Thẻ viewport thêm `viewport-fit=cover`; nút dùng `env(safe-area-inset-*)`.
+- Màn dọc: thu gọn thanh trên; chữ "Bản khung…" bị nút tròn đè → đã sửa (thu nhỏ, một dòng).
+- Vẫn MỘT bộ listener (12), `dispose()` gỡ cả listener cảm ứng.
+- Logic thuần tách ra `src/game/gestures.ts`, số chỉnh được ở `POINTER_INPUT` (`src/config/camera.ts`).
+- Sửa ngoài danh sách phạm vi (cần thiết): `src/core/save.ts` (kiểu dữ liệu + mặc định của `camera_mode`), `src/game/gestures.ts` (file mới), `src/lab/gameTools.ts` (thêm `device` vào `state()`, chỉ bản test).
+
+### Thao tác chỉ có phím → đã làm được bằng chạm
+| Phím | Bằng chạm | Ghi chú |
+|---|---|---|
+| WASD/mũi tên, Shift | nút tròn (sát mép = chạy) | mới |
+| E | nút E ảo | mới |
+| Space (tạo dáng ảnh hẹn giờ) | nút "Tạo dáng" | mới |
+| Space (thoại) | chạm vào khung thoại | có sẵn |
+| 1–9 (lựa chọn) | chạm nút lựa chọn | có sẵn |
+| J | nút "Sổ tay" | có sẵn |
+| Esc | nút "Menu"; bảng có nút "Đóng" | có sẵn |
+| V | nút "Kiểu camera" trong Menu | có sẵn, ẩn ở thanh trên khi dùng cảm ứng |
+| Chuột (phòng 2026) | chạm vào vật | có sẵn (click) |
+
+### Test mới
+- `tests/unit/world/gestures.test.ts`: 19 ca (kéo/bấm, ngưỡng, chụm, nhiều ngón, wheel chuột/touchpad/ctrlKey, nút tròn, vòng kiểu camera, giá trị lưu lạ).
+- `tests/e2e/world.spec.ts`: ca 4, 5, 12 (chuột/touchpad mô phỏng); 11a dọc 390×844 (nút tròn + kéo xoay cùng lúc, chạy, chụm, trang không cuộn/phóng); 11b (thoại, lựa chọn, nút E, Sổ tay, Menu, đổi kiểu camera, trọn bước ảnh hẹn giờ — chỉ bằng chạm; vị trí đứng được đặt sẵn bằng `teleportTo`); 11c ngang 844×390 (không chồng nút, đi + xoay).
+- Sửa 1 test cũ: `camera.test.ts` ghim "mặc định là A hoặc B" → đổi thành "mặc định là Chuẩn" vì D-S2-01 đã chốt.
+
+### Cuối Phần A (HEAD `4463b90`)
+| Lệnh | Kết quả |
+|---|---|
+| `npx tsc --noEmit` | đạt |
+| `npm test` | 241 đạt, 1 bỏ qua |
+| `npm run validate:world` | đạt — 0 lỗi, 0 nhắc |
+| `npm run test:e2e` | 19 đạt, 1 bỏ qua (Emulator tắt) — 11,9 phút |
+| `VERCEL_ENV=production npm run build` | đạt; không thấy `botStep`, `__game`, `gameTools` trong `dist/assets/*.js` |
+
+### Hiệu năng (mô phỏng điện thoại 390×844, độ nét màn hình 3)
+- Độ nét bị giới hạn ở 2 (canvas 780 px cho 390 px CSS) — đã có sẵn ở `render/stage.ts`.
+- Draw call / tam giác đo ở một điểm mỗi khu (`d.g07.03`): sân 163 / 51 nghìn; **cổng 185 / 66,5 nghìn (nặng nhất)**; lớp học 60 / 20 nghìn; sân bóng 56 / 20 nghìn; bãi đất 51 / 20 nghìn. Hành lang: điểm thử rơi vào sân nên chưa có số riêng.
+- FPS: **chưa đo** (máy này vẽ bằng CPU).
+
+### Chưa kiểm
+- Điện thoại thật (iPhone Safari, Android Chrome), touchpad laptop thật, máy tính bảng.
+- FPS trên laptop/điện thoại thật.
+- Phần B còn lại (ca 1–3, 6–10) và Phần C (tài liệu kiến trúc, quyết định) — để phiên 2c.
