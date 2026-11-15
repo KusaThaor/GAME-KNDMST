@@ -1,6 +1,14 @@
 # PROMPT_CHANG_2 — Controller & Camera (bản cập nhật theo quyết định của chủ dự án 15/11 tối)
 
-Cách dùng: mở phiên Claude Opus mới có quyền repo `KusaThaor/GAME-KNDMST`, dán nguyên file này. Phiên này chỉ làm **Chặng 2**. (Đây là bản thay thế phần Chặng 2 trong `docs/PROMPT_FOR_OPUS.md`; các quy tắc chung ở file đó vẫn giữ.)
+Cách dùng: mở phiên Claude Opus mới có quyền repo `KusaThaor/GAME-KNDMST`, dán nguyên file này, rồi ghi thêm **một dòng**: **"Làm 2a"**, **"Làm 2b"** hoặc **"Làm 2c"**. Mỗi phiên chỉ làm MỘT phần (để không hết ngữ cảnh giữa chừng):
+
+- **2a:** Phần A cho **chuột và touchpad** — kiểu camera "Chuẩn", đặt làm mặc định, test đơn vị, ca e2e 4, 5, 12 (và 1–3 nếu còn sức). Chưa làm cảm ứng điện thoại.
+- **2b:** Phần A cho **cảm ứng điện thoại** — joystick ảo, kéo xoay, chụm zoom, nút E ảo, mọi thao tác chạm được, chặn hành vi trình duyệt, hướng dẫn trên màn hình theo thiết bị; ca e2e 11.
+- **2c:** Phần B còn lại (ca 1–3, 6–10) và Phần C (3 tài liệu, handoff, blueprint §7, copy vào Project).
+
+Đầu mỗi phiên: đọc mục "S2 — tiến độ" trong `docs/DEV_SESSION_HANDOFF.md` để biết phần nào đã xong, chạy lệnh kiểm làm mốc. Cuối mỗi phiên: ghi tiến độ vào handoff (đã làm, số test thật, chưa kiểm, phần kế tiếp), commit, push. Báo cáo cuối theo mẫu ở cuối file, chỉ cho phần vừa làm.
+
+Phạm vi trọn Chặng 2 như dưới đây; chỉ làm phần của phiên này. (Đây là bản thay thế phần Chặng 2 trong `docs/PROMPT_FOR_OPUS.md`; các quy tắc chung ở file đó vẫn giữ.)
 
 ## Vai trò và bối cảnh
 Bạn là Technical Lead của game web 3D **Hành Trình Thanh Xuân** (Vite + TypeScript + Three.js + Preact). Nhánh làm việc: `feature/s2-world-camera-blender` (chạy `git log --oneline -5` xem HEAD thật; Chặng 1 đã xong ở `ccc50ef`). Không cần lịch sử chat; mọi thứ nằm trong repo.
