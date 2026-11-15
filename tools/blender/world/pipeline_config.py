@@ -13,7 +13,9 @@ Xem docs/S2_EXECUTION_BLUEPRINT.md §4.
 
 # ----------------------------------------------------------------------------- phiên bản, đơn vị, trục
 
-#: Đã chạy thật bộ test pipeline trên các bản này (15/11/2026). Máy chủ dự án đang cài 4.5.16 LTS.
+#: D-S2-05 ĐÃ CHỐT (15/11/2026): bản Blender chuẩn của dự án. Mở/lưu file .blend bằng đúng bản này.
+BLENDER_STANDARD = '4.5.16 LTS'
+#: Đã chạy thật bộ test pipeline trên các bản này (15/11/2026). 5.2.4 vẫn được test nhưng KHÔNG phải bản chuẩn.
 BLENDER_TESTED = ('4.5.16 LTS', '5.2.4 LTS')
 
 #: 1 đơn vị Blender = 1 mét.

@@ -18,7 +18,7 @@ Có hai cách chạy script. Cả hai cho cùng kết quả (bộ test pipeline 
 
 | | Blender cài sẵn | Gói `bpy` trong Python |
 |---|---|---|
-| Cài | Blender 4.5 LTS hoặc 5.2 LTS (bản chuẩn của dự án chưa chốt — D-S2-05) | Python **3.11** + `pip install bpy==4.5.*` (hoặc Python 3.13 + `bpy==5.2.*`) |
+| Cài | **Blender 4.5.16 LTS — bản chuẩn của dự án (D-S2-05 đã chốt 15/11)**. 5.2 LTS vẫn chạy được script nhưng không dùng để lưu `.blend` | Python **3.11** + `pip install bpy==4.5.*` (hoặc Python 3.13 + `bpy==5.2.*`) |
 | Mẫu lệnh | `blender --background --python <script> -- <tùy chọn>` | `python <script> <tùy chọn>` |
 
 Chạy mọi lệnh **từ thư mục gốc repo**.
@@ -61,7 +61,7 @@ Danh sách này lấy từ manifest `src/world/maps/map_thcs.world.json` (trư�
 - Mỗi khu là một file, **đặt sẵn đúng vị trí trên bản đồ**. Không dời cả khu đi chỗ khác (các khu nối liền nhau).
 - 1 đơn vị Blender = 1 mét. Trục: Blender X = game x; Blender Z (lên) = game y; Blender Y = **âm** game z.
 - **Bố cục 6 khu đang là bản tạm (D-S2-02, chờ chủ dự án).** Sửa nhỏ phần nhìn thì thoải mái; dời tường, đổi kích thước khu thì nên đợi chốt bố cục.
-- File `.blend` hiện được lưu bằng Blender 4.5. Mở bằng 5.2 rồi lưu thì file sẽ thành định dạng 5.2 (4.5 có thể không mở lại được). Thống nhất một bản trước khi sửa (D-S2-05).
+- File `.blend` hiện được lưu bằng Blender 4.5. Mở bằng 5.2 rồi lưu thì file sẽ thành định dạng 5.2 (4.5 có thể không mở lại được). Vì vậy chỉ mở/lưu `.blend` bằng bản chuẩn **4.5.16 LTS** (D-S2-05 đã chốt).
 
 ---
 
