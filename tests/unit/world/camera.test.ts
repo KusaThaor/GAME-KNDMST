@@ -111,10 +111,11 @@ describe('cấu hình camera và phím', () => {
   it('preset ngoài trời đúng số trong GDD v0.3 §3 (25–40°, 5,5 m, zoom 3,5–8 m)', () => {
     expect(P).toMatchObject({ distance: 5.5, min_distance: 3.5, max_distance: 8, min_pitch_deg: 25, max_pitch_deg: 40 });
   });
-  it('có đủ hai kiểu A (giữ chuột phải) và B (khóa con trỏ)', () => {
+  it('có đủ kiểu Chuẩn (mặc định, D-S2-01) và hai kiểu nâng cao A (giữ chuột phải), B (khóa con trỏ)', () => {
     expect(CAMERA_MODES.A.look).toBe('drag');
     expect(CAMERA_MODES.B.look).toBe('lock');
-    expect(['A', 'B']).toContain(DEFAULT_CAMERA_MODE);
+    expect(CAMERA_MODES.standard.look).toBe('free');
+    expect(DEFAULT_CAMERA_MODE).toBe('standard');
   });
   it('không phím nào gán cho hai việc; phím C chỉ dành cho máy ảnh/cuộn phim', () => {
     const seen = new Map<string, string>();

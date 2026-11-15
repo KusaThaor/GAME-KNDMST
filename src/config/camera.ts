@@ -2,7 +2,7 @@
  * Camera và phím điều khiển trong Ngày ký ức. Mọi số ở đây CHỈNH ĐƯỢC mà không sửa code hệ thống.
  *
  * Nguồn: GDD v0.3 §3 — camera thứ ba (CONFIRMED), nhìn chéo xuống 25–40°, cách 5,5 m (zoom 3,5–8 m),
- * tự kéo gần khi bị che. Hai kiểu điều khiển A/B "thử ở spike, chưa chốt" → cả hai đều có, người chơi đổi bằng phím.
+ * tự kéo gần khi bị che. Kiểu điều khiển: "Chuẩn" (mặc định, D-S2-01 chốt 15/11) + A/B nâng cao; người chơi đổi bằng phím V hoặc menu.
  */
 export interface CameraPreset {
   fov: number;
@@ -25,15 +25,45 @@ export const CAMERA_PRESETS: Record<string, CameraPreset> = {
 
 export const DEFAULT_CAMERA_PRESET = 'follow_default';
 
-/** Kiểu điều khiển camera. `look`: 'drag' = giữ chuột phải rồi rê; 'lock' = khóa con trỏ, rê chuột là xoay, Esc để thoát. */
-export interface CameraModeDef { label: string; look: 'drag' | 'lock'; hint: string }
-export type CameraModeId = 'A' | 'B';
+/**
+ * Kiểu điều khiển camera. `look`:
+ *   'free' = kéo chuột trái hoặc phải (qua ngưỡng nhỏ mới tính là kéo), touchpad kéo một ngón, cảm ứng kéo một ngón;
+ *   'drag' = chỉ giữ chuột phải rồi rê; 'lock' = khóa con trỏ, rê chuột là xoay, Esc để thoát.
+ * Cảm ứng (kéo xoay, chụm phóng) chạy ở mọi kiểu.
+ */
+export type LookStyle = 'free' | 'drag' | 'lock';
+export interface CameraModeDef { label: string; look: LookStyle; hint: string }
+export type CameraModeId = 'standard' | 'A' | 'B';
 export const CAMERA_MODES: Record<CameraModeId, CameraModeDef> = {
+  standard: { label: 'Chuẩn', look: 'free', hint: 'Kéo chuột để xoay camera' },
   A: { label: 'Kiểu A', look: 'drag', hint: 'Giữ chuột phải để xoay camera' },
   B: { label: 'Kiểu B', look: 'lock', hint: 'Bấm vào màn hình để khóa chuột · Esc để thả' },
 };
-/** D-S2-01 (chưa chốt): kiểu mặc định cho người chơi mới. */
-export const DEFAULT_CAMERA_MODE: CameraModeId = 'A';
+/** Thứ tự khi bấm V. */
+export const CAMERA_MODE_ORDER: CameraModeId[] = ['standard', 'A', 'B'];
+/** D-S2-01 ĐÃ CHỐT (15/11): mặc định "Chuẩn" — giống game phổ thông (Play Together). A/B là tùy chọn nâng cao. */
+export const DEFAULT_CAMERA_MODE: CameraModeId = 'standard';
+export const isCameraMode = (v: unknown): v is CameraModeId => typeof v === 'string' && v in CAMERA_MODES;
+export const nextCameraMode = (id: CameraModeId): CameraModeId => CAMERA_MODE_ORDER[(CAMERA_MODE_ORDER.indexOf(id) + 1) % CAMERA_MODE_ORDER.length];
+
+/** Chuột / touchpad / cảm ứng. Chỉnh ở đây, không sửa code. */
+export const POINTER_INPUT = {
+  /** Kéo quá bao nhiêu pixel mới tính là xoay camera (dưới ngưỡng = bấm). */
+  drag_threshold_px: { mouse: 6, touch: 10 },
+  /** Cảm ứng xoay nhanh hơn chuột bao nhiêu lần (màn điện thoại nhỏ). */
+  touch_look_scale: 1.4,
+  /** Chụm 2 ngón: khoảng cách 2 ngón đổi bao nhiêu pixel = 1 nấc zoom. */
+  pinch_px_per_step: 40,
+  /** Lăn chuột/cuộn 2 ngón touchpad: bao nhiêu pixel = 1 nấc zoom (1 nấc chuột thường ≈ 100 px). */
+  wheel_px_per_step: 100,
+  /** Chụm trên touchpad (trình duyệt gửi `wheel` kèm ctrlKey, số nhỏ): bao nhiêu pixel = 1 nấc. */
+  wheel_pinch_px_per_step: 12,
+  /** Một sự kiện lăn không quá bấy nhiêu nấc. */
+  wheel_max_steps_per_event: 1,
+  /** Nút tròn ảo (cảm ứng): bán kính (px), vùng chết, kéo tới bao xa (tỉ lệ bán kính) thì chạy. */
+  joystick: { radius_px: 56, dead_zone: 0.18, run_at: 0.85 },
+};
+export type PointerInputConfig = typeof POINTER_INPUT;
 
 export const LOOK_SENSITIVITY = { yaw: 0.0045, pitch: 0.003, zoom_step: 0.5 };
 
