@@ -6,6 +6,7 @@
  */
 import type { ContentIndex } from '../content/indexContent';
 import type { FlagValue, Gender, Tone } from '../content/types';
+import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../config/camera';
 
 export const SAVE_VERSION = 2;
 export const SAVE_KEY = 'htx.save';
@@ -53,7 +54,8 @@ export interface SaveState {
   pde_done: string[];
   phone: Record<string, PhoneMessage[]>;
   public_demo_done: boolean;
-  settings: { camera_mode: 'A' | 'B' };
+  /** Kiểu điều khiển camera (chỉ lưu cục bộ, không vào analytics). Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn. */
+  settings: { camera_mode: CameraModeId };
 }
 
 export function newSave(attemptId: string): SaveState {
@@ -61,7 +63,7 @@ export function newSave(attemptId: string): SaveState {
     v: SAVE_VERSION, attempt_id: attemptId, player_name: '', appearance: { gender: 'male', preset: 'default' }, profile_done: false,
     current: { memory_day_id: null, quest_id: null, step_id: null, replay: null },
     days: {}, quests: {}, flags: {}, artifacts: {}, album: {}, relationships: {}, pde_done: [], phone: {},
-    public_demo_done: false, settings: { camera_mode: 'A' },
+    public_demo_done: false, settings: { camera_mode: DEFAULT_CAMERA_MODE },
   };
 }
 

@@ -242,6 +242,7 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       attempt_id: h.save.attempt_id,
       player: h.day() ? { x: h.day()!.scene.playerPosition.x, y: h.day()!.scene.playerPosition.y, z: h.day()!.scene.playerPosition.z } : null,
       zone: h.day()?.scene.zone ?? null,
+      device: h.input.device,
       camera: h.day() ? { mode: h.save.settings.camera_mode, look: h.input.lookMode, pointerLocked: h.input.pointerLocked, ...h.day()!.scene.debug() } : null,
       listeners: h.input.listenerCount,
       toast: h.ui.get().toast,

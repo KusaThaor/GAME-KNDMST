@@ -120,3 +120,41 @@ body.game canvas { display: block; }
 .g-ui .hud-dialogue .choice { text-align: left; }
 .g-consent { z-index: 6; }
 .g-fade { z-index: 5; }
+
+/* --- S2 Chặng 2: chơi bằng cảm ứng / touchpad (điện thoại dọc + ngang, máy có tai thỏ) --- */
+/* Vùng chơi: không cuộn, không phóng trang, không chọn chữ, không menu giữ lâu, không kéo-để-tải-lại.
+   Bảng có thanh cuộn (Album, tin nhắn) vẫn cuộn được vì trình duyệt chỉ xét touch-action tới khung cuộn gần nhất. */
+html:has(body.game), body.game { overscroll-behavior: none; }
+body.game { position: fixed; inset: 0; overflow: hidden; }
+body.game #app { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+body.game canvas { touch-action: none; }
+body.game input, body.game textarea { user-select: text; -webkit-user-select: text; }
+.g-buttons { right: calc(16px + env(safe-area-inset-right)); top: calc(16px + env(safe-area-inset-top)); }
+.g-top .hud-objective { left: calc(24px + env(safe-area-inset-left)); top: calc(20px + env(safe-area-inset-top)); }
+.g-ui[data-device="touch"] .g-buttons kbd { display: none; }
+.g-ui[data-device="touch"] button { min-height: 40px; }
+.g-countdown button { pointer-events: auto; margin-top: 8px; font-size: 18px; text-shadow: none; }
+
+/* nút tròn ảo (đi) — góc dưới trái */
+.g-stick { position: absolute; left: calc(28px + env(safe-area-inset-left)); bottom: calc(40px + env(safe-area-inset-bottom)); border-radius: 50%; background: rgba(255,250,238,.28); border: 3px solid rgba(255,250,238,.75); box-shadow: 0 2px 10px rgba(58,44,38,.25); pointer-events: auto; touch-action: none; display: grid; place-items: center; }
+.g-stick.on { background: rgba(255,250,238,.4); }
+.g-stick.run { border-color: #f2b53a; }
+.g-knob { width: 46%; height: 46%; border-radius: 50%; background: rgba(255,250,238,.95); border: 2px solid var(--ink); box-shadow: 0 2px 0 rgba(58,44,38,.3); pointer-events: none; }
+/* nút E ảo (tương tác) — góc dưới phải */
+.g-ui .g-touch-e { position: absolute; right: calc(24px + env(safe-area-inset-right)); bottom: calc(48px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; font-size: 16px; max-width: calc(100% - 200px); }
+.g-touch-e b { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #f2b53a; border: 2px solid var(--ink); font-size: 22px; flex: none; }
+.g-touch-e span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud-keys { left: calc(24px + env(safe-area-inset-left)); }
+.g-ui[data-device="touch"] .hud-keys { left: 50%; transform: translateX(-50%); bottom: auto; top: calc(72px + env(safe-area-inset-top)); white-space: nowrap; font-size: 12px; }
+
+/* màn hẹp (điện thoại dọc): thu gọn thanh trên để mục tiêu không đè nút */
+@media (max-width: 600px) {
+  .g-top .hud-objective { max-width: calc(100% - 200px); font-size: 13px; padding: 6px 10px 6px 8px; }
+  .g-buttons { gap: 6px; }
+  .g-ui .g-buttons button { padding: 6px 10px; font-size: 14px; }
+  .hud-zone { top: calc(110px + env(safe-area-inset-top)); font-size: 18px; }
+  .g-ui[data-device="touch"] .hud-keys { white-space: normal; width: calc(100% - 32px); text-align: center; }
+  .hud-dialogue { bottom: calc(12px + env(safe-area-inset-bottom)); padding: 12px 16px 16px; min-height: 110px; }
+  .hud-dialogue .text { font-size: 17px; }
+  .g-banner { font-size: 10px; white-space: nowrap; bottom: calc(4px + env(safe-area-inset-bottom)); padding: 1px 8px; }
+}

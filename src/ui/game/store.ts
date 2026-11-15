@@ -1,5 +1,6 @@
 /** Trạng thái giao diện của game. UI (Preact) chỉ ĐỌC trạng thái này và gọi `UiActions`; không tự đổi tiến trình. */
 import type { Gender } from '../../content/types';
+import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../../config/camera';
 
 export interface BoxView {
   compartments: { title: string; open: boolean; artifacts: { id: string; name: string; hook: string; state: string; action: 'first' | 'replay' | null }[] }[];
@@ -37,8 +38,10 @@ export interface UiState {
   quests: { title: string; type: string; state: string }[];
   prompt: { key: string; text: string } | null;
   toast: string | null;
-  /** Kiểu điều khiển camera đang dùng trong Ngày ký ức (A: giữ chuột phải · B: khóa con trỏ). */
-  cameraMode: 'A' | 'B';
+  /** Kiểu điều khiển camera đang dùng trong Ngày ký ức (Chuẩn: kéo · A: giữ chuột phải · B: khóa con trỏ). */
+  cameraMode: CameraModeId;
+  /** Người chơi đang dùng gì: 'keyboard' = chuột/bàn phím/touchpad, 'touch' = cảm ứng. Chỉ để đổi giao diện; không vào analytics. */
+  device: 'keyboard' | 'touch';
   dialogue: { who: string; color: string; text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
@@ -60,7 +63,7 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: 'A',
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard',
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
@@ -87,6 +90,10 @@ export interface UiActions {
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   feedbackSkip(): void;
   toggleCameraMode(): void;
+  /** Nút E ảo (cảm ứng) / bấm gợi ý: tương tác với thứ đang ở gần. */
+  interact(): void;
+  /** Nút tròn ảo: ý định di chuyển, null = thả tay. */
+  stick(v: { forward: number; strafe: number; run: boolean } | null): void;
 }
 
 export interface UiStore {

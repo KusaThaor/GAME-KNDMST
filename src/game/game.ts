@@ -3,7 +3,7 @@
  * Luồng: Boot → Hub(intro|idle) → chuyển cảnh → Ngày ký ức → kết Ngày → chuyển cảnh → Hub.
  * Hub và Ngày là 2 scene riêng; mỗi Ngày nạp 1 bản đồ + 1 biến thể; rời scene nào thì giải phóng scene đó.
  */
-import { CAMERA_MODES, isControl, type CameraModeId } from '../config/camera';
+import { CAMERA_MODES, DEFAULT_CAMERA_MODE, isCameraMode, isControl, nextCameraMode } from '../config/camera';
 import { GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
@@ -42,7 +42,7 @@ export function registerTransitionFx(hook: TransitionHook) { transitionHooks.pus
 /** Thứ công cụ test (bot, nhảy bước) được phép chạm vào. Không dùng ở production. */
 export interface GameHandle {
   idx: ContentIndex; save: SaveState; bus: EventBus; engine: QuestEngine; album: AlbumModel; hub: HubModel; flow: GameFlow;
-  ui: UiStore; actions: UiActions & { interact(): void }; view: GameView; photos: PhotoStore; tracker: Tracker; input: GameInput;
+  ui: UiStore; actions: UiActions; view: GameView; photos: PhotoStore; tracker: Tracker; input: GameInput;
   day(): { scene: DayScene; def: MemoryDay } | null;
   /** Vị trí một vật của phòng 2026 trên trang (px) — để test bấm chuột thật. */
   hubPoint(id: string): { x: number; y: number } | null;
@@ -90,6 +90,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   container.appendChild(uiEl);
   const ui = createUiStore();
   const input = createInput(container);
+  // Bản lưu có giá trị lạ (hỏng/bản cũ hơn) → về kiểu mặc định. Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn.
+  if (!isCameraMode(save.settings?.camera_mode)) save.settings = { ...save.settings, camera_mode: DEFAULT_CAMERA_MODE };
   const style = ART_STYLES[opts.artStyle ?? ''];        // undefined → phong cách mặc định
   const profile = () => ({ player_name: save.player_name, gender: save.appearance.gender });
   const fmt = (text: string) => formatText(text, profile());
@@ -424,14 +426,14 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (text) toastTimer = window.setTimeout(() => ui.set({ toast: null }), ms);
   }
 
-  /** Đổi kiểu điều khiển camera A ↔ B (lưu cục bộ trong file lưu; không vào analytics). */
+  /** Đổi kiểu điều khiển camera Chuẩn → A → B → Chuẩn (lưu cục bộ trong file lưu; không vào analytics). */
   function toggleCameraMode() {
     if (ui.get().mode !== 'day') return;
-    const next: CameraModeId = save.settings.camera_mode === 'A' ? 'B' : 'A';
+    const next = nextCameraMode(save.settings.camera_mode);
     save.settings.camera_mode = next;
     input.setLookMode(CAMERA_MODES[next].look);
     ui.set({ cameraMode: next });
-    toast(`${CAMERA_MODES[next].label}: ${CAMERA_MODES[next].hint}`, 3600);
+    toast(input.device === 'touch' ? `Camera: ${CAMERA_MODES[next].label}` : `${CAMERA_MODES[next].label}: ${CAMERA_MODES[next].hint}`, 3600);
     bus.emit('save_requested', { reason: 'settings' });
   }
 
@@ -637,6 +639,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     feedbackSkip() { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
     toggleCameraMode,
+    stick(v) { input.setStick(v); },
   };
 
   bus.on('day_end_prompt', (e) => ui.set({ endPrompt: { open: e.open_side_quests.length } }));
@@ -682,6 +685,15 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   document.addEventListener('visibilitychange', () => heartbeat.setVisible(document.visibilityState === 'visible'));
   setInterval(() => { heartbeat.setPlaying(!ui.get().fade.on && !ui.get().consentAsk && !!ui.get().mode); heartbeat.tick(); }, 5000);
 
+  /** Phím (WASD/mũi tên, Shift) cộng với nút tròn ảo; phím được ưu tiên nếu bấm cùng lúc. */
+  const moveIntent = () => {
+    const f = (input.held('forward') ? 1 : 0) - (input.held('back') ? 1 : 0), s = (input.held('right') ? 1 : 0) - (input.held('left') ? 1 : 0);
+    if (f || s || !input.stick) return { forward: f, strafe: s, run: input.held('run') };
+    return { forward: input.stick.forward, strafe: input.stick.strafe, run: input.stick.run || input.held('run') };
+  };
+  input.onDeviceChange((d) => ui.set({ device: d }));
+  ui.set({ device: input.device });
+
   // ---------- khởi động ----------
   mountGameUi(uiEl, ui, actions);
   view.start((dt, t) => {
@@ -690,7 +702,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       const free = !locked();
       const look = input.takeLook();                    // luôn đọc để chuyển động chuột lúc đang khóa không dồn lại
       const ctl: DayControl = free
-        ? { move: { forward: (input.held('forward') ? 1 : 0) - (input.held('back') ? 1 : 0), strafe: (input.held('right') ? 1 : 0) - (input.held('left') ? 1 : 0), run: input.held('run') }, look }
+        ? { move: moveIntent(), look }
         : { move: null, look: null };
       if (!free && input.pointerLocked) input.releasePointer();
       dayScene.update(dt, t, ctl);

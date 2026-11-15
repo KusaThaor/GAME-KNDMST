@@ -9,6 +9,7 @@ import { PLAYER_NAME_MAX } from '../../core/save';
 import type { Gender } from '../../content/types';
 import { fadeIn } from '../motion';
 import type { UiActions, UiState, UiStore } from './store';
+import { TouchInteract, TouchStick } from './TouchControls';
 
 const SLOT_LABEL: Record<string, string> = {
   main_photo: 'Ảnh chính', free_photo: 'Ảnh tự chọn', sticker: 'Sticker', note: 'Ghi chú', artifact: 'Kỷ vật',
@@ -132,15 +133,16 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
   const [s, setS] = useState(store.get());
   // đăng ký xong thì đọc lại ngay: trạng thái có thể đã đổi giữa lần vẽ đầu và lúc effect chạy (vd. câu hỏi đồng ý lúc mở game)
   useEffect(() => { const off = store.subscribe(setS); setS(store.get()); return off; }, []);
+  const touch = s.device === 'touch';
   const blocking = s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel;
   return (
-    <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''}>
+    <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''} data-device={s.device}>
       {s.placeholderBanner && <div class="g-banner">Bản khung — nội dung [PLACEHOLDER], không phải cốt truyện</div>}
       {s.mode && !s.fade.on && (
         <div class="g-top">
           {s.objective && <div class="hud-objective" data-testid="objective"><span class="dot" />{s.objective}</div>}
           <div class="g-buttons">
-            {s.mode === 'day' && <button data-act="camera-mode" data-mode={s.cameraMode} title={CAMERA_MODES[s.cameraMode].hint} onClick={a.toggleCameraMode}>Camera {s.cameraMode} <kbd>V</kbd></button>}
+            {s.mode === 'day' && s.device !== 'touch' && <button data-act="camera-mode" data-mode={s.cameraMode} title={CAMERA_MODES[s.cameraMode].hint} onClick={a.toggleCameraMode}>Camera {CAMERA_MODES[s.cameraMode].label.replace('Kiểu ', '')} <kbd>V</kbd></button>}
             {s.mode === 'day' && <button data-act="journal" onClick={() => a.openPanel('journal')}>Sổ tay <kbd>J</kbd></button>}
             {s.canEndDay && <button class="primary" data-act="end-day" onClick={a.endDayNow}>Kết thúc Ngày</button>}
             <button data-act="menu" onClick={() => a.openPanel('menu')}>Menu <kbd>Esc</kbd></button>
@@ -149,15 +151,19 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       )}
       {s.toast && <div class="hud-zone" data-testid="toast">{s.toast}</div>}
       {s.mode === 'day' && !s.fade.on && !blocking && !s.photo && (
-        <div class="hud-keys" data-testid="keys"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {CAMERA_MODES[s.cameraMode].hint} · lăn chuột để phóng</div>
+        s.device === 'touch'
+          ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để xoay · Chụm 2 ngón để phóng</div>
+          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {CAMERA_MODES[s.cameraMode].hint} · lăn chuột/cuộn 2 ngón để phóng</div>
       )}
-      {s.prompt && !blocking && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
+      {s.prompt && !blocking && !(touch && s.mode === 'day') && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
+      {touch && s.mode === 'day' && !s.fade.on && !blocking && (!s.photo || (s.photo.phase === 'countdown' && !s.photo.posed)) && <TouchStick a={a} />}
+      {touch && s.mode === 'day' && s.prompt && !blocking && !s.photo && <TouchInteract a={a} text={s.prompt.text} />}
 
       {s.dialogue && (
         <div class="hud-dialogue g-click" data-testid="dialogue" data-act="next" onClick={a.next}>
           {s.dialogue.who && <div class="who" style={{ color: s.dialogue.color }}>{s.dialogue.who}</div>}
           <div class="text">{s.dialogue.text}</div>
-          <div class="next">Space ▸</div>
+          <div class="next">{touch ? 'Chạm ▸' : 'Space ▸'}</div>
         </div>
       )}
       {s.choice && (
@@ -187,12 +193,12 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.photo && s.photo.phase === 'ready' && (
         <Pop class="g-card g-photo-ready" testid="photo-ready">
           <h2>Máy ảnh đã đặt</h2>
-          <p>{s.photo.mode === 'timer' ? `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm Space để tạo dáng (${s.photo.seconds} giây).` : 'Bấm để chụp.'}</p>
+          <p>{s.photo.mode === 'timer' ? `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm ${touch ? 'nút Tạo dáng' : 'Space'} để tạo dáng (${s.photo.seconds} giây).` : 'Bấm để chụp.'}</p>
           <button class="primary" data-act="photo-start" onClick={a.photoStart}>{s.photo.mode === 'timer' ? 'Hẹn giờ' : 'Chụp'}</button>
         </Pop>
       )}
       {s.photo && s.photo.phase === 'countdown' && (
-        <div class="g-countdown" data-testid="photo-countdown"><b>{Math.max(0, Math.ceil(s.photo.seconds))}</b><span>{s.photo.posed ? 'Giữ nguyên nha!' : 'Space: tạo dáng'}</span></div>
+        <div class="g-countdown" data-testid="photo-countdown"><b>{Math.max(0, Math.ceil(s.photo.seconds))}</b>{s.photo.posed ? <span>Giữ nguyên nha!</span> : <button class="primary" data-act="photo-pose" onClick={a.photoPose}>Tạo dáng{!touch && <> <kbd>Space</kbd></>}</button>}</div>
       )}
       {s.photo && s.photo.phase === 'preview' && (
         <Pop class="g-card g-photo" testid="photo-preview">
@@ -236,7 +242,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
           <button class="primary" data-act="resume" onClick={a.closePanel}>Chơi tiếp</button>
           {s.mode === 'day' && <button data-act="restart-day" onClick={a.menuRestartDay}>Chơi lại Ngày từ đầu</button>}
           {s.mode === 'day' && <button data-act="safe-spot" onClick={a.menuSafeSpot}>Về chỗ an toàn</button>}
-          {s.mode === 'day' && <button data-act="menu-camera-mode" onClick={a.toggleCameraMode}>Kiểu camera: {s.cameraMode} — {CAMERA_MODES[s.cameraMode].hint}</button>}
+          {s.mode === 'day' && <button data-act="menu-camera-mode" data-mode={s.cameraMode} onClick={a.toggleCameraMode}>Kiểu camera: {CAMERA_MODES[s.cameraMode].label}{s.device === 'touch' ? '' : ` — ${CAMERA_MODES[s.cameraMode].hint}`}</button>}
           {s.mode === 'day' && s.inReplay && <button data-act="leave-day" onClick={a.menuLeaveDay}>Về phòng (thôi xem lại)</button>}
           <button class="danger" data-act="wipe" onClick={a.menuWipe}>{s.wipeArmed ? 'Bấm lần nữa để xóa hết' : 'Xóa tiến trình'}</button>
           <p class="g-hint">Tiến trình và ảnh lưu trong trình duyệt này. Xóa dữ liệu trình duyệt sẽ mất cả hai.</p>
