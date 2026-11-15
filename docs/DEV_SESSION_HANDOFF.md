@@ -1,4 +1,19 @@
 # DEV_SESSION_HANDOFF
+
+## S2 — tiến độ (cập nhật 15/11/2026, 22:30 UTC+7) — ĐỌC TRƯỚC
+Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
+
+- Nhánh `feature/s2-world-camera-blender` (tách từ `dev` @ `4f681cb`), đã push. Chưa gộp vào `dev`, chưa đụng `main`.
+- Đã có code: bản đồ 6 khu `map_thcs` (file `.blend` nguồn + `.glb`), va chạm, điều khiển nhân vật, camera A/B (phím V), pipeline Blender, nối vào Ngày ký ức. Bố cục 6 khu là blockout tạm.
+- Đã chạy thật 15/11 tối: `tsc` đạt; vitest 217 đạt, 1 bỏ qua (Emulator tắt); `validate:world` đạt; test pipeline Blender 61/61 trên 4.5.16 và 5.2.4; Playwright 13 đạt, 1 bỏ qua (Emulator tắt); build production không chứa công cụ test.
+- Chưa kiểm: test trình duyệt riêng cho S2 (đụng tường, đi qua ranh khu, đổi camera, khóa con trỏ); phần Firestore Emulator sau S2; so màu Blender với game; chạy bằng `blender.exe` trên Windows; FPS laptop thật; Edge.
+- Chưa có: bộ tài liệu S2 (kiến trúc, pipeline Blender, thêm khu, đổi art style, báo cáo test).
+- Việc kế tiếp: làm theo `docs/PROMPT_FOR_OPUS.md`, Chặng 1 → 2 → 3, mỗi phiên một chặng.
+- Chờ chủ dự án: D-S2-01 kiểu camera mặc định · D-S2-02 bố cục 6 khu · D-S2-05 bản Blender chuẩn (GDD ghi 5.2, máy đang cài 4.5.16).
+- Máy chủ dự án đang ở nhánh `feature/asset-workshop`, chưa có code F1–F10 và S2: cần `git fetch` rồi `git worktree add`, không đổi nhánh trong thư mục đó.
+
+---
+
 Phiên bản v2 · 15/11/2026, 01:xx (UTC+7) · Thay bản v1 (14/11).
 
 ## Mục tiêu hiện tại
