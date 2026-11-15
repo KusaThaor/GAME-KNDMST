@@ -1,9 +1,13 @@
 """
 =============================================================================
-HÀNH TRÌNH THANH XUÂN — CHIBI STUDENT CHARACTER GENERATION SCRIPT (V4)
+HÀNH TRÌNH THANH XUÂN — CHIBI STUDENT CHARACTER (V5 - CLEAN SHIRT & ANIMATIONS)
 Character: Nam sinh Lớp 6 (Vietnamese Middle-School Student)
-Art Direction: Cozy Stylized 3D / Toy-like / Semi-chibi / Organic Overlap
-Target Platform: Three.js Web (GLTF/GLB) via Blender 4.5 LTS
+Updates:
+- Bỏ dây áo (straps & backpack) => Áo sơ mi trắng đồng phục sạch sẽ, tinh tươm.
+- Khăn quàng đỏ cắm liền vào nút thắt.
+- Hệ thống xương mắt Eye.L / Eye.R hỗ trợ chớp mắt (Blink).
+- 5 Actions: Action_Idle, Action_Walk, Action_Run, Action_Jump, Action_Blink.
+- Render bộ preview các hoạt động: Đi (Walk), Chạy (Run), Nhảy (Jump), Chớp mắt (Blink).
 =============================================================================
 """
 
@@ -26,7 +30,7 @@ def log(msg):
         f.write(f"{msg}\n")
 
 with open(LOG_PATH, "w", encoding="utf-8") as f:
-    f.write("STARTING FINAL CHARACTER BUILD\n")
+    f.write("STARTING ANIMATION & CLEAN SHIRT BUILD\n")
 
 def hex_to_lin(hex_code, alpha=1.0):
     h = hex_code.lstrip("#")
@@ -93,7 +97,7 @@ def add_mesh_obj(name, primitive_func, loc, scale, rot, mat, col, subdiv=0, beve
 def build_student():
     col = reset_scene()
 
-    # Stylized Matte PBR Materials
+    # Materials Palette
     mats = {
         "skin": create_mat("M_Skin", "#f4cfae", roughness=0.62),
         "hair": create_mat("M_Hair", "#1c1615", roughness=0.45),
@@ -107,15 +111,13 @@ def build_student():
         "belt": create_mat("M_Belt", "#1c1c20", roughness=0.5),
         "shoe": create_mat("M_Shoe", "#f5f3ec", roughness=0.55),
         "sole": create_mat("M_Sole", "#b8aca0", roughness=0.7),
-        "backpack": create_mat("M_Backpack", "#3668ad", roughness=0.55),
-        "strap": create_mat("M_Strap", "#274f88", roughness=0.55),
         "nametag": create_mat("M_Nametag", "#cde4f7", roughness=0.5),
     }
 
     parts = []
 
     # =========================================================================
-    # 1. HEAD & HAIRSTYLE & FACE (Center Z = 0.52m)
+    # 1. HEAD & FACE
     # =========================================================================
     head_z = 0.52
     head = add_mesh_obj(
@@ -128,7 +130,7 @@ def build_student():
     )
     parts.append(head)
 
-    # Ears (attached to sides of skull)
+    # Ears
     for side, sname in [(-1, "L"), (1, "R")]:
         ear = add_mesh_obj(
             f"Ear_{sname}",
@@ -140,7 +142,7 @@ def build_student():
         )
         parts.append(ear)
 
-    # Hair Dome (hugs back and top of skull)
+    # Hair Dome
     hair_cap = add_mesh_obj(
         "Hair_Cap",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -151,7 +153,7 @@ def build_student():
     )
     parts.append(hair_cap)
 
-    # Hair Bangs (classic Vietnamese schoolboy bowl-cut fringe)
+    # Hair Bangs (bowl-cut fringe)
     hair_bangs = add_mesh_obj(
         "Hair_Bangs",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -174,7 +176,7 @@ def build_student():
         )
         parts.append(burn)
 
-    # Eyes & Highlights (embedded snugly into face curvature)
+    # Eyes & Highlights (Blinkable)
     face_y = 0.124
     eye_x = 0.065
     eye_z = head_z - 0.01
@@ -231,9 +233,8 @@ def build_student():
     parts.append(mouth)
 
     # =========================================================================
-    # 2. TORSO, COLLAR & RED SCARF (Interpenetrating & seamless)
+    # 2. TORSO, COLLAR & RED SCARF (No Straps - Clean School Uniform Shirt)
     # =========================================================================
-    # Short Neck (hidden inside chin and collar)
     neck = add_mesh_obj(
         "Neck",
         lambda location: bpy.ops.mesh.primitive_cylinder_add(radius=0.065, depth=0.06, location=location),
@@ -244,7 +245,6 @@ def build_student():
     )
     parts.append(neck)
 
-    # Shirt Torso (Z = 0.32, spans 0.22 to 0.42 => directly connects with head!)
     torso = add_mesh_obj(
         "Shirt_Torso",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -255,7 +255,6 @@ def build_student():
     )
     parts.append(torso)
 
-    # Shirt Collar Band
     collar = add_mesh_obj(
         "Shirt_Collar",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -266,24 +265,25 @@ def build_student():
     )
     parts.append(collar)
 
-    # Red Scarf Knot (center chest right under chin)
+    # Red Scarf Knot
     scarf_knot = add_mesh_obj(
         "Scarf_Knot",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
-        (0.0, 0.082, 0.38),
-        (0.034, 0.024, 0.030),
+        (0.0, 0.084, 0.38),
+        (0.038, 0.026, 0.034),
         (0, 0, 0),
         mats["scarf"], col, subdiv=1
     )
     parts.append(scarf_knot)
 
+    # Scarf Tails - Deeply embedded into knot
     for side, sname in [(-1, "L"), (1, "R")]:
         tail = add_mesh_obj(
             f"Scarf_Tail_{sname}",
             lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
-            (side * 0.018, 0.088, 0.33),
-            (0.022, 0.012, 0.068),
-            (math.radians(-12), 0, math.radians(side * -20)),
+            (side * 0.012, 0.084, 0.345),
+            (0.022, 0.014, 0.076),
+            (math.radians(-12), 0, math.radians(side * -18)),
             mats["scarf"], col, subdiv=1
         )
         parts.append(tail)
@@ -305,7 +305,6 @@ def build_student():
     arm_x = 0.118
     arm_z = 0.34
     for side, sname in [(-1, "L"), (1, "R")]:
-        # Puffed Sleeve attached to shoulder
         sleeve = add_mesh_obj(
             f"Sleeve_{sname}",
             lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -316,7 +315,6 @@ def build_student():
         )
         parts.append(sleeve)
 
-        # Arm cylinder extending down
         arm = add_mesh_obj(
             f"Arm_{sname}",
             lambda location: bpy.ops.mesh.primitive_cylinder_add(radius=0.032, depth=0.14, location=location),
@@ -327,7 +325,6 @@ def build_student():
         )
         parts.append(arm)
 
-        # Cute hand mitten
         hand = add_mesh_obj(
             f"Hand_{sname}",
             lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -339,33 +336,8 @@ def build_student():
         parts.append(hand)
 
     # =========================================================================
-    # 4. BACKPACK & STRAPS
+    # 4. WAISTLINE, BELT, PANTS, LEGS & SNEAKERS
     # =========================================================================
-    for side, sname in [(-1, "L"), (1, "R")]:
-        strap = add_mesh_obj(
-            f"Strap_{sname}",
-            lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
-            (side * 0.072, 0.070, 0.33),
-            (0.020, 0.010, 0.15),
-            (math.radians(-6), 0, 0),
-            mats["strap"], col, bevel=0.003
-        )
-        parts.append(strap)
-
-    backpack = add_mesh_obj(
-        "Backpack",
-        lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
-        (0.0, -0.105, 0.31),
-        (0.165, 0.10, 0.17),
-        (math.radians(4), 0, 0),
-        mats["backpack"], col, subdiv=2
-    )
-    parts.append(backpack)
-
-    # =========================================================================
-    # 5. WAISTLINE, BELT, PANTS, LEGS & SNEAKERS
-    # =========================================================================
-    # Belt (curved band right around torso-pelvis seam)
     belt = add_mesh_obj(
         "Belt",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -376,7 +348,6 @@ def build_student():
     )
     parts.append(belt)
 
-    # Pants Pelvis (Z = 0.18, height 0.11 => reaches up to 0.235, completely overlapping torso!)
     pelvis = add_mesh_obj(
         "Pants_Pelvis",
         lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -387,10 +358,8 @@ def build_student():
     )
     parts.append(pelvis)
 
-    # Legs & Shoes
     leg_x = 0.055
     for side, sname in [(-1, "L"), (1, "R")]:
-        # Pant leg tube reaching from 0.05 to 0.17 (deep inside pelvis!)
         leg = add_mesh_obj(
             f"Leg_{sname}",
             lambda location: bpy.ops.mesh.primitive_cylinder_add(radius=0.038, depth=0.12, location=location),
@@ -401,7 +370,6 @@ def build_student():
         )
         parts.append(leg)
 
-        # Sneaker Upper (Z = 0.015 to 0.061)
         shoe = add_mesh_obj(
             f"Shoe_{sname}",
             lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -412,7 +380,6 @@ def build_student():
         )
         parts.append(shoe)
 
-        # Flat Sole (Z = 0.00 to 0.016)
         sole = add_mesh_obj(
             f"Shoe_Sole_{sname}",
             lambda location: bpy.ops.mesh.primitive_cube_add(size=1.0, location=location),
@@ -423,11 +390,11 @@ def build_student():
         )
         parts.append(sole)
 
-    log(f"Assembled {len(parts)} mesh parts.")
+    log(f"Assembled {len(parts)} mesh parts (clean shirt, no straps).")
     return parts
 
 # =============================================================================
-# ARMATURE
+# ARMATURE (With Eye.L and Eye.R bones for blinking)
 # =============================================================================
 def build_armature(col, parts):
     arm_data = bpy.data.armatures.new("Student_Armature_Data")
@@ -462,6 +429,14 @@ def build_armature(col, parts):
     head.tail = (0, 0, 0.68)
     head.parent = neck
 
+    # Eye bones (for blinking)
+    for side, sname in [(-1, "L"), (1, "R")]:
+        eye_b = eb.new(f"Eye.{sname}")
+        eye_b.head = (side * 0.065, 0.124, 0.51)
+        eye_b.tail = (side * 0.065, 0.134, 0.51)
+        eye_b.parent = head
+
+    # Arms
     for side, sname in [(-1, "L"), (1, "R")]:
         arm_up = eb.new(f"UpperArm.{sname}")
         arm_up.head = (side * 0.11, 0.0, 0.35)
@@ -478,6 +453,7 @@ def build_armature(col, parts):
         hand.tail = (side * 0.145, 0.025, 0.16)
         hand.parent = forearm
 
+    # Legs
     for side, sname in [(-1, "L"), (1, "R")]:
         thigh = eb.new(f"Thigh.{sname}")
         thigh.head = (side * 0.055, 0.0, 0.20)
@@ -496,49 +472,55 @@ def build_armature(col, parts):
 
     bpy.ops.object.mode_set(mode="OBJECT")
 
-    bone_map = {
-        "Head": ["head", "hair", "ear", "eye", "blush", "mouth"],
-        "Neck": ["neck", "collar", "scarf"],
-        "Spine": ["torso", "strap", "backpack", "nametag"],
-        "Hips": ["belt", "pelvis"],
-        "UpperArm.L": ["sleeve_l", "arm_l"],
-        "Hand.L": ["hand_l"],
-        "UpperArm.R": ["sleeve_r", "arm_r"],
-        "Hand.R": ["hand_r"],
-        "Thigh.L": ["leg_l"],
-        "Foot.L": ["shoe_l", "sole_l"],
-        "Thigh.R": ["leg_r"],
-        "Foot.R": ["shoe_r", "sole_r"],
-    }
+    # Vertex Group mappings
+    bone_map = [
+        ("Eye.L", ["eye_l", "eye_hl1_l", "eye_hl2_l"]),
+        ("Eye.R", ["eye_r", "eye_hl1_r", "eye_hl2_r"]),
+        ("Head", ["head", "hair", "ear", "blush", "mouth"]),
+        ("Neck", ["neck", "collar", "scarf"]),
+        ("Spine", ["torso", "nametag"]),
+        ("Hips", ["belt", "pelvis"]),
+        ("UpperArm.L", ["sleeve_l", "arm_l"]),
+        ("Hand.L", ["hand_l"]),
+        ("UpperArm.R", ["sleeve_r", "arm_r"]),
+        ("Hand.R", ["hand_r"]),
+        ("Thigh.L", ["leg_l"]),
+        ("Foot.L", ["shoe_l", "sole_l"]),
+        ("Thigh.R", ["leg_r"]),
+        ("Foot.R", ["shoe_r", "sole_r"]),
+    ]
 
     for p in parts:
         mod = p.modifiers.new(name="Armature", type="ARMATURE")
         mod.object = arm_obj
         p_name = p.name.lower()
         assigned = "Hips"
-        for b_name, kws in bone_map.items():
+        for b_name, kws in bone_map:
             if any(k in p_name for k in kws):
                 assigned = b_name
                 break
         vg = p.vertex_groups.new(name=assigned)
         vg.add(list(range(len(p.data.vertices))), 1.0, "REPLACE")
 
-    log("Armature configured.")
+    log("Armature configured with Eye bones.")
     return arm_obj
 
 # =============================================================================
-# ANIMATIONS (Idle, Wave, Walk)
+# ANIMATIONS (Idle, Walk, Run, Jump, Blink)
 # =============================================================================
 def setup_animations(arm_obj):
     if not arm_obj.animation_data:
         arm_obj.animation_data_create()
 
-    # 1. Idle
+    bpy.context.view_layer.objects.active = arm_obj
+    pb = arm_obj.pose.bones
+
+    # -------------------------------------------------------------------------
+    # 1. ACTION: IDLE (Nhịp thở, nhún hông và chớp mắt nhẹ nhàng)
+    # -------------------------------------------------------------------------
     idle = bpy.data.actions.new("Action_Idle")
     arm_obj.animation_data.action = idle
-    bpy.context.view_layer.objects.active = arm_obj
     bpy.ops.object.mode_set(mode="POSE")
-    pb = arm_obj.pose.bones
 
     for f, bz, ht in [(1, 0.0, 0.0), (20, -0.006, 0.025), (40, 0.0, 0.0)]:
         pb["Hips"].location = (0, 0, bz)
@@ -547,32 +529,26 @@ def setup_animations(arm_obj):
         pb["Head"].rotation_euler = (0, ht, 0)
         pb["Head"].keyframe_insert("rotation_euler", frame=f)
 
-    # 2. Wave
-    wave = bpy.data.actions.new("Action_Wave")
-    arm_obj.animation_data.action = wave
-    for f in [1, 40]:
-        pb["UpperArm.R"].rotation_mode = "XYZ"
-        pb["UpperArm.R"].rotation_euler = (0, 0, 0)
-        pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=f)
+    # Chớp mắt tự nhiên trong Idle ở frame 18-24
+    for side in ["L", "R"]:
+        b = pb[f"Eye.{side}"]
+        for f, sz in [(1, 1.0), (18, 1.0), (21, 0.08), (24, 1.0), (40, 1.0)]:
+            b.scale = (1.0, 1.0, sz)
+            b.keyframe_insert("scale", frame=f)
 
-    pb["UpperArm.R"].rotation_euler = (math.radians(-45), 0, math.radians(100))
-    pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=12)
-    pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=32)
-
-    for f, r in [(16, 0.22), (22, -0.22), (28, 0.22)]:
-        pb["Forearm.R"].rotation_mode = "XYZ"
-        pb["Forearm.R"].rotation_euler = (0, r, 0)
-        pb["Forearm.R"].keyframe_insert("rotation_euler", frame=f)
-
-    # 3. Walk
+    # -------------------------------------------------------------------------
+    # 2. ACTION: WALK (Bước đi chibi đều đặn, nhún nhảy)
+    # -------------------------------------------------------------------------
     walk = bpy.data.actions.new("Action_Walk")
     arm_obj.animation_data.action = walk
+
     walk_keys = [
-        (1,  math.radians(18),  math.radians(-18), math.radians(-16), math.radians(16), 0.0),
-        (8,  0.0,               0.0,               0.0,               0.0,              0.008),
-        (15, math.radians(-18), math.radians(18),  math.radians(16),  math.radians(-16), 0.0),
-        (22, 0.0,               0.0,               0.0,               0.0,              0.008),
-        (30, math.radians(18),  math.radians(-18), math.radians(-16), math.radians(16), 0.0),
+        # Frame, Thigh_L, Thigh_R, Arm_L, Arm_R, Hips_Z
+        (1,   math.radians(20),  math.radians(-20), math.radians(-18), math.radians(18),  0.0),
+        (8,   0.0,               0.0,               0.0,               0.0,               0.010),
+        (15,  math.radians(-20), math.radians(20),  math.radians(18),  math.radians(-18), 0.0),
+        (22,  0.0,               0.0,               0.0,               0.0,               0.010),
+        (30,  math.radians(20),  math.radians(-20), math.radians(-18), math.radians(18),  0.0),
     ]
     for f, th_l, th_r, a_l, a_r, bz in walk_keys:
         pb["Hips"].location = (0, 0, bz)
@@ -590,11 +566,129 @@ def setup_animations(arm_obj):
         pb["UpperArm.R"].rotation_euler = (a_r, 0, 0)
         pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=f)
 
-    # Keep Rest Pose for neutral rendering
+    # -------------------------------------------------------------------------
+    # 3. ACTION: RUN (Chạy sôi động, người chúi nhẹ về trước, đánh tay mạnh)
+    # -------------------------------------------------------------------------
+    run = bpy.data.actions.new("Action_Run")
+    arm_obj.animation_data.action = run
+
+    # Người nghiêng về trước
+    pb["Spine"].rotation_mode = "XYZ"
+    pb["Spine"].rotation_euler = (math.radians(16), 0, 0)
+    pb["Spine"].keyframe_insert("rotation_euler", frame=1)
+    pb["Spine"].keyframe_insert("rotation_euler", frame=20)
+
+    # Cẳng tay gập lại khi chạy
+    for side in ["L", "R"]:
+        pb[f"Forearm.{side}"].rotation_mode = "XYZ"
+        pb[f"Forearm.{side}"].rotation_euler = (0, math.radians(65), 0)
+        pb[f"Forearm.{side}"].keyframe_insert("rotation_euler", frame=1)
+        pb[f"Forearm.{side}"].keyframe_insert("rotation_euler", frame=20)
+
+    run_keys = [
+        # Frame, Thigh_L, Shin_L, Thigh_R, Shin_R, Arm_L, Arm_R, Hips_Z
+        (1,   math.radians(42),  math.radians(-25), math.radians(-38), math.radians(40),  math.radians(-42), math.radians(42),  0.0),
+        (5,   math.radians(15),  0.0,               math.radians(-10), 0.0,               math.radians(-15), math.radians(15),  0.022),
+        (10,  math.radians(-38), math.radians(40),  math.radians(42),  math.radians(-25), math.radians(42),  math.radians(-42), 0.0),
+        (15,  math.radians(-10), 0.0,               math.radians(15),  0.0,               math.radians(15),  math.radians(-15), 0.022),
+        (20,  math.radians(42),  math.radians(-25), math.radians(-38), math.radians(40),  math.radians(-42), math.radians(42),  0.0),
+    ]
+    for f, th_l, sh_l, th_r, sh_r, a_l, a_r, bz in run_keys:
+        pb["Hips"].location = (0, 0, bz)
+        pb["Hips"].keyframe_insert("location", frame=f)
+        pb["Thigh.L"].rotation_mode = "XYZ"
+        pb["Thigh.L"].rotation_euler = (th_l, 0, 0)
+        pb["Thigh.L"].keyframe_insert("rotation_euler", frame=f)
+        pb["Shin.L"].rotation_mode = "XYZ"
+        pb["Shin.L"].rotation_euler = (sh_l, 0, 0)
+        pb["Shin.L"].keyframe_insert("rotation_euler", frame=f)
+        pb["Thigh.R"].rotation_mode = "XYZ"
+        pb["Thigh.R"].rotation_euler = (th_r, 0, 0)
+        pb["Thigh.R"].keyframe_insert("rotation_euler", frame=f)
+        pb["Shin.R"].rotation_mode = "XYZ"
+        pb["Shin.R"].rotation_euler = (sh_r, 0, 0)
+        pb["Shin.R"].keyframe_insert("rotation_euler", frame=f)
+        pb["UpperArm.L"].rotation_mode = "XYZ"
+        pb["UpperArm.L"].rotation_euler = (a_l, 0, 0)
+        pb["UpperArm.L"].keyframe_insert("rotation_euler", frame=f)
+        pb["UpperArm.R"].rotation_mode = "XYZ"
+        pb["UpperArm.R"].rotation_euler = (a_r, 0, 0)
+        pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=f)
+
+    # -------------------------------------------------------------------------
+    # 4. ACTION: JUMP (Nhún chân lấy đà -> bật nhảy lên không -> tiếp đất)
+    # -------------------------------------------------------------------------
+    jump = bpy.data.actions.new("Action_Jump")
+    arm_obj.animation_data.action = jump
+
+    # Chu kỳ nhảy 35 frames:
+    # 1-6: Đứng thẳng chuẩn bị
+    # 8-12: Nhún lấy đà (Crouch / Squash)
+    # 14-22: Bay lên không trung đạt đỉnh (Apex)
+    # 24-28: Tiếp đất nén người (Land cushion)
+    # 30-35: Hồi phục về đứng thẳng
+    jump_keys = [
+        # Frame, Hips_Z, Spine_RotX, Thigh_RotX, Arm_RotX, Head_RotX
+        (1,   0.0,                0.0,               0.0,               0.0,               0.0),
+        (8,  -0.035,              math.radians(14),  math.radians(28),  math.radians(-35), math.radians(8)),
+        (16,  0.140,             math.radians(-8),  math.radians(22),  math.radians(85),  math.radians(-12)), # ĐỈNH NHẢY TRÊN KHÔNG
+        (24, -0.030,              math.radians(12),  math.radians(24),  math.radians(-20), math.radians(6)),
+        (35,  0.0,                0.0,               0.0,               0.0,               0.0),
+    ]
+    for f, hz, sp_x, th_x, a_x, hd_x in jump_keys:
+        pb["Hips"].location = (0, 0, hz)
+        pb["Hips"].keyframe_insert("location", frame=f)
+        pb["Spine"].rotation_mode = "XYZ"
+        pb["Spine"].rotation_euler = (sp_x, 0, 0)
+        pb["Spine"].keyframe_insert("rotation_euler", frame=f)
+        pb["Thigh.L"].rotation_mode = "XYZ"
+        pb["Thigh.L"].rotation_euler = (th_x, 0, 0)
+        pb["Thigh.L"].keyframe_insert("rotation_euler", frame=f)
+        pb["Thigh.R"].rotation_mode = "XYZ"
+        pb["Thigh.R"].rotation_euler = (th_x, 0, 0)
+        pb["Thigh.R"].keyframe_insert("rotation_euler", frame=f)
+        pb["UpperArm.L"].rotation_mode = "XYZ"
+        pb["UpperArm.L"].rotation_euler = (a_x, 0, math.radians(-15))
+        pb["UpperArm.L"].keyframe_insert("rotation_euler", frame=f)
+        pb["UpperArm.R"].rotation_mode = "XYZ"
+        pb["UpperArm.R"].rotation_euler = (a_x, 0, math.radians(15))
+        pb["UpperArm.R"].keyframe_insert("rotation_euler", frame=f)
+        pb["Head"].rotation_mode = "XYZ"
+        pb["Head"].rotation_euler = (hd_x, 0, 0)
+        pb["Head"].keyframe_insert("rotation_euler", frame=f)
+
+    # -------------------------------------------------------------------------
+    # 5. ACTION: BLINK (Chớp mắt độc lập)
+    # -------------------------------------------------------------------------
+    blink = bpy.data.actions.new("Action_Blink")
+    arm_obj.animation_data.action = blink
+
+    for side in ["L", "R"]:
+        b = pb[f"Eye.{side}"]
+        for f, sz in [(1, 1.0), (4, 1.0), (7, 0.08), (10, 1.0), (15, 1.0)]:
+            b.scale = (1.0, 1.0, sz)
+            b.keyframe_insert("scale", frame=f)
+
+    # PUSH TẤT CẢ ACTIONS VÀO NLA TRACKS ĐỂ GLTF EXPORTER XUẤT ĐẦY ĐỦ 5 CLIPS
+    all_actions = [idle, walk, run, jump, blink]
+    for act in all_actions:
+        track = arm_obj.animation_data.nla_tracks.new()
+        track.name = act.name
+        track.strips.new(act.name, 1, act)
+
+    # Reset về Idle ở frame 1 cho trạng thái đứng trung tính
     arm_obj.animation_data.action = idle
     bpy.context.scene.frame_set(1)
     bpy.ops.object.mode_set(mode="OBJECT")
-    log("Animations configured.")
+    log("Setup all 5 Actions and pushed to NLA tracks.")
+
+    return {
+        "idle": idle,
+        "walk": walk,
+        "run": run,
+        "jump": jump,
+        "blink": blink,
+    }
 
 # =============================================================================
 # STUDIO LIGHTING & PREVIEW RENDERS
@@ -613,8 +707,8 @@ def setup_studio():
     stage_col = bpy.data.collections.new("Studio_Stage")
     bpy.context.scene.collection.children.link(stage_col)
 
-    # Studio Circular Podium
-    bpy.ops.mesh.primitive_cylinder_add(radius=0.70, depth=0.03, location=(0, 0, 0.015), vertices=36)
+    # Podium
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.75, depth=0.03, location=(0, 0, 0.015), vertices=36)
     podium = bpy.context.active_object
     podium.name = "Podium"
     p_mat = bpy.data.materials.new("M_Podium")
@@ -627,7 +721,7 @@ def setup_studio():
     stage_col.objects.link(podium)
     bpy.context.scene.collection.objects.unlink(podium)
 
-    # Key, Fill, Rim
+    # Lights
     key_l = bpy.data.lights.new("Key", "SUN")
     key_l.energy = 4.2
     key_l.color = hex_to_lin("#fff9f0")[:3]
@@ -657,7 +751,7 @@ def setup_studio():
 
     return cam_obj
 
-def render_views(cam_obj):
+def render_all_previews(cam_obj, arm_obj, actions):
     scene = bpy.context.scene
     scene.render.resolution_x = 1080
     scene.render.resolution_y = 1350
@@ -665,13 +759,17 @@ def render_views(cam_obj):
 
     try:
         scene.render.engine = "CYCLES"
-        scene.cycles.samples = 32
+        scene.cycles.samples = 28  # Fast & clean
         scene.cycles.device = "CPU"
     except:
         scene.render.engine = "BLENDER_EEVEE_NEXT"
 
     dist = 1.95
     target_z = 0.35
+
+    # 1. BỘ 4 ẢNH TURNAROUND (ÁO SƠ MI TRẮNG SẠCH SẼ, KHÔNG DÂY ÁO)
+    arm_obj.animation_data.action = actions["idle"]
+    scene.frame_set(1)
 
     views = [
         ("01_front.png",         (0.0, dist, target_z + 0.05),            (math.radians(88), 0, math.radians(180))),
@@ -689,15 +787,61 @@ def render_views(cam_obj):
         bpy.ops.render.render(write_still=True)
         log(f"Saved {out_path}")
 
+    # 2. BỘ 4 ẢNH HOẠT ĐỘNG (WALK, RUN, JUMP, BLINK)
+    # 2.1 WALK POSE (Frame 8 - sải bước chân)
+    arm_obj.animation_data.action = actions["walk"]
+    scene.frame_set(8)
+    cam_obj.location = (dist * 0.72, dist * 0.72, target_z + 0.12)
+    cam_obj.rotation_euler = (math.radians(84), 0, math.radians(135))
+    scene.render.filepath = os.path.join(PREVIEWS_DIR, "act_01_walk.png")
+    log("Rendering act_01_walk.png...")
+    bpy.ops.render.render(write_still=True)
+    log("Saved act_01_walk.png")
+
+    # 2.2 RUN POSE (Frame 5 - chạy rướn người về phía trước)
+    arm_obj.animation_data.action = actions["run"]
+    scene.frame_set(5)
+    cam_obj.location = (dist * 0.75, dist * 0.68, target_z + 0.10)
+    cam_obj.rotation_euler = (math.radians(84), 0, math.radians(132))
+    scene.render.filepath = os.path.join(PREVIEWS_DIR, "act_02_run.png")
+    log("Rendering act_02_run.png...")
+    bpy.ops.render.render(write_still=True)
+    log("Saved act_02_run.png")
+
+    # 2.3 JUMP POSE (Frame 16 - bật nhảy trên không trung)
+    arm_obj.animation_data.action = actions["jump"]
+    scene.frame_set(16)
+    cam_obj.location = (dist * 0.72, dist * 0.72, target_z + 0.18)
+    cam_obj.rotation_euler = (math.radians(82), 0, math.radians(135))
+    scene.render.filepath = os.path.join(PREVIEWS_DIR, "act_03_jump.png")
+    log("Rendering act_03_jump.png...")
+    bpy.ops.render.render(write_still=True)
+    log("Saved act_03_jump.png")
+
+    # 2.4 BLINK POSE (Frame 7 - cận cảnh khuôn mặt nhắm mắt / chớp mắt)
+    arm_obj.animation_data.action = actions["blink"]
+    scene.frame_set(7)
+    # Camera Close-up vào khuôn mặt (Z = 0.52m, cự ly gần 0.95m)
+    cam_obj.location = (0.0, 0.95, 0.52)
+    cam_obj.rotation_euler = (math.radians(90), 0, math.radians(180))
+    scene.render.filepath = os.path.join(PREVIEWS_DIR, "act_04_blink.png")
+    log("Rendering act_04_blink.png...")
+    bpy.ops.render.render(write_still=True)
+    log("Saved act_04_blink.png")
+
+    # Reset lại về Idle frame 1
+    arm_obj.animation_data.action = actions["idle"]
+    scene.frame_set(1)
+
 def main():
-    log("Building character geometry...")
+    log("Building character geometry (no straps)...")
     parts = build_student()
 
-    log("Building armature...")
+    log("Building armature with Eye bones...")
     arm = build_armature(bpy.data.collections["Vietnamese_Student"], parts)
 
-    log("Setting up animations...")
-    setup_animations(arm)
+    log("Setting up all 5 animations...")
+    actions = setup_animations(arm)
 
     # Save .blend
     log(f"Saving .blend: {OUTPUT_BLEND}")
@@ -720,12 +864,12 @@ def main():
         export_animations=True,
         export_skins=True
     )
-    log("GLB exported.")
+    log("GLB exported with all animations.")
 
-    log("Rendering previews...")
+    log("Setting up studio and rendering previews...")
     cam = setup_studio()
-    render_views(cam)
-    log("BUILD COMPLETED SUCCESSFULLY!")
+    render_all_previews(cam, arm, actions)
+    log("ALL ANIMATIONS AND PREVIEWS COMPLETED SUCCESSFULLY!")
 
 if __name__ == "__main__":
     main()

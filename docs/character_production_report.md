@@ -104,9 +104,17 @@ Bộ xương được xây dựng cân đối theo tỉ lệ chibi 2.6 đầu:
         - `Foot.L` & `Foot.R` ($\pm 0.055, 0.05, 0.01$)
 
 ### 5.2. Các Action Animation đã tích hợp trong GLB
-1. **`Action_Idle` (Chu kỳ 40 frames):** Nhịp thở nhún nhẹ xương hông và nghiêng đầu nhẹ nhàng tự nhiên.
-2. **`Action_Wave` (Chu kỳ 40 frames):** Giơ tay phải lên vẫy chào vui vẻ, thân thiện với bạn bè và người chơi.
-3. **`Action_Walk` (Chu kỳ 30 frames):** Dáng đi nhún nhảy đáng yêu đặc trưng của nhân vật chibi (bước chân và vung tay so le có độ nảy trọng tâm hông).
+1. **`Action_Idle` (Chu kỳ 40 frames):** Nhịp thở nhún nhẹ xương hông, nghiêng đầu ngây thơ và tự động chớp mắt tự nhiên ở frame 21.
+2. **`Action_Walk` (Chu kỳ 30 frames):** Dáng đi nhún nhảy đáng yêu đặc trưng của nhân vật chibi (bước chân và vung tay so le có độ nảy trọng tâm hông).
+3. **`Action_Run` (Chu kỳ 20 frames):** Dáng chạy rướn người về phía trước ($16^\circ$), cẳng tay gập vuông góc đánh tay mạnh mẽ, chân co gập dứt khoát.
+4. **`Action_Jump` (Chu kỳ 35 frames):** Lấy đà nhún người -> bật nhảy vút lên không trung ($+0.14\text{m}$) hai tay giơ cao hình chữ V -> tiếp đất nhún giảm chấn -> đứng thẳng.
+5. **`Action_Blink` (Chu kỳ 15 frames):** Chớp mắt độc lập qua hệ thống xương mắt `Eye.L` / `Eye.R` khép mi mượt mà.
+
+### 5.3. Bộ ảnh render hoạt cảnh hoàn thiện
+- [act_01_walk.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/previews/act_01_walk.png) (Dáng Đi - Walk)
+- [act_02_run.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/previews/act_02_run.png) (Dáng Chạy - Run)
+- [act_03_jump.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/previews/act_03_jump.png) (Dáng Nhảy - Jump)
+- [act_04_blink.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/previews/act_04_blink.png) (Cận cảnh Chớp Mắt - Blink)
 
 ---
 
