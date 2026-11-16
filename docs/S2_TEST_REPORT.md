@@ -223,12 +223,12 @@ Không có lỗi game. Bốn lần đỏ đầu tiên đều do cách viết tes
 - ca 10: tải lại trang kèm `?day=` làm công cụ test dựng lại bản lưu từ đầu → mở lại bằng `/?play=1` như người chơi thật.
 - ca 8, 11b: hẹn giờ 8 giây theo đồng hồ game + chụp ảnh chậm trên CPU → chờ tới 120–150 giây.
 
-### Số chạy thật cuối phiên (HEAD `3aabacb` + tài liệu)
+### Số chạy thật cuối phiên (HEAD `e1e7d36` + tài liệu)
 - `npx tsc --noEmit`: đạt.
 - `npm test`: 259 đạt, 1 bỏ qua (thêm 6: góc 5–65°, nút tròn nổi).
 - `npm run validate:world`: 0 lỗi, 0 nhắc.
 - `npm run test:e2e` lần 1: 36 đạt, 1 hỏng (ca 11b hết 30 giây chờ ảnh), 1 bỏ qua, 29,9 phút. Nới thời gian chờ → ca 11b chạy riêng đạt.
-- `npm run test:e2e` lần 2 (toàn bộ, HEAD `3aabacb`): **37 đạt, 1 bỏ qua, 0 hỏng**, 28,8 phút (38 ca: 29 cũ + 9 mới).
+- `npm run test:e2e` lần 2 (toàn bộ, HEAD `e1e7d36`): **37 đạt, 1 bỏ qua, 0 hỏng**, 28,8 phút (38 ca: 29 cũ + 9 mới).
 - `VERCEL_ENV=production npm run build`: đạt; không thấy `botStep|__game|gameTools` trong `dist/assets/*.js`.
 - Ca 9 (đếm listener): game tự báo 14 suốt 7 lần đo; listener thật trên `window` + `document` (DevTools) 30 ở cả phòng và Ngày, 3 vòng không tăng (có dùng chuột, lăn và một cú chạm trong mỗi Ngày).
 
