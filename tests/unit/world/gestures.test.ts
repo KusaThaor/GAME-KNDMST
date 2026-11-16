@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LookGestures, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
+import { ButtonDrag, LookGestures, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
 import { CAMERA_MODES, CAMERA_MODE_ORDER, DEFAULT_CAMERA_MODE, POINTER_INPUT, isCameraMode, nextCameraMode } from '../../../src/config/camera';
 
 const CFG = POINTER_INPUT;
@@ -156,5 +156,40 @@ describe('kiểu camera: Chuẩn mặc định, V xoay vòng 3 kiểu', () => {
     expect(isCameraMode('standard')).toBe(true);
     expect(isCameraMode('C')).toBe(false);
     expect(isCameraMode(undefined)).toBe(false);
+  });
+});
+
+describe('ButtonDrag — giữ nút chuột/touchpad khi kéo (hotfix touchpad)', () => {
+  it('chỉ theo dõi đúng pointerId đã bấm', () => {
+    const d = new ButtonDrag();
+    d.begin(1);
+    expect(d.active).toBe(1);
+    expect(d.stillPressed(2, 0)).toBe(true);          // pointer khác: không liên quan
+    expect(d.end(2)).toBe(false);
+    expect(d.end(1)).toBe(true);
+    expect(d.active).toBeNull();
+  });
+  it('không đòi đúng một giá trị buttons: 1, 2, 3 đều là "đang giữ"', () => {
+    const d = new ButtonDrag();
+    d.begin(1);
+    for (const b of [1, 2, 3, 5]) expect(d.stillPressed(1, b)).toBe(true);
+  });
+  it('trình duyệt báo buttons=0 sau khi đã từng báo đang giữ → coi như đã thả (mất pointerup)', () => {
+    const d = new ButtonDrag();
+    d.begin(1);
+    d.stillPressed(1, 1);
+    expect(d.stillPressed(1, 0)).toBe(false);
+  });
+  it('trình duyệt chưa từng báo buttons (luôn 0) → KHÔNG tự hủy kéo, chờ pointerup', () => {
+    const d = new ButtonDrag();
+    d.begin(1);
+    expect(d.stillPressed(1, 0)).toBe(true);
+    expect(d.stillPressed(1, 0)).toBe(true);
+  });
+  it('bấm lần mới thì quên trạng thái lần trước', () => {
+    const d = new ButtonDrag();
+    d.begin(1); d.stillPressed(1, 1); d.end(1);
+    d.begin(1);
+    expect(d.stillPressed(1, 0)).toBe(true);
   });
 });

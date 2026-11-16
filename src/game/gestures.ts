@@ -61,6 +61,9 @@ export class LookGestures {
   cancel(id: number): void { this.tracks.delete(id); }
   clear(): void { this.tracks.clear(); this.dx = this.dy = this.zoom = 0; }
 
+  /** Xem chuyển động đang chờ mà không xóa (cho bảng chẩn đoán). */
+  peek(): LookDelta { return { dx: this.dx, dy: this.dy, zoom: this.zoom }; }
+
   take(): LookDelta {
     const v = { dx: this.dx, dy: this.dy, zoom: this.zoom };
     this.dx = this.dy = this.zoom = 0;
@@ -95,4 +98,29 @@ export function joystickVector(dx: number, dy: number, cfg: PointerInputConfig['
   const mag = Math.min(1, len / r);
   if (mag < cfg.dead_zone) return { moving: false, forward: 0, strafe: 0, run: false, knobX, knobY };
   return { moving: true, forward: -knobY / r, strafe: knobX / r, run: mag >= cfg.run_at, knobX, knobY };
+}
+
+/**
+ * Theo dõi MỘT lần bấm-giữ-kéo bằng chuột/touchpad (theo pointerId) để biết lúc nào nút đã được thả,
+ * kể cả khi trình duyệt làm mất `pointerup` (thả ngoài cửa sổ, đổi tab…).
+ * Không đòi `buttons` đúng một giá trị: khác 0 là đang giữ. Nếu trình duyệt chưa từng báo `buttons` khác 0
+ * (một số tổ hợp touchpad/trình duyệt) thì không tự hủy, chỉ kết thúc bằng pointerup/pointercancel.
+ */
+export class ButtonDrag {
+  private id: number | null = null;
+  private sawButtons = false;
+  get active(): number | null { return this.id; }
+  begin(id: number): void { this.id = id; this.sawButtons = false; }
+  /** `false` = nên kết thúc kéo vì nút đã thả. */
+  stillPressed(id: number, buttons: number): boolean {
+    if (id !== this.id) return true;
+    if (buttons !== 0) { this.sawButtons = true; return true; }
+    return !this.sawButtons;
+  }
+  /** Trả `true` nếu pointer này đang được theo dõi (và giờ đã dừng). */
+  end(id: number): boolean {
+    if (id !== this.id) return false;
+    this.id = null; this.sawButtons = false;
+    return true;
+  }
 }
