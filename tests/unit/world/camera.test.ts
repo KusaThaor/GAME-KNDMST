@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { CameraManager, type Occluder } from '../../../src/actors/camera/cameraManager';
-import { CAMERA_MODES, CAMERA_PRESETS, CONTROLS, DEFAULT_CAMERA_MODE, DEFAULT_CAMERA_PRESET, isControl } from '../../../src/config/camera';
+import { CAMERA_MODES, CAMERA_PITCH_GDD_V03, CAMERA_PRESETS, CONTROLS, DEFAULT_CAMERA_MODE, DEFAULT_CAMERA_PRESET, isControl } from '../../../src/config/camera';
 
 const P = CAMERA_PRESETS[DEFAULT_CAMERA_PRESET];
 const deg = THREE.MathUtils.degToRad;
@@ -108,8 +108,22 @@ describe('cấu hình camera và phím', () => {
       expect(p.pitch_deg, name).toBeLessThanOrEqual(p.max_pitch_deg);
     }
   });
-  it('preset ngoài trời đúng số trong GDD v0.3 §3 (25–40°, 5,5 m, zoom 3,5–8 m)', () => {
-    expect(P).toMatchObject({ distance: 5.5, min_distance: 3.5, max_distance: 8, min_pitch_deg: 25, max_pitch_deg: 40 });
+  it('preset ngoài trời: khoảng cách/zoom đúng GDD v0.3 §3 (5,5 m, zoom 3,5–8 m), góc mặc định 30°', () => {
+    expect(P).toMatchObject({ distance: 5.5, min_distance: 3.5, max_distance: 8, pitch_deg: 30 });
+  });
+  it('chủ dự án chốt 16/11 tối: góc nghiêng 5–65° ở mọi preset (linh hoạt kiểu Play Together/PUBG); số GDD cũ còn giữ làm bản dự phòng', () => {
+    for (const [name, p] of Object.entries(CAMERA_PRESETS)) expect([p.min_pitch_deg, p.max_pitch_deg], name).toEqual([5, 65]);
+    expect(CAMERA_PITCH_GDD_V03.follow_default).toEqual({ min_pitch_deg: 25, max_pitch_deg: 40 });
+    expect(CAMERA_PITCH_GDD_V03.follow_indoor).toEqual({ min_pitch_deg: 28, max_pitch_deg: 52 });
+  });
+  it('kéo dọc thấy rõ: ~350 px chuột đi hết dải 5–65°; ở góc thấp nhất camera vẫn cao hơn chân nhân vật', () => {
+    const c = new CameraManager(P);
+    c.snapBehind(0, target);
+    c.update(1 / 60, target, { dx: 0, dy: -400, zoom: 0 });
+    expect(c.pitch).toBeCloseTo(deg(5), 6);
+    expect(c.camera.position.y).toBeGreaterThan(target.y + 0.5);
+    c.update(1 / 60, target, { dx: 0, dy: 400, zoom: 0 });
+    expect(c.pitch).toBeCloseTo(deg(65), 6);
   });
   it('có đủ kiểu Chuẩn (mặc định, D-S2-01) và hai kiểu nâng cao A (giữ chuột phải), B (khóa con trỏ)', () => {
     expect(CAMERA_MODES.A.look).toBe('drag');

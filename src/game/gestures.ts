@@ -128,6 +128,15 @@ export function joystickVector(dx: number, dy: number, cfg: PointerInputConfig['
 }
 
 /**
+ * Nút tròn "nổi": tâm nút đặt ngay chỗ ngón chạm, nhưng đẩy vào trong để cả nút nằm gọn trong vùng chạm.
+ * Vùng nhỏ hơn nút thì đặt giữa vùng. Tọa độ màn hình (px).
+ */
+export function floatingStickCenter(x: number, y: number, zone: { left: number; top: number; width: number; height: number }, radius: number): { x: number; y: number } {
+  const fit = (v: number, lo: number, size: number) => (size < radius * 2 ? lo + size / 2 : Math.min(lo + size - radius, Math.max(lo + radius, v)));
+  return { x: fit(x, zone.left, zone.width), y: fit(y, zone.top, zone.height) };
+}
+
+/**
  * Theo dõi MỘT lần bấm-giữ-kéo bằng chuột/touchpad (theo pointerId) để biết lúc nào nút đã được thả,
  * kể cả khi trình duyệt làm mất `pointerup` (thả ngoài cửa sổ, đổi tab…).
  * Không đòi `buttons` đúng một giá trị: khác 0 là đang giữ. Nếu trình duyệt chưa từng báo `buttons` khác 0

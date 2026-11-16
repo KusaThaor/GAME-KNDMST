@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ButtonDrag, LookGestures, WheelRouter, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
+import { ButtonDrag, LookGestures, WheelRouter, floatingStickCenter, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
 import { CAMERA_MODES, CAMERA_MODE_ORDER, DEFAULT_CAMERA_MODE, POINTER_INPUT, isCameraMode, nextCameraMode } from '../../../src/config/camera';
 
 const CFG = POINTER_INPUT;
@@ -236,5 +236,25 @@ describe('WheelRouter — touchpad vuốt 2 ngón: ngang = xoay camera, dọc = 
   it('một sự kiện không xoay quá giới hạn (máy gửi số rất lớn)', () => {
     const v = new WheelRouter(CFG).feed(100000, 0, 0, false, 0);
     expect(Math.abs(v.lookDx)).toBe(W.max_px_per_event);
+  });
+});
+
+describe('floatingStickCenter — nút tròn "nổi" (chạm đâu trong vùng góc trái dưới thì nút hiện ở đó)', () => {
+  const R = CFG.joystick.radius_px;
+  const zone = { left: 0, top: 400, width: 175, height: 444 };
+  it('mặc định bật nổi, vùng chạm rộng hơn nút', () => {
+    expect(CFG.joystick.floating).toBe(true);
+    expect(CFG.joystick.zone.max_width_px).toBeGreaterThan(R * 2);
+    expect(CFG.joystick.zone.max_height_px).toBeGreaterThan(R * 2);
+  });
+  it('chạm giữa vùng: tâm nút đúng chỗ ngón tay', () => {
+    expect(floatingStickCenter(100, 600, zone, R)).toEqual({ x: 100, y: 600 });
+  });
+  it('chạm sát mép: tâm nút bị đẩy vào trong để nút không tràn ra ngoài vùng', () => {
+    expect(floatingStickCenter(3, 840, zone, R)).toEqual({ x: R, y: 844 - R });
+    expect(floatingStickCenter(170, 401, zone, R)).toEqual({ x: 175 - R, y: 400 + R });
+  });
+  it('vùng nhỏ hơn nút: đặt giữa vùng', () => {
+    expect(floatingStickCenter(10, 10, { left: 0, top: 0, width: 80, height: 60 }, R)).toEqual({ x: 40, y: 30 });
   });
 });

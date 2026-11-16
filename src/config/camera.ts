@@ -1,8 +1,8 @@
 /**
  * Camera và phím điều khiển trong Ngày ký ức. Mọi số ở đây CHỈNH ĐƯỢC mà không sửa code hệ thống.
  *
- * Nguồn: GDD v0.3 §3 — camera thứ ba (CONFIRMED), nhìn chéo xuống 25–40°, cách 5,5 m (zoom 3,5–8 m),
- * tự kéo gần khi bị che. Kiểu điều khiển: "Chuẩn" (mặc định, D-S2-01 chốt 15/11) + A/B nâng cao; người chơi đổi bằng phím V hoặc menu.
+ * Nguồn: GDD v0.3 §3 — camera thứ ba (CONFIRMED), cách 5,5 m (zoom 3,5–8 m), tự kéo gần khi bị che.
+ * Góc nghiêng: GDD ghi 25–40°, chủ dự án chốt 16/11 tối mở thành 5–65° (xem CAMERA_PITCH_RANGE). Kiểu điều khiển: "Chuẩn" (mặc định, D-S2-01 chốt 15/11) + A/B nâng cao; người chơi đổi bằng phím V hoặc menu.
  */
 export interface CameraPreset {
   fov: number;
@@ -17,10 +17,22 @@ export interface CameraPreset {
   collide_pad: number;
 }
 
+/**
+ * Góc nghiêng (kéo dọc): CHỦ DỰ ÁN CHỐT 16/11 tối — 5–65° ở mọi preset, để kéo lên/xuống thấy rõ như Play Together/PUBG
+ * (5° ≈ gần ngang tầm mắt, 65° ≈ nhìn từ trên cao). Khoảng cách, zoom, góc mặc định vẫn theo GDD v0.3 §3.
+ * Muốn quay lại số GDD cũ: thay min/max bằng `CAMERA_PITCH_GDD_V03` bên dưới.
+ */
+export const CAMERA_PITCH_RANGE = { min_pitch_deg: 5, max_pitch_deg: 65 };
+/** BẢN DỰ PHÒNG — dải góc theo GDD v0.3 §3 trước khi chốt 16/11 (không dùng, giữ để đổi lại nhanh). */
+export const CAMERA_PITCH_GDD_V03 = {
+  follow_default: { min_pitch_deg: 25, max_pitch_deg: 40 },
+  follow_indoor: { min_pitch_deg: 28, max_pitch_deg: 52 },
+};
+
 export const CAMERA_PRESETS: Record<string, CameraPreset> = {
-  follow_default: { fov: 50, distance: 5.5, min_distance: 3.5, max_distance: 8, pitch_deg: 30, min_pitch_deg: 25, max_pitch_deg: 40, look_height: 1.0, follow_sharpness: 10, collide_pad: 0.25 },
+  follow_default: { fov: 50, distance: 5.5, min_distance: 3.5, max_distance: 8, pitch_deg: 30, ...CAMERA_PITCH_RANGE, look_height: 1.0, follow_sharpness: 10, collide_pad: 0.25 },
   /** Trong nhà (lớp học): gần hơn, dốc hơn để tường ít che. */
-  follow_indoor: { fov: 55, distance: 4.2, min_distance: 2.6, max_distance: 6, pitch_deg: 38, min_pitch_deg: 28, max_pitch_deg: 52, look_height: 1.0, follow_sharpness: 10, collide_pad: 0.25 },
+  follow_indoor: { fov: 55, distance: 4.2, min_distance: 2.6, max_distance: 6, pitch_deg: 38, ...CAMERA_PITCH_RANGE, look_height: 1.0, follow_sharpness: 10, collide_pad: 0.25 },
 };
 
 export const DEFAULT_CAMERA_PRESET = 'follow_default';
@@ -75,8 +87,13 @@ export const POINTER_INPUT = {
    * `max_px_per_event`: chặn số lạ từ một số máy.
    */
   wheel_look: { enabled: true, px_scale: 1, gesture_gap_ms: 160, max_px_per_event: 120 },
-  /** Nút tròn ảo (cảm ứng): bán kính (px), vùng chết, kéo tới bao xa (tỉ lệ bán kính) thì chạy. */
-  joystick: { radius_px: 56, dead_zone: 0.18, run_at: 0.85 },
+  /**
+   * Nút tròn ảo (cảm ứng): bán kính (px), vùng chết, kéo tới bao xa (tỉ lệ bán kính) thì chạy.
+   * `floating` (16/11 tối): chạm BẤT KỲ đâu trong vùng góc trái dưới thì nút tròn hiện ngay dưới ngón tay (kiểu PUBG/Genshin),
+   * không phải đặt ngón đúng vào nút. Thả tay nút về chỗ cũ. `false` = nút cố định như bản trước (code cũ vẫn giữ).
+   * `zone`: kích thước vùng chạm = min(tỉ lệ màn hình, số px tối đa).
+   */
+  joystick: { radius_px: 56, dead_zone: 0.18, run_at: 0.85, floating: true, zone: { width_frac: 0.45, height_frac: 0.6, max_width_px: 340, max_height_px: 360 } },
 };
 export type PointerInputConfig = typeof POINTER_INPUT;
 
