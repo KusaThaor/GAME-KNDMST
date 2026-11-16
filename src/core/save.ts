@@ -55,7 +55,8 @@ export interface SaveState {
   phone: Record<string, PhoneMessage[]>;
   public_demo_done: boolean;
   /** Kiểu điều khiển camera (chỉ lưu cục bộ, không vào analytics). Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn. */
-  settings: { camera_mode: CameraModeId };
+  /** free_look: tùy chọn "Nhìn tự do" (khóa con trỏ, rê touchpad để nhìn); thiếu = tắt. */
+  settings: { camera_mode: CameraModeId; free_look?: boolean };
 }
 
 export function newSave(attemptId: string): SaveState {

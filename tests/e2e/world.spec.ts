@@ -10,7 +10,7 @@ import type { CollectBatch } from '../../shared/events';
 const SHOTS = 'shots/world';
 mkdirSync(SHOTS, { recursive: true });
 
-type Cam = { mode: string; look: string; state: string; yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean };
+type Cam = { mode: string; look: string; state: string; freeLook: boolean; pointerLocked: boolean; yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean };
 type St = {
   mode: string | null; step: string | null; zone: string | null; device: string; listeners: number;
   player: { x: number; y: number; z: number } | null; camera: Cam | null;
@@ -367,6 +367,257 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     expect(Math.hypot(s1.player!.x - s0.player!.x, s1.player!.z - s0.player!.z)).toBeGreaterThan(0.3);
     expect(Math.abs(s1.camera!.yaw - s0.camera!.yaw)).toBeGreaterThan(0.2);
     expect(await pageStill(page)).toEqual({ scrollX: 0, scrollY: 0, scale: 1, docScroll: 0 });
+    expect(errors).toEqual([]);
+  });
+});
+
+// ---------------- HOTFIX touchpad Windows: kéo xoay chắc chắn hơn + "Nhìn tự do" ----------------
+// Touchpad thật trên Windows/Cốc Cốc KHÔNG chạy được ở đây: Chrome headless gửi chuột qua CDP (giống hệt cách touchpad
+// "bấm-giữ-kéo" đến trình duyệt: pointerType=mouse, button 0). Khóa con trỏ được GIẢ LẬP (stub) để kiểm logic game,
+// vì Chrome headless không khóa con trỏ thật — có 1 ca riêng ghi lại Chrome headless làm gì với yêu cầu khóa thật.
+type DiagRow = { type: string; pointerId: number; buttons: number; captured: boolean; dragging: boolean; note: string; pointerType: string };
+const diagRows = (page: Page) => page.evaluate(() => (window.__game as unknown as { inputDiagnostics?: { rows(): unknown[] } }).inputDiagnostics!.rows() as DiagRow[]);
+const hasCapture = (page: Page, id: number) => page.evaluate((pid) => document.querySelector('#app canvas')!.hasPointerCapture(pid), id);
+
+/** Giả lập khóa con trỏ: 'ok' = trình duyệt cho khóa, 'reject' = từ chối. `__userEsc()` = người chơi bấm Esc (trình duyệt tự thả). */
+async function stubPointerLock(page: Page, outcome: 'ok' | 'reject') {
+  await page.addInitScript((mode) => {
+    let lockEl: Element | null = null;
+    const w = window as unknown as { __lockCalls: number; __userEsc: () => void };
+    w.__lockCalls = 0;
+    Object.defineProperty(Document.prototype, 'pointerLockElement', { configurable: true, get: () => lockEl });
+    HTMLCanvasElement.prototype.requestPointerLock = function (this: HTMLCanvasElement) {
+      w.__lockCalls++;
+      if (mode === 'reject') {
+        setTimeout(() => document.dispatchEvent(new Event('pointerlockerror')), 0);
+        return Promise.reject(new DOMException('denied', 'NotAllowedError'));
+      }
+      lockEl = this;
+      setTimeout(() => document.dispatchEvent(new Event('pointerlockchange')), 0);
+      return Promise.resolve();
+    } as unknown as typeof HTMLCanvasElement.prototype.requestPointerLock;
+    Document.prototype.exitPointerLock = function () { if (!lockEl) return; lockEl = null; setTimeout(() => document.dispatchEvent(new Event('pointerlockchange')), 0); };
+    w.__userEsc = () => { lockEl = null; document.dispatchEvent(new Event('pointerlockchange')); };
+  }, outcome);
+}
+const lockCalls = (page: Page) => page.evaluate(() => (window as unknown as { __lockCalls: number }).__lockCalls);
+
+test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do', () => {
+  const X = 1000, Y = 300;
+
+  test('H1: kéo nút trái đổi cả yaw lẫn pitch; rê không bấm không xoay; kéo phải vẫn xoay; thả ra camera không bị đặt lại', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    expect((await cam(page)).mode).toBe('standard');
+    // rê không bấm (touchpad lướt một ngón)
+    let c0 = await cam(page);
+    await page.mouse.move(X, Y); await page.mouse.move(X + 200, Y + 80, { steps: 10 });
+    await frames(page);
+    expect((await cam(page)).yaw).toBe(c0.yaw);
+    expect((await cam(page)).pitch).toBe(c0.pitch);
+    // bấm-giữ-kéo trái: cả ngang lẫn dọc
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + 150, Y + 60, { steps: 12 });
+    await page.mouse.up();
+    await frames(page);
+    const c1 = await cam(page);
+    expect(Math.abs(c1.yaw - c0.yaw)).toBeGreaterThan(0.2);
+    expect(c1.pitch).not.toBe(c0.pitch);
+    // không bị đặt lại sau khi thả
+    await page.waitForTimeout(1000); await frames(page);
+    expect((await cam(page)).yaw).toBeCloseTo(c1.yaw, 6);
+    expect((await cam(page)).pitch).toBeCloseTo(c1.pitch, 6);
+    // kéo phải
+    c0 = c1;
+    await page.mouse.move(X, Y); await page.mouse.down({ button: 'right' });
+    await page.mouse.move(X - 150, Y, { steps: 12 });
+    await page.mouse.up({ button: 'right' });
+    await frames(page);
+    expect(Math.abs((await cam(page)).yaw - c0.yaw)).toBeGreaterThan(0.2);
+    expect(errors).toEqual([]);
+  });
+
+  test('H2: giữ con trỏ khi kéo (pointer capture) — kéo ra ngoài khung vẫn xoay, thả là trả lại; bảng chẩn đoán ghi đúng', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page, '&day=d.g06.01&inputdebug=1');
+    await expect(page.locator('[data-testid="input-diagnostics"]')).toBeVisible();
+    const cdp = await page.context().newCDPSession(page);
+    const c0 = await cam(page);
+    await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: X, y: Y, button: 'left', buttons: 1, clickCount: 1 });
+    for (let i = 1; i <= 6; i++) await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: X + i * 10, y: Y, button: 'left', buttons: 1 });
+    const down = (await diagRows(page)).find((r) => r.type === 'pointerdown')!;
+    expect(down.note).toContain('bắt đầu theo dõi kéo');
+    expect(await hasCapture(page, down.pointerId)).toBe(true);
+    // ra ngoài khung hình (bên phải cửa sổ 1280 px)
+    for (let i = 1; i <= 6; i++) await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 1270 + i * 20, y: Y, button: 'left', buttons: 1 });
+    await frames(page);
+    const mid = await cam(page);
+    expect(Math.abs(mid.yaw - c0.yaw)).toBeGreaterThan(0.2);
+    await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 1390, y: Y, button: 'left', buttons: 0, clickCount: 1 });
+    await frames(page);
+    expect(await hasCapture(page, down.pointerId)).toBe(false);
+    const rows = await diagRows(page);
+    expect(rows.some((r) => r.type === 'pointermove' && r.captured && r.note.includes('xoay'))).toBe(true);
+    expect(rows.some((r) => r.type === 'pointerup' && r.note.includes('KÉO'))).toBe(true);
+    // sao chép: có thông tin máy + nhật ký
+    const text = await page.evaluate(() => (window.__game as unknown as { inputDiagnostics: { text(): string } }).inputDiagnostics.text());
+    expect(text).toMatch(/ua: .*Chrome/);
+    expect(text).toContain('kiểu camera đã lưu: standard');
+    expect(text).toContain('pointerdown');
+    await page.screenshot({ path: `${SHOTS}/H2-bang-chan-doan.png` });
+    expect(errors).toEqual([]);
+  });
+
+  test('H3: pointercancel giữa lúc kéo → dừng xoay, không bị coi là bấm; buttons=0 không có pointerup → tự kết thúc', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page, '&day=d.g06.01&inputdebug=1');
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + 60, Y, { steps: 6 });
+    const id = (await diagRows(page)).find((r) => r.type === 'pointerdown')!.pointerId;
+    await page.evaluate((pid) => window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: pid, pointerType: 'mouse', bubbles: true })), id);
+    await frames(page);
+    const c1 = await cam(page);
+    await page.mouse.move(X + 260, Y, { steps: 10 });
+    await frames(page);
+    expect((await cam(page)).yaw).toBe(c1.yaw);                 // đã hủy: rê tiếp không xoay
+    await page.mouse.up();
+    expect(await hasCapture(page, id)).toBe(false);
+    expect((await state(page)).ui.dialogue).toBeNull();
+
+    // nhả nút mà trình duyệt "quên" gửi pointerup: sự kiện move kế tiếp báo buttons=0 → kết thúc kéo
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + 60, Y, { steps: 6 });
+    await page.evaluate(([pid, x, y]) => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: pid, pointerType: 'mouse', buttons: 0, clientX: x, clientY: y, bubbles: true })), [id, X + 70, Y]);
+    const c2 = await cam(page);
+    await page.evaluate(([pid, x, y]) => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: pid, pointerType: 'mouse', buttons: 0, clientX: x, clientY: y, bubbles: true })), [id, X + 300, Y]);
+    await frames(page);
+    expect((await cam(page)).yaw).toBe(c2.yaw);
+    expect((await diagRows(page)).some((r) => r.note.includes('buttons=0'))).toBe(true);
+    await page.mouse.up();
+    expect(errors).toEqual([]);
+  });
+
+  test('H4: giữ W đi trong lúc kéo xoay — cả hai cùng chạy', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    const s0 = await state(page);
+    await page.keyboard.down('KeyW');
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + 160, Y, { steps: 16 });
+    await page.waitForTimeout(600);
+    const mid = await state(page);
+    await page.mouse.up();
+    await page.keyboard.up('KeyW');
+    expect(mid.camera!.state).toBe('walk');
+    expect(Math.hypot(mid.player!.x - s0.player!.x, mid.player!.z - s0.player!.z)).toBeGreaterThan(0.3);
+    expect(Math.abs(mid.camera!.yaw - s0.camera!.yaw)).toBeGreaterThan(0.2);
+    expect(errors).toEqual([]);
+  });
+
+  test('H5: Nhìn tự do (khóa con trỏ GIẢ LẬP thành công) — L bật, bấm để khóa, rê không bấm là xoay + W đi; Esc thả, KHÔNG tự khóa lại; thoại thả con trỏ', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await stubPointerLock(page, 'ok');
+    await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s01');
+    await page.keyboard.press('KeyL');
+    expect((await cam(page)).freeLook).toBe(true);
+    expect((await cam(page)).mode).toBe('standard');            // kiểu camera không đổi
+    await expect(page.locator('[data-testid="keys"]')).toContainText('Bấm vào màn hình để nhìn tự do');
+    expect(await lockCalls(page)).toBe(0);                      // bật thôi chưa khóa
+    await page.mouse.click(X, Y);
+    await expect.poll(async () => (await cam(page)).pointerLocked).toBe(true);
+    await expect(page.locator('[data-testid="keys"]')).toContainText('Rê touchpad/chuột để nhìn');
+    expect((await state(page)).ui.dialogue).toBeNull();         // bấm để khóa không bị coi là tương tác
+    // rê không bấm + giữ W cùng lúc
+    const s0 = await state(page);
+    await page.keyboard.down('KeyW');
+    await page.mouse.move(X + 120, Y + 30, { steps: 10 });
+    await page.waitForTimeout(500);
+    await page.keyboard.up('KeyW');
+    await frames(page);
+    const s1 = await state(page);
+    expect(Math.abs(s1.camera!.yaw - s0.camera!.yaw)).toBeGreaterThan(0.2);
+    expect(Math.hypot(s1.player!.x - s0.player!.x, s1.player!.z - s0.player!.z)).toBeGreaterThan(0.3);
+    // người chơi bấm Esc: trình duyệt thả con trỏ → menu mở
+    await page.evaluate(() => (window as unknown as { __userEsc: () => void }).__userEsc());
+    await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
+    expect((await cam(page)).pointerLocked).toBe(false);
+    await expect(page.locator('[data-act="menu-free-look"]')).toContainText('BẬT');
+    await page.locator('[data-act="resume"]').click();
+    const calls = await lockCalls(page);
+    await page.keyboard.press('KeyW'); await page.keyboard.press('KeyA');
+    await frames(page);
+    expect(await lockCalls(page)).toBe(calls);                  // không tự khóa lại khi bấm phím
+    expect((await cam(page)).pointerLocked).toBe(false);
+    // bấm vào màn hình thì khóa lại
+    await page.mouse.click(X, Y);
+    await expect.poll(async () => (await cam(page)).pointerLocked).toBe(true);
+    // có thoại → game thả con trỏ; xong thoại không tự khóa lại
+    await page.evaluate(() => window.__game!.teleportTo('NPC_A'));
+    await page.keyboard.press('KeyE');
+    await expect(page.locator('[data-testid="dialogue"]')).toBeVisible();
+    await expect.poll(async () => (await cam(page)).pointerLocked).toBe(false);
+    const calls2 = await lockCalls(page);
+    for (let i = 0; i < 10 && (await page.locator('[data-testid="dialogue"]').count()); i++) { await page.keyboard.press('Space'); await page.waitForTimeout(150); }
+    await expect(page.locator('[data-act^="choice-"]').first()).toBeVisible({ timeout: 20_000 });
+    await page.keyboard.press('Digit1');
+    await expect.poll(async () => (await state(page)).step, { timeout: 20_000 }).toBe('q_m1_main_05.s03');
+    await freeInDay(page);
+    await page.keyboard.press('KeyW');
+    expect(await lockCalls(page)).toBe(calls2);                 // xong thoại: không tự khóa lại
+    expect((await cam(page)).pointerLocked).toBe(false);
+    // tắt bằng nút trong Menu
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
+    await page.locator('[data-act="menu-free-look"]').click();
+    expect((await cam(page)).freeLook).toBe(false);
+    expect(errors).toEqual([]);
+  });
+
+  test('H6: Nhìn tự do bị trình duyệt TỪ CHỐI (giả lập) → báo cho người chơi, không thử lại tự động, kéo để xoay vẫn chạy', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await stubPointerLock(page, 'reject');
+    await openDay(page);
+    await page.keyboard.press('KeyL');
+    await page.mouse.click(X, Y);
+    await expect(page.locator('.hud-zone, [data-testid="toast"]').filter({ hasText: 'không cho khóa chuột' })).toBeVisible({ timeout: 10_000 });
+    expect((await cam(page)).pointerLocked).toBe(false);
+    expect(await lockCalls(page)).toBe(1);
+    await page.keyboard.press('KeyW');
+    await page.waitForTimeout(300);
+    expect(await lockCalls(page)).toBe(1);
+    const c0 = await cam(page);
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + 160, Y, { steps: 12 });
+    await page.mouse.up();
+    await frames(page);
+    expect(Math.abs((await cam(page)).yaw - c0.yaw)).toBeGreaterThan(0.2);
+    expect(errors).toEqual([]);
+  });
+
+  test('H7: Chrome headless với khóa con trỏ THẬT (không giả lập): hoặc khóa được, hoặc báo lỗi — không im lặng', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    await page.keyboard.press('KeyL');
+    await page.mouse.click(X, Y);
+    await page.waitForTimeout(1500);
+    const locked = (await cam(page)).pointerLocked;
+    const toast = (await state(page) as unknown as { toast: string | null }).toast ?? '';
+    test.info().annotations.push({ type: 'pointer-lock-headless', description: locked ? 'khóa được' : `không khóa được; thông báo: ${toast}` });
+    expect(locked || toast.includes('không cho khóa chuột')).toBe(true);
     expect(errors).toEqual([]);
   });
 });

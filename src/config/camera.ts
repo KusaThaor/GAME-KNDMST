@@ -73,6 +73,8 @@ export const CONTROLS = {
   run: ['ShiftLeft', 'ShiftRight'],
   interact: ['KeyE'],
   camera_mode: ['KeyV'],
+  /** Bật/tắt "Nhìn tự do" (khóa con trỏ, rê touchpad/chuột để nhìn). */
+  free_look: ['KeyL'],
   journal: ['KeyJ', 'Tab'],
   film_camera: ['KeyC'],
   menu: ['Escape'],

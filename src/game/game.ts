@@ -437,6 +437,16 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     bus.emit('save_requested', { reason: 'settings' });
   }
 
+  /** "Nhìn tự do": tùy chọn riêng, giữ nguyên kiểu camera đang chọn (lưu cục bộ; không vào analytics). */
+  function toggleFreeLook() {
+    const on = !save.settings.free_look;
+    save.settings.free_look = on;
+    input.setFreeLook(on);
+    ui.set({ freeLook: on });
+    toast(on ? 'Nhìn tự do: BẬT — bấm vào màn hình, rồi rê touchpad để nhìn · Esc để thả' : 'Nhìn tự do: TẮT', 4200);
+    bus.emit('save_requested', { reason: 'settings' });
+  }
+
   // ---------- trong Ngày: lại gần, tương tác ----------
   function proximity() {
     if (!dayScene || engine.context?.kind !== 'day') return;
@@ -639,6 +649,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     feedbackSkip() { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
     toggleCameraMode,
+    toggleFreeLook,
     stick(v) { input.setStick(v); },
   };
 
@@ -659,13 +670,21 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
     else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
     else if (isControl('camera_mode', code) && !locked()) toggleCameraMode();
+    else if (isControl('free_look', code) && s.mode === 'day' && !locked()) toggleFreeLook();
     // Phím C (film_camera) để dành cho máy ảnh cầm tay/cuộn phim — chưa làm, không gán việc khác.
   });
   // Kiểu B: chỉ khóa con trỏ khi đang đi lại trong Ngày; có thoại/bảng thì thả. Người chơi bấm Esc để thả → mở menu.
   input.setLockGuard(() => ui.get().mode === 'day' && !locked());
   input.onLockChange((isLocked, byUser) => {
+    ui.set({ pointerLocked: isLocked });
     if (!isLocked && byUser && ui.get().mode === 'day' && !ui.get().panel) actions.openPanel('menu');
   });
+  // Khóa con trỏ thất bại (trình duyệt/touchpad không cho): không thử lại tự động; kéo để xoay vẫn chạy như thường.
+  input.onLockError(() => {
+    if (ui.get().mode === 'day') toast('Trình duyệt không cho khóa chuột — vẫn xoay được bằng cách bấm giữ rồi kéo', 5000);
+  });
+  input.setFreeLook(!!save.settings.free_look);
+  ui.set({ freeLook: !!save.settings.free_look });
   input.onPointer((kind, x, y) => {
     if (hubScene && engine.context?.kind === 'hub') {
       const id = locked() ? null : hubScene.pick(x, y);

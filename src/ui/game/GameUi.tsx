@@ -153,7 +153,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.mode === 'day' && !s.fade.on && !blocking && !s.photo && (
         s.device === 'touch'
           ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để xoay · Chụm 2 ngón để phóng</div>
-          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {CAMERA_MODES[s.cameraMode].hint} · lăn chuột/cuộn 2 ngón để phóng</div>
+          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {lookHint(s)} · lăn chuột/cuộn 2 ngón để phóng</div>
       )}
       {s.prompt && !blocking && !(touch && s.mode === 'day') && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
       {touch && s.mode === 'day' && !s.fade.on && !blocking && (!s.photo || (s.photo.phase === 'countdown' && !s.photo.posed)) && <TouchStick a={a} />}
@@ -242,6 +242,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
           <button class="primary" data-act="resume" onClick={a.closePanel}>Chơi tiếp</button>
           {s.mode === 'day' && <button data-act="restart-day" onClick={a.menuRestartDay}>Chơi lại Ngày từ đầu</button>}
           {s.mode === 'day' && <button data-act="safe-spot" onClick={a.menuSafeSpot}>Về chỗ an toàn</button>}
+          {s.mode === 'day' && s.device !== 'touch' && <button data-act="menu-free-look" data-on={String(s.freeLook)} onClick={a.toggleFreeLook}>Nhìn tự do bằng touchpad: {s.freeLook ? 'BẬT' : 'TẮT'} <kbd>L</kbd></button>}
           {s.mode === 'day' && <button data-act="menu-camera-mode" data-mode={s.cameraMode} onClick={a.toggleCameraMode}>Kiểu camera: {CAMERA_MODES[s.cameraMode].label}{s.device === 'touch' ? '' : ` — ${CAMERA_MODES[s.cameraMode].hint}`}</button>}
           {s.mode === 'day' && s.inReplay && <button data-act="leave-day" onClick={a.menuLeaveDay}>Về phòng (thôi xem lại)</button>}
           <button class="danger" data-act="wipe" onClick={a.menuWipe}>{s.wipeArmed ? 'Bấm lần nữa để xóa hết' : 'Xóa tiến trình'}</button>
@@ -270,4 +271,10 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
 export function mountGameUi(el: HTMLElement, store: UiStore, actions: UiActions) {
   render(<Ui store={store} a={actions} />, el);
   return () => render(null, el);
+}
+
+/** Dòng hướng dẫn xoay camera trên máy tính: theo kiểu camera, hoặc theo "Nhìn tự do" nếu đang bật. */
+function lookHint(s: UiState): string {
+  if (s.freeLook && s.cameraMode !== 'B') return s.pointerLocked ? 'Rê touchpad/chuột để nhìn · Esc để thả' : 'Bấm vào màn hình để nhìn tự do (L để tắt)';
+  return CAMERA_MODES[s.cameraMode].hint;
 }

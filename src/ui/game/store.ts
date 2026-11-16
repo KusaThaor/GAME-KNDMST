@@ -42,6 +42,9 @@ export interface UiState {
   cameraMode: CameraModeId;
   /** Người chơi đang dùng gì: 'keyboard' = chuột/bàn phím/touchpad, 'touch' = cảm ứng. Chỉ để đổi giao diện; không vào analytics. */
   device: 'keyboard' | 'touch';
+  /** Tùy chọn "Nhìn tự do" đang bật; con trỏ đang bị khóa. Chỉ để hiện chữ hướng dẫn. */
+  freeLook: boolean;
+  pointerLocked: boolean;
   dialogue: { who: string; color: string; text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
@@ -63,7 +66,7 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard',
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false,
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
@@ -90,6 +93,8 @@ export interface UiActions {
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   feedbackSkip(): void;
   toggleCameraMode(): void;
+  /** Bật/tắt "Nhìn tự do" (phím L hoặc nút trong Menu). */
+  toggleFreeLook(): void;
   /** Nút E ảo (cảm ứng) / bấm gợi ý: tương tác với thứ đang ở gần. */
   interact(): void;
   /** Nút tròn ảo: ý định di chuyển, null = thả tay. */
