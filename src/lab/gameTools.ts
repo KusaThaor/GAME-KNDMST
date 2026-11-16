@@ -19,6 +19,7 @@ import type { GameHandle, RunOptions } from '../game/game';
 import { AlbumModel } from '../systems/album';
 import { HubModel } from '../systems/hub';
 import { QuestEngine } from '../systems/questEngine';
+import { attachInputDiagnostics, type InputDiagnostics } from './inputDiagnostics';
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
@@ -100,6 +101,8 @@ export interface GameToolsApi {
   ready(): boolean;
   /** Tóm tắt trạng thái để bot/test đối chiếu (không có gì ở đây đi vào analytics). */
   state(): Record<string, unknown>;
+  /** Bảng chẩn đoán chuột/touchpad (chỉ khi `?inputdebug=1`). */
+  inputDiagnostics?: InputDiagnostics;
   stats(): Record<string, number>;
   /** Một nhịp của bot. Trả nhãn việc vừa làm; 'done' khi không còn gì để chơi. */
   botStep(opts?: BotOptions): string;
@@ -243,7 +246,7 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       player: h.day() ? { x: h.day()!.scene.playerPosition.x, y: h.day()!.scene.playerPosition.y, z: h.day()!.scene.playerPosition.z } : null,
       zone: h.day()?.scene.zone ?? null,
       device: h.input.device,
-      camera: h.day() ? { mode: h.save.settings.camera_mode, look: h.input.lookMode, pointerLocked: h.input.pointerLocked, ...h.day()!.scene.debug() } : null,
+      camera: h.day() ? { mode: h.save.settings.camera_mode, look: h.input.lookMode, freeLook: h.input.freeLook, pointerLocked: h.input.pointerLocked, ...h.day()!.scene.debug() } : null,
       listeners: h.input.listenerCount,
       toast: h.ui.get().toast,
       ui: { panel: h.ui.get().panel, dialogue: h.ui.get().dialogue?.text ?? null, who: h.ui.get().dialogue?.who ?? null, objective: h.ui.get().objective, feedback: h.ui.get().feedback, prompt: h.ui.get().prompt?.text ?? null },
@@ -286,5 +289,7 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       console.info(`[bot] xong sau ${api.bot.steps} nhịp:`, api.bot.log.join(' → '));
     })();
   }
+  // Bảng chẩn đoán chuột/touchpad: `?play=1&inputdebug=1` (chỉ bản test).
+  if (params.get('inputdebug') === '1') api.inputDiagnostics = attachInputDiagnostics(h);
   return api;
 }
