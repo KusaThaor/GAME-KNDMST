@@ -15,8 +15,8 @@ Nguồn sự thật trong code:
 | Đi | `W A S D` hoặc 4 phím mũi tên | Hướng đi theo hướng camera |
 | Chạy | giữ `Shift` khi đi | |
 | Xoay camera | **bấm giữ chuột trái (hoặc phải) rồi kéo** trên chỗ trống | Kéo quá 6 px mới xoay; bấm nhanh vẫn là bấm |
-| Xoay camera bằng touchpad | **nhấn mặt touchpad xuống, giữ rồi kéo** (hoặc chạm 2 lần rồi kéo) | Chưa xác nhận trên touchpad thật (xem `docs/TOUCHPAD_CHECK_GUIDE.md`) |
-| Lại gần / ra xa | lăn chuột · touchpad: **cuộn 2 ngón** hoặc **chụm 2 ngón** | Giới hạn 3,5–8 m |
+| Xoay camera bằng touchpad | **vuốt 2 ngón sang ngang** (không cần nhấn) — tay kia vẫn giữ WASD để đi; hoặc nhấn mặt touchpad xuống, giữ rồi kéo | Thêm 16/11 chiều. Chưa xác nhận trên touchpad thật. Thấy xoay ngược chiều → đổi dấu `wheel_look.px_scale` |
+| Lại gần / ra xa | lăn chuột · touchpad: **vuốt 2 ngón lên/xuống** hoặc **chụm 2 ngón** | Giới hạn 3,5–8 m. Mỗi lần vuốt chỉ theo một hướng (ngang = xoay, dọc = phóng) |
 | Tương tác (nói chuyện, nhặt, xem) | `E`, hoặc bấm chuột vào người/vật | Khi có gợi ý `[E] …` dưới màn hình |
 | Đọc tiếp thoại | `Space` hoặc bấm vào khung thoại | Khung thoại ghi "Space ▸" |
 | Chọn câu trả lời | phím số `1`, `2`, `3`… hoặc bấm vào lựa chọn | |
@@ -27,7 +27,7 @@ Nguồn sự thật trong code:
 | (để dành) Máy ảnh cầm tay / cuộn phim | `C` | Chưa làm, không gán việc khác |
 
 **Dòng hướng dẫn đang hiện dưới màn hình:**
-> `WASD` đi · `Shift` chạy · `E` tương tác · Kéo chuột để xoay camera · lăn chuột/cuộn 2 ngón để phóng
+> `WASD` đi · `Shift` chạy · `E` tương tác · Kéo chuột để xoay camera · lăn chuột để phóng · touchpad: vuốt 2 ngón ngang để xoay, dọc để phóng
 
 ## 2. Điện thoại / máy tính bảng (cảm ứng; dọc và ngang)
 
@@ -51,7 +51,7 @@ Nút tròn và nút E chỉ hiện khi người chơi đang dùng cảm ứng (m
 Đây là ghi chú để thiết kế, không phải nội dung đã chốt. Câu chữ thật do nhóm thiết kế viết.
 - Nên hiện theo thiết bị đang dùng (máy tính khác điện thoại). Game đã biết thiết bị qua `UiState.device` (`'keyboard'` | `'touch'`).
 - Các ý cần dạy, theo thứ tự: đi → xoay camera → lại gần/ra xa → tương tác (E) → Sổ tay/Menu.
-- Riêng touchpad: nói rõ "nhấn mặt touchpad xuống rồi kéo"; nhiều người quen cuộn 2 ngón sẽ chỉ phóng to/thu nhỏ.
+- Riêng touchpad: dạy "vuốt 2 ngón sang ngang để xoay, lên/xuống để phóng" — vừa giữ WASD vừa vuốt được.
 - Hiện lại được từ Menu.
 - Không gửi thông tin thiết bị hay bước hướng dẫn vào analytics nếu chưa duyệt (không thêm event mới).
 

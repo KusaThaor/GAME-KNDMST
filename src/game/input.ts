@@ -8,11 +8,11 @@
  *   'drag' (kiểu A): giữ chuột phải rồi rê.
  *   'lock' (kiểu B): bấm vào màn hình để khóa con trỏ, rê chuột là xoay; Esc thả con trỏ (trình duyệt tự làm).
  * Ở mọi kiểu: lăn chuột / cuộn 2 ngón touchpad / chụm touchpad (wheel + ctrlKey) để zoom; cảm ứng kéo một ngón trên
- * vùng trống để xoay, chụm 2 ngón để zoom. Nút tròn ảo (UI) báo ý định di chuyển qua `setStick`.
+ * vùng trống để xoay, chụm 2 ngón để zoom. Touchpad vuốt NGANG 2 ngón = xoay (không cần nhấn → vừa giữ WASD vừa xoay được). Nút tròn ảo (UI) báo ý định di chuyển qua `setStick`.
  * Phần tính toán thuần nằm ở gestures.ts (có test đơn vị).
  */
 import { CONTROLS, POINTER_INPUT, type ControlAction, type LookStyle } from '../config/camera';
-import { ButtonDrag, LookGestures, wheelZoomSteps } from './gestures';
+import { ButtonDrag, LookGestures, WheelRouter } from './gestures';
 
 export type LookMode = LookStyle;
 export type InputDevice = 'keyboard' | 'touch';
@@ -86,6 +86,7 @@ export function createInput(el: HTMLElement): GameInput {
   const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
   let device: InputDevice = coarse ? 'touch' : 'keyboard';
   const gestures = new LookGestures(POINTER_INPUT);
+  const wheelRouter = new WheelRouter(POINTER_INPUT);
   const keyFns: ((code: string) => void)[] = [], ptrFns: ((k: 'move' | 'click', x: number, y: number) => void)[] = [], actFns: (() => void)[] = [];
   const lockFns: ((locked: boolean, byUser: boolean) => void)[] = [];
   const devFns: ((d: InputDevice) => void)[] = [];
@@ -223,7 +224,13 @@ export function createInput(el: HTMLElement): GameInput {
     // ctrlKey = touchpad đang chụm: luôn chặn để trang không bị phóng to. Lăn trên bảng/danh sách thì để bảng tự cuộn.
     if (!onCanvas(e) && !e.ctrlKey) return;
     e.preventDefault();
-    zoom += wheelZoomSteps(e.deltaY, e.deltaMode, e.ctrlKey, POINTER_INPUT);
+    act();
+    setDevice('keyboard');
+    // vuốt ngang 2 ngón = xoay (ở mọi kiểu, giống kéo chuột), dọc = zoom
+    const r = wheelRouter.feed(e.deltaX, e.deltaY, e.deltaMode, e.ctrlKey, e.timeStamp || performance.now());
+    zoom += r.zoom;
+    dx += r.lookDx;
+    if (debugTap) tap(e, r.lookDx ? `vuốt ngang 2 ngón → xoay ${r.lookDx.toFixed(1)} px` : `wheel → zoom ${r.zoom.toFixed(2)} nấc`);
   };
   const cm = (e: Event) => e.preventDefault();
   const blur = () => {

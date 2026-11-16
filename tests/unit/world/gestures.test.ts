@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ButtonDrag, LookGestures, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
+import { ButtonDrag, LookGestures, WheelRouter, joystickVector, wheelZoomSteps } from '../../../src/game/gestures';
 import { CAMERA_MODES, CAMERA_MODE_ORDER, DEFAULT_CAMERA_MODE, POINTER_INPUT, isCameraMode, nextCameraMode } from '../../../src/config/camera';
 
 const CFG = POINTER_INPUT;
@@ -191,5 +191,50 @@ describe('ButtonDrag — giữ nút chuột/touchpad khi kéo (hotfix touchpad)'
     d.begin(1); d.stillPressed(1, 1); d.end(1);
     d.begin(1);
     expect(d.stillPressed(1, 0)).toBe(true);
+  });
+});
+
+describe('WheelRouter — touchpad vuốt 2 ngón: ngang = xoay camera, dọc = zoom (để vừa giữ WASD vừa xoay)', () => {
+  const W = CFG.wheel_look;
+  it('vuốt ngang: xoay, không zoom', () => {
+    const r = new WheelRouter(CFG);
+    const v = r.feed(20, 2, 0, false, 0);
+    expect(v.zoom).toBe(0);
+    expect(v.lookDx).toBeCloseTo(-20 * W.px_scale, 6);
+  });
+  it('vuốt dọc / lăn chuột thường: zoom như cũ, không xoay', () => {
+    const r = new WheelRouter(CFG);
+    const v = r.feed(0, 100, 0, false, 0);
+    expect(v.lookDx).toBe(0);
+    expect(v.zoom).toBeCloseTo(wheelZoomSteps(100, 0, false, CFG), 6);
+  });
+  it('trong một lần vuốt, giữ nguyên hướng đã chọn (vuốt ngang hơi lệch dọc không làm zoom giật)', () => {
+    const r = new WheelRouter(CFG);
+    r.feed(15, 3, 0, false, 0);
+    const v = r.feed(4, 9, 0, false, 16);          // cùng lần vuốt: dọc lớn hơn nhưng vẫn coi là ngang
+    expect(v.zoom).toBe(0);
+    expect(v.lookDx).toBeCloseTo(-4 * W.px_scale, 6);
+  });
+  it('nghỉ quá khoảng cách giữa hai lần vuốt → chọn lại hướng', () => {
+    const r = new WheelRouter(CFG);
+    r.feed(15, 0, 0, false, 0);
+    const v = r.feed(0, 50, 0, false, W.gesture_gap_ms + 50);
+    expect(v.lookDx).toBe(0);
+    expect(v.zoom).not.toBe(0);
+  });
+  it('chụm touchpad (ctrlKey) luôn là zoom, không xoay', () => {
+    const r = new WheelRouter(CFG);
+    const v = r.feed(30, -3, 0, true, 0);
+    expect(v.lookDx).toBe(0);
+    expect(v.zoom).toBeCloseTo(wheelZoomSteps(-3, 0, true, CFG), 6);
+  });
+  it('đơn vị dòng (deltaMode=1) được đổi ra pixel; tắt tính năng thì vuốt ngang không làm gì', () => {
+    expect(new WheelRouter(CFG).feed(2, 0, 1, false, 0).lookDx).toBeCloseTo(-2 * 33 * W.px_scale, 6);
+    const off = new WheelRouter({ ...CFG, wheel_look: { ...W, enabled: false } });
+    expect(off.feed(20, 0, 0, false, 0)).toEqual({ lookDx: 0, zoom: 0 });
+  });
+  it('một sự kiện không xoay quá giới hạn (máy gửi số rất lớn)', () => {
+    const v = new WheelRouter(CFG).feed(100000, 0, 0, false, 0);
+    expect(Math.abs(v.lookDx)).toBe(W.max_px_per_event);
   });
 });

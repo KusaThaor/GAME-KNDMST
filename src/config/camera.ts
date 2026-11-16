@@ -68,6 +68,13 @@ export const POINTER_INPUT = {
   wheel_pinch_px_per_step: 12,
   /** Một sự kiện lăn không quá bấy nhiêu nấc. */
   wheel_max_steps_per_event: 1,
+  /**
+   * Touchpad vuốt 2 ngón theo chiều NGANG = xoay camera (không cần nhấn mặt touchpad → tay kia vẫn giữ WASD để đi).
+   * Vuốt dọc vẫn là zoom. Mỗi lần vuốt chỉ theo một hướng (chọn ở sự kiện đầu), nghỉ quá `gesture_gap_ms` là lần vuốt mới.
+   * `px_scale`: 1 px vuốt = bao nhiêu px kéo chuột. Thấy xoay NGƯỢC chiều trên máy thật → đổi dấu (ví dụ -1).
+   * `max_px_per_event`: chặn số lạ từ một số máy.
+   */
+  wheel_look: { enabled: true, px_scale: 1, gesture_gap_ms: 160, max_px_per_event: 120 },
   /** Nút tròn ảo (cảm ứng): bán kính (px), vùng chết, kéo tới bao xa (tỉ lệ bán kính) thì chạy. */
   joystick: { radius_px: 56, dead_zone: 0.18, run_at: 0.85 },
 };

@@ -87,6 +87,33 @@ export function wheelZoomSteps(deltaY: number, deltaMode: number, ctrlKey: boole
   return Math.max(-m, Math.min(m, steps));
 }
 
+/**
+ * Chia một sự kiện `wheel` thành xoay camera hoặc zoom.
+ * Touchpad vuốt 2 ngón ngang (deltaX) = xoay; dọc (deltaY) / lăn chuột = zoom; chụm (ctrlKey) = luôn zoom.
+ * Hướng được chọn ở sự kiện đầu của một lần vuốt và giữ tới khi nghỉ quá `gesture_gap_ms` (tránh zoom giật khi vuốt hơi xéo).
+ * `lookDx` cùng đơn vị với kéo chuột (px), dấu: ngón đi sang trái giống kéo chuột sang trái (đổi bằng `px_scale` âm).
+ */
+export class WheelRouter {
+  private axis: 'x' | 'y' | null = null;
+  private last = -Infinity;
+  constructor(private cfg: Pick<PointerInputConfig, 'wheel_look' | 'wheel_px_per_step' | 'wheel_pinch_px_per_step' | 'wheel_max_steps_per_event'>) {}
+
+  feed(deltaX: number, deltaY: number, deltaMode: number, ctrlKey: boolean, now: number): { lookDx: number; zoom: number } {
+    const w = this.cfg.wheel_look;
+    if (ctrlKey || !w.enabled) { this.axis = null; return { lookDx: 0, zoom: wheelZoomSteps(deltaY, deltaMode, ctrlKey, this.cfg) }; }
+    if (now - this.last > w.gesture_gap_ms) this.axis = null;
+    this.last = now;
+    if (this.axis === null) {
+      if (!deltaX && !deltaY) return { lookDx: 0, zoom: 0 };
+      this.axis = Math.abs(deltaX) > Math.abs(deltaY) ? 'x' : 'y';
+    }
+    if (this.axis === 'y') return { lookDx: 0, zoom: wheelZoomSteps(deltaY, deltaMode, false, this.cfg) };
+    const px = deltaMode === 1 ? deltaX * 33 : deltaMode === 2 ? deltaX * 800 : deltaX;
+    const m = w.max_px_per_event;
+    return { lookDx: Math.max(-m, Math.min(m, -px * w.px_scale)), zoom: 0 };
+  }
+}
+
 export interface StickVector { moving: boolean; forward: number; strafe: number; run: boolean; knobX: number; knobY: number }
 
 /** dx/dy = ngón tay lệch khỏi tâm nút tròn (px, y hướng xuống như màn hình). */

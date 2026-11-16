@@ -238,6 +238,42 @@ test.describe('S2 Chặng 2 — kiểu điều khiển "Chuẩn" (chuột, touch
     expect((await state(page)).ui.dialogue).toBeNull();     // kéo xong không bị coi là bấm vào vật
     expect(errors).toEqual([]);
   });
+
+  test('ca 12b: touchpad mô phỏng — giữ W + vuốt NGANG 2 ngón (không nhấn) = vừa đi vừa xoay; vuốt dọc chỉ zoom; trang không cuộn ngang', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    const cdp = await page.context().newCDPSession(page);
+    const X = 1000, Y = 300;
+    const swipe = (deltaX: number, deltaY: number) => cdp.send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: X, y: Y, deltaX, deltaY, modifiers: 0 });
+    await page.mouse.move(X, Y);
+
+    // vuốt dọc 2 ngón: chỉ zoom, không xoay
+    const c0 = await cam(page);
+    for (let i = 0; i < 10; i++) await swipe(0, 8);
+    await frames(page);
+    const c1 = await cam(page);
+    expect(c1.distance).toBeGreaterThan(c0.distance);
+    expect(c1.yaw).toBe(c0.yaw);
+
+    // giữ W + vuốt ngang 2 ngón (nhiều sự kiện nhỏ, hơi xéo như ngón thật): đi VÀ xoay cùng lúc, không zoom
+    await page.waitForTimeout(300);                       // hết lần vuốt trước
+    const s0 = await state(page);
+    await page.keyboard.down('KeyW');
+    for (let i = 0; i < 30; i++) { await swipe(10, i % 3 === 0 ? 4 : 1); await page.waitForTimeout(15); }
+    await page.waitForTimeout(400);
+    const mid = await state(page);
+    await page.keyboard.up('KeyW');
+    expect(mid.camera!.state).toBe('walk');
+    expect(Math.hypot(mid.player!.x - s0.player!.x, mid.player!.z - s0.player!.z)).toBeGreaterThan(0.3);
+    expect(Math.abs(mid.camera!.yaw - s0.camera!.yaw)).toBeGreaterThan(0.2);
+    expect(mid.camera!.distance).toBeCloseTo(s0.camera!.distance, 6);
+    // trang không bị cuộn ngang / trình duyệt không lùi trang
+    expect(await page.evaluate(() => [window.scrollX, window.scrollY])).toEqual([0, 0]);
+    expect(page.url()).toContain('play=1');
+    expect(errors).toEqual([]);
+  });
 });
 
 // ---------------- cảm ứng (MÔ PHỎNG bằng Chrome: hasTouch + isMobile + CDP Input.dispatchTouchEvent) ----------------

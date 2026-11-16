@@ -23,6 +23,14 @@ Lần đầu **đừng giữ phím WASD** (Windows có thể chặn touchpad khi
 
 **Nếu không xoay:** bấm **"Sao chép"** trên bảng chẩn đoán rồi dán toàn bộ vào chat cho nhóm phát triển. Nhớ ghi rõ bạn đã kéo kiểu nào (nhấn mặt touchpad, hay chạm 2 lần rồi kéo).
 
+## 2b. Vừa đi vừa xoay: vuốt 2 ngón ngang (thêm 16/11 chiều)
+1. Tay trái giữ **W**. Tay phải đặt 2 ngón lên touchpad, **vuốt sang trái/phải** (không nhấn). Nhân vật phải vừa đi vừa quay hướng nhìn.
+2. Vuốt 2 ngón **lên/xuống**: camera lại gần / ra xa, không xoay.
+3. Vuốt xéo: chỉ xoay HOẶC chỉ phóng theo hướng lúc bắt đầu vuốt, không giật.
+4. Trang không bị lùi về trang trước khi vuốt ngang.
+5. Nếu xoay **ngược chiều** với cảm giác tay: ghi lại để đổi một con số (`wheel_look.px_scale` trong `src/config/camera.ts`).
+6. Nếu đang giữ phím mà vuốt không ăn: Cài đặt Windows → Touchpad → Độ nhạy → "Nhạy nhất", thử lại, ghi kết quả.
+
 ## 3. Nhìn tự do — đang TẮT
 Chủ dự án chốt 16/11 không có đổi camera nên tạm tắt. Bật lại khi cần trong `CAMERA_OPTIONS` (`src/config/camera.ts`).
 

@@ -153,7 +153,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.mode === 'day' && !s.fade.on && !blocking && !s.photo && (
         s.device === 'touch'
           ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để xoay · Chụm 2 ngón để phóng</div>
-          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {lookHint(s)} · lăn chuột/cuộn 2 ngón để phóng</div>
+          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {lookHint(s)} · lăn chuột để phóng · touchpad: vuốt 2 ngón ngang để xoay, dọc để phóng</div>
       )}
       {s.prompt && !blocking && !(touch && s.mode === 'day') && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
       {touch && s.mode === 'day' && !s.fade.on && !blocking && (!s.photo || (s.photo.phase === 'countdown' && !s.photo.posed)) && <TouchStick a={a} />}
