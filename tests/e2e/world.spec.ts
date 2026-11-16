@@ -366,7 +366,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
   });
 
   test('ca 11b: thoại, lựa chọn, nút E, bước chụp ảnh hẹn giờ, Sổ tay, Menu, (không còn nút đổi camera) — chỉ bằng chạm', async ({ page }) => {
-    test.setTimeout(240_000);
+    test.setTimeout(360_000);
     const errors = collectErrors(page);
     await captureCollect(page);
     await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s01');
@@ -409,7 +409,8 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await expect(pose).toBeVisible({ timeout: 20_000 });
     await expect(page.locator('[data-testid="stick"]')).toBeVisible();                 // hẹn giờ: vẫn đi được để chạy vào vòng sáng
     await pose.tap();
-    await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 30_000 });
+    // hẹn giờ 8 giây theo đồng hồ game + chụp/nén ảnh; Chrome headless vẽ bằng CPU nên chờ lâu hơn máy thật
+    await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 120_000 });
     await page.screenshot({ path: `${SHOTS}/11-anh-hen-gio.png` });
     await page.locator('[data-act="photo-keep"]').tap();
     await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s04');
