@@ -190,3 +190,14 @@ Các ca cũ 4, 5, 11a/b/c, 12 (touchpad mô phỏng, điện thoại mô phỏng
 
 ### CHƯA KIỂM (PENDING)
 Touchpad thật trên Windows + Cốc Cốc (cả kéo lẫn Nhìn tự do) · Cốc Cốc có cho khóa con trỏ không · điện thoại thật · FPS.
+
+
+## Touchpad vuốt 2 ngón ngang = xoay (16/11/2026 chiều, commit `d67b4d6`)
+Lệnh đã chạy (máy ảo Linux, Chrome headless), số thật:
+- `npx tsc --noEmit`: đạt.
+- `npm test`: 253 đạt, 1 bỏ qua (thêm 7 test `WheelRouter`).
+- `npm run validate:world`: 0 lỗi, 0 nhắc.
+- `npm run test:e2e`: 28 đạt, 1 bỏ qua, 16,8 phút. Ca mới **12b**: giữ W + 30 sự kiện wheel ngang (hơi xéo) → nhân vật đi > 0,3 m, góc xoay đổi > 0,2 rad, khoảng cách camera không đổi; vuốt dọc chỉ zoom; trang không cuộn, không lùi trang.
+- `VERCEL_ENV=production npm run build`: đạt; không thấy `botStep|__game|gameTools` trong `dist/assets/*.js`.
+
+Chưa kiểm: touchpad thật (Windows + Cốc Cốc, Mac); chiều xoay đúng cảm giác tay (phụ thuộc thiết lập cuộn của máy); Windows có chặn vuốt khi đang giữ phím hay không; FPS.
