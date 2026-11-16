@@ -44,6 +44,8 @@ export interface UiState {
   device: 'keyboard' | 'touch';
   /** Tùy chọn "Nhìn tự do" đang bật; con trỏ đang bị khóa. Chỉ để hiện chữ hướng dẫn. */
   freeLook: boolean;
+  /** Có cho người chơi đổi kiểu camera / bật Nhìn tự do không (CAMERA_OPTIONS; mặc định tắt). */
+  camOptions: { modeSwitch: boolean; freeLook: boolean };
   pointerLocked: boolean;
   dialogue: { who: string; color: string; text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
@@ -66,7 +68,7 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false,
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };

@@ -3,7 +3,7 @@
  * Luồng: Boot → Hub(intro|idle) → chuyển cảnh → Ngày ký ức → kết Ngày → chuyển cảnh → Hub.
  * Hub và Ngày là 2 scene riêng; mỗi Ngày nạp 1 bản đồ + 1 biến thể; rời scene nào thì giải phóng scene đó.
  */
-import { CAMERA_MODES, DEFAULT_CAMERA_MODE, isCameraMode, isControl, nextCameraMode } from '../config/camera';
+import { CAMERA_MODES, CAMERA_OPTIONS, DEFAULT_CAMERA_MODE, isCameraMode, isControl, nextCameraMode } from '../config/camera';
 import { GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
@@ -91,7 +91,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const ui = createUiStore();
   const input = createInput(container);
   // Bản lưu có giá trị lạ (hỏng/bản cũ hơn) → về kiểu mặc định. Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn.
-  if (!isCameraMode(save.settings?.camera_mode)) save.settings = { ...save.settings, camera_mode: DEFAULT_CAMERA_MODE };
+  // Đổi kiểu camera / Nhìn tự do: tắt theo quyết định 16/11 (CAMERA_OPTIONS). Bản test bật tạm bằng ?camtest=1.
+  const camTest = __DEV_TOOLS__ && new URLSearchParams(location.search).get('camtest') === '1';
+  const camOpts = { modeSwitch: CAMERA_OPTIONS.allow_mode_switch || camTest, freeLook: CAMERA_OPTIONS.allow_free_look || camTest };
+  // Không cho đổi kiểu → luôn "Chuẩn" (kể cả bản lưu cũ đang ở A/B). Bản lưu có giá trị lạ → mặc định.
+  if (!camOpts.modeSwitch || !isCameraMode(save.settings?.camera_mode)) save.settings = { ...save.settings, camera_mode: DEFAULT_CAMERA_MODE };
+  if (!camOpts.freeLook && save.settings.free_look) save.settings = { ...save.settings, free_look: false };
   const style = ART_STYLES[opts.artStyle ?? ''];        // undefined → phong cách mặc định
   const profile = () => ({ player_name: save.player_name, gender: save.appearance.gender });
   const fmt = (text: string) => formatText(text, profile());
@@ -428,7 +433,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
 
   /** Đổi kiểu điều khiển camera Chuẩn → A → B → Chuẩn (lưu cục bộ trong file lưu; không vào analytics). */
   function toggleCameraMode() {
-    if (ui.get().mode !== 'day') return;
+    if (ui.get().mode !== 'day' || !camOpts.modeSwitch) return;
     const next = nextCameraMode(save.settings.camera_mode);
     save.settings.camera_mode = next;
     input.setLookMode(CAMERA_MODES[next].look);
@@ -439,6 +444,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
 
   /** "Nhìn tự do": tùy chọn riêng, giữ nguyên kiểu camera đang chọn (lưu cục bộ; không vào analytics). */
   function toggleFreeLook() {
+    if (!camOpts.freeLook) return;
     const on = !save.settings.free_look;
     save.settings.free_look = on;
     input.setFreeLook(on);
@@ -684,7 +690,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (ui.get().mode === 'day') toast('Trình duyệt không cho khóa chuột — vẫn xoay được bằng cách bấm giữ rồi kéo', 5000);
   });
   input.setFreeLook(!!save.settings.free_look);
-  ui.set({ freeLook: !!save.settings.free_look });
+  ui.set({ freeLook: !!save.settings.free_look, camOptions: camOpts });
   input.onPointer((kind, x, y) => {
     if (hubScene && engine.context?.kind === 'hub') {
       const id = locked() ? null : hubScene.pick(x, y);

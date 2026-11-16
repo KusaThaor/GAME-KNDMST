@@ -46,6 +46,14 @@ export const DEFAULT_CAMERA_MODE: CameraModeId = 'standard';
 export const isCameraMode = (v: unknown): v is CameraModeId => typeof v === 'string' && v in CAMERA_MODES;
 export const nextCameraMode = (id: CameraModeId): CameraModeId => CAMERA_MODE_ORDER[(CAMERA_MODE_ORDER.indexOf(id) + 1) % CAMERA_MODE_ORDER.length];
 
+/**
+ * CHỦ DỰ ÁN CHỐT 16/11: người chơi chỉ dùng camera "Chuẩn", KHÔNG có đổi kiểu camera (A/B) và chưa có "Nhìn tự do".
+ * Code A/B/Nhìn tự do vẫn giữ nguyên; đổi `true` để bật lại (nút trên màn hình, nút trong Menu, phím V/L).
+ * Bản test có thể bật tạm bằng `?camtest=1` (chỉ để chạy test tự động; production không có).
+ * Danh sách nút + câu hướng dẫn cho màn hướng dẫn sau này: docs/CONTROLS_AND_TUTORIAL_NOTES.md.
+ */
+export const CAMERA_OPTIONS = { allow_mode_switch: false, allow_free_look: false };
+
 /** Chuột / touchpad / cảm ứng. Chỉnh ở đây, không sửa code. */
 export const POINTER_INPUT = {
   /** Kéo quá bao nhiêu pixel mới tính là xoay camera (dưới ngưỡng = bấm). */

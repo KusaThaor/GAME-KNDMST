@@ -71,17 +71,54 @@ const ctrlWheelLog = (page: Page) => page.evaluate(() => (window as unknown as {
 test.use({ actionTimeout: 20_000, viewport: { width: 1280, height: 720 } });
 
 test.describe('S2 Chặng 2 — kiểu điều khiển "Chuẩn" (chuột, touchpad)', () => {
-  test('ca 4: người chơi mới mặc định "Chuẩn"; V xoay vòng Chuẩn → A → B → Chuẩn; tải lại vẫn giữ; không gửi kiểu camera đi', async ({ page }) => {
+  test('ca 4 (chốt 16/11): luôn camera "Chuẩn" — không có nút đổi camera, V và L không làm gì; bản lưu cũ đang ở A tải lên thành Chuẩn; không gửi kiểu camera đi', async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     const batches = await captureCollect(page);
     await openDay(page);
-    const btn = page.locator('[data-act="camera-mode"]');
     expect((await cam(page)).mode).toBe('standard');
     expect((await cam(page)).look).toBe('free');
-    await expect(btn).toContainText('Camera Chuẩn');
+    await expect(page.locator('[data-act="camera-mode"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="keys"]')).toContainText('Kéo chuột để xoay camera');
+    await page.keyboard.press('KeyV');
+    await page.keyboard.press('KeyL');
+    await frames(page, 2);
+    expect((await cam(page)).mode).toBe('standard');
+    expect((await cam(page)).freeLook).toBe(false);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
+    await expect(page.locator('[data-act="menu-camera-mode"], [data-act="menu-free-look"]')).toHaveCount(0);
+    await page.locator('[data-act="resume"]').click();
 
+    // bản lưu cũ ở kiểu A + Nhìn tự do: tạo bằng bản test có ?camtest=1, rồi mở lại như người chơi thường
+    await page.goto('/?play=1&camtest=1');
+    await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
+    await freeInDay(page);
+    await page.keyboard.press('KeyV');
+    await page.keyboard.press('KeyL');
+    expect((await cam(page)).mode).toBe('A');
+    expect((await cam(page)).freeLook).toBe(true);
+    await page.waitForTimeout(800);                         // tự lưu chạy sau một nhịp
+    await page.goto('/?play=1');
+    await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
+    await freeInDay(page);
+    expect((await cam(page)).mode).toBe('standard');
+    expect((await cam(page)).look).toBe('free');
+    expect((await cam(page)).freeLook).toBe(false);
+
+    await page.evaluate(() => window.__game!.flush());
+    const json = JSON.stringify(batches);
+    expect(json).not.toMatch(/camera_mode|"standard"|look_mode|pointer_type|device|free_look/i);
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 4b (bản test ?camtest=1 — code A/B còn giữ để bật lại sau): V xoay vòng Chuẩn → A → B → Chuẩn', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page, '&day=d.g06.01&camtest=1');
+    const btn = page.locator('[data-act="camera-mode"]');
+    await expect(btn).toContainText('Camera Chuẩn');
     const seen: string[] = [];
     for (let i = 0; i < 3; i++) {
       await page.keyboard.press('KeyV');
@@ -90,20 +127,6 @@ test.describe('S2 Chặng 2 — kiểu điều khiển "Chuẩn" (chuột, touch
       seen.push(`${c.mode}/${c.look}/${(await btn.textContent())?.replace(/\s+/g, ' ').trim()}`);
     }
     expect(seen).toEqual(['A/drag/Camera A V', 'B/lock/Camera B V', 'standard/free/Camera Chuẩn V']);
-
-    // chọn A rồi tải lại trang (không kèm ?day — game tự về đúng Ngày đang dở)
-    await page.keyboard.press('KeyV');
-    expect((await cam(page)).mode).toBe('A');
-    await page.waitForTimeout(800);                         // tự lưu chạy sau một nhịp
-    await page.goto('/?play=1');
-    await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
-    await freeInDay(page);
-    expect((await cam(page)).mode).toBe('A');
-    await expect(btn).toContainText('Camera A');
-
-    await page.evaluate(() => window.__game!.flush());
-    const json = JSON.stringify(batches);
-    expect(json).not.toMatch(/camera_mode|"standard"|look_mode|pointer_type|device/i);
     expect(errors).toEqual([]);
   });
 
@@ -283,7 +306,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     expect(errors).toEqual([]);
   });
 
-  test('ca 11b: thoại, lựa chọn, nút E, bước chụp ảnh hẹn giờ, Sổ tay, Menu, đổi kiểu camera — chỉ bằng chạm', async ({ page }) => {
+  test('ca 11b: thoại, lựa chọn, nút E, bước chụp ảnh hẹn giờ, Sổ tay, Menu, (không còn nút đổi camera) — chỉ bằng chạm', async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     await captureCollect(page);
@@ -313,11 +336,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await page.locator('[data-act="menu"]').tap();
     await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/11-menu-doc.png` });
-    await page.locator('[data-act="menu-camera-mode"]').tap();
-    expect((await cam(page)).mode).toBe('A');
-    await page.locator('[data-act="menu-camera-mode"]').tap();
-    await page.locator('[data-act="menu-camera-mode"]').tap();
-    expect((await cam(page)).mode).toBe('standard');
+    await expect(page.locator('[data-act="menu-camera-mode"]')).toHaveCount(0);   // chốt 16/11: không đổi camera
     await page.locator('[data-act="resume"]').tap();
     await expect(page.locator('[data-testid="panel-menu"]')).toHaveCount(0);
 
@@ -402,7 +421,7 @@ async function stubPointerLock(page: Page, outcome: 'ok' | 'reject') {
 }
 const lockCalls = (page: Page) => page.evaluate(() => (window as unknown as { __lockCalls: number }).__lockCalls);
 
-test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do', () => {
+test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do (Nhìn tự do đang tắt, kiểm bằng ?camtest=1)', () => {
   const X = 1000, Y = 300;
 
   test('H1: kéo nút trái đổi cả yaw lẫn pitch; rê không bấm không xoay; kéo phải vẫn xoay; thả ra camera không bị đặt lại', async ({ page }) => {
@@ -527,7 +546,7 @@ test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do', () =>
     const errors = collectErrors(page);
     await captureCollect(page);
     await stubPointerLock(page, 'ok');
-    await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s01');
+    await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s01&camtest=1');
     await page.keyboard.press('KeyL');
     expect((await cam(page)).freeLook).toBe(true);
     expect((await cam(page)).mode).toBe('standard');            // kiểu camera không đổi
@@ -588,7 +607,7 @@ test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do', () =>
     const errors = collectErrors(page);
     await captureCollect(page);
     await stubPointerLock(page, 'reject');
-    await openDay(page);
+    await openDay(page, '&day=d.g06.01&camtest=1');
     await page.keyboard.press('KeyL');
     await page.mouse.click(X, Y);
     await expect(page.locator('.hud-zone, [data-testid="toast"]').filter({ hasText: 'không cho khóa chuột' })).toBeVisible({ timeout: 10_000 });
@@ -610,7 +629,7 @@ test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do', () =>
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     await captureCollect(page);
-    await openDay(page);
+    await openDay(page, '&day=d.g06.01&camtest=1');
     await page.keyboard.press('KeyL');
     await page.mouse.click(X, Y);
     await page.waitForTimeout(1500);

@@ -68,7 +68,7 @@ Cảm ứng (kéo xoay, chụm) chạy ở cả ba kiểu. Số chỉnh được
 
 Master prompt S2 có ghi phương án dự phòng "A = góc nhìn thứ nhất, B = thứ ba" **chỉ dùng khi tài liệu không có đặc tả**. Tài liệu có đặc tả nên phương án đó **không được dùng**. Muốn có góc nhìn thứ nhất là thay đổi thiết kế, cần chủ dự án quyết.
 
-Phím: `V` (hoặc nút trong Menu) xoay vòng Chuẩn → A → B; người chơi cũ đã lưu A/B giữ nguyên. `C` để dành cho máy ảnh cầm tay/cuộn phim (chưa làm, không gán việc khác). Phòng 2026 vẫn là góc cố định.
+**Chốt 16/11:** người chơi chỉ dùng "Chuẩn", không đổi kiểu camera. Nút/phím V (đổi kiểu) và L (Nhìn tự do) đang tắt bằng `CAMERA_OPTIONS` (`src/config/camera.ts`); code A/B còn giữ để bật lại. Bản lưu cũ A/B tự về Chuẩn. Danh sách nút: `docs/CONTROLS_AND_TUTORIAL_NOTES.md`. `C` để dành cho máy ảnh cầm tay/cuộn phim (chưa làm, không gán việc khác). Phòng 2026 vẫn là góc cố định.
 
 ### 2.3 Quyết định liên quan
 | Mã | Nội dung | Trạng thái | Nằm ở đâu trong code |

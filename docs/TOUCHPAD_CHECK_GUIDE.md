@@ -8,10 +8,9 @@ Góc dưới trái sẽ có bảng đen **"CHẨN ĐOÁN CHUỘT/TOUCHPAD"**. B�
 
 Nếu chưa vào Ngày ký ức: đi theo luồng game (phòng 2026 → Hộp Kỷ Vật → Ngày) cho tới khi điều khiển được nhân vật.
 
-## 1. Kiểm kiểu camera đang dùng
-Nhìn nút góc trên bên phải: phải ghi **"Camera Chuẩn"**.
-- Nếu ghi "Camera A" hoặc "Camera B": bấm **V** tới khi thành "Camera Chuẩn".
-  (Ai từng chơi bản trước 16/11 trên cùng trình duyệt thì có thể vẫn còn lưu kiểu A. Ở kiểu A chỉ **chuột phải** mới xoay được — đây là nghi vấn số 1 cho lỗi lần trước.)
+## 1. Camera luôn là "Chuẩn"
+Từ 16/11 không còn nút đổi camera; phím V và L không làm gì. Bản lưu cũ đang ở kiểu A cũng tự về "Chuẩn".
+Bảng chẩn đoán phải ghi `kiểu=standard (free)`.
 
 ## 2. Kéo để xoay (kiểu Chuẩn)
 Lần đầu **đừng giữ phím WASD** (Windows có thể chặn touchpad khi đang gõ phím).
@@ -24,21 +23,13 @@ Lần đầu **đừng giữ phím WASD** (Windows có thể chặn touchpad khi
 
 **Nếu không xoay:** bấm **"Sao chép"** trên bảng chẩn đoán rồi dán toàn bộ vào chat cho nhóm phát triển. Nhớ ghi rõ bạn đã kéo kiểu nào (nhấn mặt touchpad, hay chạm 2 lần rồi kéo).
 
-## 3. Nhìn tự do (không cần nhấn giữ)
-1. Bấm **L** (hoặc Menu → "Nhìn tự do bằng touchpad: TẮT" để bật). Dòng hướng dẫn dưới màn hình đổi thành "Bấm vào màn hình để nhìn tự do".
-2. Bấm vào màn hình **một lần**. Con trỏ biến mất.
-3. Lướt một ngón trên touchpad, **không nhấn**: camera xoay. Giữ **W** cùng lúc: nhân vật vừa đi vừa xoay được.
-4. Bấm **Esc**: con trỏ hiện lại, Menu mở. Bấm "Chơi tiếp".
-5. Bấm W/A/S/D: con trỏ **không** tự bị khóa lại. Bấm vào màn hình thì mới khóa lại.
-6. Đứng gần bạn và bấm **E** để nói chuyện: con trỏ được thả ra trong lúc có thoại.
-7. Nếu hiện dòng "Trình duyệt không cho khóa chuột…": ghi lại; khi đó vẫn kéo để xoay như mục 2.
-8. Tắt lại bằng **L** hoặc trong Menu.
+## 3. Nhìn tự do — đang TẮT
+Chủ dự án chốt 16/11 không có đổi camera nên tạm tắt. Bật lại khi cần trong `CAMERA_OPTIONS` (`src/config/camera.ts`).
 
 ## 4. Các thứ cũ phải còn chạy
 - [ ] Cuộn 2 ngón trên touchpad: camera lại gần / ra xa (không phóng to cả trang).
 - [ ] WASD đi, Shift chạy, E tương tác, J mở Sổ tay.
-- [ ] V đổi vòng Chuẩn → A → B → Chuẩn.
-- [ ] Tải lại trang: vẫn giữ kiểu camera và trạng thái "Nhìn tự do".
+- [ ] Không có nút đổi camera; bấm V không đổi gì.
 
 ## Gửi lại cho nhóm phát triển
 - Tên máy, Windows 10 hay 11, phiên bản Cốc Cốc.
