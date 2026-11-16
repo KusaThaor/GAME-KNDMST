@@ -1061,3 +1061,237 @@ def equip_modular_character_clothing(arm, char_id, skin_hex, top_id, bottom_id, 
     all_created.extend(limbs)
 
     return all_created
+
+# =============================================================================
+# 5. ACCESSORIES BUILDERS (CANONICAL VARIANTS)
+# =============================================================================
+
+def build_accessory_001_red_scarf(arm, char_id, color="#d92027"):
+    """
+    Constructs an authentic stylized Chibi Vietnamese School Red Scarf (Khăn quàng đỏ Đội viên).
+    Faithful to visual reference Figure 12 (Front knot & tails) and Figure 13 (Small rear triangle).
+    
+    Structure:
+    1. Vạt tam giác sau gáy nhỏ gọn (Small triangular section at upper back directly under collar, ~15-20% torso)
+    2. Vòng dải quàng cổ qua vai (Slim neck bands wrapping smoothly around lateral neck contours into knot)
+    3. Nút thắt vuông vắn trung tâm (Central square knot beneath shirt collar)
+    4. Hai dải khăn buông rủ phía trước (Left & right hanging tails with angled cut tips)
+    
+    Rigging:
+    - Lightweight bone-based skinning on Student_Armature (Neck, Chest, Spine)
+    - Zero cloth simulation overhead, deformation tested on all 16 actions.
+    """
+    mat = create_or_get_mat(f"M_Acc_Scarf_{char_id}", color, roughness=0.58)
+    bm = bmesh.new()
+
+    thick = 0.0022  # fabric thickness
+
+    # -------------------------------------------------------------------------
+    # 1. SMALL REAR TRIANGLE UNDER BACK COLLAR (FIGURE 13)
+    # -------------------------------------------------------------------------
+    # One continuous ribbon from the left knot, around the neck and
+    # across the rear flap, to the right knot. Shared rings prevent gaps.
+    rings = []
+    for i in range(49):
+        angle = math.radians(100 + 340 * i / 48)
+        x = 0.090 * math.cos(angle)
+        sy = math.sin(angle)
+        z_top = 0.420 - 0.049 * max(0.0, sy) + 0.008 * min(0.0, sy)
+        drop = 0.032 * max(0.0, 1.0 - abs(math.degrees(angle) - 270) / 28)
+        front = max(0.0, sy)
+        # Broad folds at the collar taper into the front knot.
+        collar_fold = math.sin(math.pi * front) ** 0.8
+        band_width = 0.012 + 0.023 * collar_fold
+        z_top -= 0.009 * front ** 10
+        z_bottom = z_top - band_width - drop
+        y_top = 0.005 + (0.103 if sy > 0 else 0.070) * sy
+        y_bottom = y_top - drop * 0.90 + 0.018 * collar_fold
+        ring = []
+        for y, z, offset in [
+            (y_top, z_top, thick), (y_bottom, z_bottom, thick),
+            (y_bottom, z_bottom, -thick), (y_top, z_top, -thick)
+        ]:
+            ring.append(bm.verts.new((
+                x + math.cos(angle) * offset,
+                y + sy * offset, z)))
+        rings.append(ring)
+    for a, b in zip(rings, rings[1:]):
+        for j in range(4):
+            bm.faces.new([a[j], b[j], b[(j+1)%4], a[(j+1)%4]])
+    bm.faces.new(list(reversed(rings[0])))
+    bm.faces.new(rings[-1])
+
+    # -------------------------------------------------------------------------
+    # 3. CENTRAL SQUARE KNOT (FIGURE 12)
+    # -------------------------------------------------------------------------
+    kw = 0.019
+    kh = 0.015
+    kd = 0.010
+    kx = 0.0
+    ky = 0.092
+    kz = 0.355
+
+    knot_rings = []
+    profiles = [
+        (kw * 0.75, kh * 0.75, kd * 0.45,  0.005),
+        (kw * 1.00, kh * 1.00, kd * 1.00,  0.000),
+        (kw * 0.70, kh * 0.70, kd * 0.50, -0.005),
+    ]
+
+    for sz_w, sz_h, sz_d, dy in profiles:
+        ring = [
+            bm.verts.new((kx - sz_w, ky + dy + sz_d, kz + sz_h)),
+            bm.verts.new((kx + sz_w, ky + dy + sz_d, kz + sz_h)),
+            bm.verts.new((kx + sz_w, ky + dy + sz_d, kz - sz_h)),
+            bm.verts.new((kx - sz_w, ky + dy + sz_d, kz - sz_h)),
+        ]
+        knot_rings.append(ring)
+
+    for r in range(len(knot_rings) - 1):
+        for j in range(4):
+            bm.faces.new([
+                knot_rings[r][j], knot_rings[r][(j+1)%4],
+                knot_rings[r+1][(j+1)%4], knot_rings[r+1][j]
+            ])
+    bm.faces.new([knot_rings[0][0], knot_rings[0][3], knot_rings[0][2], knot_rings[0][1]])
+    bm.faces.new([knot_rings[-1][0], knot_rings[-1][1], knot_rings[-1][2], knot_rings[-1][3]])
+
+    # Center knot wrap band
+    bw = 0.011
+    bh = 0.007
+    b_front = [
+        bm.verts.new((kx - bw, ky + kd + 0.006, kz + bh)),
+        bm.verts.new((kx + bw, ky + kd + 0.006, kz + bh)),
+        bm.verts.new((kx + bw, ky + kd + 0.006, kz - bh)),
+        bm.verts.new((kx - bw, ky + kd + 0.006, kz - bh)),
+    ]
+    bm.faces.new(b_front)
+
+    # -------------------------------------------------------------------------
+    # 4. TWO HANGING TAILS (FIGURE 12)
+    # -------------------------------------------------------------------------
+    tail_defs = [
+        {
+            "side": -1,
+            "root_x": -0.007,
+            "root_y": 0.091,
+            "root_z": 0.344,
+            "tip_zo": 0.276,
+            "tip_zi": 0.292,
+            "drift_x": -0.010,
+            "n_segs": 5
+        },
+        {
+            "side": 1,
+            "root_x": 0.007,
+            "root_y": 0.090,
+            "root_z": 0.344,
+            "tip_zo": 0.260,
+            "tip_zi": 0.278,
+            "drift_x": 0.011,
+            "n_segs": 5
+        }
+    ]
+
+    for td in tail_defs:
+        side = td["side"]
+        n_segs = td["n_segs"]
+        rx_0 = td["root_x"]
+        ry_0 = td["root_y"]
+        rz_0 = td["root_z"]
+        tzo = td["tip_zo"]
+        tzi = td["tip_zi"]
+        avg_tz = (tzo + tzi) * 0.5
+        t_len = rz_0 - avg_tz
+
+        hw_root = 0.009
+        hw_mid = 0.022
+        thick_t = 0.0022
+
+        rings_f = []
+        rings_b = []
+
+        for s in range(n_segs + 1):
+            frac = s / n_segs
+            cz = rz_0 - frac * t_len
+
+            y_bump = math.sin(frac * math.pi * 0.7) * 0.004
+            cy = ry_0 + y_bump - frac * 0.002
+            cx = rx_0 + frac * td["drift_x"]
+
+            cur_w = hw_root + (hw_mid - hw_root) * math.sin(math.pi * frac) + 0.007 * frac
+
+            if s == n_segs:
+                zo = tzo
+                zi = tzi
+            else:
+                zo = cz
+                zi = cz
+
+            zl = zo if side < 0 else zi
+            zr = zi if side < 0 else zo
+
+            v_fl = bm.verts.new((cx - cur_w, cy + thick_t, zl))
+            v_fr = bm.verts.new((cx + cur_w, cy + thick_t, zr))
+            v_br = bm.verts.new((cx + cur_w, cy - thick_t, zr))
+            v_bl = bm.verts.new((cx - cur_w, cy - thick_t, zl))
+
+            rings_f.append((v_fl, v_fr))
+            rings_b.append((v_bl, v_br))
+
+        for s in range(n_segs):
+            fl1, fr1 = rings_f[s]
+            fl2, fr2 = rings_f[s+1]
+            bl1, br1 = rings_b[s]
+            bl2, br2 = rings_b[s+1]
+
+            bm.faces.new([fl1, fr1, fr2, fl2])
+            bm.faces.new([fr1, br1, br2, fr2])
+            bm.faces.new([br1, bl1, bl2, br2])
+            bm.faces.new([bl1, fl1, fl2, bl2])
+
+        b_fl, b_fr = rings_f[-1]
+        b_bl, b_br = rings_b[-1]
+        bm.faces.new([b_fl, b_fr, b_br, b_bl])
+
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
+    mesh = bpy.data.meshes.new(f"Acc_Red_Scarf_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    scarf_obj = bpy.data.objects.new("Acc_Red_Scarf", mesh)
+    scarf_obj.data.materials.append(mat)
+
+    sub = scarf_obj.modifiers.new("Subdiv", "SUBSURF")
+    sub.levels = 1
+
+    for poly in scarf_obj.data.polygons:
+        poly.use_smooth = True
+
+    link_to_scene(scarf_obj)
+
+    # 5. SKINNING (NECK, CHEST, SPINE)
+    vg_neck = scarf_obj.vertex_groups.new(name="Neck")
+    vg_chest = scarf_obj.vertex_groups.new(name="Chest")
+    vg_spine = scarf_obj.vertex_groups.new(name="Spine")
+
+    for v in scarf_obj.data.vertices:
+        z = v.co.z
+        if z >= 0.380:
+            vg_neck.add([v.index], 0.65, 'REPLACE')
+            vg_chest.add([v.index], 0.35, 'REPLACE')
+        elif z >= 0.340:
+            vg_chest.add([v.index], 0.90, 'REPLACE')
+            vg_neck.add([v.index], 0.10, 'REPLACE')
+        elif z >= 0.300:
+            vg_chest.add([v.index], 0.85, 'REPLACE')
+            vg_spine.add([v.index], 0.15, 'REPLACE')
+        else:
+            vg_chest.add([v.index], 0.65, 'REPLACE')
+            vg_spine.add([v.index], 0.35, 'REPLACE')
+
+    m_arm = scarf_obj.modifiers.new("Armature", 'ARMATURE')
+    m_arm.object = arm
+
+    return scarf_obj

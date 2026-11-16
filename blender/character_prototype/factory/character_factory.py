@@ -297,7 +297,7 @@ class CharacterFactory:
     def equip_accessories(self, accessories_list, char_id):
         # 1. Clean up existing accessories
         acc_mesh_names = [
-            "Scarf_Knot", "Scarf_Tail_L", "Scarf_Tail_R",
+            "Acc_Red_Scarf", "Scarf_Wrap", "Scarf_Knot", "Scarf_Tail_L", "Scarf_Tail_R",
             "Acc_Glasses", "Acc_Hair_Clip",
             "Acc_Backpack_Body", "Acc_Backpack_Pocket"
         ]
@@ -305,39 +305,9 @@ class CharacterFactory:
 
         for acc_id in accessories_list:
             if acc_id == "ACC_001":
-                # Red School Scarf
-                mat_scarf = create_or_update_mat(f"M_Acc_Scarf_{char_id}", "#d92027", roughness=0.55)
-                bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, 0.088, 0.355))
-                knot = bpy.context.active_object
-                knot.name = "Scarf_Knot"
-                knot.scale = (0.026, 0.022, 0.032)
-                knot.rotation_euler = (math.radians(15), 0, 0)
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                sub = knot.modifiers.new("Subdiv", "SUBSURF")
-                sub.levels = 1
-                knot.data.materials.append(mat_scarf)
-                apply_smooth(knot)
-                vg = knot.vertex_groups.new(name="Chest")
-                vg.add(list(range(len(knot.data.vertices))), 1.0, 'REPLACE')
-                m = knot.modifiers.new("Armature", 'ARMATURE')
-                m.object = self.arm
-
-                # Tails
-                for side, sign in [(-1, "L"), (1, "R")]:
-                    bpy.ops.mesh.primitive_cube_add(size=1.0, location=(side * 0.022, 0.085, 0.315))
-                    tail = bpy.context.active_object
-                    tail.name = f"Scarf_Tail_{sign}"
-                    tail.scale = (0.016, 0.010, 0.045)
-                    tail.rotation_euler = (math.radians(8), math.radians(side * 12), math.radians(side * -5))
-                    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                    sub = tail.modifiers.new("Subdiv", "SUBSURF")
-                    sub.levels = 1
-                    tail.data.materials.append(mat_scarf)
-                    apply_smooth(tail)
-                    vg = tail.vertex_groups.new(name="Chest")
-                    vg.add(list(range(len(tail.data.vertices))), 1.0, 'REPLACE')
-                    m = tail.modifiers.new("Armature", 'ARMATURE')
-                    m.object = self.arm
+                # Red School Scarf (Khăn quàng đỏ Đội viên authentic stylized Chibi)
+                import clothing_library
+                clothing_library.build_accessory_001_red_scarf(self.arm, char_id)
 
             elif acc_id == "ACC_002":
                 # Round Glasses
