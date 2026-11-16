@@ -60,8 +60,8 @@ File nguồn nằm ở `tools/blender/world/map_thcs/`, file game ở `public/as
 - **TẠM:** khu nào mở ở Ngày nào (`open_zones` trong `src/content/days/*.ts`, nội dung giả). Khu không mở bị chặn bằng vật có nhãn `htx_gate_zone` dựng sẵn trong Blender.
 
 ### 2.2 Camera: Chuẩn (mặc định) + A/B nâng cao (nguồn: GDD v0.3 §3; D-S2-01 chốt 15/11)
-Cả ba đều là **camera thứ ba** bám sau nhân vật, nhìn chéo xuống 25–40°, cách 5,5 m (phóng 3,5–8 m), tự kéo gần khi bị che. Khác nhau ở cách xoay:
-- **Chuẩn (`standard`, mặc định — kiểu Play Together):** kéo chuột trái hoặc phải trên vùng trống (quá 6 px mới xoay; bấm nhanh vẫn là bấm); touchpad kéo một ngón, cuộn/chụm 2 ngón để phóng; cảm ứng: nút tròn để đi, kéo màn hình để xoay, chụm để phóng, nút E ảo.
+Cả ba đều là **camera thứ ba** bám sau nhân vật, cách 5,5 m (phóng 3,5–8 m), tự kéo gần khi bị che. Góc nghiêng: GDD ghi 25–40°; **chủ dự án chốt 16/11 tối mở thành 5–65°** (`CAMERA_PITCH_RANGE`; số cũ giữ ở `CAMERA_PITCH_GDD_V03`). Khác nhau ở cách xoay:
+- **Chuẩn (`standard`, mặc định — kiểu Play Together):** kéo chuột trái hoặc phải trên vùng trống (quá 6 px mới xoay; bấm nhanh vẫn là bấm); touchpad kéo một ngón, cuộn/chụm 2 ngón để phóng; cảm ứng: nút tròn "nổi" để đi (chạm đâu ở góc trái dưới cũng được, thêm 16/11 tối), kéo màn hình để xoay, chụm để phóng, nút E ảo.
 - **A:** giữ chuột phải rồi rê.
 - **B:** khóa con trỏ, rê chuột là xoay, Esc để thả.
 Cảm ứng (kéo xoay, chụm) chạy ở cả ba kiểu. Số chỉnh được ở `POINTER_INPUT` (`src/config/camera.ts`).
@@ -73,7 +73,7 @@ Master prompt S2 có ghi phương án dự phòng "A = góc nhìn thứ nhất, 
 ### 2.3 Quyết định liên quan
 | Mã | Nội dung | Trạng thái | Nằm ở đâu trong code |
 |---|---|---|---|
-| D-S2-01 | Kiểu camera mặc định cho người chơi mới | **ĐÃ CHỐT 15/11** — "Chuẩn" (kiểu Play Together: kéo chuột trái/phải, touchpad, cảm ứng); A/B là tùy chọn nâng cao | `DEFAULT_CAMERA_MODE = 'standard'` trong `src/config/camera.ts` |
+| D-S2-01 | Kiểu camera mặc định cho người chơi mới | **ĐÃ CHỐT 15/11** — "Chuẩn" (kiểu Play Together). **16/11 trưa:** chỉ dùng Chuẩn, không đổi kiểu (A/B tắt, code giữ). **16/11 tối:** góc nghiêng 5–65°, nút tròn nổi | `DEFAULT_CAMERA_MODE = 'standard'`, `CAMERA_OPTIONS`, `CAMERA_PITCH_RANGE`, `POINTER_INPUT.joystick.floating` trong `src/config/camera.ts` |
 | D-S2-02 | Bố cục 6 khu | **CHƯA CHỐT** — blockout tạm | `gen_map_thcs.py` + 6 file `.blend` |
 | D-S2-03 | Khu nào mở ở Ngày nào | **CHƯA CHỐT** — nội dung giả | `open_zones` trong `src/content/days/*.ts` |
 | D-S2-04 | Art style | **CHƯA KHÓA** — mặc định toon + viền | `DEFAULT_ART_STYLE` trong `src/render/style.ts`; bảng màu ở `tools/blender/world/palettes/` |

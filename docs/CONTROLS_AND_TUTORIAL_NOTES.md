@@ -14,7 +14,7 @@ Nguồn sự thật trong code:
 |---|---|---|
 | Đi | `W A S D` hoặc 4 phím mũi tên | Hướng đi theo hướng camera |
 | Chạy | giữ `Shift` khi đi | |
-| Xoay camera | **bấm giữ chuột trái (hoặc phải) rồi kéo** trên chỗ trống | Kéo quá 6 px mới xoay; bấm nhanh vẫn là bấm |
+| Xoay camera | **bấm giữ chuột trái (hoặc phải) rồi kéo** trên chỗ trống: ngang = quay, dọc = hạ thấp/nâng cao camera | Kéo quá 6 px mới xoay; bấm nhanh vẫn là bấm. Góc nghiêng 5–65° (chốt 16/11 tối) |
 | Xoay camera bằng touchpad | **vuốt 2 ngón sang ngang** (không cần nhấn) — tay kia vẫn giữ WASD để đi; hoặc nhấn mặt touchpad xuống, giữ rồi kéo | Thêm 16/11 chiều. Chưa xác nhận trên touchpad thật. Thấy xoay ngược chiều → đổi dấu `wheel_look.px_scale` |
 | Lại gần / ra xa | lăn chuột · touchpad: **vuốt 2 ngón lên/xuống** hoặc **chụm 2 ngón** | Giới hạn 3,5–8 m. Mỗi lần vuốt chỉ theo một hướng (ngang = xoay, dọc = phóng) |
 | Tương tác (nói chuyện, nhặt, xem) | `E`, hoặc bấm chuột vào người/vật | Khi có gợi ý `[E] …` dưới màn hình |
@@ -33,8 +33,8 @@ Nguồn sự thật trong code:
 
 | Việc | Cách làm | Ghi chú |
 |---|---|---|
-| Đi | **nút tròn góc dưới trái** | Kéo sát mép = chạy (≥ 85% bán kính) |
-| Xoay camera | **kéo một ngón** trên chỗ trống | Làm được cùng lúc với nút tròn (2 ngón khác nhau) |
+| Đi | **chạm bất kỳ đâu ở góc dưới trái** — nút tròn hiện ngay dưới ngón tay, kéo để đi | Kéo sát mép = chạy (≥ 85% bán kính). Thả tay nút về chỗ cũ. Thêm 16/11 tối ("nút tròn nổi"); tắt bằng `joystick.floating = false` |
+| Xoay camera | **kéo một ngón** trên chỗ trống (ngoài góc dưới trái): ngang = quay, dọc = hạ/nâng camera | Làm được cùng lúc với nút tròn (2 ngón khác nhau) |
 | Lại gần / ra xa | **chụm 2 ngón** | |
 | Tương tác | **nút tròn vàng "E"** góc dưới phải, kèm chữ gợi ý | Chỉ hiện khi đứng gần thứ tương tác được |
 | Đọc tiếp thoại | chạm vào khung thoại | Khung ghi "Chạm ▸" |
