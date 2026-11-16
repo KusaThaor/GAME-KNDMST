@@ -206,6 +206,29 @@ test.describe('S2 Chặng 2 — kiểu điều khiển "Chuẩn" (chuột, touch
     expect(errors).toEqual([]);
   });
 
+  test('ca 5b (chốt 16/11 tối): kéo chuột DỌC đổi góc nghiêng rõ ràng — kéo lên hạ camera thấp tới 5°, kéo xuống nâng cao tới 65°', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    const deg = (r: number) => (r * 180) / Math.PI;
+    expect(deg((await cam(page)).pitch)).toBeCloseTo(30, 0);
+    const X = 1000, Y = 400;
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X, Y - 300, { steps: 20 });
+    await page.mouse.up();
+    await frames(page, 2);
+    expect(deg((await cam(page)).pitch)).toBeCloseTo(5, 0);
+    await page.screenshot({ path: `${SHOTS}/05b-goc-thap.png` });
+    await page.mouse.move(X, 150); await page.mouse.down();
+    await page.mouse.move(X, 600, { steps: 25 });
+    await page.mouse.up();
+    await frames(page, 2);
+    expect(deg((await cam(page)).pitch)).toBeCloseTo(65, 0);
+    await page.screenshot({ path: `${SHOTS}/05b-goc-cao.png` });
+    expect(errors).toEqual([]);
+  });
+
   test('ca 12: touchpad mô phỏng — cuộn 2 ngón zoom từ từ, kéo một ngón (= chuột trái) xoay, không cần chuột phải', async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
@@ -390,6 +413,46 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await page.screenshot({ path: `${SHOTS}/11-anh-hen-gio.png` });
     await page.locator('[data-act="photo-keep"]').tap();
     await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s04');
+    expect(await pageStill(page)).toEqual({ scrollX: 0, scrollY: 0, scale: 1, docScroll: 0 });
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 11d (dọc): nút tròn "nổi" — chạm chỗ trống ở góc trái dưới (không trúng nút) vẫn đi được, nút hiện dưới ngón tay, thả tay nút về chỗ cũ; vùng chạm không che nút giao diện', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    const cdp = await page.context().newCDPSession(page);
+    const zone = (await page.locator('[data-testid="stick-zone"]').boundingBox())!;
+    const home = await center(page, '[data-testid="stick"]');
+    const base = (await page.locator('[data-testid="stick"]').boundingBox())!;
+    // điểm chạm: trong vùng, phía trên nút tròn (không trúng nút)
+    const p = { x: zone.x + zone.width / 2, y: base.y - 60 };
+    expect(p.y).toBeGreaterThan(zone.y);
+    expect(await page.evaluate(([x, y]) => !!document.elementFromPoint(x, y)?.closest('[data-testid="stick-zone"]'), [p.x, p.y])).toBe(true);
+    // các nút giao diện vẫn bấm được (vùng chạm không đè lên)
+    for (const sel of ['[data-act="journal"]', '[data-act="menu"]']) {
+      const c = await center(page, sel);
+      expect(await page.evaluate(([x, y, q]) => !!document.elementFromPoint(x as number, y as number)?.closest(q as string), [c.x, c.y, sel]), `${sel} bị che`).toBe(true);
+    }
+    const s0 = await state(page);
+    await touch(cdp, 'touchStart', [{ id: 1, x: p.x, y: p.y }]);
+    await frames(page, 2);
+    const moved = await center(page, '[data-testid="stick"]');
+    expect(moved.x).toBeCloseTo(p.x, 0);
+    expect(moved.y).toBeCloseTo(p.y, 0);
+    await touch(cdp, 'touchMove', [{ id: 1, x: p.x, y: p.y - 35 }]);
+    await page.waitForTimeout(900);
+    const mid = await state(page);
+    expect(mid.camera!.state).toBe('walk');
+    expect(Math.hypot(mid.player!.x - s0.player!.x, mid.player!.z - s0.player!.z)).toBeGreaterThan(0.3);
+    expect(Math.abs(mid.camera!.yaw - s0.camera!.yaw)).toBeLessThan(0.01);           // chạm trong vùng nút tròn không xoay camera
+    await touch(cdp, 'touchEnd', []);
+    await frames(page, 3);
+    expect((await state(page)).camera!.state).toBe('idle');
+    const back = await center(page, '[data-testid="stick"]');
+    expect(Math.hypot(back.x - home.x, back.y - home.y)).toBeLessThan(1);
+    await page.screenshot({ path: `${SHOTS}/11d-nut-tron-noi.png` });
     expect(await pageStill(page)).toEqual({ scrollX: 0, scrollY: 0, scale: 1, docScroll: 0 });
     expect(errors).toEqual([]);
   });
@@ -673,6 +736,245 @@ test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do (Nhìn 
     const toast = (await state(page) as unknown as { toast: string | null }).toast ?? '';
     test.info().annotations.push({ type: 'pointer-lock-headless', description: locked ? 'khóa được' : `không khóa được; thông báo: ${toast}` });
     expect(locked || toast.includes('không cho khóa chuột')).toBe(true);
+    expect(errors).toEqual([]);
+  });
+});
+
+// ---------------- Blueprint §6 Chặng 2 — ca còn lại (1, 2, 3, 7, 8, 9, 10) ----------------
+// Ca 6 (kiểu B khóa con trỏ) và ca "V xoay vòng kiểu camera" kiểu cũ: BỎ theo chủ dự án 16/11 (chỉ dùng camera Chuẩn).
+// Toạ độ dưới đây lấy từ bản đồ blockout map_thcs hiện tại (src/world/maps/map_thcs.index.json); đổi bố cục (D-S2-02) thì sửa lại.
+const FACE = { north: Math.PI, south: 0, east: Math.PI / 2 };   // hướng nhìn: north = về phía -z (sân → hành lang)
+
+/** Giữ một phím trong `ms` mili giây rồi thả (phím thật qua page.keyboard). */
+async function hold(page: Page, key: string, ms: number) {
+  await page.keyboard.down(key);
+  await page.waitForTimeout(ms);
+  await page.keyboard.up(key);
+  await frames(page, 3);
+}
+/**
+ * Giữ phím tới khi nhân vật đứng yên (bị chặn) hoặc hết `maxMs`. Chrome headless vẽ bằng CPU nên khung hình thưa và
+ * nhân vật đi chậm hơn máy thật — không dùng thời gian cố định để đoán "đã tới tường chưa".
+ */
+async function holdUntilStill(page: Page, key: string, maxMs = 30_000) {
+  await page.keyboard.down(key);
+  const t0 = Date.now();
+  let last = (await state(page)).player!;
+  let still = 0;
+  while (Date.now() - t0 < maxMs) {
+    await page.waitForTimeout(700);
+    const p = (await state(page)).player!;
+    still = Math.hypot(p.x - last.x, p.z - last.z) < 0.02 ? still + 1 : 0;
+    last = p;
+    if (still >= 2) break;
+  }
+  await page.keyboard.up(key);
+  await frames(page, 3);
+  return { stopped: still >= 2, at: (await state(page)).player! };
+}
+/** Ghi lại mọi chữ từng hiện trong ô tên khu (toast hiện thoáng rồi tắt). */
+const watchToasts = (page: Page) => page.evaluate(() => {
+  const w = window as unknown as { __toasts: string[] };
+  w.__toasts = [];
+  new MutationObserver(() => { const t = document.querySelector('[data-testid="toast"]')?.textContent; if (t && w.__toasts.at(-1) !== t) w.__toasts.push(t); })
+    .observe(document.body, { subtree: true, childList: true, characterData: true });
+});
+const toastLog = (page: Page) => page.evaluate(() => (window as unknown as { __toasts: string[] }).__toasts);
+const eventsNamed = (batches: CollectBatch[], name: string) => batches.flatMap((b) => b.events ?? []).filter((e) => e.name === name);
+
+test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ảnh, vòng đời', () => {
+  test('ca 1: giữ W đi thẳng vào tường hành lang → dừng lại, không xuyên', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    // tường phía bắc hành lang ở z ≈ -21.6 (sau tường là lớp học)
+    await page.evaluate(([f]) => window.__game!.teleport(-6, -20.4, f), [FACE.north]);
+    await frames(page, 3);
+    const z0 = (await state(page)).player!.z;
+    const r = await holdUntilStill(page, 'KeyW');
+    expect(r.stopped, 'vẫn đi tiếp — không bị tường chặn').toBe(true);
+    expect(r.at.z).toBeLessThan(z0 - 0.5);                               // đã đi được một đoạn rồi mới dừng
+    expect(r.at.z).toBeGreaterThan(-21.6);                               // không xuyên qua tường
+    expect((await state(page)).zone).toBe('zone.thcs.corridor');
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 2: đi bộ từ sân qua hành lang → khu đổi, tên khu hiện, đúng 1 event zone_entered (chỉ memory_day_id + zone_id)', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    const batches = await captureCollect(page);
+    await openDay(page);
+    await page.evaluate(([f]) => window.__game!.teleport(3, -16, f), [FACE.north]);
+    await frames(page, 3);
+    expect((await state(page)).zone).toBe('zone.thcs.yard');
+    await watchToasts(page);
+    await page.keyboard.down('KeyW');
+    await expect.poll(async () => (await state(page)).zone, { timeout: 60_000 }).toBe('zone.thcs.corridor');
+    await page.keyboard.up('KeyW');
+    await expect.poll(() => toastLog(page), { timeout: 5_000 }).toContain('Hành lang');
+    // đi tới đi lui qua ranh: vẫn chỉ 1 event cho hành lang
+    await hold(page, 'KeyS', 1500);
+    await hold(page, 'KeyW', 1500);
+    await page.evaluate(() => window.__game!.flush());
+    const zone = eventsNamed(batches, 'zone_entered').filter((e) => (e.props as Record<string, unknown>)?.zone_id === 'zone.thcs.corridor');
+    expect(zone).toHaveLength(1);
+    expect(Object.keys(zone[0].props as object).sort()).toEqual(['memory_day_id', 'zone_id']);
+    expect((zone[0].props as Record<string, unknown>).memory_day_id).toBe('d.g06.01');
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 3: Ngày d.g06.01 chỉ mở 3 khu — đi về phía cổng trường bị chặn, không vào được khu cổng', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    await page.evaluate(([f]) => window.__game!.teleport(3, 13, f), [FACE.south]);
+    await frames(page, 3);
+    const r = await holdUntilStill(page, 'KeyW');
+    expect(r.stopped, 'vẫn đi tiếp — cổng không chặn').toBe(true);
+    const s = await state(page);
+    expect(s.zone).toBe('zone.thcs.yard');
+    expect(s.player!.z).toBeGreaterThan(14);                              // đã đi về phía cổng
+    expect(s.player!.z).toBeLessThan(18.3);                               // vẫn trên sân (sàn sân hết ở z = 18.3)
+    await page.keyboard.down('ShiftLeft');                                  // thử chạy cũng không qua
+    await hold(page, 'KeyW', 2000); await page.keyboard.up('ShiftLeft');
+    expect((await state(page)).zone).not.toBe('zone.thcs.gate');
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 7: đứng sát tường rồi kéo chuột xoay camera ra sau tường → camera tự kéo gần (khoảng cách thật < khoảng cách đặt)', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    // đứng sát tường bắc hành lang, quay mặt về tường: camera ở phía sân, không bị che
+    await page.evaluate(([f]) => window.__game!.teleport(-6, -21.0, f), [FACE.north]);
+    await frames(page, 30);
+    const c0 = await cam(page);
+    expect(c0.cameraDistance).toBeGreaterThan(c0.distance - 0.3);
+    // kéo chuột ngang ~180° → camera ra phía sau tường
+    const X = 300, Y = 360, px = Math.round(Math.PI / 0.0045);
+    await page.mouse.move(X, Y); await page.mouse.down();
+    await page.mouse.move(X + px, Y, { steps: 40 });
+    await page.mouse.up();
+    await frames(page, 10);
+    const c1 = await cam(page);
+    expect(Math.abs(Math.abs(c1.yaw - c0.yaw) - Math.PI)).toBeLessThan(0.4);
+    expect(c1.cameraDistance).toBeLessThan(c1.distance - 0.5);
+    await page.screenshot({ path: `${SHOTS}/07-camera-sat-tuong.png` });
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 8: bước chụp ảnh hẹn giờ — camera khóa ở khung ngắm (kéo chuột không xoay), bấm hẹn giờ thì trả lại đúng góc cũ; chụp xong vẫn tự do', async ({ page }) => {
+    test.setTimeout(420_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s03');
+    await page.evaluate(() => window.__game!.teleportTo('itr.thcs.tripod_spot'));
+    // xoay camera một chút để có "góc cũ" khác mặc định
+    await page.mouse.move(900, 300); await page.mouse.down(); await page.mouse.move(1000, 330, { steps: 10 }); await page.mouse.up();
+    await frames(page, 3);
+    const before = await cam(page);
+    await expect(page.locator('[data-testid="prompt"]')).toBeVisible({ timeout: 20_000 });
+    await page.keyboard.press('KeyE');
+    await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
+    expect((await cam(page)).locked).toBe(true);
+    const lockedYaw = (await cam(page)).yaw;
+    await page.mouse.move(900, 300); await page.mouse.down(); await page.mouse.move(1100, 300, { steps: 10 }); await page.mouse.up();
+    await frames(page, 3);
+    expect((await cam(page)).locked).toBe(true);
+    expect((await cam(page)).yaw).toBeCloseTo(lockedYaw, 6);
+    await page.locator('[data-act="photo-start"]').click();
+    await expect.poll(async () => (await cam(page)).locked, { timeout: 10_000 }).toBe(false);
+    const after = await cam(page);
+    expect(after.yaw).toBeCloseTo(before.yaw, 3);
+    expect(after.pitch).toBeCloseTo(before.pitch, 3);
+    expect(after.distance).toBeCloseTo(before.distance, 3);
+    await page.keyboard.press('Space');                                    // tạo dáng
+    // hẹn giờ 8 giây theo đồng hồ game; Chrome headless vẽ chậm nên chờ lâu hơn máy thật
+    await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
+    await page.locator('[data-act="photo-keep"]').click();
+    await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s04');
+    expect((await cam(page)).locked).toBe(false);
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 9: phòng → Ngày → phòng 3 vòng — số listener của game và listener thật trên window/document không tăng (kể cả sau khi dùng cảm ứng)', async ({ page }) => {
+    test.setTimeout(420_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await page.goto('/?play=1&day=d.g07.03&step=q_m1_main_05.s05');
+    await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
+    const t0 = Date.now();
+    for (;;) {
+      const s = await page.evaluate(() => window.__game!.state() as { mode: string; days: Record<string, string>; ui: { feedback: unknown } });
+      if (s.mode === 'hub' && s.days['d.g07.03'] === 'completed' && s.ui.feedback) break;
+      if (Date.now() - t0 > 180_000) throw new Error('bot không về được phòng');
+      await page.evaluate(() => window.__game!.botStep({ optional: false }));
+      await page.waitForTimeout(100);
+    }
+    await page.locator('[data-act="feedback-skip"]').click();
+    const cdp = await page.context().newCDPSession(page);
+    /** Đếm listener thật (DevTools) trên window và document — không dựa vào số game tự báo. */
+    const realListeners = async () => {
+      let n = 0;
+      for (const expr of ['window', 'document']) {
+        const { result } = await cdp.send('Runtime.evaluate', { expression: expr });
+        n += (await cdp.send('DOMDebugger.getEventListeners', { objectId: result.objectId! })).listeners.length;
+      }
+      return n;
+    };
+    const hubIdle = () => page.waitForFunction(() => { const s = window.__game!.state() as { mode: string; flow: string }; return s.mode === 'hub' && s.flow === 'hub_idle' && window.__game!.ready(); }, null, { timeout: 60_000 });
+    const rows: { at: string; game: number; real: number }[] = [];
+    for (let i = 0; i < 3; i++) {
+      await hubIdle();
+      rows.push({ at: `phòng ${i + 1}`, game: (await state(page)).listeners, real: await realListeners() });
+      await page.evaluate(() => window.__game!.hubClick('itr.hub.shelf'));
+      await page.locator('[data-act="open-art_m1_05"]').click();
+      await page.waitForFunction(() => { const s = window.__game!.state() as { mode: string; replay: boolean }; return s.mode === 'day' && s.replay && window.__game!.ready(); }, null, { timeout: 60_000 });
+      // dùng thử chuột, lăn và một cú chạm (cảm ứng) trong Ngày
+      await page.mouse.move(900, 300); await page.mouse.down(); await page.mouse.move(980, 300, { steps: 6 }); await page.mouse.up();
+      await page.mouse.wheel(0, 100);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 900, y: 300, id: 1 }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 960, y: 300, id: 1 }] });
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      rows.push({ at: `Ngày ${i + 1}`, game: (await state(page)).listeners, real: await realListeners() });
+      await page.keyboard.press('Escape');
+      await page.locator('[data-act="leave-day"]').click();
+    }
+    await hubIdle();
+    rows.push({ at: 'phòng (cuối)', game: (await state(page)).listeners, real: await realListeners() });
+    console.table(rows);
+    const at = (k: string) => rows.find((r) => r.at === k)!;
+    expect(new Set(rows.map((r) => r.game)).size).toBe(1);                 // game: một bộ listener duy nhất suốt đời game
+    expect(at('Ngày 3').real).toBe(at('Ngày 1').real);
+    expect(at('phòng (cuối)').real).toBe(at('phòng 1').real);
+    expect(errors).toEqual([]);
+  });
+
+  test('ca 10: tải lại trang khi đang ở hành lang (khác khu xuất phát) → đứng lại ở điểm xuất hiện của hành lang, tiến độ quest giữ nguyên', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await captureCollect(page);
+    await openDay(page);
+    await page.evaluate(([f]) => window.__game!.teleport(3, -16, f), [FACE.north]);
+    await frames(page, 3);
+    await page.keyboard.down('KeyW');
+    await expect.poll(async () => (await state(page)).zone, { timeout: 60_000 }).toBe('zone.thcs.corridor');
+    await page.keyboard.up('KeyW');
+    const before = await page.evaluate(() => window.__game!.state() as { step: string; quests: unknown });
+    await page.waitForTimeout(1000);                                         // tự lưu khi đổi khu chạy sau một nhịp
+    // mở lại như người chơi thật (không kèm ?day=, vì tham số đó dựng lại bản lưu từ đầu)
+    await page.goto('/?play=1');
+    await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
+    await freeInDay(page);
+    const s = await state(page);
+    const after = await page.evaluate(() => window.__game!.state() as { step: string; quests: unknown });
+    expect(s.zone).toBe('zone.thcs.corridor');
+    expect(Math.hypot(s.player!.x - -6, s.player!.z - -20.5)).toBeLessThan(1.0);   // spawn.thcs.corridor
+    expect(after.step).toBe(before.step);
+    expect(after.quests).toEqual(before.quests);
     expect(errors).toEqual([]);
   });
 });
