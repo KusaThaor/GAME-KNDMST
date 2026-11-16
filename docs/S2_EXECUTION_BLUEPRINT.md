@@ -262,6 +262,8 @@ Không sửa: `gen_map_thcs.py` (bố cục chờ D-S2-02), 6 file `.blend`.
 9. Phòng → Ngày → phòng 3 vòng: `state().listeners` không tăng.
 10. Tải lại trang khi đang đứng ở khu khác khu xuất phát → đứng lại ở điểm xuất hiện của khu đó, tiến độ quest giữ nguyên.
 
+**Ghi chú 16/11 (chủ dự án chốt chỉ dùng camera Chuẩn):** ca 4 đổi thành "luôn là Chuẩn, V không làm gì, bản lưu A/B về Chuẩn"; ca 6 bỏ. Thêm ca 5b (kéo dọc 5–65°), 11a–d (cảm ứng mô phỏng), 12/12b (touchpad mô phỏng). Tất cả nằm trong `tests/e2e/world.spec.ts`.
+
 ### Chặng 3 — Integration & Test
 | Việc | File |
 |---|---|
@@ -276,24 +278,24 @@ Cốt truyện/thoại thật; chốt bất kỳ quyết định D-xx nào; nố
 
 ## 7. Bảng nghiệm thu S2
 
-| Tiêu chí | Trạng thái (cập nhật sau Chặng 2 Phần A, 16/11) | Bằng chứng / còn thiếu |
+| Tiêu chí | Trạng thái (cập nhật sau Chặng 2, phiên 2c, 17/11) | Bằng chứng / còn thiếu |
 |---|---|---|
 | Có 6 khu theo tài liệu, blockout ghi chú rõ | ĐẠT | `validate:world`; §2.1 |
 | Các khu nạp được | ĐẠT | `world.test.ts`; bot đi tới điểm tương tác ở cả 6 khu |
-| Đi lại được | ĐẠT một phần | unit + test giữ `W`; thiếu ca 1 |
-| Đường nối/đổi khu | ĐẠT một phần | `travel.test.ts`; thiếu ca 2, 3 trên trình duyệt |
+| Đi lại được | ĐẠT | unit + e2e ca 1 (giữ W vào tường) |
+| Đường nối/đổi khu | ĐẠT | `travel.test.ts`; e2e ca 2 (sân → hành lang, 1 event `zone_entered`), ca 3 (cổng bị chặn), ca 10 (tải lại giữ khu) |
 | Thêm khu bằng cấu hình + file | ĐẠT | `expand.test.ts` + mục 7 `test_pipeline.py`; 15/11 thử tay trọn quy trình khu thứ 7 trong worktree bỏ đi, chơi thử bằng phím thật (vào portal, bấm E ra) — `docs/HOW_TO_EXPAND_WORLD.md` |
-| Camera Chuẩn/A/B, đổi kiểu | ĐẠT một phần | `camera.test.ts`, `gestures.test.ts`; e2e ca 4, 5, 12 đạt; thiếu ca 6 (kiểu B) |
-| Chơi bằng touchpad / cảm ứng (D-S2-01) | ĐẠT một phần (mô phỏng) | e2e ca 11a/b/c, 12 trên mô phỏng Chrome; CHƯA KIỂM trên điện thoại thật, touchpad thật |
-| Camera không xuyên vật | ĐẠT một phần | unit; thiếu ca 7 |
-| Va chạm | ĐẠT một phần | `collision.test.ts`, `controller.test.ts`; thiếu ca 1 |
-| Input không nhân đôi | CHƯA KIỂM trên trình duyệt | thiếu ca 9 |
+| Camera Chuẩn (chỉ một kiểu, chốt 16/11) | ĐẠT | `camera.test.ts`, `gestures.test.ts`; e2e ca 4, 5, 5b (góc 5–65°), 12, 12b. Ca 6 (kiểu B) bỏ theo chủ dự án; code A/B giữ, tắt |
+| Chơi bằng touchpad / cảm ứng (D-S2-01) | ĐẠT một phần (mô phỏng) | e2e ca 11a/b/c/d (nút tròn nổi), 12, 12b trên mô phỏng Chrome; CHƯA KIỂM trên điện thoại thật, touchpad thật |
+| Camera không xuyên vật | ĐẠT | unit; e2e ca 7 (xoay ra sau tường → camera kéo gần) |
+| Va chạm | ĐẠT | `collision.test.ts`, `controller.test.ts`; e2e ca 1, 3 |
+| Input không nhân đôi | ĐẠT | e2e ca 9: phòng ↔ Ngày 3 vòng, listener game 14 và listener thật trên window/document 30 không đổi |
 | `.blend` sửa được + `.glb` tương ứng + script xuất + collection | ĐẠT | §1; Chặng 1 chạy lại `test_pipeline.py` 61/61 trên `bpy` 4.5.16 (bản chuẩn, D-S2-05) và 5.2.4. `blender.exe` trên Windows: CHƯA KIỂM |
 | Màu Blender ↔ game | ĐẠT một phần | Chặng 1: màu trong `.glb` trùng đúng bảng màu; ảnh preview Blender bạc màu (AgX); game buổi chiều ngả cam do ánh sáng `late_afternoon`. Chưa sửa (art style chưa khóa, D-S2-04). Ảnh: `docs/images/s2_color_compare.jpg`; số đo: `docs/S2_TEST_REPORT.md` |
 | Giữ ID ổn định sau khi sửa phần nhìn | ĐẠT | mục 4 `test_pipeline.py` |
-| Luồng cũ, quest, checkpoint, phòng 2026 | ĐẠT | Playwright 19 đạt (13 cũ + 6 mới), 16/11 |
+| Luồng cũ, quest, checkpoint, phòng 2026 | ĐẠT | Playwright 37 đạt, 1 bỏ qua (toàn bộ), 17/11; ca 8 (camera khóa/trả khi chụp ảnh) |
 | Analytics, đồng ý thu thập | ĐẠT một phần | chưa chạy lại phần Emulator |
-| Hướng dẫn sửa Blender, thêm khu, đổi art style, đổi model | ĐẠT một phần | Có `docs/BLENDER_PIPELINE.md`, `docs/HOW_TO_EXPAND_WORLD.md` (Chặng 1). Còn thiếu đổi art style, đổi model (Chặng 2–3) |
+| Hướng dẫn sửa Blender, thêm khu, đổi art style, đổi model | ĐẠT một phần | `BLENDER_PIPELINE.md`, `HOW_TO_EXPAND_WORLD.md`, `S2_WORLD_ARCHITECTURE.md` §6 (đổi model qua `rigAvatar`). Còn thiếu đổi art style (Chặng 3) |
 | Preset camera chỉnh trong cấu hình | ĐẠT | `src/config/camera.ts` |
 | Quest không dính tên mesh/file | ĐẠT | nội dung chỉ nêu ID; `validate:world` |
 

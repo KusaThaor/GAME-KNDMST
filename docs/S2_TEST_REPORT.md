@@ -201,3 +201,38 @@ Lệnh đã chạy (máy ảo Linux, Chrome headless), số thật:
 - `VERCEL_ENV=production npm run build`: đạt; không thấy `botStep|__game|gameTools` trong `dist/assets/*.js`.
 
 Chưa kiểm: touchpad thật (Windows + Cốc Cốc, Mac); chiều xoay đúng cảm giác tay (phụ thuộc thiết lập cuộn của máy); Windows có chặn vuốt khi đang giữ phím hay không; FPS.
+
+## Chặng 2 — Phần 2c: ca trình duyệt còn lại + camera linh hoạt hơn (16–17/11/2026, 22:20–01:30 UTC+7)
+Máy ảo Linux 2 nhân, Chrome headless (vẽ bằng CPU). Touchpad và cảm ứng ở đây là **mô phỏng** của Chrome.
+
+### Chủ dự án chốt trong phiên (16/11 tối)
+- Bỏ 2 ca: ca 6 (kiểu B khóa con trỏ) và ca "V xoay vòng kiểu camera" kiểu cũ — vì đã chốt chỉ dùng camera Chuẩn.
+- Tập trung camera linh hoạt như Play Together/PUBG; không cho người chơi đổi chế độ camera; code cũ không xóa.
+- Góc nghiêng mở từ 25–40° (GDD) thành **5–65°** (chủ dự án chọn trong phiên).
+
+### Đã làm
+- **Góc nghiêng 5–65°** cho mọi preset (`CAMERA_PITCH_RANGE`). Số GDD cũ giữ ở `CAMERA_PITCH_GDD_V03`. Kéo dọc ~350 px chuột là đi hết dải.
+- **Nút tròn "nổi" trên điện thoại** (`POINTER_INPUT.joystick.floating = true`): chạm bất kỳ đâu ở vùng góc trái dưới (≈ 45% rộng × 60% cao, tối đa 340×360 px) thì nút hiện dưới ngón tay; thả tay nút về chỗ cũ. `floating = false` = nút cố định như cũ (code giữ).
+- Thêm ca e2e 1, 2, 3, 7, 8, 9, 10 (blueprint §6) + 5b (kéo dọc) + 11d (nút tròn nổi).
+- Không đổi: luồng F0–F10, analytics (không event mới), code A/B/Nhìn tự do (vẫn tắt).
+
+### Lỗi do test lộ ra
+Không có lỗi game. Bốn lần đỏ đầu tiên đều do cách viết test, đã sửa test (không sửa game):
+- ca 1, 3: đoán "đã tới tường" bằng thời gian cố định — Chrome headless chỉ vài khung hình/giây nên nhân vật đi chậm. Đổi thành giữ phím tới khi nhân vật đứng yên.
+- ca 2: tên khu hiện thoáng rồi tắt trước khi test kịp đọc → ghi lại mọi chữ từng hiện.
+- ca 10: tải lại trang kèm `?day=` làm công cụ test dựng lại bản lưu từ đầu → mở lại bằng `/?play=1` như người chơi thật.
+- ca 8, 11b: hẹn giờ 8 giây theo đồng hồ game + chụp ảnh chậm trên CPU → chờ tới 120–150 giây.
+
+### Số chạy thật cuối phiên (HEAD `3aabacb` + tài liệu)
+- `npx tsc --noEmit`: đạt.
+- `npm test`: 259 đạt, 1 bỏ qua (thêm 6: góc 5–65°, nút tròn nổi).
+- `npm run validate:world`: 0 lỗi, 0 nhắc.
+- `npm run test:e2e` lần 1: 36 đạt, 1 hỏng (ca 11b hết 30 giây chờ ảnh), 1 bỏ qua, 29,9 phút. Nới thời gian chờ → ca 11b chạy riêng đạt.
+- `npm run test:e2e` lần 2 (toàn bộ, HEAD `3aabacb`): **37 đạt, 1 bỏ qua, 0 hỏng**, 28,8 phút (38 ca: 29 cũ + 9 mới).
+- `VERCEL_ENV=production npm run build`: đạt; không thấy `botStep|__game|gameTools` trong `dist/assets/*.js`.
+- Ca 9 (đếm listener): game tự báo 14 suốt 7 lần đo; listener thật trên `window` + `document` (DevTools) 30 ở cả phòng và Ngày, 3 vòng không tăng (có dùng chuột, lăn và một cú chạm trong mỗi Ngày).
+
+### Chưa kiểm
+- Điện thoại thật (iPhone Safari, Android Chrome), touchpad thật (Windows + Chrome/Cốc Cốc) — đặc biệt nút tròn nổi và kéo dọc.
+- Ca 6 (kiểu B khóa con trỏ): bỏ theo chủ dự án; code còn, không kiểm thêm.
+- FPS: chưa đo (chỉ đo trên máy có GPU thật).

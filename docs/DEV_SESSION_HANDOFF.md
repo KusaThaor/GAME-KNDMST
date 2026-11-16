@@ -1,9 +1,9 @@
 # DEV_SESSION_HANDOFF
 
-## S2 — tiến độ (cập nhật 16/11/2026, 14:20 UTC+7, sau bản touchpad vuốt ngang) — ĐỌC TRƯỚC
+## S2 — tiến độ (cập nhật 17/11/2026, 01:30 UTC+7, sau phiên 2c) — ĐỌC TRƯỚC
 Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
 
-- Nhánh `feature/s2-world-camera-blender`, đã push (Phần A tới `4463b90`). Chưa gộp vào `dev`, chưa đụng `main`.
+- Nhánh `feature/s2-world-camera-blender`, đã push (tới phiên 2c). Chưa gộp vào `dev`, chưa đụng `main`.
 - Chặng 1 xong (World & Blender Pipeline) — xem `docs/S2_TEST_REPORT.md`.
 - **Chặng 2 Phần A xong (2a + 2b):** kiểu camera "Chuẩn" là mặc định (D-S2-01 đã chốt): kéo chuột trái/phải, touchpad (cuộn/chụm 2 ngón, kéo một ngón), cảm ứng (nút tròn, kéo xoay, chụm, nút E ảo, nút Tạo dáng). V/Menu xoay vòng Chuẩn → A → B. Chặn cuộn/phóng trang, viewport tai thỏ. Số chỉnh ở `POINTER_INPUT` (`src/config/camera.ts`), logic ở `src/game/gestures.ts`.
 - **HOTFIX touchpad (16/11 sáng, đã push `14f5fb5`):** chủ dự án thử thật Windows + Cốc Cốc: kéo touchpad để xoay KHÔNG đạt. Gốc lỗi CHƯA xác nhận (nghi số 1: bản lưu cũ còn kiểu A). Đã làm: kéo kiểu Chuẩn chắc hơn (giữ con trỏ, xử lý mất pointerup), tùy chọn "Nhìn tự do" (phím L / Menu; bấm để khóa, rê touchpad là xoay), bảng chẩn đoán `?inputdebug=1` (chỉ bản test). Playwright 26 đạt, 1 bỏ qua. Chờ chủ dự án thử lại theo `docs/TOUCHPAD_CHECK_GUIDE.md` và gửi nội dung "Sao chép". Chi tiết: `docs/S2_TEST_REPORT.md` mục HOTFIX.
@@ -14,7 +14,13 @@ Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `
 - Touchpad/cảm ứng mới kiểm bằng **mô phỏng** của Chrome. Chưa thử điện thoại thật, touchpad thật; FPS chưa đo.
 - Khu nặng nhất (mô phỏng điện thoại): cổng ~185 draw call, ~66 nghìn tam giác. Độ nét màn hình đã giới hạn ≤ 2.
 - Thấy khi thử, chưa sửa (từ Chặng 1): tên khu dài đè nút "Camera" ở cửa sổ 960 px; nhắc `closed_zone_no_gate` với khu chỉ vào bằng portal.
-- **Việc kế tiếp: phiên 2c** theo `docs/PROMPT_CHANG_2.md`: Phần B ca 1–3, 6–10 (ca 9 phải đếm cả listener cảm ứng); Phần C: `docs/S2_WORLD_ARCHITECTURE.md` (có sơ đồ luồng đầu vào), `docs/DECISIONS_AND_OPEN_QUESTIONS.md`, cột Trạng thái §7 blueprint.
+- **Phiên 2c xong (16–17/11 đêm) — Chặng 2 hoàn tất:**
+  - Chủ dự án chốt: chỉ camera Chuẩn, linh hoạt như Play Together/PUBG, code cũ giữ. **Góc nghiêng 5–65°** (GDD ghi 25–40°; số cũ ở `CAMERA_PITCH_GDD_V03`). **Nút tròn "nổi"** trên điện thoại: chạm đâu ở góc trái dưới cũng đi được (`POINTER_INPUT.joystick.floating`; `false` = nút cố định cũ).
+  - E2E thêm ca 1, 2, 3, 7, 8, 9, 10, 5b, 11d (`tests/e2e/world.spec.ts`). Bỏ ca 6 (kiểu B) và ca V kiểu cũ theo chủ dự án.
+  - Tài liệu mới: `docs/S2_WORLD_ARCHITECTURE.md` (vòng đời cảnh, camera khóa/trả, sơ đồ đầu vào, thay model qua `rigAvatar`), `docs/DECISIONS_AND_OPEN_QUESTIONS.md`. Cập nhật `S2_TEST_REPORT.md` (mục 2c), `CONTROLS_AND_TUTORIAL_NOTES.md`, blueprint §2.2/§2.3/§7.
+  - Số chạy thật: `tsc` đạt; vitest 259 đạt, 1 bỏ qua; `validate:world` 0 lỗi; Playwright 37 đạt, 1 bỏ qua (toàn bộ); build production sạch công cụ test. Chi tiết: `docs/S2_TEST_REPORT.md`.
+- **Việc kế tiếp: Chặng 3** (blueprint §6): chạy đủ bộ có Firestore Emulator, ảnh 6 khu × 2 phong cách, `ART_STYLE_CHANGE_GUIDE.md`, `AI_HANDOFF_START_HERE.md`, README, rồi mở Pull Request vào `dev` (không tự gộp).
+- Chờ chủ dự án thử thật: nút tròn nổi + kéo dọc trên điện thoại; touchpad Windows (kéo một ngón, vuốt 2 ngón ngang). Cân nhắc: màn hướng dẫn điều khiển, thanh độ nhạy camera trong Menu.
 - Chờ chủ dự án: thử trên điện thoại/touchpad thật · D-S2-02 bố cục 6 khu · D-S2-03 · D-S2-04 art style (màu chiều ngả cam).
 - Máy chủ dự án đang ở nhánh `feature/asset-workshop`: cần `git fetch` rồi `git worktree add`, không đổi nhánh trong thư mục đó.
 
