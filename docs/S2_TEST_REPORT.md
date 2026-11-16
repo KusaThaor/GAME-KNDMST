@@ -134,3 +134,59 @@ Môi trường: máy Linux trong phiên Claude (không GPU), Node 22.23.4, Chrom
 - Điện thoại thật (iPhone Safari, Android Chrome), touchpad laptop thật, máy tính bảng.
 - FPS trên laptop/điện thoại thật.
 - Phần B còn lại (ca 1–3, 6–10) và Phần C (tài liệu kiến trúc, quyết định) — để phiên 2c.
+
+## HOTFIX touchpad Windows (16/11/2026, 08:50–09:40 UTC+7)
+
+**Kết quả thử thật của chủ dự án** (Windows, Cốc Cốc, touchpad, không chuột rời, bản `4faf704`): WASD đạt · cuộn 2 ngón zoom đạt · **bấm-giữ-kéo touchpad để xoay: KHÔNG đạt**.
+
+### Gốc lỗi: CHƯA XÁC NHẬN
+Ở đây không có touchpad thật nên không tái hiện được. Chrome (mô phỏng) kéo trái vẫn xoay từ Phần A. Đọc code không thấy đường nào làm hỏng một lần kéo **trong cửa sổ** bằng nút trái. Các nghi vấn, xếp theo khả năng:
+1. **Bản lưu cũ đang ở kiểu A** (tình huống F trong prompt): trước Phần A, mặc định là A; người chơi cũ được giữ lựa chọn nên vẫn ở A, mà kiểu A chỉ xoay bằng chuột phải. Kiểm bằng: nút góc phải ghi "Camera A", hoặc bảng chẩn đoán ghi `kiểu camera đã lưu: A`.
+2. **Windows chặn touchpad khi đang giữ phím** (G): thử kéo trong lúc giữ WASD.
+3. **Thao tác touchpad không thành "nhấn-giữ-kéo"** (G): tùy máy/thiết lập (chạm 2 lần rồi kéo bị tắt…).
+4. **Kéo ra ngoài khung/cửa sổ thì mất** (B): code cũ không giữ con trỏ (pointer capture) → đã sửa.
+5. **Cốc Cốc khác Chrome** (F): chưa có bằng chứng.
+
+→ Thêm **bảng chẩn đoán** để lần thử tới có bằng chứng.
+
+### Đã sửa / thêm
+- `src/game/input.ts`: kéo kiểu Chuẩn giờ có trạng thái rõ ràng theo `pointerId`:
+  - giữ con trỏ (`setPointerCapture`), nên kéo ra ngoài khung vẫn nhận;
+  - thả đúng lúc (pointerup, pointercancel, mất focus); nếu trình duyệt quên gửi pointerup thì nhận ra nhờ `buttons=0`; ghi lại `lostpointercapture`;
+  - không đòi `buttons` đúng một giá trị.
+- **"Nhìn tự do"** (tùy chọn riêng, không đổi tên hay thay kiểu Chuẩn/A/B), lưu cục bộ, không vào analytics:
+  - bật bằng phím **L** hoặc trong Menu; bấm vào màn hình để khóa con trỏ, rồi rê touchpad (không nhấn) là xoay;
+  - Esc thả con trỏ; không tự khóa lại khi chưa bấm vào màn hình; có thoại/bảng thì thả con trỏ;
+  - khóa bị từ chối → báo cho người chơi, vẫn kéo để xoay được.
+- `src/game/gestures.ts`: thêm `ButtonDrag` (logic thuần, 5 test đơn vị).
+- **Bảng chẩn đoán** `src/lab/inputDiagnostics.ts`, chỉ có ở bản test, mở bằng `?inputdebug=1`:
+  - ghi tối đa 400 sự kiện: loại, pointerType, button/buttons, id, tọa độ, movement, phần tử nhận, phần tử đang focus, kiểu camera, đang kéo/giữ/khóa, chuyển động chờ, yaw/pitch trước và sau;
+  - có nút "Sao chép". Không in ra console.
+- Lỗi tìm thấy khi viết test, đã sửa:
+  - (a) nhật ký chẩn đoán làm hỏng xử lý chính khi sự kiện đến từ `window` → bọc an toàn;
+  - (b) `el.contains(window)` gây lỗi → kiểm kiểu trước.
+- Hướng dẫn kiểm trên máy thật: `docs/TOUCHPAD_CHECK_GUIDE.md`.
+- Sửa thêm, ngoài phạm vi nhưng cần: `src/core/save.ts` (thêm `free_look` tùy chọn), `src/config/camera.ts` (phím L), `src/ui/game/{GameUi.tsx,store.ts}`, `src/lab/gameTools.ts`.
+
+### Test (chạy thật trong máy này)
+| Lệnh | Kết quả |
+|---|---|
+| `npx tsc --noEmit` | đạt |
+| `npm test` | 246 đạt, 1 bỏ qua |
+| `npm run validate:world` | 0 lỗi, 0 nhắc |
+| `npx playwright test` | **26 đạt, 1 bỏ qua** (Emulator), 0 chập chờn — 13,7 phút |
+| `VERCEL_ENV=production npm run build` | đạt; không có `__game`, `gameTools`, bảng chẩn đoán trong `dist` (chỉ còn hàm móc rỗng `setDebugTap`) |
+
+Ca mới H1–H7 (`tests/e2e/world.spec.ts`):
+- **H1:** kéo trái đổi cả yaw lẫn pitch; rê không bấm thì không xoay; kéo phải vẫn xoay; thả ra không bị đặt lại.
+- **H2:** giữ con trỏ khi kéo, ra ngoài khung vẫn xoay; thả thì trả con trỏ; bảng chẩn đoán ghi đúng và sao chép được.
+- **H3:** pointercancel và `buttons=0` (không có pointerup) đều dừng kéo.
+- **H4:** W + kéo cùng lúc.
+- **H5:** Nhìn tự do, khóa **giả lập** thành công: Esc, không tự khóa lại, thoại thả con trỏ, nút Menu.
+- **H6:** khóa **giả lập** bị từ chối: có báo, không thử lại, kéo vẫn chạy.
+- **H7:** khóa con trỏ **thật** trong Chrome headless: khóa được.
+
+Các ca cũ 4, 5, 11a/b/c, 12 (touchpad mô phỏng, điện thoại mô phỏng) vẫn đạt.
+
+### CHƯA KIỂM (PENDING)
+Touchpad thật trên Windows + Cốc Cốc (cả kéo lẫn Nhìn tự do) · Cốc Cốc có cho khóa con trỏ không · điện thoại thật · FPS.
