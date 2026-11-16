@@ -1,0 +1,2 @@
+Rendered front to: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_base\test_upright_front.png, exists: True
+Rendered 3/4 to: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_base\test_upright_34.png, exists: True

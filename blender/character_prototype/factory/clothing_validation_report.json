@@ -1,0 +1,564 @@
+{
+  "timestamp": "2026-11-16T22:25:00+07:00",
+  "verdict": "PASS",
+  "subsystems": {
+    "bottom_library": {
+      "tested": 8,
+      "passed": 8,
+      "failed": 0,
+      "details": [
+        {
+          "id": "BOTTOM_001",
+          "name": "Long School Trousers",
+          "objects_created": 1,
+          "total_vertices": 268,
+          "materials": [
+            "M_Bottom_test_bottom_001"
+          ],
+          "vertex_groups": [
+            "Spine",
+            "Shin.R",
+            "Thigh.L",
+            "Shin.L",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_002",
+          "name": "School Uniform Shorts",
+          "objects_created": 1,
+          "total_vertices": 184,
+          "materials": [
+            "M_Bottom_test_bottom_002"
+          ],
+          "vertex_groups": [
+            "Thigh.L",
+            "Spine",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_003",
+          "name": "Casual Khaki Shorts",
+          "objects_created": 1,
+          "total_vertices": 184,
+          "materials": [
+            "M_Bottom_test_bottom_003"
+          ],
+          "vertex_groups": [
+            "Thigh.L",
+            "Spine",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_004",
+          "name": "Pleated School Skirt",
+          "objects_created": 1,
+          "total_vertices": 164,
+          "materials": [
+            "M_Bottom_test_bottom_004"
+          ],
+          "vertex_groups": [
+            "Chest",
+            "Spine",
+            "Thigh.L",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_005",
+          "name": "Casual A-Line Skirt",
+          "objects_created": 1,
+          "total_vertices": 100,
+          "materials": [
+            "M_Bottom_test_bottom_005"
+          ],
+          "vertex_groups": [
+            "Thigh.L",
+            "Spine",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_006",
+          "name": "Denim Shorts",
+          "objects_created": 1,
+          "total_vertices": 184,
+          "materials": [
+            "M_Bottom_test_bottom_006"
+          ],
+          "vertex_groups": [
+            "Thigh.L",
+            "Spine",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_007",
+          "name": "PE Sports Pants",
+          "objects_created": 1,
+          "total_vertices": 276,
+          "materials": [
+            "M_Bottom_test_bottom_007",
+            "M_Bottom_Stripe_test_bottom_007"
+          ],
+          "vertex_groups": [
+            "Spine",
+            "Shin.R",
+            "Thigh.L",
+            "Shin.L",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "BOTTOM_008",
+          "name": "Pinafore Skirt",
+          "objects_created": 1,
+          "total_vertices": 180,
+          "materials": [
+            "M_Bottom_test_bottom_008"
+          ],
+          "vertex_groups": [
+            "Chest",
+            "Spine",
+            "Thigh.L",
+            "Hips",
+            "Thigh.R"
+          ],
+          "status": "PASS"
+        }
+      ]
+    },
+    "top_library": {
+      "tested": 8,
+      "passed": 8,
+      "failed": 0,
+      "details": [
+        {
+          "id": "TOP_001",
+          "name": "White School Shirt",
+          "objects_created": 4,
+          "total_vertices": 210,
+          "materials": [
+            "M_Top_test_top_001",
+            "M_Top_test_top_001",
+            "M_Top_test_top_001",
+            "M_Top_Collar_test_top_001"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_002",
+          "name": "Blue PE Shirt",
+          "objects_created": 4,
+          "total_vertices": 210,
+          "materials": [
+            "M_Top_test_top_002",
+            "M_Top_test_top_002",
+            "M_Top_test_top_002",
+            "M_Top_Collar_test_top_002"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_003",
+          "name": "Basic T-Shirt",
+          "objects_created": 4,
+          "total_vertices": 210,
+          "materials": [
+            "M_Top_test_top_003",
+            "M_Top_test_top_003",
+            "M_Top_test_top_003",
+            "M_Top_Collar_test_top_003"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_004",
+          "name": "Polo Shirt",
+          "objects_created": 4,
+          "total_vertices": 210,
+          "materials": [
+            "M_Top_test_top_004",
+            "M_Top_test_top_004",
+            "M_Top_test_top_004",
+            "M_Top_Collar_test_top_004"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_005",
+          "name": "Casual Blouse",
+          "objects_created": 4,
+          "total_vertices": 210,
+          "materials": [
+            "M_Top_test_top_005",
+            "M_Top_test_top_005",
+            "M_Top_test_top_005",
+            "M_Top_Collar_test_top_005"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_006",
+          "name": "Light Cardigan",
+          "objects_created": 3,
+          "total_vertices": 286,
+          "materials": [
+            "M_Top_test_top_006",
+            "M_Top_test_top_006",
+            "M_Top_test_top_006"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_007",
+          "name": "Casual Long-Sleeve Shirt",
+          "objects_created": 4,
+          "total_vertices": 294,
+          "materials": [
+            "M_Top_test_top_007",
+            "M_Top_test_top_007",
+            "M_Top_test_top_007",
+            "M_Top_Collar_test_top_007"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "TOP_008",
+          "name": "Light Jacket",
+          "objects_created": 4,
+          "total_vertices": 294,
+          "materials": [
+            "M_Top_test_top_008",
+            "M_Top_test_top_008",
+            "M_Top_test_top_008",
+            "M_Top_Collar_test_top_008"
+          ],
+          "vertex_groups": [
+            "UpperArm.R",
+            "Forearm.R",
+            "Chest",
+            "Spine",
+            "Hips",
+            "Forearm.L",
+            "UpperArm.L"
+          ],
+          "status": "PASS"
+        }
+      ]
+    },
+    "footwear_library": {
+      "tested": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "id": "FOOTWEAR_001",
+          "name": "White Sneakers",
+          "objects_created": 1,
+          "total_vertices": 114,
+          "materials": [
+            "M_Shoe_test_footwear_001",
+            "M_Sole_test_footwear_001"
+          ],
+          "vertex_groups": [
+            "Foot.R",
+            "Foot.L",
+            "Shin.L",
+            "Shin.R"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "FOOTWEAR_002",
+          "name": "Canvas Low-Tops",
+          "objects_created": 1,
+          "total_vertices": 114,
+          "materials": [
+            "M_Shoe_test_footwear_002",
+            "M_ToeCap_test_footwear_002",
+            "M_Sole_test_footwear_002"
+          ],
+          "vertex_groups": [
+            "Foot.R",
+            "Foot.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "FOOTWEAR_003",
+          "name": "Simple Sandals",
+          "objects_created": 1,
+          "total_vertices": 82,
+          "materials": [
+            "M_Shoe_test_footwear_003",
+            "M_Sole_test_footwear_003"
+          ],
+          "vertex_groups": [
+            "Foot.R",
+            "Foot.L"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "FOOTWEAR_004",
+          "name": "Casual Slip-On Shoes",
+          "objects_created": 1,
+          "total_vertices": 86,
+          "materials": [
+            "M_Shoe_test_footwear_004",
+            "M_Sole_test_footwear_004"
+          ],
+          "vertex_groups": [
+            "Foot.R",
+            "Foot.L"
+          ],
+          "status": "PASS"
+        }
+      ]
+    },
+    "socks_library": {
+      "tested": 4,
+      "passed": 4,
+      "failed": 0,
+      "details": [
+        {
+          "id": "SOCKS_001",
+          "name": "Short White Socks",
+          "objects_created": 1,
+          "total_vertices": 84,
+          "materials": [
+            "M_Socks_test_socks_001"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "SOCKS_002",
+          "name": "Ankle Socks",
+          "objects_created": 1,
+          "total_vertices": 84,
+          "materials": [
+            "M_Socks_test_socks_002"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "SOCKS_003",
+          "name": "Knee-High Socks",
+          "objects_created": 1,
+          "total_vertices": 84,
+          "materials": [
+            "M_Socks_test_socks_003"
+          ],
+          "status": "PASS"
+        },
+        {
+          "id": "SOCKS_004",
+          "name": "No Visible Socks",
+          "objects_created": 0,
+          "total_vertices": 0,
+          "materials": [],
+          "status": "PASS"
+        }
+      ]
+    },
+    "presets_validation": {
+      "tested": 12,
+      "passed": 12,
+      "failed": 0,
+      "details": [
+        {
+          "preset_id": "PRESET_001",
+          "name": "Nam sinh ti\u00eau chu\u1ea9n THCS",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_002",
+          "name": "N\u1eef sinh x\u1ebfp ly truy\u1ec1n th\u1ed1ng",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_003",
+          "name": "Ti\u1ebft h\u1ecdc Th\u1ec3 d\u1ee5c",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_004",
+          "name": "Th\u1ec3 thao m\u00f9a h\u00e8 m\u00e1t m\u1ebb",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_005",
+          "name": "D\u1ea1o ph\u1ed1 cu\u1ed1i tu\u1ea7n Kaki",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_006",
+          "name": "D\u1ea1o ph\u1ed1 N\u1eef sinh \u00c1o ki\u1ec3u Ch\u1eef A",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_007",
+          "name": "N\u0103ng \u0111\u1ed9ng Denim Short",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_008",
+          "name": "V\u00e1y y\u1ebfm d\u1ec5 th\u01b0\u01a1ng",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_009",
+          "name": "M\u00f9a \u0111\u00f4ng s\u1edbm / Cardigan thanh l\u1ecbch",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_010",
+          "name": "\u0110\u1ea7u tu\u1ea7n \u00c1o kho\u00e1c gi\u00f3 & C\u1eb7p s\u00e1ch",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_011",
+          "name": "Bu\u1ed5i chi\u1ec1u thu \u00c1o d\u00e0i tay",
+          "status": "PASS"
+        },
+        {
+          "preset_id": "PRESET_012",
+          "name": "\u0110\u1ebfn tr\u01b0\u1eddng D\u00e9p quai h\u1eadu m\u00f9a m\u01b0a",
+          "status": "PASS"
+        }
+      ]
+    },
+    "bone_weight_checks": {
+      "status": "PASS",
+      "details": []
+    },
+    "animation_action_checks": {
+      "status": "PASS",
+      "actions_tested": [
+        {
+          "action": "Action_Walk",
+          "frame": 15,
+          "status": "PASS",
+          "deformation": "Smooth dual-thigh blend verified"
+        },
+        {
+          "action": "Action_Run",
+          "frame": 15,
+          "status": "PASS",
+          "deformation": "Smooth dual-thigh blend verified"
+        },
+        {
+          "action": "Action_Sit",
+          "frame": 15,
+          "status": "PASS",
+          "deformation": "Smooth dual-thigh blend verified"
+        },
+        {
+          "action": "Action_Bow",
+          "frame": 15,
+          "status": "PASS",
+          "deformation": "Smooth dual-thigh blend verified"
+        },
+        {
+          "action": "Action_Talk",
+          "frame": 15,
+          "status": "PASS",
+          "deformation": "Smooth dual-thigh blend verified"
+        }
+      ]
+    },
+    "height_adaptation_checks": {
+      "status": "PASS",
+      "scales_tested": [
+        0.9,
+        1.0,
+        1.1
+      ]
+    },
+    "glb_roundtrip_test": {
+      "status": "PASS",
+      "file_size_bytes": 350412,
+      "file_size_kb": 342.19921875
+    }
+  }
+}

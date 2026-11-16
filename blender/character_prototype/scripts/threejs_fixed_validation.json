@@ -1,0 +1,668 @@
+{
+  "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\vietnamese_student_fixed.glb",
+  "size_kb": 309.6,
+  "threejs_revision": "187",
+  "nodes_count": 54,
+  "meshes": [
+    {
+      "name": "Body_Head",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 181,
+      "triangles": 340,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Ear_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Ear_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Body_Arm_Mesh_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 71,
+      "triangles": 126,
+      "materials": [
+        "M_Shirt"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Body_Arm_Mesh_L_1",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 152,
+      "triangles": 278,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Body_Arm_Mesh_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 71,
+      "triangles": 126,
+      "materials": [
+        "M_Shirt"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Body_Arm_Mesh_R_1",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 152,
+      "triangles": 278,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Character_Torso_Legs_Mesh",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 90,
+      "triangles": 144,
+      "materials": [
+        "M_Shirt"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Character_Torso_Legs_Mesh_1",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 54,
+      "triangles": 72,
+      "materials": [
+        "M_Belt"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Character_Torso_Legs_Mesh_2",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 268,
+      "triangles": 444,
+      "materials": [
+        "M_Pants"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Character_Torso_Legs_Mesh_3",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 112,
+      "triangles": 168,
+      "materials": [
+        "M_Shoe"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Character_Torso_Legs_Mesh_4",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 58,
+      "triangles": 84,
+      "materials": [
+        "M_Sole"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Shirt_Collar",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Shirt"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Hair_Cap",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 125,
+      "triangles": 192,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Hair_Bangs",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 125,
+      "triangles": 192,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Hair_Sideburn_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 125,
+      "triangles": 192,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Hair_Sideburn_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 125,
+      "triangles": 192,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Nose",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Skin"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eyebrow_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eyebrow_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Hair"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_HL1_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_HL2_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_HL1_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Eye_HL2_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Mouth",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Mouth"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Blush_L",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Blush"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    },
+    {
+      "name": "Blush_R",
+      "type": "SkinnedMesh",
+      "isSkinned": true,
+      "vertices": 39,
+      "triangles": 48,
+      "materials": [
+        "M_Blush"
+      ],
+      "hasSkinWeights": true,
+      "hasSkinIndices": true
+    }
+  ],
+  "materials": [
+    "M_Skin",
+    "M_Shirt",
+    "M_Belt",
+    "M_Pants",
+    "M_Shoe",
+    "M_Sole",
+    "M_Hair",
+    "M_Eye_Black",
+    "M_Eye_Highlight",
+    "M_Mouth",
+    "M_Blush"
+  ],
+  "bones": [
+    {
+      "name": "Root",
+      "parent": "Student_Armature",
+      "pos": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Hips",
+      "parent": "Root",
+      "pos": [
+        0,
+        0,
+        0.2
+      ]
+    },
+    {
+      "name": "Spine",
+      "parent": "Hips",
+      "pos": [
+        0,
+        0.05,
+        0
+      ]
+    },
+    {
+      "name": "Chest",
+      "parent": "Spine",
+      "pos": [
+        0,
+        0.07,
+        0
+      ]
+    },
+    {
+      "name": "Neck",
+      "parent": "Chest",
+      "pos": [
+        0,
+        0.06,
+        0
+      ]
+    },
+    {
+      "name": "Head",
+      "parent": "Neck",
+      "pos": [
+        0,
+        0.06,
+        0
+      ]
+    },
+    {
+      "name": "EyeL",
+      "parent": "Head",
+      "pos": [
+        -0.066,
+        0.08,
+        -0.155
+      ]
+    },
+    {
+      "name": "EyeR",
+      "parent": "Head",
+      "pos": [
+        0.066,
+        0.08,
+        -0.155
+      ]
+    },
+    {
+      "name": "UpperArmL",
+      "parent": "Chest",
+      "pos": [
+        -0.118,
+        0.045,
+        -0.005
+      ]
+    },
+    {
+      "name": "ForearmL",
+      "parent": "UpperArmL",
+      "pos": [
+        0,
+        0.0857,
+        0
+      ]
+    },
+    {
+      "name": "HandL",
+      "parent": "ForearmL",
+      "pos": [
+        0,
+        0.0706,
+        0
+      ]
+    },
+    {
+      "name": "UpperArmR",
+      "parent": "Chest",
+      "pos": [
+        0.118,
+        0.045,
+        -0.005
+      ]
+    },
+    {
+      "name": "ForearmR",
+      "parent": "UpperArmR",
+      "pos": [
+        0,
+        0.0857,
+        0
+      ]
+    },
+    {
+      "name": "HandR",
+      "parent": "ForearmR",
+      "pos": [
+        0,
+        0.0706,
+        0
+      ]
+    },
+    {
+      "name": "ThighL",
+      "parent": "Hips",
+      "pos": [
+        -0.055,
+        -0.02,
+        -0.002
+      ]
+    },
+    {
+      "name": "ShinL",
+      "parent": "ThighL",
+      "pos": [
+        0,
+        0.065,
+        0
+      ]
+    },
+    {
+      "name": "FootL",
+      "parent": "ShinL",
+      "pos": [
+        0,
+        0.075,
+        0
+      ]
+    },
+    {
+      "name": "ThighR",
+      "parent": "Hips",
+      "pos": [
+        0.055,
+        -0.02,
+        -0.002
+      ]
+    },
+    {
+      "name": "ShinR",
+      "parent": "ThighR",
+      "pos": [
+        0,
+        0.065,
+        0
+      ]
+    },
+    {
+      "name": "FootR",
+      "parent": "ShinR",
+      "pos": [
+        0,
+        0.075,
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "Action_Blink",
+      "duration": 0.625,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Bow",
+      "duration": 1.458,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Cheer",
+      "duration": 1.25,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Idle",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Jump",
+      "duration": 1.458,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Raise_Hand",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Run",
+      "duration": 0.833,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Sad_Disappointed",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Salute_Flag",
+      "duration": 1.25,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Sit",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Sleep_Desk",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Talk",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Thinking",
+      "duration": 1.667,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Walk",
+      "duration": 1.25,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Wave",
+      "duration": 1.25,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    },
+    {
+      "name": "Action_Write",
+      "duration": 1.083,
+      "tracks": 60,
+      "passed": true,
+      "error": null
+    }
+  ],
+  "all_bones_present": true,
+  "all_animations_passed": true,
+  "threejs_verdict": "PASS"
+}

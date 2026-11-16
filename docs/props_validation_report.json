@@ -1,0 +1,181 @@
+{
+  "timestamp": "2026-11-15T17:20:16.295Z",
+  "threejs_revision": "187",
+  "total_props_validated": 5,
+  "props": [
+    {
+      "id": "classroom_chalkboard",
+      "file": "classroom_chalkboard.glb",
+      "file_size_kb": 16.3,
+      "total_vertices": 396,
+      "total_triangles": 260,
+      "poly_budget_max": 1000,
+      "poly_budget_passed": true,
+      "matrices_valid": true,
+      "dimensions": {
+        "x": 2.4,
+        "y": 1.49,
+        "z": 0.188
+      },
+      "boundingBox": {
+        "min": [
+          -1.2,
+          0,
+          -0.188
+        ],
+        "max": [
+          1.2,
+          1.49,
+          0
+        ]
+      },
+      "materials": [
+        "FFFFFF",
+        "1A1A1A",
+        "455A64",
+        "4CAF50",
+        "795548"
+      ],
+      "meshes_count": 8,
+      "passed": true
+    },
+    {
+      "id": "schoolyard_shade_tree",
+      "file": "schoolyard_shade_tree.glb",
+      "file_size_kb": 304.89,
+      "total_vertices": 7337,
+      "total_triangles": 12224,
+      "poly_budget_max": 15000,
+      "poly_budget_passed": true,
+      "matrices_valid": true,
+      "dimensions": {
+        "x": 7.8,
+        "y": 7.056,
+        "z": 7
+      },
+      "boundingBox": {
+        "min": [
+          -3.9,
+          0,
+          -3.5
+        ],
+        "max": [
+          3.9,
+          7.056,
+          3.5
+        ]
+      },
+      "materials": [
+        "M_Phuong_Trunk",
+        "M_Phuong_Leaf1",
+        "M_Phuong_Leaf2",
+        "M_Phuong_Flower"
+      ],
+      "meshes_count": 4,
+      "passed": true
+    },
+    {
+      "id": "schoolyard_tropical_tree",
+      "file": "schoolyard_tropical_tree.glb",
+      "file_size_kb": 219.84,
+      "total_vertices": 5394,
+      "total_triangles": 8224,
+      "poly_budget_max": 12000,
+      "poly_budget_passed": true,
+      "matrices_valid": true,
+      "dimensions": {
+        "x": 7.696,
+        "y": 5.38,
+        "z": 7.104
+      },
+      "boundingBox": {
+        "min": [
+          -3.848,
+          0,
+          -3.552
+        ],
+        "max": [
+          3.848,
+          5.38,
+          3.552
+        ]
+      },
+      "materials": [
+        "M_Bang_Trunk",
+        "M_Bang_Leaf1",
+        "M_Bang_Leaf2"
+      ],
+      "meshes_count": 3,
+      "passed": true
+    },
+    {
+      "id": "schoolyard_flamboyant_tree",
+      "file": "schoolyard_flamboyant_tree.glb",
+      "file_size_kb": 304.89,
+      "total_vertices": 7337,
+      "total_triangles": 12224,
+      "poly_budget_max": 15000,
+      "poly_budget_passed": true,
+      "matrices_valid": true,
+      "dimensions": {
+        "x": 7.8,
+        "y": 7.056,
+        "z": 7
+      },
+      "boundingBox": {
+        "min": [
+          -3.9,
+          0,
+          -3.5
+        ],
+        "max": [
+          3.9,
+          7.056,
+          3.5
+        ]
+      },
+      "materials": [
+        "M_Phuong_Trunk",
+        "M_Phuong_Leaf1",
+        "M_Phuong_Leaf2",
+        "M_Phuong_Flower"
+      ],
+      "meshes_count": 4,
+      "passed": true
+    },
+    {
+      "id": "school_desk",
+      "file": "school_desk.glb",
+      "file_size_kb": 138.5,
+      "total_vertices": 3180,
+      "total_triangles": 4636,
+      "poly_budget_max": 10000,
+      "poly_budget_passed": true,
+      "matrices_valid": true,
+      "dimensions": {
+        "x": 1.266,
+        "y": 0.74,
+        "z": 1.048
+      },
+      "boundingBox": {
+        "min": [
+          -0.633,
+          0,
+          -0.818
+        ],
+        "max": [
+          0.633,
+          0.74,
+          0.23
+        ]
+      },
+      "materials": [
+        "M_Wood_SchoolDesk",
+        "M_Metal_Hook"
+      ],
+      "meshes_count": 41,
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

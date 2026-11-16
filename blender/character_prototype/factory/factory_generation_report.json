@@ -1,0 +1,176 @@
+{
+  "status": "PASS",
+  "total_characters": 4,
+  "characters": [
+    {
+      "character_id": "character_a",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\character_a.glb",
+      "glb_size_bytes": 348568,
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\generated_scenes\\character_a.blend",
+      "config": {
+        "character_id": "character_a",
+        "base_version": "1.0.0",
+        "name": "Character A - Minh (L\u1edbp 6 Nh\u1ecf Nh\u1eafn)",
+        "height_scale": 0.9,
+        "skin_tone": "SKIN_01",
+        "hair_style": "HAIR_001",
+        "hair_color": "#1c1615",
+        "outfit": "OUTFIT_001",
+        "accessories": [
+          "ACC_001"
+        ],
+        "default_expression": "Happy",
+        "animation_set": "school_actions_v1"
+      },
+      "resolved_clothing": {
+        "top_id": "TOP_001",
+        "bottom_id": "BOTTOM_001",
+        "footwear_id": "FOOTWEAR_001",
+        "socks_id": "SOCKS_001",
+        "preset_used": "PRESET_001",
+        "color_overrides": {}
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "resolved_clothing": {
+          "top_id": "TOP_001",
+          "bottom_id": "BOTTOM_001",
+          "footwear_id": "FOOTWEAR_001",
+          "socks_id": "SOCKS_001",
+          "preset_used": "PRESET_001",
+          "color_overrides": {}
+        }
+      }
+    },
+    {
+      "character_id": "character_b",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\character_b.glb",
+      "glb_size_bytes": 353452,
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\generated_scenes\\character_b.blend",
+      "config": {
+        "character_id": "character_b",
+        "base_version": "1.0.0",
+        "name": "Character B - Tu\u1ea5n (Th\u1ec3 Thao N\u0103ng \u0110\u1ed9ng)",
+        "height_scale": 1.0,
+        "skin_tone": "SKIN_04",
+        "hair_style": "HAIR_002",
+        "hair_color": "#161b26",
+        "outfit": "OUTFIT_002",
+        "accessories": [],
+        "default_expression": "Neutral",
+        "animation_set": "school_actions_v1"
+      },
+      "resolved_clothing": {
+        "top_id": "TOP_002",
+        "bottom_id": "BOTTOM_007",
+        "footwear_id": "FOOTWEAR_001",
+        "socks_id": "SOCKS_001",
+        "preset_used": "PRESET_003",
+        "color_overrides": {}
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "resolved_clothing": {
+          "top_id": "TOP_002",
+          "bottom_id": "BOTTOM_007",
+          "footwear_id": "FOOTWEAR_001",
+          "socks_id": "SOCKS_001",
+          "preset_used": "PRESET_003",
+          "color_overrides": {}
+        }
+      }
+    },
+    {
+      "character_id": "character_c",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\character_c.glb",
+      "glb_size_bytes": 343792,
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\generated_scenes\\character_c.blend",
+      "config": {
+        "character_id": "character_c",
+        "base_version": "1.0.0",
+        "name": "Character C - Lan (N\u1eef Sinh C\u00e1 T\u00ednh)",
+        "height_scale": 1.1,
+        "skin_tone": "SKIN_05",
+        "hair_style": "HAIR_003",
+        "hair_color": "#2b1b17",
+        "outfit": "OUTFIT_003",
+        "accessories": [
+          "ACC_002",
+          "ACC_003"
+        ],
+        "default_expression": "Smile",
+        "animation_set": "school_actions_v1"
+      },
+      "resolved_clothing": {
+        "top_id": "TOP_004",
+        "bottom_id": "BOTTOM_003",
+        "footwear_id": "FOOTWEAR_004",
+        "socks_id": "SOCKS_004",
+        "preset_used": "PRESET_005",
+        "color_overrides": {}
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "Expression 'Smile' not in standard list. Will default to Neutral."
+        ],
+        "resolved_clothing": {
+          "top_id": "TOP_004",
+          "bottom_id": "BOTTOM_003",
+          "footwear_id": "FOOTWEAR_004",
+          "socks_id": "SOCKS_004",
+          "preset_used": "PRESET_005",
+          "color_overrides": {}
+        }
+      }
+    },
+    {
+      "character_id": "character_backpack",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\character_backpack.glb",
+      "glb_size_bytes": 352836,
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\generated_scenes\\character_backpack.blend",
+      "config": {
+        "character_id": "character_backpack",
+        "base_version": "1.0.0",
+        "name": "Character Backpack Demo",
+        "height_scale": 1.0,
+        "skin_tone": "SKIN_02",
+        "hair_style": "HAIR_001",
+        "hair_color": "#1c1615",
+        "outfit": "OUTFIT_001",
+        "accessories": [
+          "ACC_001",
+          "ACC_004"
+        ],
+        "default_expression": "Neutral",
+        "animation_set": "school_actions_v1"
+      },
+      "resolved_clothing": {
+        "top_id": "TOP_001",
+        "bottom_id": "BOTTOM_001",
+        "footwear_id": "FOOTWEAR_001",
+        "socks_id": "SOCKS_001",
+        "preset_used": "PRESET_001",
+        "color_overrides": {}
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "resolved_clothing": {
+          "top_id": "TOP_001",
+          "bottom_id": "BOTTOM_001",
+          "footwear_id": "FOOTWEAR_001",
+          "socks_id": "SOCKS_001",
+          "preset_used": "PRESET_001",
+          "color_overrides": {}
+        }
+      }
+    }
+  ]
+}

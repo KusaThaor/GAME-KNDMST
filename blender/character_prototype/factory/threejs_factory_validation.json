@@ -1,0 +1,859 @@
+{
+  "timestamp": "2026-11-16T15:22:43.395Z",
+  "threejs_version": "187",
+  "verdict": "PASS",
+  "multi_character_scene_test": {
+    "simultaneous_characters_loaded": 4,
+    "material_leak_check": "PASS",
+    "details": {
+      "character_a": "#fae4d3",
+      "character_b": "#d6a479",
+      "character_c": "#b97c51",
+      "character_backpack": "#f4d0af"
+    }
+  },
+  "character_results": [
+    {
+      "id": "character_a",
+      "name": "Character A (Minh - Short, Classic, Light Warm, Uniform, Scarf)",
+      "file_size_kb": 340.4,
+      "bones_count": 20,
+      "skinned_meshes_count": 32,
+      "materials": [
+        {
+          "mesh": "Hair_Cap",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Bangs",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Sideburn_L",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Sideburn_R",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Top_Torso_Mesh",
+          "matName": "M_Top_character_a",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Sleeve_L",
+          "matName": "M_Top_character_a",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Sleeve_R",
+          "matName": "M_Top_character_a",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Collar",
+          "matName": "M_Top_Collar_character_a",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Bottom_Mesh",
+          "matName": "M_Bottom_character_a",
+          "colorHex": "#15233f"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_a",
+          "matName": "M_Shoe_character_a",
+          "colorHex": "#f5f3ed"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_a_1",
+          "matName": "M_Sole_character_a",
+          "colorHex": "#b9ada1"
+        },
+        {
+          "mesh": "Socks_Mesh",
+          "matName": "M_Socks_character_a",
+          "colorHex": "#f8fafc"
+        },
+        {
+          "mesh": "Body_Arm_Skin_L",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Body_Arm_Skin_R",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Scarf_Knot",
+          "matName": "M_Acc_Scarf_character_a",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Scarf_Tail_L",
+          "matName": "M_Acc_Scarf_character_a",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Scarf_Tail_R",
+          "matName": "M_Acc_Scarf_character_a",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Mouth",
+          "matName": "M_Mouth_character_a",
+          "colorHex": "#832c2c"
+        },
+        {
+          "mesh": "Eyebrow_L",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Eyebrow_R",
+          "matName": "M_Hair_character_a",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Body_Head",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Ear_L",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Ear_R",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Nose",
+          "matName": "M_Skin_character_a",
+          "colorHex": "#fae4d3"
+        },
+        {
+          "mesh": "Eye_L",
+          "matName": "M_Eye_Black_character_a",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_L",
+          "matName": "M_Eye_Highlight_character_a",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_L",
+          "matName": "M_Eye_Highlight_character_a",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_R",
+          "matName": "M_Eye_Black_character_a",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_R",
+          "matName": "M_Eye_Highlight_character_a",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_R",
+          "matName": "M_Eye_Highlight_character_a",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Blush_L",
+          "matName": "M_Blush_character_a",
+          "colorHex": "#f58998"
+        },
+        {
+          "mesh": "Blush_R",
+          "matName": "M_Blush_character_a",
+          "colorHex": "#f58998"
+        }
+      ],
+      "morph_targets": {
+        "Mouth": [
+          "Mouth_Smile",
+          "Mouth_Open",
+          "Mouth_O",
+          "Mouth_Sad"
+        ],
+        "Eyebrow_L": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ],
+        "Eyebrow_R": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ]
+      },
+      "animations_count": 16,
+      "actions_verified": {
+        "Action_Idle": "PASS",
+        "Action_Walk": "PASS",
+        "Action_Run": "PASS",
+        "Action_Jump": "PASS",
+        "Action_Blink": "PASS",
+        "Action_Sit": "PASS",
+        "Action_Write": "PASS",
+        "Action_Sleep_Desk": "PASS",
+        "Action_Raise_Hand": "PASS",
+        "Action_Cheer": "PASS",
+        "Action_Talk": "PASS",
+        "Action_Wave": "PASS",
+        "Action_Bow": "PASS",
+        "Action_Salute_Flag": "PASS",
+        "Action_Thinking": "PASS",
+        "Action_Sad_Disappointed": "PASS"
+      },
+      "measured_height_m": 0.629,
+      "status": "PASS"
+    },
+    {
+      "id": "character_b",
+      "name": "Character B (Tuấn - Standard, Sporty, Medium Neutral, PE)",
+      "file_size_kb": 345.2,
+      "bones_count": 20,
+      "skinned_meshes_count": 32,
+      "materials": [
+        {
+          "mesh": "Hair_Spiky_Cap",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Hair_Spike_Front",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Hair_Spike_L",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Hair_Spiky_Sideburn_L",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Hair_Spike_R",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Hair_Spiky_Sideburn_R",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Top_Torso_Mesh",
+          "matName": "M_Top_character_b",
+          "colorHex": "#18518f"
+        },
+        {
+          "mesh": "Top_Sleeve_L",
+          "matName": "M_Top_character_b",
+          "colorHex": "#18518f"
+        },
+        {
+          "mesh": "Top_Sleeve_R",
+          "matName": "M_Top_character_b",
+          "colorHex": "#18518f"
+        },
+        {
+          "mesh": "Top_Collar",
+          "matName": "M_Top_Collar_character_b",
+          "colorHex": "#f2f5f8"
+        },
+        {
+          "mesh": "Bottom_PEPants_Mesh_character_b",
+          "matName": "M_Bottom_character_b",
+          "colorHex": "#0c203a"
+        },
+        {
+          "mesh": "Bottom_PEPants_Mesh_character_b_1",
+          "matName": "M_Bottom_Stripe_character_b",
+          "colorHex": "#f2f5f8"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_b",
+          "matName": "M_Shoe_character_b",
+          "colorHex": "#f5f3ed"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_b_1",
+          "matName": "M_Sole_character_b",
+          "colorHex": "#b9ada1"
+        },
+        {
+          "mesh": "Socks_Mesh",
+          "matName": "M_Socks_character_b",
+          "colorHex": "#f8fafc"
+        },
+        {
+          "mesh": "Body_Arm_Skin_L",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Body_Arm_Skin_R",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Mouth",
+          "matName": "M_Mouth_character_b",
+          "colorHex": "#832c2c"
+        },
+        {
+          "mesh": "Eyebrow_L",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Eyebrow_R",
+          "matName": "M_Hair_character_b",
+          "colorHex": "#0e1421"
+        },
+        {
+          "mesh": "Body_Head",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Ear_L",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Ear_R",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Nose",
+          "matName": "M_Skin_character_b",
+          "colorHex": "#d6a479"
+        },
+        {
+          "mesh": "Eye_L",
+          "matName": "M_Eye_Black_character_b",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_L",
+          "matName": "M_Eye_Highlight_character_b",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_L",
+          "matName": "M_Eye_Highlight_character_b",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_R",
+          "matName": "M_Eye_Black_character_b",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_R",
+          "matName": "M_Eye_Highlight_character_b",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_R",
+          "matName": "M_Eye_Highlight_character_b",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Blush_L",
+          "matName": "M_Blush_character_b",
+          "colorHex": "#f58998"
+        },
+        {
+          "mesh": "Blush_R",
+          "matName": "M_Blush_character_b",
+          "colorHex": "#f58998"
+        }
+      ],
+      "morph_targets": {
+        "Mouth": [
+          "Mouth_Smile",
+          "Mouth_Open",
+          "Mouth_O",
+          "Mouth_Sad"
+        ],
+        "Eyebrow_L": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ],
+        "Eyebrow_R": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ]
+      },
+      "animations_count": 16,
+      "actions_verified": {
+        "Action_Idle": "PASS",
+        "Action_Walk": "PASS",
+        "Action_Run": "PASS",
+        "Action_Jump": "PASS",
+        "Action_Blink": "PASS",
+        "Action_Sit": "PASS",
+        "Action_Write": "PASS",
+        "Action_Sleep_Desk": "PASS",
+        "Action_Raise_Hand": "PASS",
+        "Action_Cheer": "PASS",
+        "Action_Talk": "PASS",
+        "Action_Wave": "PASS",
+        "Action_Bow": "PASS",
+        "Action_Salute_Flag": "PASS",
+        "Action_Thinking": "PASS",
+        "Action_Sad_Disappointed": "PASS"
+      },
+      "measured_height_m": 0.689,
+      "status": "PASS"
+    },
+    {
+      "id": "character_c",
+      "name": "Character C (Lan - Tall, Bob, Deep Warm, Casual, Glasses, Clip)",
+      "file_size_kb": 335.7,
+      "bones_count": 20,
+      "skinned_meshes_count": 32,
+      "materials": [
+        {
+          "mesh": "Hair_Bob_Cap",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Hair_Bob_Bangs",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Hair_Bob_Side_L",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Hair_Bob_Side_R",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Top_Torso_Mesh",
+          "matName": "M_Top_character_c",
+          "colorHex": "#295a41"
+        },
+        {
+          "mesh": "Top_Sleeve_L",
+          "matName": "M_Top_character_c",
+          "colorHex": "#295a41"
+        },
+        {
+          "mesh": "Top_Sleeve_R",
+          "matName": "M_Top_character_c",
+          "colorHex": "#295a41"
+        },
+        {
+          "mesh": "Top_Collar",
+          "matName": "M_Top_Collar_character_c",
+          "colorHex": "#1f4632"
+        },
+        {
+          "mesh": "Bottom_Mesh",
+          "matName": "M_Bottom_character_c",
+          "colorHex": "#9d886b"
+        },
+        {
+          "mesh": "Footwear_Slipon_Mesh_character_c",
+          "matName": "M_Shoe_character_c",
+          "colorHex": "#232c3a"
+        },
+        {
+          "mesh": "Footwear_Slipon_Mesh_character_c_1",
+          "matName": "M_Sole_character_c",
+          "colorHex": "#eeece7"
+        },
+        {
+          "mesh": "Body_Arm_Skin_L",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Body_Arm_Skin_R",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Body_Leg_Skin_L",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Body_Leg_Skin_R",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Acc_Glasses",
+          "matName": "M_Acc_Glasses_character_c",
+          "colorHex": "#1c1c21"
+        },
+        {
+          "mesh": "Acc_Hair_Clip",
+          "matName": "M_Acc_Clip_character_c",
+          "colorHex": "#f4b513"
+        },
+        {
+          "mesh": "Mouth",
+          "matName": "M_Mouth_character_c",
+          "colorHex": "#832c2c"
+        },
+        {
+          "mesh": "Eyebrow_L",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Eyebrow_R",
+          "matName": "M_Hair_character_c",
+          "colorHex": "#271410"
+        },
+        {
+          "mesh": "Body_Head",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Ear_L",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Ear_R",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Nose",
+          "matName": "M_Skin_character_c",
+          "colorHex": "#b97c51"
+        },
+        {
+          "mesh": "Eye_L",
+          "matName": "M_Eye_Black_character_c",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_L",
+          "matName": "M_Eye_Highlight_character_c",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_L",
+          "matName": "M_Eye_Highlight_character_c",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_R",
+          "matName": "M_Eye_Black_character_c",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_R",
+          "matName": "M_Eye_Highlight_character_c",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_R",
+          "matName": "M_Eye_Highlight_character_c",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Blush_L",
+          "matName": "M_Blush_character_c",
+          "colorHex": "#f58998"
+        },
+        {
+          "mesh": "Blush_R",
+          "matName": "M_Blush_character_c",
+          "colorHex": "#f58998"
+        }
+      ],
+      "morph_targets": {
+        "Mouth": [
+          "Mouth_Smile",
+          "Mouth_Open",
+          "Mouth_O",
+          "Mouth_Sad"
+        ],
+        "Eyebrow_L": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ],
+        "Eyebrow_R": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ]
+      },
+      "animations_count": 16,
+      "actions_verified": {
+        "Action_Idle": "PASS",
+        "Action_Walk": "PASS",
+        "Action_Run": "PASS",
+        "Action_Jump": "PASS",
+        "Action_Blink": "PASS",
+        "Action_Sit": "PASS",
+        "Action_Write": "PASS",
+        "Action_Sleep_Desk": "PASS",
+        "Action_Raise_Hand": "PASS",
+        "Action_Cheer": "PASS",
+        "Action_Talk": "PASS",
+        "Action_Wave": "PASS",
+        "Action_Bow": "PASS",
+        "Action_Salute_Flag": "PASS",
+        "Action_Thinking": "PASS",
+        "Action_Sad_Disappointed": "PASS"
+      },
+      "measured_height_m": 0.771,
+      "status": "PASS"
+    },
+    {
+      "id": "character_backpack",
+      "name": "Character Backpack (Standard, Classic, Uniform, Scarf, Backpack)",
+      "file_size_kb": 344.6,
+      "bones_count": 20,
+      "skinned_meshes_count": 34,
+      "materials": [
+        {
+          "mesh": "Hair_Cap",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Bangs",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Sideburn_L",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Hair_Sideburn_R",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Top_Torso_Mesh",
+          "matName": "M_Top_character_backpack",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Sleeve_L",
+          "matName": "M_Top_character_backpack",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Sleeve_R",
+          "matName": "M_Top_character_backpack",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Top_Collar",
+          "matName": "M_Top_Collar_character_backpack",
+          "colorHex": "#f7f5ef"
+        },
+        {
+          "mesh": "Bottom_Mesh",
+          "matName": "M_Bottom_character_backpack",
+          "colorHex": "#15233f"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_backpack",
+          "matName": "M_Shoe_character_backpack",
+          "colorHex": "#f5f3ed"
+        },
+        {
+          "mesh": "Footwear_Mesh_character_backpack_1",
+          "matName": "M_Sole_character_backpack",
+          "colorHex": "#b9ada1"
+        },
+        {
+          "mesh": "Socks_Mesh",
+          "matName": "M_Socks_character_backpack",
+          "colorHex": "#f8fafc"
+        },
+        {
+          "mesh": "Body_Arm_Skin_L",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Body_Arm_Skin_R",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Scarf_Knot",
+          "matName": "M_Acc_Scarf_character_backpack",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Scarf_Tail_L",
+          "matName": "M_Acc_Scarf_character_backpack",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Scarf_Tail_R",
+          "matName": "M_Acc_Scarf_character_backpack",
+          "colorHex": "#da1a22"
+        },
+        {
+          "mesh": "Acc_Backpack_Body",
+          "matName": "M_Acc_Backpack_character_backpack",
+          "colorHex": "#13335d"
+        },
+        {
+          "mesh": "Acc_Backpack_Pocket",
+          "matName": "M_Acc_Backpack_Pocket_character_backpack",
+          "colorHex": "#254165"
+        },
+        {
+          "mesh": "Mouth",
+          "matName": "M_Mouth_character_backpack",
+          "colorHex": "#832c2c"
+        },
+        {
+          "mesh": "Eyebrow_L",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Eyebrow_R",
+          "matName": "M_Hair_character_backpack",
+          "colorHex": "#150e0d"
+        },
+        {
+          "mesh": "Body_Head",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Ear_L",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Ear_R",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Nose",
+          "matName": "M_Skin_character_backpack",
+          "colorHex": "#f4d0af"
+        },
+        {
+          "mesh": "Eye_L",
+          "matName": "M_Eye_Black_character_backpack",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_L",
+          "matName": "M_Eye_Highlight_character_backpack",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_L",
+          "matName": "M_Eye_Highlight_character_backpack",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_R",
+          "matName": "M_Eye_Black_character_backpack",
+          "colorHex": "#0a0a0e"
+        },
+        {
+          "mesh": "Eye_HL1_R",
+          "matName": "M_Eye_Highlight_character_backpack",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Eye_HL2_R",
+          "matName": "M_Eye_Highlight_character_backpack",
+          "colorHex": "#ffffff"
+        },
+        {
+          "mesh": "Blush_L",
+          "matName": "M_Blush_character_backpack",
+          "colorHex": "#f58998"
+        },
+        {
+          "mesh": "Blush_R",
+          "matName": "M_Blush_character_backpack",
+          "colorHex": "#f58998"
+        }
+      ],
+      "morph_targets": {
+        "Mouth": [
+          "Mouth_Smile",
+          "Mouth_Open",
+          "Mouth_O",
+          "Mouth_Sad"
+        ],
+        "Eyebrow_L": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ],
+        "Eyebrow_R": [
+          "Eyebrow_Raise",
+          "Eyebrow_Furrow",
+          "Eyebrow_Sad"
+        ]
+      },
+      "animations_count": 16,
+      "actions_verified": {
+        "Action_Idle": "PASS",
+        "Action_Walk": "PASS",
+        "Action_Run": "PASS",
+        "Action_Jump": "PASS",
+        "Action_Blink": "PASS",
+        "Action_Sit": "PASS",
+        "Action_Write": "PASS",
+        "Action_Sleep_Desk": "PASS",
+        "Action_Raise_Hand": "PASS",
+        "Action_Cheer": "PASS",
+        "Action_Talk": "PASS",
+        "Action_Wave": "PASS",
+        "Action_Bow": "PASS",
+        "Action_Salute_Flag": "PASS",
+        "Action_Thinking": "PASS",
+        "Action_Sad_Disappointed": "PASS"
+      },
+      "measured_height_m": 0.699,
+      "status": "PASS"
+    }
+  ]
+}

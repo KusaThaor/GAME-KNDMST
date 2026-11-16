@@ -1,0 +1,55 @@
+=== ORIGINAL OBJECTS ===
+Obj: Belt, type: MESH, loc: [0.0, 0.0, 0.23000000417232513], parent: None
+Obj: Blush_L, type: MESH, loc: [-0.11699999868869781, 0.11400000005960464, 0.4819999933242798], parent: None
+Obj: Blush_R, type: MESH, loc: [0.11699999868869781, 0.11400000005960464, 0.4819999933242798], parent: None
+Obj: Ear_L, type: MESH, loc: [-0.1550000011920929, -0.009999999776482582, 0.5099999904632568], parent: None
+Obj: Ear_R, type: MESH, loc: [0.1550000011920929, -0.009999999776482582, 0.5099999904632568], parent: None
+Obj: Eye_HL1_L, type: MESH, loc: [-0.0729999989271164, 0.13099999725818634, 0.5220000147819519], parent: None
+Obj: Eye_HL1_R, type: MESH, loc: [0.05700000002980232, 0.13099999725818634, 0.5220000147819519], parent: None
+Obj: Eye_HL2_L, type: MESH, loc: [-0.05700000002980232, 0.13099999725818634, 0.49799999594688416], parent: None
+Obj: Eye_HL2_R, type: MESH, loc: [0.0729999989271164, 0.13099999725818634, 0.49799999594688416], parent: None
+Obj: Eye_L, type: MESH, loc: [-0.06499999761581421, 0.12600000202655792, 0.5099999904632568], parent: None
+Obj: Eye_R, type: MESH, loc: [0.06499999761581421, 0.12600000202655792, 0.5099999904632568], parent: None
+Obj: Forearm_L, type: MESH, loc: [-0.12999999523162842, 0.012000000104308128, 0.24199999868869781], parent: None
+Obj: Forearm_R, type: MESH, loc: [0.12999999523162842, 0.012000000104308128, 0.24199999868869781], parent: None
+Obj: Hair_Bangs, type: MESH, loc: [0.0, 0.10000000149011612, 0.5699999928474426], parent: None
+  Mesh verts: 8, faces: 6
+  Bounds X: [-0.165, 0.165], Y: [-0.076, 0.076], Z: [-0.079, 0.079]
+  Modifiers: ['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+Obj: Hair_Cap, type: MESH, loc: [0.0, -0.014999999664723873, 0.5400000214576721], parent: None
+  Mesh verts: 8, faces: 6
+  Bounds X: [-0.180, 0.180], Y: [-0.170, 0.170], Z: [-0.145, 0.145]
+  Modifiers: ['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+Obj: Hair_Sideburn_L, type: MESH, loc: [-0.1599999964237213, 0.029999999329447746, 0.5199999809265137], parent: None
+  Mesh verts: 8, faces: 6
+  Bounds X: [-0.022, 0.022], Y: [-0.043, 0.043], Z: [-0.051, 0.051]
+  Modifiers: ['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+Obj: Hair_Sideburn_R, type: MESH, loc: [0.1599999964237213, 0.029999999329447746, 0.5199999809265137], parent: None
+  Mesh verts: 8, faces: 6
+  Bounds X: [-0.022, 0.022], Y: [-0.043, 0.043], Z: [-0.051, 0.051]
+  Modifiers: ['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+Obj: Hand_L, type: MESH, loc: [-0.1340000033378601, 0.017999999225139618, 0.19499999284744263], parent: None
+Obj: Hand_R, type: MESH, loc: [0.1340000033378601, 0.017999999225139618, 0.19499999284744263], parent: None
+Obj: Head, type: MESH, loc: [0.0, 0.0, 0.5199999809265137], parent: None
+Obj: Mouth, type: MESH, loc: [0.0, 0.12600000202655792, 0.4659999907016754], parent: None
+Obj: Nametag, type: MESH, loc: [-0.06199999898672104, 0.07999999821186066, 0.3400000035762787], parent: None
+Obj: Neck, type: MESH, loc: [0.0, 0.0, 0.4099999964237213], parent: None
+Obj: Pants_Pelvis, type: MESH, loc: [0.0, 0.0, 0.18000000715255737], parent: None
+Obj: Scarf_Knot, type: MESH, loc: [0.0, 0.08399999886751175, 0.3799999952316284], parent: None
+Obj: Scarf_Tail_L, type: MESH, loc: [-0.012000000104308128, 0.08399999886751175, 0.3449999988079071], parent: None
+Obj: Scarf_Tail_R, type: MESH, loc: [0.012000000104308128, 0.08399999886751175, 0.3449999988079071], parent: None
+Obj: Shin_L, type: MESH, loc: [-0.054999999701976776, 0.0, 0.07800000160932541], parent: None
+Obj: Shin_R, type: MESH, loc: [0.054999999701976776, 0.0, 0.07800000160932541], parent: None
+Obj: Shirt_Collar, type: MESH, loc: [0.0, 0.014999999664723873, 0.4050000011920929], parent: None
+Obj: Shirt_Torso, type: MESH, loc: [0.0, 0.0, 0.3199999928474426], parent: None
+Obj: Shoe_L, type: MESH, loc: [-0.054999999701976776, 0.012000000104308128, 0.03799999877810478], parent: None
+Obj: Shoe_R, type: MESH, loc: [0.054999999701976776, 0.012000000104308128, 0.03799999877810478], parent: None
+Obj: Shoe_Sole_L, type: MESH, loc: [-0.054999999701976776, 0.012000000104308128, 0.00800000037997961], parent: None
+Obj: Shoe_Sole_R, type: MESH, loc: [0.054999999701976776, 0.012000000104308128, 0.00800000037997961], parent: None
+Obj: Sleeve_L, type: MESH, loc: [-0.11800000071525574, 0.0, 0.3499999940395355], parent: None
+Obj: Sleeve_R, type: MESH, loc: [0.11800000071525574, 0.0, 0.3499999940395355], parent: None
+Obj: Student_Armature, type: ARMATURE, loc: [0.0, 0.0, 0.0], parent: None
+Obj: Thigh_L, type: MESH, loc: [-0.054999999701976776, 0.0, 0.1550000011920929], parent: None
+Obj: Thigh_R, type: MESH, loc: [0.054999999701976776, 0.0, 0.1550000011920929], parent: None
+Obj: UpperArm_L, type: MESH, loc: [-0.12399999797344208, 0.004999999888241291, 0.3050000071525574], parent: None
+Obj: UpperArm_R, type: MESH, loc: [0.12399999797344208, 0.004999999888241291, 0.3050000071525574], parent: None

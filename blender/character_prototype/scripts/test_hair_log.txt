@@ -1,0 +1,7 @@
+STARTING
+ERROR: 'NoneType' object has no attribute 'location'
+Traceback (most recent call last):
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scripts\test_perfect_hair.py", line 96, in <module>
+    cam_obj.location = (0.0, 1.95, 0.35 + 0.05)
+    ^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'location'

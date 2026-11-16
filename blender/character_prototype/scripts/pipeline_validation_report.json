@@ -1,0 +1,390 @@
+{
+  "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\vietnamese_student_fixed.glb",
+  "glb_size_bytes": 317044,
+  "objects_count": 25,
+  "meshes": {
+    "Blush_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0214,
+        0.007,
+        0.0132
+      ],
+      "world_z_range": [
+        0.4924,
+        0.5056
+      ]
+    },
+    "Blush_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0214,
+        0.007,
+        0.0132
+      ],
+      "world_z_range": [
+        0.4924,
+        0.5056
+      ]
+    },
+    "Body_Head": {
+      "vertices": 181,
+      "polygons": 340,
+      "dimensions": [
+        0.348,
+        0.331,
+        0.298
+      ],
+      "world_z_range": [
+        0.38,
+        0.678
+      ]
+    },
+    "Character_Arm_L": {
+      "vertices": 223,
+      "polygons": 404,
+      "dimensions": [
+        0.1,
+        0.0936,
+        0.243
+      ],
+      "world_z_range": [
+        0.142,
+        0.385
+      ]
+    },
+    "Character_Arm_R": {
+      "vertices": 223,
+      "polygons": 404,
+      "dimensions": [
+        0.1,
+        0.0936,
+        0.243
+      ],
+      "world_z_range": [
+        0.142,
+        0.385
+      ]
+    },
+    "Character_Torso_Legs": {
+      "vertices": 582,
+      "polygons": 912,
+      "dimensions": [
+        0.24,
+        0.1734,
+        0.405
+      ],
+      "world_z_range": [
+        -0.0,
+        0.405
+      ]
+    },
+    "Ear_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0215,
+        0.0361,
+        0.043
+      ],
+      "world_z_range": [
+        0.4935,
+        0.5365
+      ]
+    },
+    "Ear_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0215,
+        0.0361,
+        0.043
+      ],
+      "world_z_range": [
+        0.4935,
+        0.5365
+      ]
+    },
+    "Eye_HL1_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0101,
+        0.0034,
+        0.0109
+      ],
+      "world_z_range": [
+        0.5255,
+        0.5365
+      ]
+    },
+    "Eye_HL1_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0101,
+        0.0034,
+        0.0109
+      ],
+      "world_z_range": [
+        0.5255,
+        0.5365
+      ]
+    },
+    "Eye_HL2_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0059,
+        0.0034,
+        0.0059
+      ],
+      "world_z_range": [
+        0.5071,
+        0.5129
+      ]
+    },
+    "Eye_HL2_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0059,
+        0.0034,
+        0.0059
+      ],
+      "world_z_range": [
+        0.5071,
+        0.5129
+      ]
+    },
+    "Eye_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0269,
+        0.0067,
+        0.0327
+      ],
+      "world_z_range": [
+        0.5036,
+        0.5364
+      ]
+    },
+    "Eye_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0269,
+        0.0067,
+        0.0327
+      ],
+      "world_z_range": [
+        0.5036,
+        0.5364
+      ]
+    },
+    "Eyebrow_L": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0249,
+        0.0061,
+        0.0067
+      ],
+      "world_z_range": [
+        0.5657,
+        0.5723
+      ]
+    },
+    "Eyebrow_R": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0249,
+        0.0061,
+        0.0067
+      ],
+      "world_z_range": [
+        0.5657,
+        0.5723
+      ]
+    },
+    "Hair_Bangs": {
+      "vertices": 125,
+      "polygons": 192,
+      "dimensions": [
+        0.3022,
+        0.1761,
+        0.1325
+      ],
+      "world_z_range": [
+        0.5237,
+        0.6563
+      ]
+    },
+    "Hair_Cap": {
+      "vertices": 125,
+      "polygons": 192,
+      "dimensions": [
+        0.3526,
+        0.3358,
+        0.2602
+      ],
+      "world_z_range": [
+        0.4349,
+        0.6951
+      ]
+    },
+    "Hair_Sideburn_L": {
+      "vertices": 125,
+      "polygons": 192,
+      "dimensions": [
+        0.0234,
+        0.0488,
+        0.0951
+      ],
+      "world_z_range": [
+        0.4875,
+        0.5825
+      ]
+    },
+    "Hair_Sideburn_R": {
+      "vertices": 125,
+      "polygons": 192,
+      "dimensions": [
+        0.0234,
+        0.0488,
+        0.0951
+      ],
+      "world_z_range": [
+        0.4875,
+        0.5825
+      ]
+    },
+    "Icosphere": {
+      "vertices": 42,
+      "polygons": 80,
+      "dimensions": [
+        1.9021,
+        2.0,
+        2.0
+      ],
+      "world_z_range": [
+        -1.0,
+        1.0
+      ]
+    },
+    "Mouth": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0218,
+        0.005,
+        0.0067
+      ],
+      "world_z_range": [
+        0.4766,
+        0.4834
+      ]
+    },
+    "Nose": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.0134,
+        0.0118,
+        0.0118
+      ],
+      "world_z_range": [
+        0.4941,
+        0.5059
+      ]
+    },
+    "Shirt_Collar": {
+      "vertices": 39,
+      "polygons": 48,
+      "dimensions": [
+        0.1108,
+        0.0673,
+        0.0247
+      ],
+      "world_z_range": [
+        0.3756,
+        0.4004
+      ]
+    }
+  },
+  "bones_count": 20,
+  "actions_count": 16,
+  "actions": [
+    "Action_Blink",
+    "Action_Bow",
+    "Action_Cheer",
+    "Action_Idle",
+    "Action_Jump",
+    "Action_Raise_Hand",
+    "Action_Run",
+    "Action_Sad_Disappointed",
+    "Action_Salute_Flag",
+    "Action_Sit",
+    "Action_Sleep_Desk",
+    "Action_Talk",
+    "Action_Thinking",
+    "Action_Walk",
+    "Action_Wave",
+    "Action_Write"
+  ],
+  "numerical_checks": {
+    "hair_cap_subdivided": {
+      "status": "PASS",
+      "vertices": 125,
+      "dimensions": [
+        0.3526,
+        0.3358,
+        0.2602
+      ]
+    },
+    "hair_bangs_subdivided": {
+      "status": "PASS",
+      "vertices": 125,
+      "dimensions": [
+        0.3022,
+        0.1761,
+        0.1325
+      ]
+    },
+    "Eye_L_present": {
+      "status": "PASS",
+      "verts": 39
+    },
+    "Eye_R_present": {
+      "status": "PASS",
+      "verts": 39
+    },
+    "Nose_present": {
+      "status": "PASS",
+      "verts": 39
+    },
+    "Mouth_present": {
+      "status": "PASS",
+      "verts": 39
+    },
+    "total_height_check": {
+      "measured_height_m": 0.6951,
+      "expected_range_m": [
+        0.65,
+        0.95
+      ],
+      "status": "PASS"
+    },
+    "canonical_actions_check": {
+      "actions_found": 16,
+      "expected_actions": 16,
+      "status": "PASS"
+    }
+  },
+  "verdict": "PASS",
+  "total_height": 0.6951
+}

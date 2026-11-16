@@ -1,0 +1,4 @@
+Testing re-imported animations from C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\test_variants\test_export_apply.glb...
+Rendered Action_Walk at frame 15 -> C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_repair\reimported_Action_Walk.png
+Rendered Action_Sit at frame 20 -> C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_repair\reimported_Action_Sit.png
+Rendered Action_Wave at frame 15 -> C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_repair\reimported_Action_Wave.png

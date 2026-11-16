@@ -1,0 +1,28 @@
+=== Hair_Cap ===
+loc=[0.0, 0.0, 0.0], parent=None
+modifiers=['Armature(ARMATURE)']
+vertex_groups=['Head']
+materials=['None']
+verts count=101, faces count=100
+mesh coords: X:[-0.188, 0.188], Y:[-0.190, 0.166], Z:[0.535, 0.696]
+=== Hair_Bangs ===
+loc=[0.0, 0.0, 0.0], parent=None
+modifiers=['Solidify(SOLIDIFY)', 'Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+vertex_groups=['Head']
+materials=['None']
+verts count=21, faces count=12
+mesh coords: X:[-0.152, 0.152], Y:[0.091, 0.180], Z:[0.552, 0.604]
+=== Hair_Sideburn_L ===
+loc=[-0.16500000655651093, 0.03999999910593033, 0.5199999809265137], parent=None
+modifiers=['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+vertex_groups=['Head']
+materials=['None']
+verts count=8, faces count=6
+mesh coords: X:[-0.015, 0.015], Y:[-0.035, 0.035], Z:[-0.042, 0.042]
+=== Body_Head ===
+loc=[0.0, 0.0, 0.0], parent=None
+modifiers=['Armature(ARMATURE)']
+vertex_groups=['Head', 'Neck']
+materials=['M_Skin']
+verts count=181, faces count=180
+mesh coords: X:[-0.174, 0.174], Y:[-0.163, 0.168], Z:[0.380, 0.678]

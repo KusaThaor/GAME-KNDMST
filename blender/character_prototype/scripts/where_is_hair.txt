@@ -1,0 +1,55 @@
+
+=== Object: Hair_Cap ===
+  type=MESH, loc=[0.0, -0.014999999664723873, 0.5450000166893005], rot=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0]
+  parent=None
+  collections=['03_Hair_Default']
+  hide_render=False, hide_viewport=False
+  modifiers=['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+  materials=['M_Hair']
+  local bounds X:[-0.188, 0.188], Y:[-0.178, 0.178], Z:[-0.148, 0.148]
+  world bounds X:[-0.188, 0.188], Y:[-0.193, 0.163], Z:[0.397, 0.693]
+  EVALUATED world bounds X:[-0.158, 0.158], Y:[-0.164, 0.134], Z:[0.421, 0.669]
+
+=== Object: Hair_Bangs ===
+  type=MESH, loc=[0.0, 0.10999999940395355, 0.5699999928474426], rot=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0]
+  parent=None
+  collections=['03_Hair_Default']
+  hide_render=False, hide_viewport=False
+  modifiers=['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+  materials=['M_Hair']
+  local bounds X:[-0.172, 0.172], Y:[-0.093, 0.093], Z:[-0.095, 0.095]
+  world bounds X:[-0.172, 0.172], Y:[0.017, 0.203], Z:[0.475, 0.665]
+  EVALUATED world bounds X:[-0.144, 0.144], Y:[0.047, 0.173], Z:[0.505, 0.635]
+
+=== Object: Hair_Sideburn_L ===
+  type=MESH, loc=[-0.16500000655651093, 0.029999999329447746, 0.5199999809265137], rot=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0]
+  parent=None
+  collections=['03_Hair_Default']
+  hide_render=False, hide_viewport=False
+  modifiers=['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+  materials=['M_Hair']
+  local bounds X:[-0.034, 0.034], Y:[-0.059, 0.059], Z:[-0.063, 0.063]
+  world bounds X:[-0.199, -0.131], Y:[-0.029, 0.089], Z:[0.457, 0.583]
+  EVALUATED world bounds X:[-0.186, -0.144], Y:[-0.006, 0.066], Z:[0.475, 0.565]
+
+=== Object: Hair_Sideburn_R ===
+  type=MESH, loc=[0.16500000655651093, 0.029999999329447746, 0.5199999809265137], rot=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0]
+  parent=None
+  collections=['03_Hair_Default']
+  hide_render=False, hide_viewport=False
+  modifiers=['Subdiv(SUBSURF)', 'Armature(ARMATURE)']
+  materials=['M_Hair']
+  local bounds X:[-0.034, 0.034], Y:[-0.059, 0.059], Z:[-0.063, 0.063]
+  world bounds X:[0.131, 0.199], Y:[-0.029, 0.089], Z:[0.457, 0.583]
+  EVALUATED world bounds X:[0.144, 0.186], Y:[-0.006, 0.066], Z:[0.475, 0.565]
+
+=== Object: Body_Head ===
+  type=MESH, loc=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0]
+  parent=None
+  collections=['01_Base_Body']
+  hide_render=False, hide_viewport=False
+  modifiers=['Armature(ARMATURE)']
+  materials=['M_Skin']
+  local bounds X:[-0.174, 0.174], Y:[-0.163, 0.168], Z:[0.380, 0.678]
+  world bounds X:[-0.174, 0.174], Y:[-0.163, 0.168], Z:[0.380, 0.678]
+  EVALUATED world bounds X:[-0.174, 0.174], Y:[-0.163, 0.168], Z:[0.380, 0.678]

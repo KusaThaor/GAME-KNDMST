@@ -1,0 +1,1795 @@
+{
+  "objects_count": 42,
+  "objects": [
+    {
+      "name": "Belt",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.0,
+        0.23
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Hips"
+      ],
+      "materials": [
+        "M_Belt"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Blush_L",
+      "type": "MESH",
+      "location": [
+        -0.117,
+        0.114,
+        0.482
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Blush"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Blush_R",
+      "type": "MESH",
+      "location": [
+        0.117,
+        0.114,
+        0.482
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Blush"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Ear_L",
+      "type": "MESH",
+      "location": [
+        -0.155,
+        -0.01,
+        0.51
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Ear_R",
+      "type": "MESH",
+      "location": [
+        0.155,
+        -0.01,
+        0.51
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_HL1_L",
+      "type": "MESH",
+      "location": [
+        -0.073,
+        0.131,
+        0.522
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_HL1_R",
+      "type": "MESH",
+      "location": [
+        0.057,
+        0.131,
+        0.522
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_HL2_L",
+      "type": "MESH",
+      "location": [
+        -0.057,
+        0.131,
+        0.498
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_HL2_R",
+      "type": "MESH",
+      "location": [
+        0.073,
+        0.131,
+        0.498
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_L",
+      "type": "MESH",
+      "location": [
+        -0.065,
+        0.126,
+        0.51
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Eye_R",
+      "type": "MESH",
+      "location": [
+        0.065,
+        0.126,
+        0.51
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Forearm_L",
+      "type": "MESH",
+      "location": [
+        -0.13,
+        0.012,
+        0.242
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Forearm.L"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Forearm_R",
+      "type": "MESH",
+      "location": [
+        0.13,
+        0.012,
+        0.242
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Forearm.R"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Hair_Bangs",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.1,
+        0.57
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Hair_Cap",
+      "type": "MESH",
+      "location": [
+        0.0,
+        -0.015,
+        0.54
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Hair_Sideburn_L",
+      "type": "MESH",
+      "location": [
+        -0.16,
+        0.03,
+        0.52
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Hair_Sideburn_R",
+      "type": "MESH",
+      "location": [
+        0.16,
+        0.03,
+        0.52
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Hand_L",
+      "type": "MESH",
+      "location": [
+        -0.134,
+        0.018,
+        0.195
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Hand.L"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Hand_R",
+      "type": "MESH",
+      "location": [
+        0.134,
+        0.018,
+        0.195
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Hand.R"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Head",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.0,
+        0.52
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Mouth",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.126,
+        0.466
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Mouth"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Nametag",
+      "type": "MESH",
+      "location": [
+        -0.062,
+        0.08,
+        0.34
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Spine"
+      ],
+      "materials": [
+        "M_Nametag"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Neck",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.0,
+        0.41
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Neck"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Pants_Pelvis",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.0,
+        0.18
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Hips"
+      ],
+      "materials": [
+        "M_Pants"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Scarf_Knot",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.084,
+        0.38
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Neck"
+      ],
+      "materials": [
+        "M_Scarf"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Scarf_Tail_L",
+      "type": "MESH",
+      "location": [
+        -0.012,
+        0.084,
+        0.345
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Neck"
+      ],
+      "materials": [
+        "M_Scarf"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Scarf_Tail_R",
+      "type": "MESH",
+      "location": [
+        0.012,
+        0.084,
+        0.345
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Neck"
+      ],
+      "materials": [
+        "M_Scarf"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shin_L",
+      "type": "MESH",
+      "location": [
+        -0.055,
+        0.0,
+        0.078
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Shin.L"
+      ],
+      "materials": [
+        "M_Pants"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Shin_R",
+      "type": "MESH",
+      "location": [
+        0.055,
+        0.0,
+        0.078
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Shin.R"
+      ],
+      "materials": [
+        "M_Pants"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Shirt_Collar",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.015,
+        0.405
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Neck"
+      ],
+      "materials": [
+        "M_Shirt"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shirt_Torso",
+      "type": "MESH",
+      "location": [
+        0.0,
+        0.0,
+        0.32
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Spine"
+      ],
+      "materials": [
+        "M_Shirt"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shoe_L",
+      "type": "MESH",
+      "location": [
+        -0.055,
+        0.012,
+        0.038
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Foot.L"
+      ],
+      "materials": [
+        "M_Shoe"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shoe_R",
+      "type": "MESH",
+      "location": [
+        0.055,
+        0.012,
+        0.038
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Foot.R"
+      ],
+      "materials": [
+        "M_Shoe"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shoe_Sole_L",
+      "type": "MESH",
+      "location": [
+        -0.055,
+        0.012,
+        0.008
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Foot.L"
+      ],
+      "materials": [
+        "M_Sole"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Shoe_Sole_R",
+      "type": "MESH",
+      "location": [
+        0.055,
+        0.012,
+        0.008
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Foot.R"
+      ],
+      "materials": [
+        "M_Sole"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Sleeve_L",
+      "type": "MESH",
+      "location": [
+        -0.118,
+        0.0,
+        0.35
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.L"
+      ],
+      "materials": [
+        "M_Shirt"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Sleeve_R",
+      "type": "MESH",
+      "location": [
+        0.118,
+        0.0,
+        0.35
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.R"
+      ],
+      "materials": [
+        "M_Shirt"
+      ],
+      "vert_count": 8,
+      "face_count": 6
+    },
+    {
+      "name": "Student_Armature",
+      "type": "ARMATURE",
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [],
+      "vertex_groups": [],
+      "materials": []
+    },
+    {
+      "name": "Thigh_L",
+      "type": "MESH",
+      "location": [
+        -0.055,
+        0.0,
+        0.155
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Thigh.L"
+      ],
+      "materials": [
+        "M_Pants"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "Thigh_R",
+      "type": "MESH",
+      "location": [
+        0.055,
+        0.0,
+        0.155
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Thigh.R"
+      ],
+      "materials": [
+        "M_Pants"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "UpperArm_L",
+      "type": "MESH",
+      "location": [
+        -0.124,
+        0.005,
+        0.305
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.L"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    },
+    {
+      "name": "UpperArm_R",
+      "type": "MESH",
+      "location": [
+        0.124,
+        0.005,
+        0.305
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "parent": null,
+      "modifiers": [
+        {
+          "name": "Bevel",
+          "type": "BEVEL"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.R"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "vert_count": 64,
+      "face_count": 34
+    }
+  ],
+  "armatures": [
+    {
+      "name": "Student_Armature_Data",
+      "bones": [
+        {
+          "name": "Root",
+          "parent": null,
+          "head": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "tail": [
+            0.0,
+            0.0,
+            0.08
+          ],
+          "length": 0.08
+        },
+        {
+          "name": "Hips",
+          "parent": "Root",
+          "head": [
+            0.0,
+            0.0,
+            0.2
+          ],
+          "tail": [
+            0.0,
+            0.0,
+            0.26
+          ],
+          "length": 0.06
+        },
+        {
+          "name": "Spine",
+          "parent": "Hips",
+          "head": [
+            0.0,
+            0.0,
+            0.26
+          ],
+          "tail": [
+            0.0,
+            0.0,
+            0.36
+          ],
+          "length": 0.1
+        },
+        {
+          "name": "Neck",
+          "parent": "Spine",
+          "head": [
+            0.0,
+            0.0,
+            0.36
+          ],
+          "tail": [
+            0.0,
+            0.0,
+            0.42
+          ],
+          "length": 0.06
+        },
+        {
+          "name": "Head",
+          "parent": "Neck",
+          "head": [
+            0.0,
+            0.0,
+            0.42
+          ],
+          "tail": [
+            0.0,
+            0.0,
+            0.68
+          ],
+          "length": 0.26
+        },
+        {
+          "name": "Eye.L",
+          "parent": "Head",
+          "head": [
+            -0.065,
+            0.124,
+            0.51
+          ],
+          "tail": [
+            -0.065,
+            0.134,
+            0.51
+          ],
+          "length": 0.01
+        },
+        {
+          "name": "Eye.R",
+          "parent": "Head",
+          "head": [
+            0.065,
+            0.124,
+            0.51
+          ],
+          "tail": [
+            0.065,
+            0.134,
+            0.51
+          ],
+          "length": 0.01
+        },
+        {
+          "name": "UpperArm.L",
+          "parent": "Spine",
+          "head": [
+            -0.115,
+            0.0,
+            0.35
+          ],
+          "tail": [
+            -0.122,
+            0.005,
+            0.28
+          ],
+          "length": 0.0705
+        },
+        {
+          "name": "Forearm.L",
+          "parent": "UpperArm.L",
+          "head": [
+            -0.122,
+            0.005,
+            0.28
+          ],
+          "tail": [
+            -0.132,
+            0.012,
+            0.21
+          ],
+          "length": 0.0711
+        },
+        {
+          "name": "Hand.L",
+          "parent": "Forearm.L",
+          "head": [
+            -0.132,
+            0.012,
+            0.21
+          ],
+          "tail": [
+            -0.14,
+            0.018,
+            0.15
+          ],
+          "length": 0.0608
+        },
+        {
+          "name": "UpperArm.R",
+          "parent": "Spine",
+          "head": [
+            0.115,
+            0.0,
+            0.35
+          ],
+          "tail": [
+            0.122,
+            0.005,
+            0.28
+          ],
+          "length": 0.0705
+        },
+        {
+          "name": "Forearm.R",
+          "parent": "UpperArm.R",
+          "head": [
+            0.122,
+            0.005,
+            0.28
+          ],
+          "tail": [
+            0.132,
+            0.012,
+            0.21
+          ],
+          "length": 0.0711
+        },
+        {
+          "name": "Hand.R",
+          "parent": "Forearm.R",
+          "head": [
+            0.132,
+            0.012,
+            0.21
+          ],
+          "tail": [
+            0.14,
+            0.018,
+            0.15
+          ],
+          "length": 0.0608
+        },
+        {
+          "name": "Thigh.L",
+          "parent": "Hips",
+          "head": [
+            -0.055,
+            0.0,
+            0.2
+          ],
+          "tail": [
+            -0.055,
+            0.0,
+            0.115
+          ],
+          "length": 0.085
+        },
+        {
+          "name": "Shin.L",
+          "parent": "Thigh.L",
+          "head": [
+            -0.055,
+            0.0,
+            0.115
+          ],
+          "tail": [
+            -0.055,
+            0.0,
+            0.04
+          ],
+          "length": 0.075
+        },
+        {
+          "name": "Foot.L",
+          "parent": "Shin.L",
+          "head": [
+            -0.055,
+            0.0,
+            0.04
+          ],
+          "tail": [
+            -0.055,
+            0.05,
+            0.01
+          ],
+          "length": 0.0583
+        },
+        {
+          "name": "Thigh.R",
+          "parent": "Hips",
+          "head": [
+            0.055,
+            0.0,
+            0.2
+          ],
+          "tail": [
+            0.055,
+            0.0,
+            0.115
+          ],
+          "length": 0.085
+        },
+        {
+          "name": "Shin.R",
+          "parent": "Thigh.R",
+          "head": [
+            0.055,
+            0.0,
+            0.115
+          ],
+          "tail": [
+            0.055,
+            0.0,
+            0.04
+          ],
+          "length": 0.075
+        },
+        {
+          "name": "Foot.R",
+          "parent": "Shin.R",
+          "head": [
+            0.055,
+            0.0,
+            0.04
+          ],
+          "tail": [
+            0.055,
+            0.05,
+            0.01
+          ],
+          "length": 0.0583
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Belt",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Blush",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Eye_Black",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Eye_Highlight",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Hair",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Mouth",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Nametag",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Pants",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Scarf",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Shirt",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Shoe",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Skin",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    },
+    {
+      "name": "M_Sole",
+      "use_nodes": true,
+      "nodes": [
+        "BSDF_PRINCIPLED",
+        "OUTPUT_MATERIAL"
+      ]
+    }
+  ],
+  "actions": [
+    "Action_Blink",
+    "Action_Bow",
+    "Action_Cheer",
+    "Action_Idle",
+    "Action_Jump",
+    "Action_Raise_Hand",
+    "Action_Run",
+    "Action_Sad_Disappointed",
+    "Action_Salute_Flag",
+    "Action_Sit",
+    "Action_Sleep_Desk",
+    "Action_Talk",
+    "Action_Thinking",
+    "Action_Walk",
+    "Action_Wave",
+    "Action_Write"
+  ],
+  "images": [],
+  "total_verts": 888,
+  "total_faces": 526
+}

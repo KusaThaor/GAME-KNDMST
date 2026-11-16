@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-11-16T05:39:07.470Z",
+  "all_passed": true,
+  "results": [
+    {
+      "name": "Base Canonical",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\assets\\characters\\vietnamese_student_base.glb",
+      "size_kb": 266.2,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1475,
+      "skinned_meshes": 29,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Height 90% (Freshman)",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_height_90.glb",
+      "size_kb": 266.6,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1475,
+      "skinned_meshes": 29,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Height 100% (Standard)",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_height_100.glb",
+      "size_kb": 266.2,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1475,
+      "skinned_meshes": 29,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Height 110% (Senior)",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_height_110.glb",
+      "size_kb": 266.5,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1475,
+      "skinned_meshes": 29,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Hairstyle Spiky",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_hair_spiky.glb",
+      "size_kb": 269.7,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1503,
+      "skinned_meshes": 31,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Hairstyle Bob",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_hair_bob.glb",
+      "size_kb": 268.3,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1489,
+      "skinned_meshes": 30,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Outfit Red Scarf",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_outfit_scarf.glb",
+      "size_kb": 271.4,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1517,
+      "skinned_meshes": 32,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    },
+    {
+      "name": "Outfit PE Sports",
+      "file": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\test_variants\\student_outfit_pe.glb",
+      "size_kb": 269.8,
+      "bones_count": 20,
+      "missing_bones": [],
+      "total_verts": 1503,
+      "skinned_meshes": 31,
+      "animations_count": 16,
+      "has_idle_walk_sit": true,
+      "anim_playback_passed": true,
+      "overall_passed": true
+    }
+  ]
+}

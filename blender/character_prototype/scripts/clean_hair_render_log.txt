@@ -1,0 +1,2 @@
+Rendered front: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_base\test_clean_hair_front.png, exists: True
+Rendered 3/4: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_base\test_clean_hair_34.png, exists: True

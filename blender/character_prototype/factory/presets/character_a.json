@@ -1,0 +1,13 @@
+{
+  "character_id": "character_a",
+  "base_version": "1.0.0",
+  "name": "Character A - Minh (Lớp 6 Nhỏ Nhắn)",
+  "height_scale": 0.90,
+  "skin_tone": "SKIN_01",
+  "hair_style": "HAIR_001",
+  "hair_color": "#1c1615",
+  "outfit": "OUTFIT_001",
+  "accessories": ["ACC_001"],
+  "default_expression": "Happy",
+  "animation_set": "school_actions_v1"
+}

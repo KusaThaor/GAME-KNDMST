@@ -1,0 +1,1539 @@
+{
+  "scene_name": "vietnamese_student_base.blend",
+  "collections": {
+    "00_Armature": [
+      "Student_Armature"
+    ],
+    "01_Base_Body": [
+      "Body_Head",
+      "Ear_L",
+      "Ear_R",
+      "Character_Arm_L",
+      "Character_Arm_R"
+    ],
+    "02_Outfit_Uniform": [
+      "Character_Torso_Legs",
+      "Shirt_Collar"
+    ],
+    "03_Hair_Default": [
+      "Hair_Cap",
+      "Hair_Bangs",
+      "Hair_Sideburn_L",
+      "Hair_Sideburn_R"
+    ],
+    "04_Accessories": [],
+    "05_Facial_Features": [
+      "Nose",
+      "Eyebrow_L",
+      "Eyebrow_R",
+      "Eye_L",
+      "Eye_HL1_L",
+      "Eye_HL2_L",
+      "Eye_R",
+      "Eye_HL1_R",
+      "Eye_HL2_R",
+      "Mouth",
+      "Blush_L",
+      "Blush_R"
+    ]
+  },
+  "mesh_objects": [
+    {
+      "name": "Blush_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Blush"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.125,
+        0.11699999868869781,
+        0.49900001287460327
+      ],
+      "dimensions": [
+        0.021350182592868805,
+        0.00695154070854187,
+        0.013228058815002441
+      ]
+    },
+    {
+      "name": "Blush_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Blush"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.125,
+        0.11699999868869781,
+        0.49900001287460327
+      ],
+      "dimensions": [
+        0.021350182592868805,
+        0.00695154070854187,
+        0.013228058815002441
+      ]
+    },
+    {
+      "name": "Body_Head",
+      "vertices": 181,
+      "faces": 180,
+      "modifiers": [
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head",
+        "Neck"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.3479999899864197,
+        0.3310000002384186,
+        0.2979999780654907
+      ]
+    },
+    {
+      "name": "Character_Arm_L",
+      "vertices": 209,
+      "faces": 220,
+      "modifiers": [
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.L",
+        "Forearm.L",
+        "Hand.L",
+        "Chest"
+      ],
+      "materials": [
+        "M_Shirt",
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.09546971321105957,
+        0.11000572144985199,
+        0.24064229428768158
+      ]
+    },
+    {
+      "name": "Character_Arm_R",
+      "vertices": 209,
+      "faces": 220,
+      "modifiers": [
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "UpperArm.R",
+        "Forearm.R",
+        "Hand.R",
+        "Chest"
+      ],
+      "materials": [
+        "M_Shirt",
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.09546971321105957,
+        0.11000572144985199,
+        0.24064229428768158
+      ]
+    },
+    {
+      "name": "Character_Torso_Legs",
+      "vertices": 490,
+      "faces": 470,
+      "modifiers": [
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Chest",
+        "Spine",
+        "Hips",
+        "Thigh.L",
+        "Thigh.R",
+        "Shin.L",
+        "Shin.R",
+        "Foot.L",
+        "Foot.R"
+      ],
+      "materials": [
+        "M_Shirt",
+        "M_Belt",
+        "M_Pants",
+        "M_Shoe",
+        "M_Sole"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions": [
+        0.23999999463558197,
+        0.17337173223495483,
+        0.4050000011920929
+      ]
+    },
+    {
+      "name": "Ear_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.16599999368190765,
+        -0.004999999888241291,
+        0.5149999856948853
+      ],
+      "dimensions": [
+        0.021512985229492188,
+        0.03613109141588211,
+        0.04299113154411316
+      ]
+    },
+    {
+      "name": "Ear_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.16599999368190765,
+        -0.004999999888241291,
+        0.5149999856948853
+      ],
+      "dimensions": [
+        0.021512985229492188,
+        0.036131083965301514,
+        0.04299113154411316
+      ]
+    },
+    {
+      "name": "Eye_HL1_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.07400000095367432,
+        0.15800000727176666,
+        0.531000018119812
+      ],
+      "dimensions": [
+        0.010074079036712646,
+        0.0033580362796783447,
+        0.010913610458374023
+      ]
+    },
+    {
+      "name": "Eye_HL1_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.07400000095367432,
+        0.15800000727176666,
+        0.531000018119812
+      ],
+      "dimensions": [
+        0.010074079036712646,
+        0.0033580362796783447,
+        0.010913610458374023
+      ]
+    },
+    {
+      "name": "Eye_HL2_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.057999998331069946,
+        0.15800000727176666,
+        0.5099999904632568
+      ],
+      "dimensions": [
+        0.0058765411376953125,
+        0.0033580362796783447,
+        0.0058765411376953125
+      ]
+    },
+    {
+      "name": "Eye_HL2_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Highlight"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.057999998331069946,
+        0.15800000727176666,
+        0.5099999904632568
+      ],
+      "dimensions": [
+        0.0058765411376953125,
+        0.0033580362796783447,
+        0.0058765411376953125
+      ]
+    },
+    {
+      "name": "Eye_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.L"
+      ],
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.06599999964237213,
+        0.15199999511241913,
+        0.5199999809265137
+      ],
+      "dimensions": [
+        0.026864200830459595,
+        0.006716042757034302,
+        0.03274071216583252
+      ]
+    },
+    {
+      "name": "Eye_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Eye.R"
+      ],
+      "materials": [
+        "M_Eye_Black"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.06599999964237213,
+        0.15199999511241913,
+        0.5199999809265137
+      ],
+      "dimensions": [
+        0.026864200830459595,
+        0.006716042757034302,
+        0.03274071216583252
+      ]
+    },
+    {
+      "name": "Eyebrow_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.06599999964237213,
+        0.15000000596046448,
+        0.5690000057220459
+      ],
+      "dimensions": [
+        0.024940088391304016,
+        0.006147027015686035,
+        0.0066792964935302734
+      ]
+    },
+    {
+      "name": "Eyebrow_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.06599999964237213,
+        0.15000000596046448,
+        0.5690000057220459
+      ],
+      "dimensions": [
+        0.024940084666013718,
+        0.006147027015686035,
+        0.0066792964935302734
+      ]
+    },
+    {
+      "name": "Hair_Bangs",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.07500000298023224,
+        0.5899999737739563
+      ],
+      "dimensions": [
+        0.30222228169441223,
+        0.17610201239585876,
+        0.13250696659088135
+      ]
+    },
+    {
+      "name": "Hair_Cap",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        -0.02199999988079071,
+        0.5649999976158142
+      ],
+      "dimensions": [
+        0.3525925874710083,
+        0.33580249547958374,
+        0.26024699211120605
+      ]
+    },
+    {
+      "name": "Hair_Sideburn_L",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        -0.17000000178813934,
+        0.04500000178813934,
+        0.5350000262260437
+      ],
+      "dimensions": [
+        0.023416727781295776,
+        0.048813506960868835,
+        0.0950765311717987
+      ]
+    },
+    {
+      "name": "Hair_Sideburn_R",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Hair"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.17000000178813934,
+        0.04500000178813934,
+        0.5350000262260437
+      ],
+      "dimensions": [
+        0.023416727781295776,
+        0.048813506960868835,
+        0.0950765311717987
+      ]
+    },
+    {
+      "name": "Mouth",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Mouth"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.1589999943971634,
+        0.47999998927116394
+      ],
+      "dimensions": [
+        0.02182716131210327,
+        0.005037039518356323,
+        0.0067160725593566895
+      ]
+    },
+    {
+      "name": "Nose",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Head"
+      ],
+      "materials": [
+        "M_Skin"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.16500000655651093,
+        0.5
+      ],
+      "dimensions": [
+        0.013432100415229797,
+        0.011753082275390625,
+        0.011753082275390625
+      ]
+    },
+    {
+      "name": "Shirt_Collar",
+      "vertices": 8,
+      "faces": 6,
+      "modifiers": [
+        {
+          "name": "Subdiv",
+          "type": "SUBSURF"
+        },
+        {
+          "name": "Armature",
+          "type": "ARMATURE"
+        }
+      ],
+      "vertex_groups": [
+        "Chest"
+      ],
+      "materials": [
+        "M_Shirt"
+      ],
+      "has_armature_mod": true,
+      "location": [
+        0.0,
+        0.03799999877810478,
+        0.3880000114440918
+      ],
+      "dimensions": [
+        0.11081480979919434,
+        0.06733520328998566,
+        0.02470231056213379
+      ]
+    }
+  ],
+  "total_vertices": 1241,
+  "total_faces": 1204,
+  "materials": [
+    {
+      "name": "M_Belt",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Blush",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Eye_Black",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Eye_Highlight",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Hair",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Mouth",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Pants",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Shirt",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Shoe",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Skin",
+      "use_nodes": true
+    },
+    {
+      "name": "M_Sole",
+      "use_nodes": true
+    }
+  ],
+  "armature": {
+    "name": "Student_Armature",
+    "bones_count": 20,
+    "bones": [
+      {
+        "name": "Root",
+        "parent": null,
+        "head": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tail": [
+          0.0,
+          0.07999999821186066,
+          0.0
+        ],
+        "length": 0.07999999821186066
+      },
+      {
+        "name": "Hips",
+        "parent": "Root",
+        "head": [
+          0.0,
+          0.0,
+          0.20000000298023224
+        ],
+        "tail": [
+          0.0,
+          0.0,
+          0.25
+        ],
+        "length": 0.04999999701976776
+      },
+      {
+        "name": "Spine",
+        "parent": "Hips",
+        "head": [
+          0.0,
+          0.0,
+          0.25
+        ],
+        "tail": [
+          0.0,
+          0.0,
+          0.3199999928474426
+        ],
+        "length": 0.06999999284744263
+      },
+      {
+        "name": "Chest",
+        "parent": "Spine",
+        "head": [
+          0.0,
+          0.0,
+          0.3199999928474426
+        ],
+        "tail": [
+          0.0,
+          0.0,
+          0.3799999952316284
+        ],
+        "length": 0.06000000238418579
+      },
+      {
+        "name": "Neck",
+        "parent": "Chest",
+        "head": [
+          0.0,
+          0.0,
+          0.3799999952316284
+        ],
+        "tail": [
+          0.0,
+          0.0,
+          0.4399999976158142
+        ],
+        "length": 0.06000000238418579
+      },
+      {
+        "name": "Head",
+        "parent": "Neck",
+        "head": [
+          0.0,
+          0.0,
+          0.4399999976158142
+        ],
+        "tail": [
+          0.0,
+          0.0,
+          0.6800000071525574
+        ],
+        "length": 0.24000000953674316
+      },
+      {
+        "name": "Eye.L",
+        "parent": "Head",
+        "head": [
+          -0.06599999964237213,
+          0.1550000011920929,
+          0.5199999809265137
+        ],
+        "tail": [
+          -0.06599999964237213,
+          0.2199999988079071,
+          0.5199999809265137
+        ],
+        "length": 0.06499999761581421
+      },
+      {
+        "name": "Eye.R",
+        "parent": "Head",
+        "head": [
+          0.06599999964237213,
+          0.1550000011920929,
+          0.5199999809265137
+        ],
+        "tail": [
+          0.06599999964237213,
+          0.2199999988079071,
+          0.5199999809265137
+        ],
+        "length": 0.06499999761581421
+      },
+      {
+        "name": "UpperArm.L",
+        "parent": "Chest",
+        "head": [
+          -0.11800000071525574,
+          0.004999999888241291,
+          0.36500000953674316
+        ],
+        "tail": [
+          -0.12800000607967377,
+          0.009999999776482582,
+          0.2800000011920929
+        ],
+        "length": 0.08573214709758759
+      },
+      {
+        "name": "Forearm.L",
+        "parent": "UpperArm.L",
+        "head": [
+          -0.12800000607967377,
+          0.009999999776482582,
+          0.2800000011920929
+        ],
+        "tail": [
+          -0.13600000739097595,
+          0.014999999664723873,
+          0.20999999344348907
+        ],
+        "length": 0.07063285261392593
+      },
+      {
+        "name": "Hand.L",
+        "parent": "Forearm.L",
+        "head": [
+          -0.13600000739097595,
+          0.014999999664723873,
+          0.20999999344348907
+        ],
+        "tail": [
+          -0.1379999965429306,
+          0.017999999225139618,
+          0.1420000046491623
+        ],
+        "length": 0.06809550523757935
+      },
+      {
+        "name": "UpperArm.R",
+        "parent": "Chest",
+        "head": [
+          0.11800000071525574,
+          0.004999999888241291,
+          0.36500000953674316
+        ],
+        "tail": [
+          0.12800000607967377,
+          0.009999999776482582,
+          0.2800000011920929
+        ],
+        "length": 0.08573214709758759
+      },
+      {
+        "name": "Forearm.R",
+        "parent": "UpperArm.R",
+        "head": [
+          0.12800000607967377,
+          0.009999999776482582,
+          0.2800000011920929
+        ],
+        "tail": [
+          0.13600000739097595,
+          0.014999999664723873,
+          0.20999999344348907
+        ],
+        "length": 0.07063285261392593
+      },
+      {
+        "name": "Hand.R",
+        "parent": "Forearm.R",
+        "head": [
+          0.13600000739097595,
+          0.014999999664723873,
+          0.20999999344348907
+        ],
+        "tail": [
+          0.1379999965429306,
+          0.017999999225139618,
+          0.1420000046491623
+        ],
+        "length": 0.06809550523757935
+      },
+      {
+        "name": "Thigh.L",
+        "parent": "Hips",
+        "head": [
+          -0.054999999701976776,
+          0.0020000000949949026,
+          0.18000000715255737
+        ],
+        "tail": [
+          -0.054999999701976776,
+          0.004000000189989805,
+          0.11500000208616257
+        ],
+        "length": 0.06503076106309891
+      },
+      {
+        "name": "Shin.L",
+        "parent": "Thigh.L",
+        "head": [
+          -0.054999999701976776,
+          0.004000000189989805,
+          0.11500000208616257
+        ],
+        "tail": [
+          -0.054999999701976776,
+          0.006000000052154064,
+          0.03999999910593033
+        ],
+        "length": 0.07502666860818863
+      },
+      {
+        "name": "Foot.L",
+        "parent": "Shin.L",
+        "head": [
+          -0.054999999701976776,
+          0.006000000052154064,
+          0.03999999910593033
+        ],
+        "tail": [
+          -0.054999999701976776,
+          0.06499999761581421,
+          0.004999999888241291
+        ],
+        "length": 0.06860027462244034
+      },
+      {
+        "name": "Thigh.R",
+        "parent": "Hips",
+        "head": [
+          0.054999999701976776,
+          0.0020000000949949026,
+          0.18000000715255737
+        ],
+        "tail": [
+          0.054999999701976776,
+          0.004000000189989805,
+          0.11500000208616257
+        ],
+        "length": 0.06503076106309891
+      },
+      {
+        "name": "Shin.R",
+        "parent": "Thigh.R",
+        "head": [
+          0.054999999701976776,
+          0.004000000189989805,
+          0.11500000208616257
+        ],
+        "tail": [
+          0.054999999701976776,
+          0.006000000052154064,
+          0.03999999910593033
+        ],
+        "length": 0.07502666860818863
+      },
+      {
+        "name": "Foot.R",
+        "parent": "Shin.R",
+        "head": [
+          0.054999999701976776,
+          0.006000000052154064,
+          0.03999999910593033
+        ],
+        "tail": [
+          0.054999999701976776,
+          0.06499999761581421,
+          0.004999999888241291
+        ],
+        "length": 0.06860027462244034
+      }
+    ],
+    "hierarchy": {
+      "Root": "ROOT",
+      "Hips": "Root",
+      "Spine": "Hips",
+      "Chest": "Spine",
+      "Neck": "Chest",
+      "Head": "Neck",
+      "Eye.L": "Head",
+      "Eye.R": "Head",
+      "UpperArm.L": "Chest",
+      "Forearm.L": "UpperArm.L",
+      "Hand.L": "Forearm.L",
+      "UpperArm.R": "Chest",
+      "Forearm.R": "UpperArm.R",
+      "Hand.R": "Forearm.R",
+      "Thigh.L": "Hips",
+      "Shin.L": "Thigh.L",
+      "Foot.L": "Shin.L",
+      "Thigh.R": "Hips",
+      "Shin.R": "Thigh.R",
+      "Foot.R": "Shin.R"
+    }
+  },
+  "actions": [
+    {
+      "name": "Action_Blink",
+      "frame_range": [
+        1.0,
+        15.0
+      ],
+      "duration_frames": 15,
+      "fcurves_count": 6,
+      "animated_bones_count": 2,
+      "animated_bones": [
+        "Eye.L",
+        "Eye.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 30
+    },
+    {
+      "name": "Action_Bow",
+      "frame_range": [
+        1.0,
+        35.0
+      ],
+      "duration_frames": 35,
+      "fcurves_count": 15,
+      "animated_bones_count": 5,
+      "animated_bones": [
+        "Chest",
+        "Head",
+        "Spine",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 45
+    },
+    {
+      "name": "Action_Cheer",
+      "frame_range": [
+        1.0,
+        30.0
+      ],
+      "duration_frames": 30,
+      "fcurves_count": 18,
+      "animated_bones_count": 6,
+      "animated_bones": [
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 54
+    },
+    {
+      "name": "Action_Deform_Poses_Test",
+      "frame_range": [
+        1.0,
+        6.0
+      ],
+      "duration_frames": 6,
+      "fcurves_count": 36,
+      "animated_bones_count": 12,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 120
+    },
+    {
+      "name": "Action_Idle",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 63,
+      "animated_bones_count": 20,
+      "animated_bones": [
+        "Chest",
+        "Eye.L",
+        "Eye.R",
+        "Foot.L",
+        "Foot.R",
+        "Forearm.L",
+        "Forearm.R",
+        "Hand.L",
+        "Hand.R",
+        "Head",
+        "Hips",
+        "Neck",
+        "Root",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 189
+    },
+    {
+      "name": "Action_Jump",
+      "frame_range": [
+        1.0,
+        35.0
+      ],
+      "duration_frames": 35,
+      "fcurves_count": 21,
+      "animated_bones_count": 7,
+      "animated_bones": [
+        "Hips",
+        "Shin.L",
+        "Shin.R",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 84
+    },
+    {
+      "name": "Action_Raise_Hand",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 18,
+      "animated_bones_count": 6,
+      "animated_bones": [
+        "Chest",
+        "Forearm.R",
+        "Head",
+        "Spine",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 36
+    },
+    {
+      "name": "Action_Run",
+      "frame_range": [
+        1.0,
+        20.0
+      ],
+      "duration_frames": 20,
+      "fcurves_count": 39,
+      "animated_bones_count": 13,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Neck",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 195
+    },
+    {
+      "name": "Action_Sad_Disappointed",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 15,
+      "animated_bones_count": 5,
+      "animated_bones": [
+        "Chest",
+        "Head",
+        "Spine",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 30
+    },
+    {
+      "name": "Action_Salute_Flag",
+      "frame_range": [
+        1.0,
+        30.0
+      ],
+      "duration_frames": 30,
+      "fcurves_count": 12,
+      "animated_bones_count": 4,
+      "animated_bones": [
+        "Forearm.R",
+        "Head",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 24
+    },
+    {
+      "name": "Action_Sit",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 39,
+      "animated_bones_count": 13,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Neck",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 78
+    },
+    {
+      "name": "Action_Sleep_Desk",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 36,
+      "animated_bones_count": 12,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 72
+    },
+    {
+      "name": "Action_Talk",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 9,
+      "animated_bones_count": 3,
+      "animated_bones": [
+        "Forearm.R",
+        "Head",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 45
+    },
+    {
+      "name": "Action_Thinking",
+      "frame_range": [
+        1.0,
+        40.0
+      ],
+      "duration_frames": 40,
+      "fcurves_count": 12,
+      "animated_bones_count": 4,
+      "animated_bones": [
+        "Forearm.R",
+        "Head",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": false,
+      "keyframes_count": 24
+    },
+    {
+      "name": "Action_Walk",
+      "frame_range": [
+        1.0,
+        30.0
+      ],
+      "duration_frames": 30,
+      "fcurves_count": 39,
+      "animated_bones_count": 13,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Neck",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 195
+    },
+    {
+      "name": "Action_Wave",
+      "frame_range": [
+        1.0,
+        30.0
+      ],
+      "duration_frames": 30,
+      "fcurves_count": 9,
+      "animated_bones_count": 3,
+      "animated_bones": [
+        "Forearm.R",
+        "Head",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 27
+    },
+    {
+      "name": "Action_Write",
+      "frame_range": [
+        1.0,
+        26.0
+      ],
+      "duration_frames": 26,
+      "fcurves_count": 36,
+      "animated_bones_count": 12,
+      "animated_bones": [
+        "Chest",
+        "Forearm.L",
+        "Forearm.R",
+        "Head",
+        "Hips",
+        "Shin.L",
+        "Shin.R",
+        "Spine",
+        "Thigh.L",
+        "Thigh.R",
+        "UpperArm.L",
+        "UpperArm.R"
+      ],
+      "is_multi_frame_dynamic": true,
+      "keyframes_count": 108
+    }
+  ]
+}

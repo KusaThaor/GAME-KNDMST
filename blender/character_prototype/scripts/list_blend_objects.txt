@@ -1,0 +1,33 @@
+Total objects in bpy.data.objects: 24
+  Blush_L                   | type=MESH | in_scene=True
+  Blush_R                   | type=MESH | in_scene=True
+  Body_Head                 | type=MESH | in_scene=True
+  Character_Arm_L           | type=MESH | in_scene=True
+  Character_Arm_R           | type=MESH | in_scene=True
+  Character_Torso_Legs      | type=MESH | in_scene=True
+  Ear_L                     | type=MESH | in_scene=True
+  Ear_R                     | type=MESH | in_scene=True
+  Eye_HL1_L                 | type=MESH | in_scene=True
+  Eye_HL1_R                 | type=MESH | in_scene=True
+  Eye_HL2_L                 | type=MESH | in_scene=True
+  Eye_HL2_R                 | type=MESH | in_scene=True
+  Eye_L                     | type=MESH | in_scene=True
+  Eye_R                     | type=MESH | in_scene=True
+  Eyebrow_L                 | type=MESH | in_scene=True
+  Eyebrow_R                 | type=MESH | in_scene=True
+  Hair_Bangs                | type=MESH | in_scene=True
+  Hair_Cap                  | type=MESH | in_scene=True
+  Hair_Sideburn_L           | type=MESH | in_scene=True
+  Hair_Sideburn_R           | type=MESH | in_scene=True
+  Mouth                     | type=MESH | in_scene=True
+  Nose                      | type=MESH | in_scene=True
+  Shirt_Collar              | type=MESH | in_scene=True
+  Student_Armature          | type=ARMATURE | in_scene=True
+
+Collections:
+  Collection: 00_Armature -> ['Student_Armature']
+  Collection: 01_Base_Body -> ['Body_Head', 'Ear_L', 'Ear_R', 'Character_Arm_L', 'Character_Arm_R']
+  Collection: 02_Outfit_Uniform -> ['Character_Torso_Legs', 'Shirt_Collar']
+  Collection: 03_Hair_Default -> ['Hair_Cap', 'Hair_Bangs', 'Hair_Sideburn_L', 'Hair_Sideburn_R']
+  Collection: 04_Accessories -> []
+  Collection: 05_Facial_Features -> ['Nose', 'Eyebrow_L', 'Eyebrow_R', 'Eye_L', 'Eye_HL1_L', 'Eye_HL2_L', 'Eye_R', 'Eye_HL1_R', 'Eye_HL2_R', 'Mouth', 'Blush_L', 'Blush_R']

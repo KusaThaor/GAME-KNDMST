@@ -1,0 +1,18 @@
+Total actions: 17
+  Action_Blink                  : frames=1.0..15.0, curves=6
+  Action_Bow                    : frames=1.0..35.0, curves=15
+  Action_Cheer                  : frames=1.0..30.0, curves=18
+  Action_Deform_Poses_Test      : frames=1.0..6.0, curves=36
+  Action_Idle                   : frames=1.0..40.0, curves=63
+  Action_Jump                   : frames=1.0..35.0, curves=21
+  Action_Raise_Hand             : frames=1.0..40.0, curves=18
+  Action_Run                    : frames=1.0..20.0, curves=39
+  Action_Sad_Disappointed       : frames=1.0..40.0, curves=15
+  Action_Salute_Flag            : frames=1.0..30.0, curves=12
+  Action_Sit                    : frames=1.0..40.0, curves=39
+  Action_Sleep_Desk             : frames=1.0..40.0, curves=36
+  Action_Talk                   : frames=1.0..40.0, curves=9
+  Action_Thinking               : frames=1.0..40.0, curves=12
+  Action_Walk                   : frames=1.0..30.0, curves=39
+  Action_Wave                   : frames=1.0..30.0, curves=9
+  Action_Write                  : frames=1.0..26.0, curves=36

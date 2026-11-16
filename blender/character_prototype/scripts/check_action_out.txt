@@ -1,0 +1,43 @@
+Armature object: <bpy_struct, Object("Student_Armature") at 0x000001BE6A994120>
+NLA tracks: 16
+use_nla: True
+  Track: Action_Idle, strips: ['Action_Idle(Action_Idle)']
+  Track: Action_Walk, strips: ['Action_Walk(Action_Walk)']
+  Track: Action_Run, strips: ['Action_Run(Action_Run)']
+  Track: Action_Sit, strips: ['Action_Sit(Action_Sit)']
+  Track: Action_Sleep_Desk, strips: ['Action_Sleep_Desk(Action_Sleep_Desk)']
+  Track: Action_Write, strips: ['Action_Write(Action_Write)']
+  Track: Action_Raise_Hand, strips: ['Action_Raise_Hand(Action_Raise_Hand)']
+  Track: Action_Wave, strips: ['Action_Wave(Action_Wave)']
+  Track: Action_Bow, strips: ['Action_Bow(Action_Bow)']
+  Track: Action_Cheer, strips: ['Action_Cheer(Action_Cheer)']
+  Track: Action_Jump, strips: ['Action_Jump(Action_Jump)']
+  Track: Action_Salute_Flag, strips: ['Action_Salute_Flag(Action_Salute_Flag)']
+  Track: Action_Talk, strips: ['Action_Talk(Action_Talk)']
+  Track: Action_Thinking, strips: ['Action_Thinking(Action_Thinking)']
+  Track: Action_Sad_Disappointed, strips: ['Action_Sad_Disappointed(Action_Sad_Disappointed)']
+  Track: Action_Blink, strips: ['Action_Blink(Action_Blink)']
+Action_Raise_Hand: <bpy_struct, Action("Action_Raise_Hand") at 0x000001BE6A87F5A0>
+Fcurves count: 18
+  pose.bones["Spine"].rotation_euler[0]
+  pose.bones["Spine"].rotation_euler[1]
+  pose.bones["Spine"].rotation_euler[2]
+  pose.bones["Chest"].rotation_euler[0]
+  pose.bones["Chest"].rotation_euler[1]
+  pose.bones["Chest"].rotation_euler[2]
+  pose.bones["Head"].rotation_euler[0]
+  pose.bones["Head"].rotation_euler[1]
+  pose.bones["Head"].rotation_euler[2]
+  pose.bones["UpperArm.R"].rotation_euler[0]
+  pose.bones["UpperArm.R"].rotation_euler[1]
+  pose.bones["UpperArm.R"].rotation_euler[2]
+  pose.bones["Forearm.R"].rotation_euler[0]
+  pose.bones["Forearm.R"].rotation_euler[1]
+  pose.bones["Forearm.R"].rotation_euler[2]
+UpperArm.R rotation_mode: QUATERNION
+UpperArm.R rotation_quaternion: [1.0, 0.0, 0.0, 0.0]
+UpperArm.R rotation_euler: [2.7052602767944336, 0.0, 0.20943951606750488]
+UpperArm.R location: [0.0, 0.0, 0.0]
+Torso modifiers: ['Armature(ARMATURE)']
+Armature mod object: <bpy_struct, Object("Student_Armature") at 0x000001BE6A994120>
+Armature mod show_viewport: True, show_render: True

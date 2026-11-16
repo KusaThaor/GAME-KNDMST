@@ -1,0 +1,18 @@
+Starting test_clothing_integration...
+Opened base: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\Chibi_Base_Canonical_v1.blend, armature: Student_Armature
+Successfully equipped modular clothing! Created 11 objects:
+  - Top_Torso_Mesh (verts: 90, mat: ['M_Top_test_mod'])
+  - Top_Sleeve_L (verts: 56, mat: ['M_Top_test_mod'])
+  - Top_Sleeve_R (verts: 56, mat: ['M_Top_test_mod'])
+  - Top_Collar (verts: 8, mat: ['M_Top_Collar_test_mod'])
+  - Bottom_Mesh (verts: 164, mat: ['M_Bottom_test_mod'])
+  - Footwear_Mesh (verts: 114, mat: ['M_Shoe_test_mod', 'M_Sole_test_mod'])
+  - Socks_Mesh (verts: 84, mat: ['M_Socks_test_mod'])
+  - Body_Arm_Skin_L (verts: 85, mat: ['M_Skin_test_mod'])
+  - Body_Arm_Skin_R (verts: 85, mat: ['M_Skin_test_mod'])
+  - Body_Leg_Skin_L (verts: 56, mat: ['M_Skin_test_mod'])
+  - Body_Leg_Skin_R (verts: 56, mat: ['M_Skin_test_mod'])
+Selected 30 meshes and armature for export
+EXPORT GLB SUCCESS! Size: 322,680 bytes (315.1 KB)
+Successfully tested Pinafore + Sandals! Created 10 objects.
+ALL TESTS COMPLETED SUCCESSFULLY!

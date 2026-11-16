@@ -1,0 +1,7 @@
+Starting render runner...
+Traceback (most recent call last):
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\run_render_with_log.py", line 14, in <module>
+    import render_clothing_sheets
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_clothing_sheets.py", line 21, in <module>
+    from PIL import Image, ImageDraw, ImageFont
+ModuleNotFoundError: No module named 'PIL'

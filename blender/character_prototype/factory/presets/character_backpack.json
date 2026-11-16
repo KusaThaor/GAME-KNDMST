@@ -1,0 +1,13 @@
+{
+  "character_id": "character_backpack",
+  "base_version": "1.0.0",
+  "name": "Character Backpack Demo",
+  "height_scale": 1.00,
+  "skin_tone": "SKIN_02",
+  "hair_style": "HAIR_001",
+  "hair_color": "#1c1615",
+  "outfit": "OUTFIT_001",
+  "accessories": ["ACC_001", "ACC_004"],
+  "default_expression": "Neutral",
+  "animation_set": "school_actions_v1"
+}

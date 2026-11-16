@@ -1,0 +1,45 @@
+=== COLLECTIONS ===
+Collection: 00_Armature, hide_render=False, hide_viewport=False
+  Obj in col: Student_Armature, hide_render=False, loc=[0.0, 0.0, 0.0]
+Collection: 01_Base_Body, hide_render=False, hide_viewport=False
+  Obj in col: Body_Head, hide_render=False, loc=[0.0, 0.0, 0.0]
+  Obj in col: Ear_L, hide_render=False, loc=[-0.16599999368190765, -0.004999999888241291, 0.5149999856948853]
+  Obj in col: Ear_R, hide_render=False, loc=[0.16599999368190765, -0.004999999888241291, 0.5149999856948853]
+  Obj in col: Character_Arm_L, hide_render=False, loc=[0.0, 0.0, 0.0]
+  Obj in col: Character_Arm_R, hide_render=False, loc=[0.0, 0.0, 0.0]
+Collection: 02_Outfit_Uniform, hide_render=False, hide_viewport=False
+  Obj in col: Character_Torso_Legs, hide_render=False, loc=[0.0, 0.0, 0.0]
+  Obj in col: Shirt_Collar, hide_render=False, loc=[0.0, 0.03799999877810478, 0.3880000114440918]
+  Obj in col: Belt_Buckle, hide_render=False, loc=[0.0, 0.07599999755620956, 0.23600000143051147]
+Collection: 03_Hair_Default, hide_render=False, hide_viewport=False
+  Obj in col: Hair_Cap, hide_render=False, loc=[0.0, 0.0, 0.0]
+  Obj in col: Hair_Bangs, hide_render=False, loc=[0.0, 0.0, 0.0]
+  Obj in col: Hair_Sideburn_L, hide_render=False, loc=[-0.16500000655651093, 0.03999999910593033, 0.5199999809265137]
+  Obj in col: Hair_Sideburn_R, hide_render=False, loc=[0.16500000655651093, 0.03999999910593033, 0.5199999809265137]
+Collection: 04_Accessories, hide_render=False, hide_viewport=False
+  Obj in col: Scarf_Knot, hide_render=False, loc=[0.0, 0.08799999952316284, 0.35499998927116394]
+  Obj in col: Scarf_Tail_L, hide_render=False, loc=[-0.01600000075995922, 0.0820000022649765, 0.31200000643730164]
+  Obj in col: Scarf_Tail_R, hide_render=False, loc=[0.017999999225139618, 0.07999999821186066, 0.3019999861717224]
+  Obj in col: Nametag, hide_render=False, loc=[-0.057999998331069946, 0.0860000029206276, 0.33500000834465027]
+Collection: 05_Facial_Features, hide_render=False, hide_viewport=False
+  Obj in col: Nose, hide_render=False, loc=[0.0, 0.16500000655651093, 0.5]
+  Obj in col: Eyebrow_L, hide_render=False, loc=[-0.06499999761581421, 0.1509999930858612, 0.5630000233650208]
+  Obj in col: Eyebrow_R, hide_render=False, loc=[0.06499999761581421, 0.1509999930858612, 0.5630000233650208]
+  Obj in col: Eye_L, hide_render=False, loc=[-0.06499999761581421, 0.15199999511241913, 0.5199999809265137]
+  Obj in col: Eye_HL1_L, hide_render=False, loc=[-0.07100000232458115, 0.15800000727176666, 0.527999997138977]
+  Obj in col: Eye_HL2_L, hide_render=False, loc=[-0.05900000035762787, 0.15800000727176666, 0.5130000114440918]
+  Obj in col: Eye_R, hide_render=False, loc=[0.06499999761581421, 0.15199999511241913, 0.5199999809265137]
+  Obj in col: Eye_HL1_R, hide_render=False, loc=[0.07100000232458115, 0.15800000727176666, 0.527999997138977]
+  Obj in col: Eye_HL2_R, hide_render=False, loc=[0.05900000035762787, 0.15800000727176666, 0.5130000114440918]
+  Obj in col: Mouth, hide_render=False, loc=[0.0, 0.1589999943971634, 0.47999998927116394]
+  Obj in col: Blush_L, hide_render=False, loc=[-0.125, 0.11699999868869781, 0.49900001287460327]
+  Obj in col: Blush_R, hide_render=False, loc=[0.125, 0.11699999868869781, 0.49900001287460327]
+
+=== VIEW LAYER LAYER COLLECTIONS ===
+LayerCol: Scene Collection, exclude=False, hide_viewport=False
+  LayerCol: 00_Armature, exclude=False, hide_viewport=False
+  LayerCol: 01_Base_Body, exclude=False, hide_viewport=False
+  LayerCol: 02_Outfit_Uniform, exclude=False, hide_viewport=False
+  LayerCol: 03_Hair_Default, exclude=False, hide_viewport=False
+  LayerCol: 04_Accessories, exclude=False, hide_viewport=False
+  LayerCol: 05_Facial_Features, exclude=False, hide_viewport=False

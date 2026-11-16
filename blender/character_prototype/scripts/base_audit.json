@@ -1,0 +1,534 @@
+{
+  "objects": [
+    {
+      "name": "Belt_Buckle",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Bevel (BEVEL)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Buckle"
+      ]
+    },
+    {
+      "name": "Blush_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Blush"
+      ]
+    },
+    {
+      "name": "Blush_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Blush"
+      ]
+    },
+    {
+      "name": "Body_Head",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Armature (ARMATURE)"
+      ],
+      "verts": 181,
+      "polys": 180,
+      "smooth": true,
+      "vg_count": 2,
+      "mats": [
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Character_Arm_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Armature (ARMATURE)"
+      ],
+      "verts": 194,
+      "polys": 192,
+      "smooth": true,
+      "vg_count": 4,
+      "mats": [
+        "M_Shirt",
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Character_Arm_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Armature (ARMATURE)"
+      ],
+      "verts": 194,
+      "polys": 192,
+      "smooth": true,
+      "vg_count": 4,
+      "mats": [
+        "M_Shirt",
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Character_Torso_Legs",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Armature (ARMATURE)"
+      ],
+      "verts": 490,
+      "polys": 470,
+      "smooth": true,
+      "vg_count": 9,
+      "mats": [
+        "M_Shirt",
+        "M_Belt",
+        "M_Pants",
+        "M_Shoe",
+        "M_Sole"
+      ]
+    },
+    {
+      "name": "Ear_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Ear_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Eye_HL1_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Highlight"
+      ]
+    },
+    {
+      "name": "Eye_HL1_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Highlight"
+      ]
+    },
+    {
+      "name": "Eye_HL2_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Highlight"
+      ]
+    },
+    {
+      "name": "Eye_HL2_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Highlight"
+      ]
+    },
+    {
+      "name": "Eye_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Black"
+      ]
+    },
+    {
+      "name": "Eye_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Eye_Black"
+      ]
+    },
+    {
+      "name": "Eyebrow_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Eyebrow_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Bangs_Center",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Bangs_Left",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Bangs_Right",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Base",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Armature (ARMATURE)"
+      ],
+      "verts": 101,
+      "polys": 100,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Sideburn_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Hair_Sideburn_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Hair"
+      ]
+    },
+    {
+      "name": "Mouth",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Mouth"
+      ]
+    },
+    {
+      "name": "Nametag",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Bevel (BEVEL)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Nametag"
+      ]
+    },
+    {
+      "name": "Nose",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Skin"
+      ]
+    },
+    {
+      "name": "Scarf_Knot",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Scarf"
+      ]
+    },
+    {
+      "name": "Scarf_Tail_L",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Scarf"
+      ]
+    },
+    {
+      "name": "Scarf_Tail_R",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Scarf"
+      ]
+    },
+    {
+      "name": "Shirt_Collar",
+      "type": "MESH",
+      "parent": null,
+      "modifiers": [
+        "Subdiv (SUBSURF)",
+        "Armature (ARMATURE)"
+      ],
+      "verts": 8,
+      "polys": 6,
+      "smooth": true,
+      "vg_count": 1,
+      "mats": [
+        "M_Shirt"
+      ]
+    },
+    {
+      "name": "Student_Armature",
+      "type": "ARMATURE",
+      "parent": null,
+      "modifiers": []
+    }
+  ],
+  "materials": [
+    "M_Belt",
+    "M_Blush",
+    "M_Buckle",
+    "M_Eye_Black",
+    "M_Eye_Highlight",
+    "M_Hair",
+    "M_Mouth",
+    "M_Nametag",
+    "M_Pants",
+    "M_Scarf",
+    "M_Shirt",
+    "M_Shoe",
+    "M_Skin",
+    "M_Sole"
+  ],
+  "actions": [
+    "Action_Blink",
+    "Action_Bow",
+    "Action_Cheer",
+    "Action_Deform_Poses_Test",
+    "Action_Idle",
+    "Action_Jump",
+    "Action_Raise_Hand",
+    "Action_Run",
+    "Action_Sad_Disappointed",
+    "Action_Salute_Flag",
+    "Action_Sit",
+    "Action_Sleep_Desk",
+    "Action_Talk",
+    "Action_Thinking",
+    "Action_Walk",
+    "Action_Wave",
+    "Action_Write"
+  ],
+  "collections": [
+    "00_Armature",
+    "01_Base_Body",
+    "02_Outfit_Uniform",
+    "03_Hair_Default",
+    "04_Accessories",
+    "05_Facial_Features"
+  ]
+}

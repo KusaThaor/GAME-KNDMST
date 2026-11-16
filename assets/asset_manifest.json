@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "Hành Trình Thanh Xuân",
+  "version": "1.0.0",
+  "generated_at": "2026-11-15T23:55:00+07:00",
+  "assets": [
+    {
+      "id": "classroom_chalkboard",
+      "name": "Bảng viết phấn xanh lớp học (Classroom Chalkboard)",
+      "category": "classroom_props",
+      "file_path": "assets/props/classroom_chalkboard.glb",
+      "source_format": "GLB",
+      "file_size_kb": 16.3,
+      "triangles": 260,
+      "vertices": 383,
+      "dimensions_meters": {
+        "width_x": 2.40,
+        "height_y": 1.49,
+        "depth_z": 0.19
+      },
+      "pivot_point": "Bottom-center of back face (snaps flush against wall at Z=0)",
+      "original_source": {
+        "title": "Blackboard",
+        "author": "dook",
+        "platform": "Poly Pizza / Google Poly Archive",
+        "url": "https://poly.pizza/m/duhtFXbJCfc",
+        "license": "Creative Commons Attribution (CC-BY)",
+        "license_url": "https://creativecommons.org/licenses/by/3.0/"
+      },
+      "pipeline_modifications": [
+        "Scaled down from 9.98m to realistic Vietnamese standard classroom width of 2.40m",
+        "Adjusted chalkboard face color to anti-glare moss green (#1f4726) with 0.68 roughness matte finish",
+        "Normalized pivot: Z=0 at wall-contact back face, Y=0 at bottom edge of frame",
+        "Applied all rotation and scaling transformations (scale: 1, 1, 1)"
+      ],
+      "gameplay_usage": "Treo trên tường phía trước lớp học, phía trên bục giảng; tích hợp điểm socket viết bảng cho giáo viên và học sinh."
+    },
+    {
+      "id": "schoolyard_shade_tree",
+      "name": "Cây bóng mát sân trường (Schoolyard Shade Tree)",
+      "category": "schoolyard_foliage",
+      "file_path": "assets/props/schoolyard_shade_tree.glb",
+      "source_format": "GLB",
+      "file_size_kb": 155.01,
+      "triangles": 2888,
+      "vertices": 5776,
+      "dimensions_meters": {
+        "canopy_width_x": 3.96,
+        "height_y": 5.20,
+        "canopy_depth_z": 5.81
+      },
+      "pivot_point": "Ground level center of trunk base (0, 0, 0)",
+      "original_source": {
+        "title": "CommonTree_1 (Stylized Nature MegaKit)",
+        "author": "Quaternius",
+        "platform": "Quaternius.com / GitHub",
+        "url": "https://quaternius.com/packs/stylizednature.html",
+        "license": "CC0 1.0 Universal (Public Domain Dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "pipeline_modifications": [
+        "Rescaled from prototype 2.48m height to 5.20m adult schoolyard shade tree",
+        "Normalized trunk base pivot to (0, 0, 0) at ground level",
+        "Tuned foliage material to lush tropical green (#4d8c36) and sturdy warm wood (#634837)",
+        "Optimized bounding box for cylinder trunk collider (r=0.35m, h=2.5m)"
+      ],
+      "gameplay_usage": "Cây xanh râm mát bố trí dọc sân trường và hành lang; che bóng mát cho học sinh tụ tập nói chuyện."
+    },
+    {
+      "id": "schoolyard_tropical_tree",
+      "name": "Cây bàng phân tầng sân trường (Schoolyard Tiered Almond Tree)",
+      "category": "schoolyard_foliage",
+      "file_path": "assets/props/schoolyard_tropical_tree.glb",
+      "source_format": "GLB",
+      "file_size_kb": 15.37,
+      "triangles": 215,
+      "vertices": 738,
+      "dimensions_meters": {
+        "canopy_width_x": 2.50,
+        "height_y": 5.10,
+        "canopy_depth_z": 2.67
+      },
+      "pivot_point": "Ground level center of trunk base (0, 0, 0)",
+      "original_source": {
+        "title": "Tree Plateau (Nature Kit 2.1)",
+        "author": "Kenney (Kenney Vleugels)",
+        "platform": "Kenney.nl / GitHub",
+        "url": "https://kenney.nl/assets/nature-kit",
+        "license": "CC0 1.0 Universal (Public Domain Dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "pipeline_modifications": [
+        "Rescaled from mini 1.25m height to 5.10m tall tiered tropical tree (Terminalia catappa)",
+        "Adjusted color scheme from pastel cyan to tropical school green (#52933a) and dark bark (#503928)",
+        "Normalized ground base pivot to (0, 0, 0)",
+        "Prepared for combination with circular concrete planter ring (r=1.1m)"
+      ],
+      "gameplay_usage": "Cây bàng tán 3 tầng nằm ngang biểu tượng trường học Việt Nam; trồng cạnh bồn hoa và cột cờ."
+    },
+    {
+      "id": "schoolyard_flamboyant_tree",
+      "name": "Cây hoa phượng vĩ học đường (Schoolyard Flamboyant Flame Tree)",
+      "category": "schoolyard_foliage",
+      "file_path": "assets/props/schoolyard_flamboyant_tree.glb",
+      "source_format": "GLB",
+      "file_size_kb": 154.98,
+      "triangles": 2888,
+      "vertices": 5776,
+      "dimensions_meters": {
+        "canopy_width_x": 4.04,
+        "height_y": 5.30,
+        "canopy_depth_z": 5.92
+      },
+      "pivot_point": "Ground level center of trunk base (0, 0, 0)",
+      "original_source": {
+        "title": "CommonTree_Autumn_1 (Stylized Nature MegaKit)",
+        "author": "Quaternius",
+        "platform": "Quaternius.com / GitHub",
+        "url": "https://quaternius.com/packs/stylizednature.html",
+        "license": "CC0 1.0 Universal (Public Domain Dedication)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "pipeline_modifications": [
+        "Rescaled to 5.30m height with wide umbrella canopy",
+        "Retuned canopy material to vibrant scarlet-orange flamboyant blossom (#e0402e / #ef5a33)",
+        "Normalized ground pivot to (0, 0, 0)"
+      ],
+      "gameplay_usage": "Cây hoa phượng vĩ nở hoa đỏ rực rỡ, địa điểm họp nhóm của 5 nhân vật chính (Chương 1 và Chương 6)."
+    },
+    {
+      "id": "school_desk",
+      "name": "Bộ bàn ghế học sinh THCS (Vietnamese Junior High School Desk Set)",
+      "category": "classroom_props",
+      "file_path": "assets/props/school_desk.glb",
+      "source_format": "GLB",
+      "file_size_kb": 138.5,
+      "triangles": 4636,
+      "vertices": 6256,
+      "dimensions_meters": {
+        "width_x": 1.27,
+        "height_y": 0.74,
+        "depth_z": 1.05
+      },
+      "pivot_point": "Ground level center of desk base (0, 0, 0)",
+      "original_source": {
+        "title": "Vietnamese School Desk Procedural Asset",
+        "author": "Hành Trình Thanh Xuân Production Team",
+        "platform": "Internal Repository",
+        "url": "local",
+        "license": "Proprietary / Project Asset",
+        "license_url": "local"
+      },
+      "pipeline_modifications": [
+        "Procedurally built via generate_desk.py with rounded bevels, double shelf and bag hooks"
+      ],
+      "gameplay_usage": "Bàn ghế đôi 2 chỗ ngồi trong lớp 6A1, tích hợp các socket ngồi và đặt sách vở."
+    }
+  ]
+}

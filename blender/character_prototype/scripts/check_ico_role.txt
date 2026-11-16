@@ -1,0 +1,23 @@
+Icosphere in objects: True
+Icosphere users: 21, data users: 1
+Icosphere in scene: True
+Bone Root custom shape: Icosphere
+Bone Hips custom shape: Icosphere
+Bone Spine custom shape: Icosphere
+Bone Chest custom shape: Icosphere
+Bone Neck custom shape: Icosphere
+Bone Head custom shape: Icosphere
+Bone Eye.L custom shape: Icosphere
+Bone Eye.R custom shape: Icosphere
+Bone UpperArm.L custom shape: Icosphere
+Bone Forearm.L custom shape: Icosphere
+Bone Hand.L custom shape: Icosphere
+Bone UpperArm.R custom shape: Icosphere
+Bone Forearm.R custom shape: Icosphere
+Bone Hand.R custom shape: Icosphere
+Bone Thigh.L custom shape: Icosphere
+Bone Shin.L custom shape: Icosphere
+Bone Foot.L custom shape: Icosphere
+Bone Thigh.R custom shape: Icosphere
+Bone Shin.R custom shape: Icosphere
+Bone Foot.R custom shape: Icosphere

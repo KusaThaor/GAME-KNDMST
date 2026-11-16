@@ -1,0 +1,13 @@
+{
+  "character_id": "character_b",
+  "base_version": "1.0.0",
+  "name": "Character B - Tuấn (Thể Thao Năng Động)",
+  "height_scale": 1.00,
+  "skin_tone": "SKIN_04",
+  "hair_style": "HAIR_002",
+  "hair_color": "#161b26",
+  "outfit": "OUTFIT_002",
+  "accessories": [],
+  "default_expression": "Neutral",
+  "animation_set": "school_actions_v1"
+}

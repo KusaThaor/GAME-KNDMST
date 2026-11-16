@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-/** Texture vẽ bằng canvas lúc chạy (chữ tiếng Việt, cờ, nền gạch) — không cần tải file ảnh. */
+/** Texture vẽ bằng canvas lúc chạy (chữ tiếng Việt, cờ, nền gạch, bảng phấn) — không cần tải file ảnh. */
 export function canvasTexture(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void, opts: { repeat?: [number, number] } = {}) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -22,6 +22,61 @@ export function signTexture(text: string, opts: { bg?: string; fg?: string; bord
     g.font = opts.font ?? `800 ${Math.round(h * 0.6)}px Nunito, "DejaVu Sans", sans-serif`;
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText(text, w / 2, h / 2 + h * 0.04);
+  });
+}
+
+/** Bảng viết phấn xanh chống lóa với chữ phấn trắng nắn nót học đường Việt Nam 2012 (GDD / in_class.png) */
+export function chalkboardTexture(w = 1024, h = 512) {
+  return canvasTexture(w, h, (g) => {
+    // 1. Nền xanh rêu đậm chống lóa học đường
+    g.fillStyle = '#1b3f24';
+    g.fillRect(0, 0, w, h);
+
+    // Vết bụi phấn nhẹ loang mờ tự nhiên
+    const dust = g.createRadialGradient(w * 0.5, h * 0.5, 40, w * 0.5, h * 0.5, w * 0.6);
+    dust.addColorStop(0, 'rgba(255, 255, 255, 0.06)');
+    dust.addColorStop(0.6, 'rgba(255, 255, 255, 0.02)');
+    dust.addColorStop(1, 'rgba(0, 0, 0, 0.08)');
+    g.fillStyle = dust;
+    g.fillRect(0, 0, w, h);
+
+    // 2. Kẻ đường ô ly phấn mờ 5cm (đặc trưng bảng tiểu học & THCS Việt Nam)
+    g.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    g.lineWidth = 1.5;
+    const gridStep = 48;
+    for (let x = 32; x < w - 32; x += gridStep) {
+      g.beginPath(); g.moveTo(x, 24); g.lineTo(x, h - 24); g.stroke();
+    }
+    for (let y = 32; y < h - 32; y += gridStep) {
+      g.beginPath(); g.moveTo(32, y); g.lineTo(w - 32, y); g.stroke();
+    }
+
+    // 3. Dòng chữ phấn trắng viết tay học đường 2012-2013 (khớp concept in_class.png)
+    g.fillStyle = 'rgba(255, 255, 255, 0.92)';
+    g.shadowColor = 'rgba(255, 255, 255, 0.4)';
+    g.shadowBlur = 3;
+
+    // Tiêu đề ngày tháng ở góc trên
+    g.font = '700 24px Nunito, "Comic Sans MS", cursive, sans-serif';
+    g.textAlign = 'center';
+    g.fillText('Thứ Hai, ngày 03 tháng 9 năm 2012', w / 2, 70);
+
+    // Môn học & bài học
+    g.font = '800 32px Nunito, "Comic Sans MS", cursive, sans-serif';
+    g.fillText('TẬP ĐỌC: TÔI ĐI HỌC', w / 2, 130);
+
+    // Nội dung bài giảng nắn nót
+    g.font = '600 22px Nunito, "Comic Sans MS", cursive, sans-serif';
+    g.textAlign = 'left';
+    g.fillText('1. Hằng năm cứ vào cuối thu, lá ngoài đường rụng nhiều...', 90, 200);
+    g.fillText('2. Lòng tôi lại nao nức những kỷ niệm mơn man của buổi tựu trường.', 90, 245);
+    g.fillText('3. Buổi sáng mai hôm ấy, một buổi mai đầy sương thu và gió lạnh...', 90, 290);
+
+    // Góc phải: dặn dò trực nhật & sĩ số
+    g.textAlign = 'right';
+    g.font = '700 20px Nunito, "Comic Sans MS", cursive, sans-serif';
+    g.fillText('Lớp: 6A1  |  Sĩ số: 38/38', w - 80, 420);
+    g.fillText('Trực nhật: Tổ 1 (Đức, Quân, Châu, Hạ, Lâm)', w - 80, 455);
   });
 }
 

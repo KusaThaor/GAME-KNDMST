@@ -1,0 +1,5 @@
+Hair_Cap material assigned: M_Hair
+Hair_Bangs material assigned: M_Hair
+Hair_Sideburn_L material assigned: M_Hair
+Hair_Sideburn_R material assigned: M_Hair
+Debug render saved: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\previews_base\test_hair_debug.png, exists=True

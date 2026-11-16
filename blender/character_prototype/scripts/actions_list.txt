@@ -1,0 +1,16 @@
+Action_Blink|1.0|15.0
+Action_Bow|1.0|35.0
+Action_Cheer|1.0|30.0
+Action_Idle|1.0|40.0
+Action_Jump|1.0|35.0
+Action_Raise_Hand|1.0|40.0
+Action_Run|1.0|20.0
+Action_Sad_Disappointed|1.0|40.0
+Action_Salute_Flag|1.0|30.0
+Action_Sit|1.0|40.0
+Action_Sleep_Desk|1.0|40.0
+Action_Talk|1.0|40.0
+Action_Thinking|1.0|40.0
+Action_Walk|1.0|30.0
+Action_Wave|1.0|30.0
+Action_Write|1.0|26.0

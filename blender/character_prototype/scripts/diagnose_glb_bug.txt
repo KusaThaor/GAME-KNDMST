@@ -1,0 +1,513 @@
+=== PHASE 1: ROOT CAUSE ANALYSIS ===
+
+--- 1. INSPECTING IMPORTED GLB: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\assets\characters\vietnamese_student.glb ---
+Total objects in GLB: 25
+
+Object: 'Blush_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0272, dy=0.0139, dz=0.0168
+  Dimensions: [0.0272, 0.0139, 0.0168]
+  World BBox: X=[-0.139, -0.111], Y=[0.110, 0.124], Z=[0.491, 0.507]
+  Materials: ['M_Blush']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Blush_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0272, dy=0.0139, dz=0.0168
+  Dimensions: [0.0272, 0.0139, 0.0168]
+  World BBox: X=[0.111, 0.139], Y=[0.110, 0.124], Z=[0.491, 0.507]
+  Materials: ['M_Blush']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Body_Head' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 181, Edges: 520, Polygons: 340
+  Local BBox Dims: dx=0.3480, dy=0.3310, dz=0.2980
+  Dimensions: [0.348, 0.331, 0.298]
+  World BBox: X=[-0.174, 0.174], Y=[-0.163, 0.168], Z=[0.380, 0.678]
+  Materials: ['M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Character_Arm_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 223, Edges: 624, Polygons: 404
+  Local BBox Dims: dx=0.1000, dy=0.0936, dz=0.2430
+  Dimensions: [0.1, 0.0936, 0.243]
+  World BBox: X=[-0.172, -0.072], Y=[-0.043, 0.051], Z=[0.142, 0.385]
+  Materials: ['M_Shirt', 'M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Character_Arm_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 223, Edges: 624, Polygons: 404
+  Local BBox Dims: dx=0.1000, dy=0.0936, dz=0.2430
+  Dimensions: [0.1, 0.0936, 0.243]
+  World BBox: X=[0.072, 0.172], Y=[-0.043, 0.051], Z=[0.142, 0.385]
+  Materials: ['M_Shirt', 'M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Character_Torso_Legs' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 582, Edges: 1492, Polygons: 912
+  Local BBox Dims: dx=0.2400, dy=0.1734, dz=0.4050
+  Dimensions: [0.24, 0.1734, 0.405]
+  World BBox: X=[-0.120, 0.120], Y=[-0.084, 0.090], Z=[-0.000, 0.405]
+  Materials: ['M_Shirt', 'M_Belt', 'M_Pants', 'M_Shoe', 'M_Sole']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Ear_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0430, dy=0.0502, dz=0.0557
+  Dimensions: [0.043, 0.0502, 0.0557]
+  World BBox: X=[-0.188, -0.144], Y=[-0.030, 0.020], Z=[0.487, 0.543]
+  Materials: ['M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Ear_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0430, dy=0.0502, dz=0.0557
+  Dimensions: [0.043, 0.0502, 0.0557]
+  World BBox: X=[0.144, 0.188], Y=[-0.030, 0.020], Z=[0.487, 0.543]
+  Materials: ['M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_HL1_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0120, dy=0.0040, dz=0.0130
+  Dimensions: [0.012, 0.004, 0.013]
+  World BBox: X=[-0.080, -0.068], Y=[0.156, 0.160], Z=[0.524, 0.537]
+  Materials: ['M_Eye_Highlight']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_HL1_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0120, dy=0.0040, dz=0.0130
+  Dimensions: [0.012, 0.004, 0.013]
+  World BBox: X=[0.068, 0.080], Y=[0.156, 0.160], Z=[0.524, 0.537]
+  Materials: ['M_Eye_Highlight']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_HL2_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0070, dy=0.0040, dz=0.0070
+  Dimensions: [0.007, 0.004, 0.007]
+  World BBox: X=[-0.061, -0.054], Y=[0.156, 0.160], Z=[0.506, 0.513]
+  Materials: ['M_Eye_Highlight']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_HL2_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0070, dy=0.0040, dz=0.0070
+  Dimensions: [0.007, 0.004, 0.007]
+  World BBox: X=[0.054, 0.061], Y=[0.156, 0.160], Z=[0.506, 0.513]
+  Materials: ['M_Eye_Highlight']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0320, dy=0.0080, dz=0.0390
+  Dimensions: [0.032, 0.008, 0.039]
+  World BBox: X=[-0.082, -0.050], Y=[0.148, 0.156], Z=[0.500, 0.539]
+  Materials: ['M_Eye_Black']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eye_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0320, dy=0.0080, dz=0.0390
+  Dimensions: [0.032, 0.008, 0.039]
+  World BBox: X=[0.050, 0.082], Y=[0.148, 0.156], Z=[0.500, 0.539]
+  Materials: ['M_Eye_Black']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eyebrow_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0307, dy=0.0109, dz=0.0086
+  Dimensions: [0.0307, 0.0109, 0.0086]
+  World BBox: X=[-0.081, -0.051], Y=[0.145, 0.155], Z=[0.565, 0.573]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Eyebrow_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0307, dy=0.0109, dz=0.0086
+  Dimensions: [0.0307, 0.0109, 0.0086]
+  World BBox: X=[0.051, 0.081], Y=[0.145, 0.155], Z=[0.565, 0.573]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Hair_Bangs' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.3600, dy=0.2579, dz=0.2174
+  Dimensions: [0.36, 0.2579, 0.2174]
+  World BBox: X=[-0.180, 0.180], Y=[-0.054, 0.204], Z=[0.481, 0.699]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Hair_Cap' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.4200, dy=0.4000, dz=0.3100
+  Dimensions: [0.42, 0.4, 0.31]
+  World BBox: X=[-0.210, 0.210], Y=[-0.222, 0.178], Z=[0.410, 0.720]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Hair_Sideburn_L' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0344, dy=0.0763, dz=0.1228
+  Dimensions: [0.0344, 0.0763, 0.1228]
+  World BBox: X=[-0.187, -0.153], Y=[0.007, 0.083], Z=[0.474, 0.596]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Hair_Sideburn_R' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0344, dy=0.0763, dz=0.1228
+  Dimensions: [0.0344, 0.0763, 0.1228]
+  World BBox: X=[0.153, 0.187], Y=[0.007, 0.083], Z=[0.474, 0.596]
+  Materials: ['M_Hair']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Icosphere' | Type: MESH
+  Parent: None, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 42, Edges: 120, Polygons: 80
+  Local BBox Dims: dx=1.9021, dy=2.0000, dz=2.0000
+  Dimensions: [1.9021, 2.0, 2.0]
+  World BBox: X=[-0.951, 0.951], Y=[-1.000, 1.000], Z=[-1.000, 1.000]
+  Materials: []
+  Modifiers: []
+
+Object: 'Mouth' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0260, dy=0.0060, dz=0.0080
+  Dimensions: [0.026, 0.006, 0.008]
+  World BBox: X=[-0.013, 0.013], Y=[0.156, 0.162], Z=[0.476, 0.484]
+  Materials: ['M_Mouth']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Nose' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.0160, dy=0.0140, dz=0.0140
+  Dimensions: [0.016, 0.014, 0.014]
+  World BBox: X=[-0.008, 0.008], Y=[0.158, 0.172], Z=[0.493, 0.507]
+  Materials: ['M_Skin']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Shirt_Collar' | Type: MESH
+  Parent: Student_Armature, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+  Vertices: 14, Edges: 25, Polygons: 12
+  Local BBox Dims: dx=0.1320, dy=0.0852, dz=0.0405
+  Dimensions: [0.132, 0.0852, 0.0405]
+  World BBox: X=[-0.066, 0.066], Y=[-0.005, 0.081], Z=[0.368, 0.408]
+  Materials: ['M_Shirt']
+  Modifiers: ['Armature(ARMATURE)']
+
+Object: 'Student_Armature' | Type: ARMATURE
+  Parent: None, Parent Type: OBJECT
+  Loc: [0.0, 0.0, 0.0]
+  Rot: [0.0, 0.0, 0.0]
+  Scale: [1.0, 1.0, 1.0]
+
+
+--- 2. INSPECTING SOURCE .BLEND: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\vietnamese_student_base.blend ---
+Total objects in Blend: 24
+
+Object: 'Blush_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.125, 0.117, 0.499], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.017' | Vertices: 8, Polys: 6
+  Dimensions: [0.0214, 0.007, 0.0132]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Blush']
+
+Object: 'Blush_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.125, 0.117, 0.499], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.018' | Vertices: 8, Polys: 6
+  Dimensions: [0.0214, 0.007, 0.0132]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Blush']
+
+Object: 'Body_Head' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.0, 0.0], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Body_Head_Mesh' | Vertices: 181, Polys: 180
+  Dimensions: [0.348, 0.331, 0.298]
+  Modifiers: ['Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head', 'Neck']
+  Materials: ['M_Skin']
+
+Object: 'Character_Arm_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.0, 0.0], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Body_Arm_Mesh_L' | Vertices: 209, Polys: 220
+  Dimensions: [0.0955, 0.11, 0.2406]
+  Modifiers: ['Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['UpperArm.L', 'Forearm.L', 'Hand.L', 'Chest']
+  Materials: ['M_Shirt', 'M_Skin']
+
+Object: 'Character_Arm_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.0, 0.0], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Body_Arm_Mesh_R' | Vertices: 209, Polys: 220
+  Dimensions: [0.0955, 0.11, 0.2406]
+  Modifiers: ['Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['UpperArm.R', 'Forearm.R', 'Hand.R', 'Chest']
+  Materials: ['M_Shirt', 'M_Skin']
+
+Object: 'Character_Torso_Legs' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.0, 0.0], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Character_Torso_Legs_Mesh' | Vertices: 490, Polys: 470
+  Dimensions: [0.24, 0.1734, 0.405]
+  Modifiers: ['Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Chest', 'Spine', 'Hips', 'Thigh.L', 'Thigh.R', 'Shin.L', 'Shin.R', 'Foot.L', 'Foot.R']
+  Materials: ['M_Shirt', 'M_Belt', 'M_Pants', 'M_Shoe', 'M_Sole']
+
+Object: 'Ear_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.166, -0.005, 0.515], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube' | Vertices: 8, Polys: 6
+  Dimensions: [0.0215, 0.0361, 0.043]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Skin']
+
+Object: 'Ear_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.166, -0.005, 0.515], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.001' | Vertices: 8, Polys: 6
+  Dimensions: [0.0215, 0.0361, 0.043]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Skin']
+
+Object: 'Eye_HL1_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.074, 0.158, 0.531], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.011' | Vertices: 8, Polys: 6
+  Dimensions: [0.0101, 0.0034, 0.0109]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.L']
+  Materials: ['M_Eye_Highlight']
+
+Object: 'Eye_HL1_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.074, 0.158, 0.531], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.014' | Vertices: 8, Polys: 6
+  Dimensions: [0.0101, 0.0034, 0.0109]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.R']
+  Materials: ['M_Eye_Highlight']
+
+Object: 'Eye_HL2_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.058, 0.158, 0.51], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.012' | Vertices: 8, Polys: 6
+  Dimensions: [0.0059, 0.0034, 0.0059]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.L']
+  Materials: ['M_Eye_Highlight']
+
+Object: 'Eye_HL2_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.058, 0.158, 0.51], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.015' | Vertices: 8, Polys: 6
+  Dimensions: [0.0059, 0.0034, 0.0059]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.R']
+  Materials: ['M_Eye_Highlight']
+
+Object: 'Eye_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.066, 0.152, 0.52], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.010' | Vertices: 8, Polys: 6
+  Dimensions: [0.0269, 0.0067, 0.0327]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.L']
+  Materials: ['M_Eye_Black']
+
+Object: 'Eye_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.066, 0.152, 0.52], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.013' | Vertices: 8, Polys: 6
+  Dimensions: [0.0269, 0.0067, 0.0327]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Eye.R']
+  Materials: ['M_Eye_Black']
+
+Object: 'Eyebrow_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.066, 0.15, 0.569], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.008' | Vertices: 8, Polys: 6
+  Dimensions: [0.0249, 0.0061, 0.0067]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Eyebrow_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.066, 0.15, 0.569], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.009' | Vertices: 8, Polys: 6
+  Dimensions: [0.0249, 0.0061, 0.0067]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Hair_Bangs' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.075, 0.59], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.004' | Vertices: 8, Polys: 6
+  Dimensions: [0.3022, 0.1761, 0.1325]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Hair_Cap' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, -0.022, 0.565], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.003' | Vertices: 8, Polys: 6
+  Dimensions: [0.3526, 0.3358, 0.2602]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Hair_Sideburn_L' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [-0.17, 0.045, 0.535], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.005' | Vertices: 8, Polys: 6
+  Dimensions: [0.0234, 0.0488, 0.0951]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Hair_Sideburn_R' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.17, 0.045, 0.535], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.006' | Vertices: 8, Polys: 6
+  Dimensions: [0.0234, 0.0488, 0.0951]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Hair']
+
+Object: 'Mouth' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.159, 0.48], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.016' | Vertices: 8, Polys: 6
+  Dimensions: [0.0218, 0.005, 0.0067]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Mouth']
+
+Object: 'Nose' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.165, 0.5], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.007' | Vertices: 8, Polys: 6
+  Dimensions: [0.0134, 0.0118, 0.0118]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Head']
+  Materials: ['M_Skin']
+
+Object: 'Shirt_Collar' | Type: MESH | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.038, 0.388], Scale: [1.0, 1.0, 1.0]
+  Mesh Data Name: 'Cube.002' | Vertices: 8, Polys: 6
+  Dimensions: [0.1108, 0.0673, 0.0247]
+  Modifiers: ['Subdiv(SUBSURF, show_viewport=True, show_render=True)', 'Armature(ARMATURE, show_viewport=True, show_render=True)']
+  Vertex Groups: ['Chest']
+  Materials: ['M_Shirt']
+
+Object: 'Student_Armature' | Type: ARMATURE | Hide Viewport: False | Hide Render: False | Hide Get: False
+  Parent: None, Parent Type: OBJECT, Bone: 
+  Loc: [0.0, 0.0, 0.0], Scale: [1.0, 1.0, 1.0]

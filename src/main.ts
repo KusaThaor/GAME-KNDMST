@@ -26,6 +26,12 @@ async function boot() {
     runYardScene(app, params);
     return;
   }
+  if (lab === 'assets') {
+    document.body.classList.add('lab');
+    const { runAssetsPreviewScene } = await import('./lab/assetsPreviewScene');
+    runAssetsPreviewScene(app, params);
+    return;
+  }
   renderHome();
 }
 
@@ -41,6 +47,7 @@ function renderHome() {
         <ul>
           <li><a href="?lab=sheet&grade=6">Bảng nhân vật lớp 6</a> · <a href="?lab=sheet&grade=9">lớp 9</a> · <a href="?lab=sheet&grade=6&motion=mix">các dáng</a> · <a href="?lab=sheet&grade=6&motion=walk">đi bộ</a></li>
           <li><a href="?lab=yard">Góc sân trường — camera thứ ba</a> · <a href="?lab=yard&view=wide">toàn cảnh</a></li>
+          <li><a href="?lab=assets">Triển lãm Asset mới (Bảng phấn & Cây xanh)</a> · <a href="?lab=assets&view=chalkboard">Bảng lớp học</a> · <a href="?lab=assets&view=trees">Cây sân trường</a></li>
         </ul>
         <h2>Kiểm tra đường ống dữ liệu</h2>
         <button id="pipe">Gửi 1 event thử</button>

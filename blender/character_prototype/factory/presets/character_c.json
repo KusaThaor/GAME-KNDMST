@@ -1,0 +1,13 @@
+{
+  "character_id": "character_c",
+  "base_version": "1.0.0",
+  "name": "Character C - Lan (Nữ Sinh Cá Tính)",
+  "height_scale": 1.10,
+  "skin_tone": "SKIN_05",
+  "hair_style": "HAIR_003",
+  "hair_color": "#2b1b17",
+  "outfit": "OUTFIT_003",
+  "accessories": ["ACC_002", "ACC_003"],
+  "default_expression": "Smile",
+  "animation_set": "school_actions_v1"
+}

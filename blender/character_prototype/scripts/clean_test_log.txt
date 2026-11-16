@@ -1,0 +1,11 @@
+Starting test_clean_base_look.py...
+Removed detail: Scarf_Knot
+Removed detail: Scarf_Tail_L
+Removed detail: Scarf_Tail_R
+Removed detail: Nametag
+Removed detail: Belt_Buckle
+Scaled Eye_L
+Scaled Eye_R
+Rendered front
+Rendered 3/4
+SUCCESS!

@@ -1,0 +1,3 @@
+Hair_Cap modifiers: [('Subdiv', 'SUBSURF'), ('Armature', 'ARMATURE')]
+Hair_Cap base mesh verts: 8, polys: 6
+Hair_Cap evaluated verts: 98, polys: 96

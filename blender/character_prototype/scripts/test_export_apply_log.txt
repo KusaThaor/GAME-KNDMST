@@ -1,0 +1,28 @@
+Attempting export with export_apply=True...
+Export finished. Size: 330636 bytes
+
+Objects in test_export_apply.glb:
+  Blush_L             : verts=39, polys=48, bbox_dims=[0.021, 0.007, 0.013]
+  Blush_R             : verts=39, polys=48, bbox_dims=[0.021, 0.007, 0.013]
+  Body_Head           : verts=181, polys=340, bbox_dims=[0.348, 0.331, 0.298]
+  Character_Arm_L     : verts=223, polys=404, bbox_dims=[0.1, 0.094, 0.243]
+  Character_Arm_R     : verts=223, polys=404, bbox_dims=[0.1, 0.094, 0.243]
+  Character_Torso_Legs: verts=582, polys=912, bbox_dims=[0.24, 0.173, 0.405]
+  Ear_L               : verts=39, polys=48, bbox_dims=[0.022, 0.036, 0.043]
+  Ear_R               : verts=39, polys=48, bbox_dims=[0.022, 0.036, 0.043]
+  Eye_HL1_L           : verts=39, polys=48, bbox_dims=[0.01, 0.003, 0.011]
+  Eye_HL1_R           : verts=39, polys=48, bbox_dims=[0.01, 0.003, 0.011]
+  Eye_HL2_L           : verts=39, polys=48, bbox_dims=[0.006, 0.003, 0.006]
+  Eye_HL2_R           : verts=39, polys=48, bbox_dims=[0.006, 0.003, 0.006]
+  Eye_L               : verts=39, polys=48, bbox_dims=[0.027, 0.007, 0.033]
+  Eye_R               : verts=39, polys=48, bbox_dims=[0.027, 0.007, 0.033]
+  Eyebrow_L           : verts=39, polys=48, bbox_dims=[0.025, 0.006, 0.007]
+  Eyebrow_R           : verts=39, polys=48, bbox_dims=[0.025, 0.006, 0.007]
+  Hair_Bangs          : verts=125, polys=192, bbox_dims=[0.302, 0.176, 0.133]
+  Hair_Cap            : verts=125, polys=192, bbox_dims=[0.353, 0.336, 0.26]
+  Hair_Sideburn_L     : verts=125, polys=192, bbox_dims=[0.023, 0.049, 0.095]
+  Hair_Sideburn_R     : verts=125, polys=192, bbox_dims=[0.023, 0.049, 0.095]
+  Icosphere           : verts=42, polys=80, bbox_dims=[1.902, 2.0, 2.0]
+  Mouth               : verts=39, polys=48, bbox_dims=[0.022, 0.005, 0.007]
+  Nose                : verts=39, polys=48, bbox_dims=[0.013, 0.012, 0.012]
+  Shirt_Collar        : verts=39, polys=48, bbox_dims=[0.111, 0.067, 0.025]
