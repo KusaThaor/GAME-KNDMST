@@ -9,6 +9,7 @@ from build_scarf_deliverables import setup_studio
 bpy.ops.wm.open_mainfile(filepath=str(root/"scarf-review/student_uniform_scarf.blend"))
 arm=next(o for o in bpy.data.objects if o.type=="ARMATURE")
 arm.animation_data_clear()
+arm.data.pose_position='REST'
 for bone in arm.pose.bones:
     bone.matrix_basis.identity()
 for obj in list(bpy.data.objects):
@@ -49,7 +50,7 @@ for label,loc in [("front",(0,1.6,.36)),("front_closeup",(0,1.6,.37)),("side",(1
     cam.data.type="ORTHO"
     cam.data.ortho_scale=0.85 if label=="front" else 0.36
     cam.rotation_euler=(Vector((0,0,.37))-cam.location).to_track_quat("-Z","Y").to_euler()
-    scene.render.filepath=str(root/("scarf-review/reference_"+label+".png"))
+    scene.render.filepath=str(root/("scarf-review/fixed_"+label+".png"))
     bpy.ops.render.render(write_still=True)
 print("SCARF_REVIEW_DONE")
 

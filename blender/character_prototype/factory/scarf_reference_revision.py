@@ -99,6 +99,23 @@ def build(arm, char_id, color="#c91629"):
     for p in km.polygons:p.use_smooth=True
     sub=knot.modifiers.new('Soft compressed knot','SUBSURF');sub.levels=2
     for ob in [obj,knot]:
+        # Correct the FINAL thickness/bevel/subdivision vertices, not just
+        # the original surface. Those modifiers can introduce new collisions.
+        bpy.ops.object.select_all(action='DESELECT')
+        ob.select_set(True)
+        bpy.context.view_layer.objects.active=ob
+        for modifier in list(ob.modifiers):
+            bpy.ops.object.modifier_apply(modifier=modifier.name)
+        inv=ob.matrix_world.inverted()
+        for vertex in ob.data.vertices:
+            p=ob.matrix_world@vertex.co
+            for iteration in range(4):
+                p=clear_shirt(p)
+                hit,normal,_,distance=surface.find_nearest(p)
+                if hit is not None and (p-hit).dot(normal)<.002:
+                    p=hit+normal*.0035
+            vertex.co=inv@clear_shirt(p)
+        ob.data.update()
         neck=ob.vertex_groups.new(name='Neck');chest=ob.vertex_groups.new(name='Chest');spine=ob.vertex_groups.new(name='Spine')
         for v in ob.data.vertices:
             n=max(0,min(.6,(v.co.z-.38)*12));s=max(0,min(.3,(.31-v.co.z)*5))
