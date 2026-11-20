@@ -1,7 +1,7 @@
 # Hành Trình Thanh Xuân — game 3D trên web (dự án KNĐMST)
 
 Vite + TypeScript + Three.js + Preact · Vercel (web + Functions) · Firebase Firestore gói Spark (dữ liệu đo lường).
-Thiết kế: `GDD.md` · Kế hoạch: `PROTOTYPE_PLAN.md` (trong Claude Project).
+Thiết kế (chuẩn, v1.0 APPROVED): [`docs/gdd/00_MASTER_GDD.md`](docs/gdd/00_MASTER_GDD.md) · Bản đồ nhánh và nguồn chân lý: [`WORKSPACE.md`](WORKSPACE.md).
 
 ## Chạy trên máy
 ```bash
