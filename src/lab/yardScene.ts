@@ -50,11 +50,38 @@ export function runYardScene(container: HTMLElement, params: URLSearchParams) {
   });
   const playerRig = actors[actors.length - 1].rig;
 
-  // Camera thứ ba: sau lưng Player 5,5 m, nhìn chéo xuống ~28° (GDD 3)
+  // Camera: tuỳ chọn góc nhìn phục vụ kiểm tra và chụp ảnh map chuẩn ảnh ref
   const widePos = new THREE.Vector3(13, 13, 22), wideLook = new THREE.Vector3(-1.5, 1.5, -3);
   if (view === 'wide') {
     camera.position.copy(widePos);
     camera.lookAt(wideLook);
+  } else if (view === 'diorama' || view === 'ref') {
+    // Góc nhìn chính diện từ trên cao chuẩn xác như bức ảnh reference
+    camera.position.set(0, 48, 52);
+    camera.lookAt(new THREE.Vector3(0, 0, -1.5));
+  } else if (view === 'aerial' || view === 'overview') {
+    camera.position.set(0, 68, 52);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+  } else if (view === 'iso') {
+    // Góc nhìn isometric 3/4 từ phía trước bên phải
+    camera.position.set(32, 38, 44);
+    camera.lookAt(new THREE.Vector3(-4, 0, -2));
+  } else if (view === 'street') {
+    // Đứng tại ngã ba nhìn thẳng trục đường chính lên cổng trường
+    camera.position.set(0, 3.5, 17);
+    camera.lookAt(new THREE.Vector3(0, 2.2, -14));
+  } else if (view === 'taphoa') {
+    // Cận cảnh tiệm Tạp Hóa (kệ hàng, TV, ghế đỏ, mái hiên)
+    camera.position.set(-11.0, 1.9, 11.0);
+    camera.lookAt(new THREE.Vector3(-11.0, 1.7, 3.5));
+  } else if (view === 'net') {
+    // Cận cảnh Quán Net (dàn máy tính, màn hình vi tính, bảng hiệu)
+    camera.position.set(11.0, 1.9, 11.0);
+    camera.lookAt(new THREE.Vector3(11.0, 1.7, 3.5));
+  } else if (view === 'gazebo') {
+    // Cận cảnh chòi gỗ góc sân trường bên trái
+    camera.position.set(-16.0, 5.5, -18.0);
+    camera.lookAt(new THREE.Vector3(-24.5, 1.5, -25.5));
   } else {
     const fwd = new THREE.Vector3(Math.sin(player.face), 0, Math.cos(player.face));
     const pp = playerRig.root.position;

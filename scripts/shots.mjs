@@ -31,7 +31,8 @@ const GIFS = [
 ];
 
 const only = process.argv.slice(2);
-const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore' });
+const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+const server = spawn(npxCmd, ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'ignore', shell: true });
 await new Promise((r) => setTimeout(r, 1500));
 
 const browser = await chromium.launch({

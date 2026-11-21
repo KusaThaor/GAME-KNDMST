@@ -37,7 +37,7 @@ export function toon(color: THREE.ColorRepresentation, opts: ToonOpts = {}): THR
     side: opts.side ?? THREE.FrontSide, vertexColors: opts.vertexColors ?? false,
   });
   if (opts.emissive) { m.emissive = new THREE.Color(opts.emissive); m.emissiveIntensity = 1; }
-  m.userData.outlineParameters = { visible: opts.outline ?? true, thickness: 0.0045, color: [0.22, 0.15, 0.13], alpha: 1 };
+  m.userData.outlineParameters = { visible: opts.outline ?? true, thickness: 0.0018, color: [0.35, 0.32, 0.30], alpha: 0.7 };
   cache.set(key, m);
   return m;
 }
