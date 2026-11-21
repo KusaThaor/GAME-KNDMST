@@ -127,3 +127,172 @@ npm run dev                 # mở /?play=1
 4. Chơi lại thật: chơi tới giữa Trang 1 bằng bản code cũ, đổi sang bản mới, tải lại trang → vẫn đứng đúng chỗ, Album không mất.
 5. Bằng chứng cần lưu: dán JSON trước/sau chuyển đổi (đã bỏ tên người chơi) vào mô tả commit.
 - Task kế tiếp: **T-03**.
+
+---
+
+## T-03 · Khung minigame chung (`UI_MG_FRAME`)
+
+### MỤC TIÊU
+- ID: **T-03**. Agent: **Claude Code**.
+- Vấn đề thấy được trong game: mọi minigame hiện ra là **một thẻ trắng có đúng một nút "Xong"** (`[PLACEHOLDER] Minigame "..." (mức min)`). Không có luật, không thắng/thua, không chơi lại. Mọi trò của Trang 1–4 đều phải chờ khung này.
+- Kết quả phải bàn giao: một khung dùng chung cho mọi trò, nạp trò theo `game_id`, có vòng đời đúng GDD `02` §1.1; thẻ giả cũ bị thay; một trò thật đầu tiên (lau bảng K6) chạy được qua khung để chứng minh khung dùng được.
+
+### FILE TÁC ĐỘNG
+- Nhánh `feat/sprint-0412` (sau T-01 và T-04).
+- Đọc trước: `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` **§1 toàn mục** (vòng đời ván, quy tắc thua không chặn truyện, bỏ ván = thua, hướng dẫn luật, Esc dừng đồng hồ) và §2.4.4 (lau bảng); `src/game/game.ts` dòng 178–186 (chỗ hiện gắn thẻ giả); `src/ui/game/GameUi.tsx` dòng 212–215; `src/content/types.ts` dòng 72; `src/core/eventBus.ts` dòng 31–32 (kiểu event đã có sẵn).
+- Dự kiến sửa: `src/content/types.ts` (bước `minigame`: thêm `config?` và bỏ giới hạn `level: 'min'`) · `src/game/game.ts` (`presentStep` nhánh `minigame`) · `src/ui/game/GameUi.tsx` · `src/ui/game/store.ts` · `src/content/validate.ts` (kiểm `game` có trong sổ đăng ký).
+- File mới: `src/minigames/frame.tsx` (khung: màn luật → chơi → kết quả → Chơi lại / Tiếp tục) · `src/minigames/registry.ts` (sổ đăng ký theo `game_id`) · `src/minigames/types.ts` · `src/minigames/wipeBoard.tsx` (trò lau bảng) · `tests/unit/minigameFrame.test.ts`.
+
+### YÊU CẦU KỸ THUẬT CHI TIẾT
+- Hợp đồng một trò: `{ id, title, rules: { image?: string; lines: string[] /* tối đa 3 */ }, mount(el, ctx): void, dispose(): void }`, trong đó `ctx` cho trò gọi `ctx.finish({ result, stars?, score?, hints_used? })` và đọc `ctx.difficulty`.
+- Vòng đời bắt buộc: **màn luật** (bỏ qua được từ lần thứ hai, nhớ bằng `save.minigames_story` hoặc cờ riêng) → **chơi** → **kết quả** (Thắng / Thua / Hòa / Hoàn thành) → **Chơi lại** hoặc **Tiếp tục**. Nút **"?"** mở lại luật trong lúc chơi. **Esc** mở menu và **dừng đồng hồ** của trò.
+- Quy tắc không được phá: thua **không bao giờ** chặn truyện — mọi kết quả đều `engine.complete(step.id)`. "Bỏ ván" tính là **thua** và vẫn đi tiếp. Kết quả **lần đầu** là kết quả dùng cho thoại (ghi vào `minigames_story`); chơi lại chỉ cập nhật bảng thành tích (`minigames`).
+- Event: giữ nguyên `minigame_started` / `minigame_finished` đã có ở `eventBus.ts`, nhưng `result` phải là kết quả thật (`win|lose|draw|complete|quit`), `duration_s` là thời gian chơi thật (không tính lúc dừng), `stars`/`hints_used`/`score` điền khi trò có.
+- Trò lau bảng (để chứng minh khung): giữ chuột trái di trên vùng bảng, bán kính cọ 8% chiều rộng vùng; xong khi phủ ≥ 90%; 3 sao nếu ≤ 10 giây, 2 sao nếu ≤ 16 giây, còn lại 1 sao; không có thua.
+- Giao diện: lớp 2D phủ lên cảnh 3D, nền sáng, góc bo, font Nunito, chữ to — theo GDD `00` §7.4. Không chặn `Esc`.
+- Giới hạn: không thêm thư viện; không sửa `questEngine.ts`; không viết thoại thật (dùng `[PLACEHOLDER]`).
+
+### TIÊU CHÍ NGHIỆM THU
+```bash
+npx tsc --noEmit && npm test && npm run validate:world
+npm run dev   # mở /?play=1&day=d.g06.01
+```
+- Chơi lại từng bước: vào Trang 1 → tới bước lau bảng → **màn luật hiện ra** → chơi → phủ ≥ 90% → **thẻ kết quả có số sao** → bấm **Chơi lại** chơi được ván nữa → bấm **Tiếp tục** thì quest sang bước kế. Bấm **Esc** giữa ván: đồng hồ dừng, mở lại chơi tiếp được. Bấm **Bỏ ván**: hiện kết quả thua, quest **vẫn** sang bước kế.
+- Test đơn vị: `finish({result:'lose'})` vẫn gọi `engine.complete`; lần chơi thứ hai không ghi lại `minigames_story`; `validateContent` báo lỗi khi `game` không có trong sổ đăng ký.
+- Bằng chứng cần lưu: ảnh chụp 3 màn (luật, đang chơi, kết quả) vào `docs/images/`, kết quả 3 lệnh trên vào mô tả commit.
+- Task kế tiếp: **T-07**.
+
+---
+
+## T-05 · Khung dữ liệu Trang 2 và Trang 3
+
+### MỤC TIÊU
+- ID: **T-05**. Agent: **Claude Code**.
+- Vấn đề thấy được trong game: bản đo cần đủ 4 Trang nhưng chỉ có 2 Trang tồn tại (`d.g06.01`, `d.g07.03`). Chọn kỷ vật thứ hai trong Hộp là không có gì xảy ra.
+- Kết quả phải bàn giao: hai file Ngày mới đúng schema, đủ kỷ vật – quest – mảnh ký ức – ô Album – Present-day Event, chơi xuyên suốt 4 Trang được với nội dung `[PLACEHOLDER]`; **đồng thời là file mẫu để Gemini đổ nội dung thật ở T-06**.
+
+### FILE TÁC ĐỘNG
+- Nhánh `feat/sprint-0412` (sau T-02).
+- Đọc trước: `README.md` mục **"Thêm một Ngày ký ức mới"** (6 bước, là hướng dẫn chuẩn) · `docs/PAGE_DATA_GUIDE.md` · `src/content/days/d_g06_01.ts` (mẫu) · `docs/gdd/01_NARRATIVE_AND_SCENES.md` Trang 2 và Trang 3 · `docs/gdd/00_MASTER_GDD.md` §5.3 (đường đi theo Trang).
+- Dự kiến sửa: `src/content/pack.ts` (`DAYS`) · `src/content/release.ts` · `src/content/chapters.ts` · `src/content/hub.ts` (thêm PDE `RESTORE` + `SHELF` cho hai Trang) · `src/content/base.ts` (biến thể bản đồ nếu cần).
+- File mới: `src/content/days/d_g07_01.ts` (Thuyền giấy dưới mái hiên) · `src/content/days/d_g07_02.ts` (Căn cứ bí mật).
+
+### YÊU CẦU KỸ THUẬT CHI TIẾT
+- Theo đúng 6 bước trong `README.md`. ID phải khớp mẫu: Trang `d.g07.01` / `d.g07.02`; quest `q_m1_main_NN` / `q_m1_side_NN`; bước `<quest_id>.sNN`; kỷ vật `art_m1_NN`; mảnh `frag.<ngày>.NN`; ô Album `alb.<ngày>.NN`.
+- Trang 2 dùng khu **Z02b** (mái hiên + rãnh nước) theo GDD `00` §5.3; Trang 3 đi **Z02 → góc sân sau → Z05**. Chỉ dùng vai `NPC_A…NPC_D`, **không** ghi thẳng `chr_*`.
+- Mỗi Trang: đúng **một** kỷ vật dẫn vào, `appear_when` = xong Trang trước; ít nhất một ô Album `required_for_restore: true`; Side/Daily phải `blocks_main: false` và bước đầu thuộc `talk | interact | goto | collect | place` (luật mới ở T-02).
+- Bước minigame khai bằng `game_id` của sổ đăng ký T-03 (ví dụ `mg_boat_race`, `mg_build_base`), **chưa cần trò thật** — khung sẽ hiện màn luật `[PLACEHOLDER]`.
+- Mọi chữ ghi `[PLACEHOLDER]` + nhãn `AI_PROPOSED`. Nếu bản đồ thiếu marker (`itr.thcs.gutter_water`, `cam.thcs.*`…) thì **thêm vào `src/world/maps/map_thcs.world.json` bằng đúng quy trình ở `docs/HOW_TO_EXPAND_WORLD.md`**, không đặt tọa độ cứng trong file nội dung.
+
+### TIÊU CHÍ NGHIỆM THU
+```bash
+npm test                  # validator 0 lỗi về ID và tham chiếu
+npm run validate:world    # 0 lỗi
+npm run dev               # /?play=1&day=d.g07.01   và   /?play=1&day=d.g07.02
+npm run test:e2e          # bot chơi hết 4 Trang
+```
+- Chơi lại: từ phòng 2026 chơi liền 4 Trang, mỗi lần xong thì **một trang Album hiện rõ** và **kỷ vật kế tiếp sáng lên**; tải lại trang giữa Trang 2 thì đứng lại đúng khu.
+- Bằng chứng cần lưu: kết quả `npm test`, `validate:world`, và nhật ký bot e2e.
+- Task kế tiếp: **T-06** (Gemini) và **T-07** (Claude Code) chạy song song.
+
+---
+
+## T-06 · Số hóa kịch bản Trang 1–4 thành dữ liệu (Gemini Pro)
+
+### MỤC TIÊU
+- ID: **T-06**. Agent: **Gemini Pro**. Trạng thái: **đang chờ T-05** (cần file mẫu và schema chốt).
+- Việc: biến kịch bản chữ thành dữ liệu để game đọc, cho **Trang 1 → Trang 4** (Mốc 1). Không làm Trang 5–9 trong đợt này.
+- Kết quả phải bàn giao: 4 file `.ts` theo đúng mẫu, nội dung thật thay `[PLACEHOLDER]`, kèm bảng đối chiếu "câu nào trong kịch bản → bước nào trong dữ liệu".
+
+### FILE TÁC ĐỘNG
+- Kịch bản nguồn (nguyên văn, **thắng file 01 khi khác nhau**): `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` phần MỞ ĐẦU và Trang 1–4.
+- Mô tả cảnh theo bước: `docs/gdd/01_NARRATIVE_AND_SCENES.md` §4 (MỞ ĐẦU, Trang 1–4), §2.3 (**quy tắc xưng hô** — bắt buộc tuân theo), §5.1 (kỷ vật), §6 (trang Album), §7 (lựa chọn cần lưu).
+- Luật chơi của từng trò: `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §2.4.1–2.4.6.
+- Schema và file mẫu: `docs/PAGE_DATA_GUIDE.md` · `README.md` mục "Thêm một Ngày ký ức mới" · `src/content/days/d_g06_01.ts` · `src/content/types.ts` (kiểu `Step`, `Quest`, `DialogueLine`).
+- File phải nộp: `src/content/days/d_g06_01.ts`, `d_g07_01.ts`, `d_g07_02.ts`, `d_g07_03.ts` (ghi đè bản `[PLACEHOLDER]`).
+
+### YÊU CẦU KỸ THUẬT CHI TIẾT
+- **Quy tắc ID (không được đổi):** Trang `d.gNN.KK` · quest `q_m1_<main|side|daily|event>_NN` · bước `<quest_id>.sNN` · kỷ vật `art_m1_NN` · mảnh `frag.<ngày>.NN` · ô Album `alb.<ngày>.NN` · điểm tương tác `itr.<map>.<tên>` · máy ảnh `cam.<...>.<...>`. **ID đã phát hành thì không đổi.**
+- Chỉ dùng vai `NPC_A` (Đức), `NPC_B` (Châu), `NPC_C` (Hạ), `NPC_D` (Quân) — **không** ghi `chr_duc`. Tên Player chèn bằng mẫu `{player_name}`, không viết tên cụ thể.
+- Ô thoại **tối đa 2 dòng mỗi lần**; bước `choice` có 2–3 lựa chọn; lựa chọn nào cần lưu thì theo danh sách `01` §7, còn lại chỉ đổi lời tại chỗ.
+- Mỗi bước phải là một trong các loại có thật trong `types.ts`: `talk`, `goto`, `interact`, `choice`, `collect`, `place`, `photo`, `minigame`, `cutscene`, `free`, `setFlag`, `phone_ui`, `compose_message`, `album_restore`. **Không tự nghĩ loại bước mới** — nếu kịch bản cần thứ chưa có, ghi chú lại và dừng, đừng bịa.
+- Nội dung đã được nhóm duyệt thì bỏ nhãn `AI_PROPOSED`; chỗ tự viết thêm thì **giữ nhãn** `AI_PROPOSED` để validator chặn khỏi bản production.
+- Năm học: lớp 6 = **2014–2015** (CONFIRMED 20/11). Không dùng chi tiết văn hóa/công nghệ sau mốc thời gian của cảnh.
+- Định dạng đầu ra: TypeScript đúng cú pháp, chạy được `npx tsc --noEmit`; mỗi file xuất đúng 5 thứ `day`, `quests`, `artifact`, `fragments`, `entries`.
+
+### TIÊU CHÍ NGHIỆM THU
+```bash
+npx tsc --noEmit
+npm test                 # validator kiểm ID, tham chiếu, trùng ID, nhãn ownership
+npm run dev              # /?play=1&day=d.g06.01 … d.g07.03
+```
+- Đọc lại từng Trang trong game: thoại khớp kịch bản, xưng hô đúng `01` §2.3, không còn `[PLACEHOLDER]` trên đường Main của Trang 1–4.
+- Bằng chứng cần lưu: bảng đối chiếu kịch bản → bước, nộp kèm trong `docs/handoff/`.
+- Task kế tiếp: **T-08** (lời ba tin nhắn kết demo).
+
+---
+
+## T-07 · Tám trò K của Trang 1–4
+
+### MỤC TIÊU
+- ID: **T-07**. Agent: **Claude Code**. Phụ thuộc: **T-03**.
+- Kết quả phải bàn giao: 8 trò chạy thật qua khung T-03, mỗi trò có luật, điều kiện xong, chấm sao hoặc thắng/thua theo GDD, và nút Chơi lại.
+
+### FILE TÁC ĐỘNG
+- Đọc trước: `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §2.4.1 (đá cầu), §2.4.2 (gấp và đua thuyền), §2.4.3 (bóp mì gói), §2.4.4 (lau bảng — đã làm ở T-03), §2.4.6 (giải mật lệnh, dựng Căn cứ, viết luật Căn cứ, xếp đội hình).
+- File mới: mỗi trò một file trong `src/minigames/`, khai vào `registry.ts`.
+
+### YÊU CẦU KỸ THUẬT CHI TIẾT
+Thứ tự làm (dừng ở đâu cũng có thứ dùng được): **giải mật lệnh (K4)** → **đá cầu (K5)** → **bóp mì gói (K6)** → **dựng Căn cứ (K3)** → **viết luật Căn cứ (K4)** → **xếp đội hình (K3)** → **gấp và đua thuyền (K5, tốn công nhất)**.
+Số liệu lấy **đúng** từ GDD: cửa sổ nhịp đá cầu ±80 ms / ±160 ms, thắng khi 10 lượt liên tiếp, thua khi hụt 3 lần; thuyền 3 kiểu gấp, vùng xanh 25% thanh lực, rãnh 12 m chạy 25–35 giây, **Quân luôn nhất và thuyền Đức luôn lật ngay khi thả**; bóp mì 3 sao ≤ 6 giây; mật lệnh nối 6 ký hiệu, nối sai thì Châu gợi ý, không có thua. Mọi con số để trong file cấu hình của trò, không rải trong logic.
+
+### TIÊU CHÍ NGHIỆM THU
+- `npx tsc --noEmit`, `npm test`, `npm run test:e2e` đạt; mỗi trò có ít nhất 1 test đơn vị cho điều kiện thắng/xong.
+- Chơi lại từng trò qua `?play=1&day=<id>&step=<bước>`; kiểm đủ: thua vẫn đi tiếp · Bỏ ván vẫn đi tiếp · Chơi lại được · Esc dừng đồng hồ.
+- Task kế tiếp: **T-08**.
+
+---
+
+## T-08 · Kết demo sau Trang 4 và form phản hồi thật
+
+### MỤC TIÊU
+- ID: **T-08**. Agent: **Claude Code** (lời tin nhắn: **Gemini Pro**).
+- Vấn đề thấy được trong game: thẻ phản hồi cuối demo hiện ra **chỉ có một nút "Bỏ qua"**, không có câu hỏi nào và không có nơi ghi dữ liệu → mất bằng chứng kinh doanh của môn học. Ba tin nhắn kết còn mang nghĩa cũ (sau Trang 9) trong khi bản đo dừng ở Trang 4.
+- Kết quả phải bàn giao: điểm dừng đúng sau Trang 4; ba tin nhắn kết mang nghĩa "nhớ hồi tụi mình mới đủ năm đứa"; form phản hồi có câu hỏi thật và ghi được vào Firestore; thứ tự "ghi hoàn thành **trước** form" không đổi.
+
+### FILE TÁC ĐỘNG
+- Dự kiến sửa: `src/content/release.ts` (khai bản `production`) · `src/content/hub.ts` (3 lựa chọn mở lời + `demo_end_lines`) · `src/ui/game/GameUi.tsx` (thẻ `feedback`) · `src/ui/game/store.ts` · `src/analytics/bridge.ts` (phát `feedback_submitted`) · `firestore.rules` nếu cần.
+- File mới: `api/feedback.ts` (Vercel Function ghi vào collection `feedback` — hằng số đã có ở `api/_lib/firestore.ts:7`) · `tests/unit/feedback.test.ts`.
+- Đọc trước: `docs/gdd/00_MASTER_GDD.md` §4 (khối CONFIRMED 21/11 về phạm vi) · `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §5.1 · `README.md` mục "Môi trường và dữ liệu" · `api/collect.ts` làm mẫu.
+
+### YÊU CẦU KỸ THUẬT CHI TIẾT
+- `production.memory_day_ids` = 4 Trang của Mốc 1, `end_day_id = 'd.g07.03'`, `end_step_id` giữ như bản test. **Chỉ khai khi T-06 đã bỏ nhãn `AI_PROPOSED`** — validator sẽ chặn nếu chưa.
+- Form: tối đa 5 câu, mỗi câu **chọn sẵn** (không bắt buộc nhập chữ); nếu có một ô chữ tự do thì ghi rõ "không bắt buộc" và **không** gửi kèm bất cứ ID nào có thể lần ra người chơi. **Không** thu tên, email, IP.
+- `api/feedback.ts` dùng lại cách kiểm và chống ghi trùng của `api/collect.ts` (`doc(id).create()`), ghi vào `COLLECTIONS.feedback`; hết hạn mức thì trả 429 để client gửi lại.
+- Giữ nguyên thứ tự: `public_demo_completed` được ghi **trước** khi thẻ phản hồi hiện ra (hiện đúng ở `src/game/game.ts:380–390` — không được làm hỏng).
+- Phát `feedback_shown`, `feedback_submitted`, `feedback_skipped` đủ cả ba.
+
+### TIÊU CHÍ NGHIỆM THU
+```bash
+npm test                                     # có test cho api/feedback
+npm run dev                                  # /?play=1&bot=release rồi xem màn kết
+firebase emulators:start --only firestore --project demo-htx
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8085 GCLOUD_PROJECT=demo-htx npm run test:e2e
+```
+- Chơi lại: chơi hết 4 Trang → gửi tin nhắn → **thấy `public_demo_completed` trong Firestore trước** → form hiện ra → gửi form → có **một** document trong collection `feedback`, **không** chứa tên, email, IP, hay nội dung tin nhắn.
+- Bằng chứng cần lưu: ảnh chụp document trong Emulator (đã che ID), kết quả e2e.
+- Task kế tiếp: **T-09**, rồi **T-14**.
+
+---
+
+## T-09 → T-14 (ghi gọn, mở prompt đầy đủ khi tới lượt)
+
+| ID | Việc | Ghi chú cho người làm |
+|---|---|---|
+| **T-09** | Phát các event còn thiếu | `free_photo_taken`, `feedback_submitted` hiện **có người nghe trong `src/analytics/bridge.ts` nhưng không ai phát**; `landing_view`, `cta_click` chưa có nơi phát (gắn ở `src/main.ts` trang chủ). **Bỏ `hub_opened`** khỏi đợt này — Khu Vui Chơi thuộc Mốc 2. Nghiệm thu: chơi một lượt với Emulator rồi đếm đủ loại event |
+| **T-10** | Nhân vật GLB (hướng base mesh + xương chung) | Blender: thêm hệ số chuẩn hóa chiều cao vào `blender/character_prototype/factory/character_factory.py` (hiện mọi kích thước là số cứng), xuất 1 base + preset cho Player nam/nữ, Đức, Châu, Quân, Hạ; chiều cao **1,30–1,40 m** (lớp 6–7), **1,55–1,65 m** (lớp 8–9); gốc `min.y = 0`; giữ 20 xương + 16 hoạt ảnh; nhân vật chính ≤ 6.000 tam giác / 1,5 MB. Claude Code: viết `glbRigAdapter` cắm vào `DaySceneOptions.rigAdapter`, map 16 hoạt ảnh sang `Motion` của `src/actors/character/animate.ts`, kiểm bằng `checkAvatarHeight`. **Nhân vật dựng bằng code giữ làm dự phòng** |
+| **T-11** | Cây và ghi công | `schoolyard_shade_tree.glb` hiện **trùng byte** với cây phượng (md5 `fc7a3c80…`) → dựng cây bàng tán tầng mới hoặc dùng `schoolyard_tropical_tree.glb`. Cây phượng 12.224 tam giác → giảm về ≤ 3.000 / 200 KB. Sửa `docs/ASSET_CREDITS.md` theo đoạn thay thế ở `DEMO_AUDIT.md` §6.1(3) và mang file này sang nhánh code |
+| **T-12** | Phòng 2026 + 4 kỷ vật Mốc 1 | Theo `docs/gdd/03_ASSETS_AND_AUDIO.md` §2 và §5. Kỷ vật: mẩu giấy mật lệnh, thuyền giấy của Hạ, biển tên Căn cứ + sổ luật, ảnh nhóm bị ố |
+| **T-13** | Hai lỗi asset trong code | Sửa gốc `prp_desk_2seat.glb` về `min.y = 0` (hiện −0,663). Sửa bẫy: `loadProp()` giữ cache theo URL và trả `clone(true)` dùng chung geometry, còn `World.dispose()` (`src/world/world.ts:199`) lại `dispose()` geometry → props Blender sẽ **mất ở lần vào Ngày thứ hai**. Hiện chưa nổ vì `loadProp` chỉ dùng ở `src/lab/yardScene.ts` |
+| **T-14** | Dựng bản đo | Chạy e2e toàn tuyến; **đo FPS trên laptop thật** (Chrome headless vẽ bằng CPU, không dùng làm số đo); kiểm bản `test` và `production` tách đúng; kiểm bản production không lẫn công cụ test; mở Pull Request `feat/sprint-0412` → `dev`, rồi **xin chủ dự án duyệt** mới gộp `main`. Ghi nhật ký mỗi lần đưa lên production trong kỳ đo 05–15/12 |
+| **T-15** | Mốc 2, sau 15/12 | Trang 5–9, Caro 12×12, Sudoku, Hòm thư Valentine (4 cảnh + 3 minigame), Tầng B (lật chai, bi ve, ô ăn quan, lò cò), Khu Vui Chơi Căn cứ. Thiết kế đã chốt đầy đủ trong `docs/gdd/` — không cần họp lại |
