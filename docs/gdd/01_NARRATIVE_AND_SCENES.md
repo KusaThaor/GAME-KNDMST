@@ -2,11 +2,11 @@
 
 | Trường | Giá trị |
 |---|---|
-| Phiên bản | **v1.1-draft** (nền v1.0 APPROVED 20/11) |
+| Phiên bản | **v1.2-draft** (nền v1.0 APPROVED 20/11) |
 | Ngày cập nhật | 21/11/2026 (UTC+7) |
-| Trạng thái | **v1.0 APPROVED 20/11; v1.1-draft thêm thay đổi Trang 6 theo chỉ đạo 21/11 — phần thay đổi chờ chủ dự án duyệt lại** (các Trang khác vẫn APPROVED). Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
+| Trạng thái | **v1.0 APPROVED 20/11; v1.2-draft: Trang 6 đã được chủ dự án CHỐT HƯỚNG ngày 21/11 (chiều) để triển khai — chi tiết còn ghi PROPOSED vẫn chỉnh được khi chơi thử.** Chưa đóng dấu APPROVED cho cả file; các Trang khác vẫn APPROVED. Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
 | Phạm vi | Bản public: Mở đầu 2026 → Mốc 1 (Trang 1–4) → chuyển Mốc → Mốc 2 (Trang 5–9) → Kết demo 2026 |
-| Nguồn kịch bản | `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` **v1.5-draft** (nền v1.4; Trang 6 đổi 21/11) là bản thoại đầy đủ. File này tóm theo từng bước và trích thoại mẫu; khi thoại ở đây khác bản kịch bản thì **bản kịch bản thắng** |
+| Nguồn kịch bản | `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` **v1.6-draft** (nền v1.4; Trang 6 đổi 21/11) là bản thoại đầy đủ. File này tóm theo từng bước và trích thoại mẫu; khi thoại ở đây khác bản kịch bản thì **bản kịch bản thắng** |
 | Nguồn khác | `NARRATIVE_TIMELINE_BIBLE_v1`, `MEMORY_ALBUM_SYSTEM_v1`, `GDD.md` v0.3 §10, quyết định chủ dự án 19/11 và 21/11, bản sửa của nhóm `fix_c__minigame.md` (Chương 2) |
 
 > **Lưu ý cho người nhận:** kịch bản đầy đủ nằm ở `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` (đã có trên GitHub, nhánh `docs/sync-approved-gdd-v1` và nhánh `docs/valentine-mailbox-main-flow`). Chưa có trong Project Knowledge — dev đọc từ repo.
@@ -38,7 +38,7 @@ Ai gặp Player ở lớp 6: **Đức + Châu** (D-01, CONFIRMED 19/11). Quân v
 | Cô Diệp | Trang 5–9 | Cô chủ nhiệm lớp 8–9. Câu chốt ở lưu bút: "Cảm ơn em mấy tấm ảnh lớp. Mà tấm nào cũng thiếu em đó." | Tên tạm |
 | Bác bảo vệ | Trang 5 | Tới nhắc khóa cổng lúc nhóm đánh caro | PROPOSED |
 | Tú | Trang 6 | Bạn cùng lớp đọc confession; hỏi Đức "bạn thư viện" là ai | Tên tạm |
-| Hòm thư Valentine *(đồ cả nhóm làm, không phải nhân vật)* | Trang 6 (Cảnh A, D); nền ở Trang 7, 9 | Hòm thư tình bạn ở Căn cứ — xem Trang 6 | **CONFIRMED 21/11** (nghĩa mới); chi tiết PROPOSED |
+| Hòm thư Valentine *(đồ cả nhóm làm, không phải nhân vật)* | Trang 6 (Cảnh B, D); nền ở Trang 7, 9 | Hòm thư tình bạn ở Căn cứ — xem Trang 6 | **CONFIRMED 21/11** (nghĩa mới); chi tiết PROPOSED |
 | Chú chủ tiệm tạp hóa | Trang 8 | Bật tivi trận chung kết, chụp ảnh giùm, cho Đức tờ lịch | PROPOSED |
 | "Bạn hay ngồi ở thư viện" | Trang 6 (chỉ được nhắc) | Người Hạ thầm thích; **không lộ mặt**, không phải Player, không thuộc nhóm năm người | Còn mở: có xuất hiện về sau không |
 | Học sinh phụ | Mọi Trang | Đứng nền; tối đa vài người đứng yên ở Tầng A | PROPOSED |
@@ -67,7 +67,7 @@ Từ đệm miền Nam vừa phải: "nè", "nha", "nghen", "hông", "lẹ", "v�
 | Đầu HK II lớp 7 (2016) | 7 | 12–13 | Trang 3: dựng Căn cứ, viết luật |
 | Cuối lớp 7 (2016) | 7 | 13 | Trang 4: ảnh đủ năm đứa đầu tiên |
 | 9/2016 | 8 | 13 | Trang 5: khai giảng lớp 8, ván caro dang dở |
-| Sau Tết Đinh Dậu (28/1/2017) → Valentine (thứ Ba 14/2/2017) | 8 | 13–14 | Trang 6: làm hòm thư (6/2) → confession của Hạ (9–10/2) → tiết Toán (13/2) → Hòm thư Valentine (14/2) |
+| Sau Tết Đinh Dậu (28/1/2017) → Valentine (thứ Ba 14/2/2017) | 8 | 13–14 | Trang 6: confession của Hạ (thứ Năm 9/2) → làm hòm thư + thư xin lỗi của Đức (thứ Sáu 10/2) → tiết Toán (13/2) → Hòm thư Valentine (14/2) |
 | 9–11/2017 | 9 | 14 | Trang 7: phiếu nguyện vọng, báo tường 20/11 |
 | 27/1/2018 (thứ Bảy) | 9 | 15 | Trang 8: xem chung kết U23 ở tiệm tạp hóa |
 | 3/2018 | 9 | 15 | Trang 8: Hội trại ở sân trường (CONFIRMED 20/11) |
@@ -202,60 +202,57 @@ Thoại mẫu trích từ bản v1.3/v1.4. Vài câu lấy từ bản trước k
 > **CONFIRMED 20/11 — Lật chai** ở **xe quà vặt cổng trường (Z03)**, không có căn-tin riêng. Cơ chế kéo – thả có tính lực, góc, trọng tâm chai vơi 1/3 và ma sát; chai đứng thì tự chụp ảnh vào Album phụ (`02` §2.3).
 
 #### TRANG 6 · VALENTINE — HÒM THƯ CỦA NĂM ĐỨA (sau Tết lớp 8) · mã `d.g08.02`
-> **CONFIRMED 21/11 — chỉ đạo chủ dự án:** **Hòm thư Valentine là sự kiện Main của Trang 6**, dùng **nghĩa mới** theo bản sửa của nhóm (`fix_c__minigame.md`, Chương 2). Người chơi luôn đi qua sự kiện này dù chọn thư nào; chỉ buổi chiều và câu chốt khác nhau. Tên trang đổi từ "Confession" sang "Valentine" (**PROPOSED** — đổi tên hiển thị không đổi mã trang).
+> **CONFIRMED 21/11 — chỉ đạo chủ dự án:** **Hòm thư Valentine là sự kiện Main của Trang 6**, dùng **nghĩa mới** theo bản sửa của nhóm (`fix_c__minigame.md`, Chương 2). Người chơi luôn đi qua sự kiện này dù chọn thư nào; chỉ buổi chiều và câu chốt khác nhau. Tên hiển thị của Trang đổi từ "Confession" sang "Valentine"; **mã trang `d.g08.02` giữ nguyên**.
+>
+> **CONFIRMED 21/11 (chiều) — thứ tự hai sự kiện:** hôm trước là **confession của Hạ** (thứ Năm 9/2); hôm sau cả nhóm **làm hòm thư và Đức xin lỗi thật bằng một lá thư** bỏ vào hòm (thứ Sáu 10/2). Giữ **4 cảnh**. Buổi chiều Valentine làm **3 minigame đầy đủ**; các nhánh còn lại rút gọn. **Ảnh chính** = ảnh nhóm bên hòm thư. Bảng nội quy giữ **ba điều**. Lời thư do Claude chỉnh (chủ dự án ủy quyền).
 >
 > **Nghĩa mới:** hòm thư **tình bạn** của năm đứa, đặt ở Căn cứ (Z05). Ai cũng bỏ thư vào: lời cảm ơn, lời trêu nhẹ, hoặc lời rủ làm một việc chung. **Không** thả thính, **không** hiểu lầm, **không** có trạng thái thất bại. Ba điều trên bảng nội quy: không tự ý lấy thư · không đọc thư riêng trước đám đông · thư gửi cả nhóm thì đọc chung. Hạ thêm một ngăn cho thư chung. Phần thưởng: hòm thư đứng ở Căn cứ từ đây tới hết Trang 9.
 >
-> **Người chơi mang ra khỏi Trang:** những điều nhỏ làm tình bạn chắc hơn; thư riêng là của riêng người nhận; dù chọn thư nào, cả năm đứa vẫn là bạn và có chung một tấm ảnh.
+> **Người chơi mang ra khỏi Trang:** những điều nhỏ — một lời cảm ơn, một lời xin lỗi viết ra cho đàng hoàng, một lời rủ đi chơi — làm tình bạn chắc hơn; thư riêng là của riêng người nhận; dù chọn thư nào, cả năm đứa vẫn là bạn và có chung một tấm ảnh.
 >
-> **SUPERSEDED:** nghĩa cũ "Hòm thư thả thính" (bao lì xì, Điều 4 của Đức, hòm có khóa, làm Hạ tổn thương) — vẫn bỏ từ v1.2 của kịch bản.
->
-> **Quan hệ với chỉ đạo 19/11 (confession của Hạ):** câu "Không có hòm thư" ở chỉ đạo 19/11 **hết hiệu lực** vì chỉ đạo 21/11 mới hơn. Phần còn lại của chỉ đạo 19/11 (Hạ tỏ tình ẩn danh, Đức trêu ba lần rồi xin lỗi thật, Đức không tự đăng) **được giữ** ở Cảnh B. **[CẦN CHỐT #1 — xem `REVISION_REVIEW_FIX_C_21-11.md`]**
+> **SUPERSEDED:** nghĩa cũ "Hòm thư thả thính" (bao lì xì, Điều 4 của Đức, hòm có khóa, làm Hạ tổn thương) — vẫn bỏ từ v1.2 của kịch bản. Câu "Không có hòm thư" của chỉ đạo 19/11 **hết hiệu lực** vì chỉ đạo 21/11 mới hơn; phần còn lại của chỉ đạo 19/11 (Hạ tỏ tình ẩn danh, Đức trêu ba lần rồi xin lỗi thật, Đức không tự đăng) **được giữ**, chỉ đổi cách xin lỗi thành thư.
 
 **Đoạn nối vào:** sau Trang 5, về Phòng 2026; kỷ vật Trang 6 sáng lên → Player chạm tờ vẽ chiếc lá → vào Cảnh A. **Đoạn nối ra:** giữ ảnh nhóm Valentine → Album thêm trang "Valentine" → về Phòng 2026 → kỷ vật Trang 7 sáng lên.
 
 **Kỷ vật dẫn vào:** tờ vẽ chiếc lá bằng bút chì, góc dưới ghi mờ "Chưa dám đưa." **[PLAYER_NAME]** (2026): "Chiếc lá của Hạ… Hạ nhờ mình giữ từ hồi lớp 8. Tới giờ mình vẫn chưa biết là vẽ cho ai." *(Hòm thư không phải kỷ vật dẫn vào; đó là đồ cả nhóm làm ra trong Trang.)*
 
-**Cảnh A — "Đi học lại sau Tết"** · thứ Hai 6/2/2017. Căn cứ, giờ về; cả trường rộ chuyện Valentine; trang confession của trường (tên hư cấu) đăng bài dạng "Gửi bạn A lớp 8B…". Đức mang lén điện thoại cũ của anh trai. Loa trường phát bài hát đang hot.
-| Bước | Người chơi làm | Thoại mẫu |
+**Cảnh A — "Sáng thứ Năm" · confession** · 9/2/2017 *(Tết Đinh Dậu mùng 1 = 28/1/2017; đi học lại từ thứ Hai 6/2; Valentine 14/2 là thứ Ba).* Căn cứ trước giờ vào học; cả trường rộ chuyện Valentine; trang confession của trường (tên hư cấu) đăng bài dạng "Gửi bạn A lớp 8B…". Đức mang lén điện thoại cũ của anh trai. Loa trường phát bài hát đang hot. Bài của Hạ gửi "bạn hay ngồi ở thư viện" đã đăng từ tối hôm trước. *(PROPOSED: Hạ chọn trang confession vì người Hạ viết cho không thuộc nhóm và nghĩ ẩn danh là an toàn.)*
+| Bước | Người chơi làm | Thoại mẫu / diễn biến |
 |---|---|---|
 | 1 · Đọc confession | Lướt màn hình 2D, đọc vài bài, xem số thứ tự và bình luận (K1) | **Châu:** "Điện thoại không được mang vô trường. Nội quy ghi rõ." · **Đức:** "Nó tự nằm trong cặp tao mà." · **Hạ:** "Gửi ẩn danh thì dễ nói thật hơn ha." *(Hạ vẽ chiếc lá ở mép vở)* |
-| 2 · Đức rủ làm hòm thư | Nghe, không chọn gì | **Đức:** "Gửi lên trang trường thì cả trường đọc hết. Tụi mình làm hòm thư riêng đi! Ai muốn nhắn gì thì bỏ vào, tối Valentine mở ra xem." · **Châu:** "Được, nhưng phải có nội quy. Thư gửi riêng thì đưa đúng người nhận, không tự tiện đọc lên." · **Quân:** "Để tớ gia cố đáy hộp." · **Hạ:** "Hạ trang trí thêm một ngăn dành cho thư gửi cả nhóm nha?" |
-| 3 · Làm hòm thư *(Main, K3, luật ở `02` §2.5.1)* | Kéo giấy, bút, keo, ruy-băng lên chiếc hộp giày làm 5 việc: chọn màu nền → dán giấy ba mặt → trang trí (tim, sao, họa tiết) → gắn khe thư + **ngăn chung** + kiểm tra nắp → gắn **bảng nội quy** (ba điều trên). Không thất bại; dán lệch thì bóc ra dán lại | Châu nhắc món còn thiếu; Hạ góp ý màu; Quân gia cố đáy |
-- **Ra khỏi cảnh:** hòm thư đứng ở Căn cứ; cả nhóm hẹn tối 14/2 mở hòm.
+| 2 · Bị trêu — ba lần | Xem; lần 2 chọn can (kéo tay / nói nhỏ / lau bảng) — lựa chọn nào Đức cũng không dừng ngay | Lần 1 hành lang: Đức đọc ké bài mới đăng, hét "Bạn thư viện ơi~". Lần 2 lớp học: Đức vẽ chiếc lá + trái tim lên bảng; cô Diệp phạt quét sân thứ Sáu. Lần 3 **ghế đá sân trường** (CONFIRMED 20/11): Hạ đặt bịch quà vặt xuống, đứng dậy bỏ đi; **Quân:** "Dừng lại." · **Châu:** "Ba lần. Tui đếm. Họp khẩn." |
+| 3 · Kế hoạch xin lỗi *(tan học, Căn cứ)* | Nghe | **Châu:** "Lỗi không phải ông đoán ra. Lỗi là trêu ba lần, người ta quay đi rồi vẫn trêu. Bước hai: xin lỗi cho đàng hoàng, không ở hành lang. Bước ba: ngừng. Bước bốn… nhờ chim bồ câu đưa thư." *(chim bồ câu = hòm thư ngày mai)*. Đức: "Tao nói trước nghĩ sau. Chắc viết ra thì… nghĩ được." |
+| 4 · Tìm Hạ + giữ giùm | Tìm ở hiên thư viện, hành lang, gốc phượng; chọn 1 trong 3 câu an ủi (không lưu) | Hạ rút tờ vẽ chiếc lá: "Hạ vẽ chiếc lá này cho người ta. Chắc không đưa được nữa. [PLAYER_NAME] giữ giùm Hạ đi. Chỗ đó không ai đọc to được." Hạ viết nhỏ "Chưa dám đưa." ở góc; Player kẹp vào sổ nhỏ của mình |
+- **Ra khỏi cảnh:** hết ngày, Đức ngồi ở Căn cứ trước một tờ giấy trắng, chưa viết được chữ nào.
 
-**Cảnh B — "Sáng thứ Năm"** · 9/2/2017. Bài của Hạ gửi "bạn hay ngồi ở thư viện" đã đăng; Đức đoán ra. *(PROPOSED: Hạ không bỏ thư vào hòm vì người Hạ viết cho không thuộc nhóm; Hạ chọn trang confession vì nghĩ ẩn danh là an toàn.)*
-| Bước | Diễn biến |
-|---|---|
-| 1 · Trêu lần 1 — hành lang | Đức hét "Bạn thư viện ơi~". Thoại đầu cảnh **một câu cho mọi người chơi**: **Đức:** "Có bài nào của tụi mình hông ta? …Không có. Chán." *(SUPERSEDED: ba nhánh theo bài Player đã gửi lên trang confession)* |
-| 2 · Trêu lần 2 — lớp học | Đức vẽ chiếc lá + trái tim lên bảng; người chơi có thể can nhưng Đức không dừng; cô Diệp phạt Đức quét sân |
-| 3 · Trêu lần 3 — ghế đá sân trường, giờ ra chơi (CONFIRMED 20/11) | Hạ đặt bịch quà vặt xuống, đứng dậy bỏ đi. **Quân:** "Dừng lại." · **Châu:** "Ba lần. Tui đếm." |
-| 4 · Nói rõ lỗi *(ở Căn cứ)* | **Châu:** "Lỗi không phải ông đoán ra. Lỗi là trêu ba lần, người ta quay đi rồi vẫn trêu." Bước ba trong kế hoạch của Châu chỉ là "ngừng". **Châu** chỉ bảng nội quy hòm thư: "Điều hai: không đọc thư riêng trước đám đông. Mới treo hôm thứ Hai. Chưa ai bỏ thư vào hòm mà ông phạm trước rồi." **[MỚI]** |
-| 5 · Xin lỗi thật | **Đức:** "Mày gửi ẩn danh là vì không muốn ai biết. Tao đoán ra thì đáng lẽ phải im, đằng này tao la lên." · **Hạ:** "Hạ không giận vì Đức đoán ra. Buồn là vì Đức cứ nhắc hoài." · Hạ dặn: "Đức đừng thề. Cứ nhớ im là được." |
-| 6 · Thấy Đức đã đổi | Thứ Sáu 10/2, lúc quét sân, Tú hỏi bạn thư viện là ai. **Đức:** "Không biết. Mà biết tao cũng không nói." *(Player chụp Đức cầm chổi → ảnh phụ)* |
-| 7 · Giữ giùm | Hạ viết nhỏ "Chưa dám đưa." ở góc tờ vẽ rồi đưa Player: "Chắc không đưa được nữa. [PLAYER_NAME] giữ giùm Hạ đi. Chỗ đó không ai đọc to được." Người chơi kẹp vào sổ nhỏ của mình |
+**Cảnh B — "Thứ Sáu" · làm hòm thư, thư xin lỗi** · 10/2/2017. Căn cứ, giờ ra chơi dài. Đức cầm tờ nháp gạch xóa đầy chữ.
+| Bước | Người chơi làm | Thoại mẫu / diễn biến |
+|---|---|---|
+| 1 · Đức rủ làm hòm thư | Nghe, không chọn gì | **Đức:** "Tao viết rồi… mà đưa tận tay thì tao lại nói bậy. Gửi lên trang trường thì cả trường đọc hết. Tụi mình làm hòm thư riêng đi! Ai muốn nhắn gì thì bỏ vào, tối Valentine mở ra xem." · **Châu:** "Được, nhưng phải có nội quy. Thư gửi riêng thì đưa đúng người nhận, không tự tiện đọc lên." · **Quân:** "Để tớ gia cố đáy hộp." · **Hạ:** "Hạ trang trí thêm một ngăn dành cho thư gửi cả nhóm nha?" |
+| 2 · Làm hòm thư *(Main, K3, luật ở `02` §2.5.1)* | Kéo giấy, bút, keo, ruy-băng lên chiếc hộp giày làm 5 việc: chọn màu nền → dán giấy ba mặt → trang trí (tim, sao, họa tiết) → gắn khe thư + **ngăn chung** + kiểm tra nắp → gắn **bảng nội quy** (ba điều trên). Không thất bại; dán lệch thì bóc ra dán lại | Châu nhắc món còn thiếu; Hạ góp ý màu; Quân gia cố đáy. Xong: hòm thư đứng ở Căn cứ; cả nhóm hẹn tối thứ Ba 14/2 mở hòm |
+| 3 · Thư xin lỗi của Đức *(CONFIRMED 21/11)* | Chọn **câu mở đầu thư** (3 lựa chọn, chỉ đổi dòng đầu, **không lưu**) → lật từng dòng thư viết tay → kéo thư vào khe (thư riêng, ghi tên Hạ ngoài phong bì) | Thân thư **giữ nguyên chữ lời xin lỗi cũ của Đức**: "Tao trêu mày cả ngày. Mày bỏ đi rồi tao vẫn trêu. / Mày gửi ẩn danh là vì không muốn ai biết. Tao đoán ra thì đáng lẽ phải im, đằng này tao la lên. Lúc nào tao cũng nói trước nghĩ sau. / Từ giờ tao không nhắc nữa. Ai hỏi tao nói không biết." **Châu:** "Thư riêng. Đúng người nhận. Đúng nội quy." |
+| 4 · Hạ đọc thư | Đi cùng Đức ra hiên chờ (Z02b); không ai đọc to, không ai liếc | Hạ lấy thư ở ngăn riêng, đọc một mình rồi quay lại: "Hạ muốn kêu Đức thôi… mà nói không ra." · "Hạ không giận vì Đức đoán ra. Buồn là vì Đức cứ nhắc hoài." · "Đức đừng thề. Cứ nhớ im là được." · "Ừ. Hạ nhận lời xin lỗi." |
+| 5 · Quét sân | Chụp Đức cầm chổi (K2) | Tan học thứ Sáu. **Tú:** "Bạn thư viện của Hạ là ai vậy? Mày biết đúng không?" · **Đức:** "Không biết. Mà biết tao cũng không nói." *(ảnh phụ)* |
 
-*(Thứ tự bước trong bản kịch bản: tìm Hạ + giữ giùm → xin lỗi → quét sân. Bảng này giữ số bước cũ; thoại và thứ tự lấy theo kịch bản v1.5.)*
-
-**Cảnh C — "Tuần sau" · Tiết Toán** *(Side 01 đã nâng lên Main — bản v1.4)* · thứ Hai 13/2/2017. Cô phát lại bài kiểm tra 15 phút; Quân gập bài vào sách. Nói chuyện với Quân (3 lựa chọn đều dẫn ra cột rổ) → giảng phương trình bậc nhất ở cột rổ (mỗi lần ném trúng mở một bước giải) → Quân vẽ mặt cười ở lề tờ nháp, đưa Player. Cuối cảnh: nét chữ Châu trên góc bảng "14/2 — mở hòm thư ở Căn cứ". Giữ vì lưu bút Trang 9 nhắc "Cảm ơn cậu đã giảng Toán" (xem dưới).
+**Cảnh C — "Thứ Hai tuần sau" · Tiết Toán** *(Side 01 đã nâng lên Main — bản v1.4)* · 13/2/2017. Cô phát lại bài kiểm tra 15 phút; Quân gập bài vào sách. Nói chuyện với Quân (3 lựa chọn đều dẫn ra cột rổ) → giảng phương trình bậc nhất ở cột rổ (mỗi lần ném trúng mở một bước giải) → Quân vẽ mặt cười ở lề tờ nháp, đưa Player. Cuối cảnh: nét chữ Châu trên góc bảng "14/2 — mở hòm thư ở Căn cứ". Giữ vì lưu bút Trang 9 nhắc "Cảm ơn cậu đã giảng Toán" (xem dưới).
 
 **Cảnh D — "Thứ Ba, 14 tháng 2" · Hòm thư Valentine** *(Main)* · Căn cứ (Z05) sáng, buổi chiều theo thư (Z03 / Z02 / Z02b), tối về Căn cứ.
 | Bước | Người chơi làm | Kết quả |
 |---|---|---|
 | 1 · Viết thư, bỏ vào hòm | Chọn **người nhận** (Đức / Châu / Quân / Hạ / cả nhóm) → chọn **nội dung** → bỏ vào khe (K3, `UI_LETTER_PICKER`) | Riêng cho một bạn: 3 loại thư — **cảm ơn · trêu chọc · rủ làm việc chung** (lời thư ở kịch bản §Trang 6 Cảnh D). Cả nhóm: chọn 1 trong 4 câu hoặc vẽ một bức tranh nhỏ về cả nhóm |
 | 2 · Giờ ra chơi | Đưa thư riêng đúng người nhận (theo nội quy số 1); thư chung nằm ngăn chung tới tối | Bạn nhận phản ứng theo loại thư (Đức vênh mặt / ôm ngực; Châu nhìn chỗ khác; Quân cười tai đỏ; Hạ mừng). Không có phản ứng nào là "sai" |
-| 3 · Buổi chiều — theo thư | Chỉ **thư "rủ" gửi riêng** mở nhánh riêng; mọi thư khác mở nhánh chung. Chỉ đi **một** nhánh | Nhánh riêng: **Kèo ăn vặt** (Đức, Z03) · **Danh sách mua sắm** (Châu, tiệm tạp hóa Z03) · **Thử thách ném rổ** (Quân, Z02) · **Một vòng sân trường** (Hạ, Z02/Z02b). Nhánh chung: **"Một buổi Valentine của năm đứa"** (Z05). **Tầng A: bản rút gọn 1–2 phút, không có thua (mặc định); Tầng B: minigame đầy đủ** `02` §2.5.3. **[CẦN CHỐT #3]** Mỗi nhánh có ảnh phụ |
-| 4 · Tối — mở hòm thư | Quây quanh hòm ở Căn cứ lúc hoàng hôn; nghe bốn tờ ngăn chung do Đức đọc to; bạn nhận nhắc lại thư riêng của Player **không đọc to nội dung** | **Đức** định đọc to thư riêng rồi khựng: "Khoan. Nội quy số hai." · **Châu:** "Ông nhớ được rồi." · **Đức:** "Cứ nhớ im là được." *(gọi lại lời Hạ, không nhắc tên chuyện)* · Câu chốt khác nhau theo loại thư |
+| 3 · Buổi chiều — theo thư *(CONFIRMED 21/11: 3 minigame đầy đủ)* | Chỉ **thư "rủ" gửi riêng** mở nhánh riêng; mọi thư khác mở nhánh chung. Chỉ đi **một** nhánh | **Minigame 1 · Ném bóng tính điểm** (Quân, K5, Z02) · **Minigame 2 · Săn góc ảnh** (Hạ, K2, Z02/Z02b) · **Minigame 3 · Trang trí Căn cứ** (nhánh chung "Một buổi Valentine của năm đứa", K3, Z05). Rút gọn: **Kèo ăn vặt** (Đức, Z03) và **Danh sách mua sắm** (Châu, tiệm tạp hóa Z03) chỉ là lựa chọn/nhặt đồ ngắn; "Đoán xem ai là người…" là câu hỏi nhanh. Luật `02` §2.5.3. Mỗi nhánh có ảnh phụ |
+| 4 · Tối — mở hòm thư | Quây quanh hòm ở Căn cứ lúc hoàng hôn; nghe bốn tờ ngăn chung do Đức đọc to; bạn nhận nhắc lại thư riêng của Player **không đọc to nội dung** | **Đức** định đọc to thư riêng rồi khựng: "Khoan. Nội quy số hai." · **Châu:** "Ông nhớ được rồi." · **Đức:** "Cứ nhớ im là được." *(gọi lại lời Hạ ở Cảnh B, không nhắc tên chuyện)* · Câu chốt khác nhau theo loại thư |
 | 5 · Ảnh nhóm | Hẹn giờ, chạy vào khung; **hòm thư nằm trong khung** (K2); cả năm có mặt dù chọn thư nào | **Đức:** "Đứng cạnh hòm thư nha! Hòm thư tính là một thành viên!" |
 
 - **Hết Trang khi:** giữ ảnh nhóm Valentine. Không còn bước Main nào sau đó.
-- **Ảnh chính:** ảnh nhóm bên hòm thư (**PROPOSED**; bản v1.4 là Đức cầm chổi — nay là ảnh phụ). **[CẦN CHỐT #5]** Ảnh phụ: Đức cầm chổi; "Player × bạn" nếu đi nhánh riêng.
+- **Ảnh chính:** ảnh nhóm bên hòm thư (**CONFIRMED 21/11**; bản v1.4 là Đức cầm chổi — nay là ảnh phụ). Ảnh phụ: Đức cầm chổi (Cảnh B); "Player × bạn" nếu đi nhánh riêng.
 - **Album:** trang "Valentine"; tờ vẽ chiếc lá của Hạ và tờ nháp mặt cười của Quân vào dạng hình nhỏ.
 - **Phòng 2026:** tờ vẽ kẹp trong sổ nhỏ của Player trên kệ, **không** dán tường; ảnh nhóm Valentine dán tường (PROPOSED).
-- **Lưu:** thư Valentine Player gửi (người nhận × loại, hoặc cả nhóm + lời nhắn đã chọn) và kiểu hòm thư (màu nền + họa tiết); kết quả mini-game theo `02` §4.2. Các lựa chọn khác chỉ đổi thoại tại chỗ.
+- **Lưu:** thư Valentine Player gửi (người nhận × loại, hoặc cả nhóm + lời nhắn đã chọn) và kiểu hòm thư (màu nền + họa tiết); kết quả 3 minigame theo `02` §4.2. Các lựa chọn khác (kể cả câu đầu thư xin lỗi của Đức) chỉ đổi thoại tại chỗ, **không lưu**.
 - **Sau Trang 6:** hòm thư vẫn đứng ở Căn cứ trong Trang 7 và 9 (đồ nền, không thoại mới); Trang 9 dọn Căn cứ thì xếp vào thùng. Từ Trang 7 trở đi **không ai nhắc lại** chuyện của Hạ. Ở Hội trại, gợi ý cổng trại "trái tim" đã đổi thành "tên lửa" để tránh gợi lại.
-- **Trang 6 có 4 cảnh** (GDD ghi 1–3 cảnh/Trang). Mặc định giữ 4, Cảnh C ngắn; muốn giảm 3 thì nhập tiết Toán vào phần sáng của Cảnh D. **[CẦN CHỐT #2]**
-- **Chỗ thoại bản sửa của nhóm được chỉnh khi đưa vào:** đại từ theo §2.3; "cuối tuần / hôm nào" → "chiều nay"; phản ứng và câu chốt là lời mẫu. **[CẦN CHỐT #4]**
+- **Trang 6 có 4 cảnh** (GDD ghi 1–3 cảnh/Trang): **CONFIRMED 21/11 giữ 4**, Cảnh C ngắn; muốn cắt thì nhập tiết Toán vào phần sáng của Cảnh D.
+- **Chỗ thoại bản sửa của nhóm được chỉnh khi đưa vào:** đại từ theo §2.3; "cuối tuần / hôm nào" → "chiều nay"; phản ứng và câu chốt là lời mẫu (**CONFIRMED 21/11, ủy quyền**: người giữ giọng nhân vật chỉnh sau được).
 
 #### TRANG 7 · TỜ BÁO TƯỜNG CUỐI CÙNG (học kỳ I lớp 9)
 **Kỷ vật dẫn vào:** bản báo tường thu nhỏ khổ A5 chép tay, gấp đôi; góc dưới có một ô.
@@ -370,7 +367,7 @@ Quy tắc: 1 kỷ vật mở đúng 1 Trang; kỷ vật kế tiếp **sáng lên
 |---|---|---|
 | Máy ảnh compact của Player | Mọi Trang | Công cụ chụp ảnh; của Player (CONFIRMED 19/11) |
 | Sổ nhỏ của Player | 1, 6, 7 | Nơi kẹp tờ vẽ chiếc lá, bản A5 |
-| **Hòm thư Valentine** + bảng nội quy 3 điều + thư Valentine *(CONFIRMED 21/11; chi tiết PROPOSED)* | 6 (làm ở Cảnh A, dùng ở Cảnh D); đồ nền 7, 9 | Đồ cả nhóm làm ở Căn cứ; không phải kỷ vật dẫn vào; trong Album có ảnh nhóm bên hòm thư |
+| **Hòm thư Valentine** + bảng nội quy 3 điều + thư Valentine *(CONFIRMED 21/11; chi tiết PROPOSED)* | 6 (làm ở Cảnh B, dùng ở Cảnh D); đồ nền 7, 9 | Đồ cả nhóm làm ở Căn cứ; không phải kỷ vật dẫn vào; trong Album có ảnh nhóm bên hòm thư |
 | Mẩu phấn cuối cùng | 5 | Nằm trong hộp phấn KV-01 |
 | Chai nhựa của Đức | 5 | Trò lật chai (tùy chọn) ở xe quà vặt Z03 |
 | Bút highlight vàng của Châu | 7 | Hình nhỏ trên trang Album "Báo tường" |
@@ -391,7 +388,7 @@ Quy tắc: 1 kỷ vật mở đúng 1 Trang; kỷ vật kế tiếp **sáng lên
 | 3 | Căn cứ | Theo v1.4 | Biển tên |
 | 4 | Đủ năm đứa | Ảnh cầu vồng | — |
 | 5 | Lên lớp 8 | Bàn caro dang dở | Ảnh khai giảng |
-| 6 | Valentine *(trước: Confession)* | Ảnh nhóm bên hòm thư (PROPOSED; CẦN CHỐT #5) | Đức cầm chổi; "Player × bạn" nếu đi nhánh riêng; tờ vẽ chiếc lá và tờ nháp mặt cười (hình nhỏ) |
+| 6 | Valentine *(trước: Confession)* | Ảnh nhóm bên hòm thư (CONFIRMED 21/11) | Đức cầm chổi; "Player × bạn" nếu đi nhánh riêng; tờ vẽ chiếc lá và tờ nháp mặt cười (hình nhỏ) |
 | 7 | Báo tường | Báo tường, tay bốn người | Ô trống + bút highlight |
 | 8 | Hội trại | Ảnh quanh lửa | Ảnh trước tivi, cờ giấy |
 | 9 | Vẫn đủ năm đứa | Ảnh đủ năm đứa (1 trong 3) | 2 ảnh còn lại, áo chữ ký, lưu bút |
@@ -407,7 +404,7 @@ Quy tắc: 1 kỷ vật mở đúng 1 Trang; kỷ vật kế tiếp **sáng lên
 | Bạn làm cặp trực nhật | 5 | Thoại trực nhật |
 | ~~Bài confession Player gửi~~ **SUPERSEDED 21/11** | — | Bỏ |
 | Thư Valentine Player gửi (người nhận × loại, hoặc cả nhóm + lời nhắn) | 6 | Phản ứng giờ ra chơi, nhánh buổi chiều, câu chốt tối |
-| Kiểu hòm thư (màu nền, họa tiết) *(PROPOSED)* | 6 | Hòm thư ở Căn cứ Trang 7, 9; ảnh nhóm Valentine |
+| Kiểu hòm thư (màu nền, họa tiết) *(PROPOSED)* | 6 (Cảnh B) | Hòm thư ở Căn cứ Trang 7, 9; ảnh nhóm Valentine |
 | Player nói thật ở báo tường (có/không) | 7 | Một câu của Châu ở lửa trại |
 | Kiểu cổng trại (tên lửa / chiếc lá / thường) | 8 | Ảnh lửa trại |
 | Ảnh chính Trang 9 | 9 | Album, phòng 2026 |
@@ -442,18 +439,19 @@ Các lựa chọn khác chỉ đổi lời thoại ngay lúc đó.
 | 6 | Tháng và nơi Hội trại | **CONFIRMED 20/11:** sân trường, tháng 3/2018 |
 | 7 | "Bạn thư viện" của Hạ | **Còn mở:** có xuất hiện lại ở Mốc 3 không |
 | 8 | Trang 6: điện thoại Đức mang lén, tên "Tú" | **Còn mở:** tên tạm; nhóm kiểm |
-| 9 | Ảnh chính Trang 3 và Trang 6 | **Còn mở (Trang 3).** Trang 6: **PROPOSED 21/11** ảnh nhóm bên hòm thư — **CẦN CHỐT #5** |
+| 9 | Ảnh chính Trang 3 và Trang 6 | **Còn mở (Trang 3).** Trang 6: **CONFIRMED 21/11** ảnh nhóm bên hòm thư |
 | 10 | Token tên Player | **PROPOSED:** dev chuyển `[PLAYER_NAME]` → `{player_name}` khi nhập nội dung |
 | 11 | Lần trêu thứ ba ở Trang 6 | **CONFIRMED 20/11:** ghế đá sân trường giờ ra chơi |
 | 12 | Đua thuyền | **CONFIRMED 20/11:** Quân luôn về nhất; người chơi thắng khi về đích không lật |
 | 13 | Hòm thư Valentine trong luồng Main (Trang 6) | **CONFIRMED 21/11 (chủ dự án):** Main, nghĩa mới theo bản sửa nhóm. Câu "Không có hòm thư" của chỉ đạo 19/11 hết hiệu lực. Nghĩa cũ "thả thính" vẫn SUPERSEDED |
-| 14 | Mạch confession của Hạ cùng Trang 6 | **PROPOSED 21/11:** giữ ở Cảnh B. **[CẦN CHỐT #1]** |
-| 15 | Trang 6 có 4 cảnh (GDD ghi 1–3) | **PROPOSED 21/11:** giữ 4, hoặc nhập Cảnh C vào Cảnh D. **[CẦN CHỐT #2]** |
-| 16 | Độ sâu nhánh buổi chiều | **PROPOSED 21/11:** Tầng A (rút gọn) làm bắt buộc, Tầng B (minigame đầy đủ) nếu còn thời gian. **[CẦN CHỐT #3]** |
-| 17 | Lời thư, phản ứng, câu chốt (Cảnh D) | **PROPOSED 21/11:** đại từ đổi theo §2.3, "chiều nay"; phản ứng/câu chốt là lời mẫu. **[CẦN CHỐT #4]** |
-| 18 | Kiểu bảng nội quy hòm thư | **PROPOSED 21/11:** gắn đủ 3 điều, người chơi chọn kiểu bảng. **[CẦN CHỐT #6]** |
+| 14 | Mạch confession của Hạ cùng Trang 6 | **CONFIRMED 21/11 (chiều):** confession ở Cảnh A (thứ Năm); hôm sau làm hòm thư và Đức xin lỗi bằng thư (Cảnh B) |
+| 15 | Trang 6 có 4 cảnh (GDD ghi 1–3) | **CONFIRMED 21/11:** giữ 4 cảnh (Cảnh C ngắn) |
+| 16 | Độ sâu nhánh buổi chiều | **CONFIRMED 21/11:** làm **3 minigame đầy đủ** (mặc định: Ném bóng tính điểm · Săn góc ảnh · Trang trí Căn cứ — đổi được); nhánh còn lại rút gọn |
+| 17 | Lời thư, phản ứng, câu chốt (Cảnh D) | **CONFIRMED 21/11 (ủy quyền cho Claude chỉnh):** đại từ đổi theo §2.3, "chiều nay"; phản ứng/câu chốt là lời mẫu |
+| 18 | Kiểu bảng nội quy hòm thư | **CONFIRMED 21/11:** giữ đủ 3 điều, người chơi chọn kiểu bảng |
 
 ## 11. Changelog
+- **v1.2-draft — 21/11/2026 (chiều):** Chủ dự án trả lời 6 câu rà soát. Sắp lại Trang 6: **confession (thứ Năm 9/2) → làm hòm thư + Đức xin lỗi bằng thư (thứ Sáu 10/2)** → Toán (13/2) → Valentine (14/2); giữ 4 cảnh; **3 minigame đầy đủ** buổi chiều; ảnh chính là ảnh nhóm bên hòm thư; bảng nội quy giữ 3 điều; lời thư do Claude chỉnh. Gỡ mọi `CẦN CHỐT #1–#6`. Lời xin lỗi của Đức và lời đáp của Hạ giữ nguyên chữ, chỉ đổi sang dạng thư. Chưa đóng dấu APPROVED cả file.
 - **v1.1-draft — 21/11/2026:** Chủ dự án chỉ đạo đưa **Hòm thư Valentine vào luồng Main** với nghĩa mới theo bản sửa của nhóm (`fix_c__minigame.md`, Chương 2). Viết lại Trang 6 (tên "Valentine", mã `d.g08.02` giữ): thêm Cảnh A bước 2–3 (làm hòm thư) và Cảnh D (Hòm thư Valentine 14/2); giữ confession ở Cảnh B (sửa: bỏ ba nhánh theo bài Player gửi, thêm câu của Châu về nội quy); giữ Cảnh C (Toán). Bỏ câu "Không có hòm thư" (19/11). Sửa bảng timeline, §2.2, §5.2, §6, §7, §9, §10. Mọi chỗ chưa chốt ghi `CẦN CHỐT #1–#6`. Tổng hợp xung đột và cách sửa: `REVISION_REVIEW_FIX_C_21-11.md`. Các Trang khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Chốt: Sudoku ở Trang 7 cảnh A; tỉ số caro theo loạt ván (3–3 → 4–3) lấy động cho nắp hộp phấn và tin nhắn cuối; Quân luôn về nhất ở đua thuyền; lần trêu thứ ba ở ghế đá. Thêm chi tiết: ở cảnh chuyển Mốc hai con số trên nắp hộp phấn còn nhòe, chơi xong Trang 5 mới hiện tỉ số. Hai bản nháp trước đổi tên thành v1.0-draft và v1.1-draft.
 - **v1.1-draft — 20/11/2026 (tối):** Ghi quyết định chủ dự án 20/11: caro, Sudoku, đá cầu, đua thuyền thành minigame chơi thật (luật ở `02`); lật chai ở xe quà vặt Z03; bác bảo vệ là cảnh thoại; lần trêu thứ ba ở Trang 6 rời khỏi căn-tin; ô A5 theo v1.4; Hội trại ở sân trường tháng 3/2018. Thêm đề xuất tỉ số caro theo loạt ván.

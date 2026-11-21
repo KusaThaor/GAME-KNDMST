@@ -2,11 +2,11 @@
 
 | Trường | Giá trị |
 |---|---|
-| Phiên bản | v1 · 21/11/2026 (UTC+7) · **DRAFT — chờ chủ dự án duyệt** |
+| Phiên bản | v1.1 · 21/11/2026 chiều (UTC+7) · **DRAFT — phần B đã được chủ dự án trả lời; xem "ĐÃ CHỐT 21/11 chiều" ở cuối file** |
 | Nhánh / nguồn | Nhánh `docs/valentine-mailbox-main-flow` (tách từ `docs/sync-approved-gdd-v1`, commit cb2d81e) |
 | Bản sửa của nhóm | `fix_c__minigame.md` (Chương 2 ↔ Trang 6) |
-| GDD hiện hành | `docs/gdd/00–03` v1.0 APPROVED (20/11) → nay v1.1-draft |
-| Kịch bản | `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` v1.4 → v1.5-draft |
+| GDD hiện hành | `docs/gdd/00–03` v1.0 APPROVED (20/11) → nay v1.2-draft |
+| Kịch bản | `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` v1.4 → v1.6-draft |
 | Chỉ đạo | Chủ dự án 21/11: **hòm thư Valentine vào luồng Main, dùng nghĩa mới của bản sửa** |
 
 Hai phần: **A. Báo cáo** (đã làm) và **B. Cần chủ dự án duyệt**.
@@ -22,6 +22,7 @@ Hai phần: **A. Báo cáo** (đã làm) và **B. Cần chủ dự án duyệt**
 - **Sau Trang 6, người chơi nên cảm thấy:** những điều nhỏ làm tình bạn chắc hơn; thư riêng là của riêng người nhận; dù chọn thư nào, cả năm đứa vẫn là bạn và có chung một tấm ảnh.
 
 ## A2. Sự kiện mới nằm ở đâu, chạy thế nào
+> **Cập nhật 21/11 chiều:** bảng bốn cảnh bên dưới là **bản v1.5 (trung gian)**. Chủ dự án đã chốt thứ tự mới — **A thứ Năm 9/2 confession → B thứ Sáu 10/2 làm hòm thư + Đức xin lỗi bằng thư + quét sân → C thứ Hai 13/2 Toán → D thứ Ba 14/2 Valentine** — xem phần "ĐÃ CHỐT" ở cuối file và `docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`. Phần A3–A6 giữ nguyên làm lịch sử rà soát.
 - **Vị trí:** Trang 6 (mã `d.g08.02`, đổi tên hiển thị "Valentine — Hòm thư của năm đứa"). Bốn cảnh:
 
 | Cảnh | Ngày | Nơi | Nội dung |
@@ -115,7 +116,7 @@ Tên đã dò: "hòm thư", "Hòm thư Valentine", "thùng thư", "hộp thư", 
 
 ---
 
-# B. CẦN CHỦ DỰ ÁN DUYỆT
+# B. CẦN CHỦ DỰ ÁN DUYỆT — **ĐÃ TRẢ LỜI 21/11 chiều (xem bảng "ĐÃ CHỐT" ngay dưới)**
 Mỗi mục có **đề xuất mặc định** đang nằm trong tài liệu. Chọn "ok" thì mình giữ; chọn khác thì mình sửa.
 
 | # | Câu hỏi | Mặc định đang dùng | Phương án khác |
@@ -132,3 +133,19 @@ Mỗi mục có **đề xuất mặc định** đang nằm trong tài liệu. Ch
 - Người giữ nhánh `feat/sprint-0412`: cập nhật `docs/PAGE_DATA_GUIDE.md` dòng 82 khi gộp (nhánh khác, mình không sửa).
 
 **Chưa có hình cho hòm thư:** cần ChatGPT/Gemini phác 1 hình hòm thư + 1–2 kiểu bảng nội quy trước khi dựng (quy trình concept → duyệt → dựng).
+
+---
+
+# ĐÃ CHỐT 21/11 chiều (chủ dự án trả lời 6 câu)
+Nguyên văn: *"1. sự kiện song song, hôm trước confession xong hôm sau làm hòm thư, để đức xin lỗi thật qua thư luôn, giữ 4 mặc định đi, triển khai luôn nhưng 3 minigame thôi, lời thư tự đổi, ảnh nhóm bên hòm thư. điều 6 giữ y nguyên. Làm xong push git để claude khác dev"*
+
+| # | Kết quả | Ghi chú cách hiểu |
+|---|---|---|
+| 1 | **CONFIRMED:** giữ confession; thứ Năm 9/2 confession → thứ Sáu 10/2 làm hòm thư; **Đức xin lỗi thật bằng thư** bỏ vào hòm | Lời xin lỗi của Đức và lời đáp của Hạ giữ nguyên chữ, chỉ đổi từ nói sang thư. Câu mở đầu thư có 3 lựa chọn (không lưu) |
+| 2 | **CONFIRMED:** giữ 4 cảnh | "giữ 4 mặc định" hiểu là giữ các mặc định #2, #4, #5, #6 |
+| 3 | **CONFIRMED:** triển khai luôn bản đầy đủ nhưng chỉ **3 minigame** | **Chủ dự án không chỉ định 3 trò nào.** Mặc định của Claude (PROPOSED): **Ném bóng tính điểm** (Quân) · **Săn góc ảnh** (Hạ) · **Trang trí Căn cứ** (nhánh chung). Các nhánh còn lại rút gọn |
+| 4 | **CONFIRMED (ủy quyền):** Claude tự chỉnh lời thư | "lời thư tự đổi" hiểu là để Claude đổi. Người giữ giọng nhân vật vẫn có thể chỉnh sau |
+| 5 | **CONFIRMED:** ảnh chính = ảnh nhóm bên hòm thư | Đức cầm chổi xuống ảnh phụ |
+| 6 | **CONFIRMED:** bảng nội quy giữ đủ 3 điều | "điều 6 giữ y nguyên" hiểu là **câu hỏi số 6**. Điều 6 trong sổ luật Căn cứ (Trang 3) không bị đụng ở cả hai cách hiểu |
+
+**Việc sau chốt:** GDD `00`–`03` lên v1.2-draft, kịch bản lên v1.6-draft, thêm `IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md` cho dev. Vẫn **chưa đóng dấu APPROVED** cho cả GDD.

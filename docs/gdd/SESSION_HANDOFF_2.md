@@ -1,28 +1,34 @@
 # SESSION_HANDOFF
-Phiên bản v9 · Cập nhật 21/11/2026 (UTC+7) · Bộ ngữ cảnh v1.0 (GDD 00–03 đang ở v1.1-draft, xem dưới).
+Phiên bản v10 · Cập nhật 21/11/2026 chiều (UTC+7) · Bộ ngữ cảnh v1.0 (GDD 00–03 đang ở v1.2-draft, xem dưới).
 
 ## Mục tiêu hiện tại
-Dựng bản public (Mốc 1 + Mốc 2, 9 Trang) kịp hạn chuẩn bị 04/12, theo GDD `docs/gdd/00`–`03`. Phiên 21/11: đưa **Hòm thư Valentine** vào luồng Main của Trang 6 theo bản sửa của nhóm.
+Dựng bản public (Mốc 1 + Mốc 2, 9 Trang) kịp hạn chuẩn bị 04/12 theo GDD `docs/gdd/00`–`03`. Việc đang chạy: **Trang 6 "Valentine — Hòm thư của năm đứa"** đã được chủ dự án chốt hướng, sẵn sàng giao cho dev.
 
-## Quyết định mới (21/11)
-- **CONFIRMED (chủ dự án):** Hòm thư Valentine là sự kiện **Main** của Trang 6, **nghĩa mới** (hòm thư tình bạn: cảm ơn · trêu nhẹ · rủ làm việc chung; nội quy 3 điều). Câu "Không có hòm thư" của chỉ đạo 19/11 hết hiệu lực. Nghĩa cũ "thả thính" vẫn SUPERSEDED.
-- **PROPOSED, chờ duyệt (CẦN CHỐT #1–#6):** giữ confession của Hạ ở Cảnh B; Trang 6 có 4 cảnh; nhánh buổi chiều làm bản rút gọn trước; lời thư/phản ứng; ảnh chính = ảnh nhóm bên hòm thư; bảng nội quy đủ 3 điều. Chi tiết: `docs/gdd/REVISION_REVIEW_FIX_C_21-11.md`.
+## Quyết định mới (21/11 chiều) — CONFIRMED
+- Hai sự kiện nối nhau: **thứ Năm 9/2 confession** của Hạ → **thứ Sáu 10/2 cả nhóm làm hòm thư, Đức xin lỗi bằng thư** (lời giữ nguyên chữ) → thứ Hai 13/2 Toán → **thứ Ba 14/2 Valentine**.
+- Giữ 4 cảnh. Buổi chiều Valentine làm **3 minigame đầy đủ**, nhánh còn lại rút gọn; mọi minigame có nút "Bỏ qua".
+- Ảnh chính = ảnh nhóm bên hòm thư. Bảng nội quy đủ 3 điều. Lời thư do Claude chỉnh (ủy quyền).
+- Hòm thư nghĩa **tình bạn**; nghĩa cũ "thả thính" vẫn SUPERSEDED.
+
+## Cách mình hiểu (PROPOSED, báo chủ dự án)
+- **3 minigame nào:** chủ dự án chưa chỉ định → mặc định Ném bóng tính điểm · Săn góc ảnh · Trang trí Căn cứ.
+- **"Điều 6 giữ y nguyên"** hiểu là câu hỏi số 6 (bảng nội quy đủ 3 điều). Điều 6 sổ luật Trang 3 không đổi.
 
 ## Trạng thái từng việc
-- Tài liệu: nhánh `docs/valentine-mailbox-main-flow` có `00`–`03` v1.1-draft, kịch bản v1.5-draft (`docs/gdd/scripts/`), file rà xung đột. **Chưa gộp**, chưa duyệt; các Trang khác vẫn APPROVED v1.0.
-- Code: chưa làm Trang 6 (không có màn chọn thư, hòm thư, nhánh chiều). Không nhánh code nào nhắc hòm thư.
+- Tài liệu: nhánh `docs/valentine-mailbox-main-flow` có `00`–`03` v1.2-draft, kịch bản v1.6-draft, `IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`, file rà soát. **Chưa gộp**, chưa APPROVED cả file.
+- Code: chưa làm gì cho Trang 6.
 
 ## Đã kiểm tra / chưa kiểm tra
-- Đã: tìm mọi chỗ nhắc hòm thư trong repo và Project; đối chiếu ngày (Valentine 14/2/2017 = thứ Ba); đối chiếu "căn-tin ↔ ghế đá"; mọi lựa chọn thư đều có đường đi tiếp.
-- Chưa: chơi thử; hình hòm thư và bảng nội quy chưa có concept; ngân sách/giá nhánh ăn vặt và mua sắm chưa đặt; phản ứng và câu chốt là lời mẫu AI viết.
+- Đã: đối chiếu ngày (14/2/2017 = thứ Ba); ngày–cảnh–tham chiếu chéo khớp giữa kịch bản và `00`–`03`; mọi lựa chọn thư đều có đường đi tiếp (bảng ở `02` §2.5.5).
+- Chưa: chơi thử; concept hình hòm thư + bảng; giá nhánh ăn vặt; lời mẫu phản ứng/câu chốt do AI viết; chưa xác minh quan hệ hai nhánh code.
 
 ## File cần đọc cho tác vụ kế tiếp
-`docs/gdd/REVISION_REVIEW_FIX_C_21-11.md` → `docs/gdd/02` §2.5 → kịch bản Trang 6 → `docs/gdd/03` (dòng Valentine).
+`docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md` → `02` §2.5 → kịch bản Trang 6 → `03` (dòng Valentine).
 
 ## Điểm chưa rõ
-- 6 câu CẦN CHỐT ở trên.
+- Ba minigame có đúng ý chủ dự án không; concept hòm thư; tên "Tú".
 - Danh sách Side; nhân lực; ảnh chính Trang 3; "bạn thư viện" có trở lại không; ngoại hình NPC; nhạc nền.
 - `docs/PAGE_DATA_GUIDE.md` dòng 82 (nhánh `feat/sprint-0412`) còn ghi Trang 6 "Confession" — chưa sửa vì khác nhánh.
 
 ## Một bước tiếp theo
-Chủ dự án trả lời #1–#6; sau đó đổi nhãn sang APPROVED, gộp nhánh vào `docs/sync-approved-gdd-v1` và chuyển Trang 6 (Tầng A) cho dev.
+Dev (Claude khác) chọn nhánh code theo `WORKSPACE.md`, rồi dựng Trang 6 theo file bàn giao; chủ dự án xác nhận 3 minigame trước khi dev bắt tay vào các trò.
