@@ -174,6 +174,8 @@ export const PDES: PresentDayEvent[] = [
   { id: 'pde_06', type: 'CONTACT', trigger: { day: 'd.g07.03' }, effects: [{ kind: 'unlock_quest', quest_id: 'q_hub_pd_02' }], once: true },
   { id: 'pde_11', type: 'RESTORE', trigger: { day: 'd.g08.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g08.01' }], once: true },
   { id: 'pde_12', type: 'SHELF', trigger: { day: 'd.g08.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_01' }], once: true },
+  { id: 'pde_13', type: 'RESTORE', trigger: { day: 'd.g08.02' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g08.02' }], once: true },
+  { id: 'pde_14', type: 'SHELF', trigger: { day: 'd.g08.02' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_02' }], once: true },
   { id: 'pde_15', type: 'RESTORE', trigger: { day: 'd.g09.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.01' }], once: true },
   { id: 'pde_16', type: 'SHELF', trigger: { day: 'd.g09.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_03' }], once: true },
   { id: 'pde_17', type: 'RESTORE', trigger: { day: 'd.g09.02' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.02' }], once: true },

@@ -6,5 +6,5 @@ import type { Chapter } from './types';
 
 export const CHAPTERS: Chapter[] = [
   { id: 'ch_m1', label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', memory_day_ids: ['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03'] },
-  { id: 'ch_m2', label: '[PLACEHOLDER] Mốc 2 · lớp 8–9', memory_day_ids: ['d.g08.01', 'd.g09.01', 'd.g09.02', 'd.g09.03'] },
+  { id: 'ch_m2', label: '[PLACEHOLDER] Mốc 2 · lớp 8–9', memory_day_ids: ['d.g08.01', 'd.g08.02', 'd.g09.01', 'd.g09.02', 'd.g09.03'] },
 ];
