@@ -1,0 +1,158 @@
+{
+  "HAIR_001": {
+    "name": "Classic Bowl Cut",
+    "glb": "character_hair_001_v11.glb",
+    "glb_size_kb": 427.8,
+    "renders": {
+      "front": "hair_001_front.png",
+      "three_quarter": "hair_001_three_quarter.png",
+      "side": "hair_001_side.png",
+      "back": "hair_001_back.png"
+    },
+    "quads": 612,
+    "color": "#2b201c"
+  },
+  "HAIR_002": {
+    "name": "Sporty Short",
+    "glb": "character_hair_002_v11.glb",
+    "glb_size_kb": 539.7,
+    "renders": {
+      "front": "hair_002_front.png",
+      "three_quarter": "hair_002_three_quarter.png",
+      "side": "hair_002_side.png",
+      "back": "hair_002_back.png"
+    },
+    "quads": 1142,
+    "color": "#161b26"
+  },
+  "HAIR_003": {
+    "name": "Rounded Bob",
+    "glb": "character_hair_003_v11.glb",
+    "glb_size_kb": 427.8,
+    "renders": {
+      "front": "hair_003_front.png",
+      "three_quarter": "hair_003_three_quarter.png",
+      "side": "hair_003_side.png",
+      "back": "hair_003_back.png"
+    },
+    "quads": 612,
+    "color": "#221714"
+  },
+  "HAIR_004": {
+    "name": "Side-Parted Short",
+    "glb": "character_hair_004_v11.glb",
+    "glb_size_kb": 474.9,
+    "renders": {
+      "front": "hair_004_front.png",
+      "three_quarter": "hair_004_three_quarter.png",
+      "side": "hair_004_side.png",
+      "back": "hair_004_back.png"
+    },
+    "quads": 832,
+    "color": "#241c19"
+  },
+  "HAIR_005": {
+    "name": "Medium Straight",
+    "glb": "character_hair_005_v11.glb",
+    "glb_size_kb": 443.5,
+    "renders": {
+      "front": "hair_005_front.png",
+      "three_quarter": "hair_005_three_quarter.png",
+      "side": "hair_005_side.png",
+      "back": "hair_005_back.png"
+    },
+    "quads": 684,
+    "color": "#1e1816"
+  },
+  "HAIR_006": {
+    "name": "Low Ponytail",
+    "glb": "character_hair_006_v11.glb",
+    "glb_size_kb": 524.0,
+    "renders": {
+      "front": "hair_006_front.png",
+      "three_quarter": "hair_006_three_quarter.png",
+      "side": "hair_006_side.png",
+      "back": "hair_006_back.png"
+    },
+    "quads": 1052,
+    "color": "#1b1717"
+  },
+  "HAIR_007": {
+    "name": "High Ponytail",
+    "glb": "character_hair_007_v11.glb",
+    "glb_size_kb": 668.8,
+    "renders": {
+      "front": "hair_007_front.png",
+      "three_quarter": "hair_007_three_quarter.png",
+      "side": "hair_007_side.png",
+      "back": "hair_007_back.png"
+    },
+    "quads": 1724,
+    "color": "#1a1818"
+  },
+  "HAIR_008": {
+    "name": "Twin Pigtails",
+    "glb": "character_hair_008_v11.glb",
+    "glb_size_kb": 693.1,
+    "renders": {
+      "front": "hair_008_front.png",
+      "three_quarter": "hair_008_three_quarter.png",
+      "side": "hair_008_side.png",
+      "back": "hair_008_back.png"
+    },
+    "quads": 1832,
+    "color": "#2b201c"
+  },
+  "HAIR_009": {
+    "name": "Braided Hair",
+    "glb": "character_hair_009_v11.glb",
+    "glb_size_kb": 860.6,
+    "renders": {
+      "front": "hair_009_front.png",
+      "three_quarter": "hair_009_three_quarter.png",
+      "side": "hair_009_side.png",
+      "back": "hair_009_back.png"
+    },
+    "quads": 2664,
+    "color": "#1c1615"
+  },
+  "HAIR_010": {
+    "name": "Shoulder-Length Hair",
+    "glb": "character_hair_010_v11.glb",
+    "glb_size_kb": 443.5,
+    "renders": {
+      "front": "hair_010_front.png",
+      "three_quarter": "hair_010_three_quarter.png",
+      "side": "hair_010_side.png",
+      "back": "hair_010_back.png"
+    },
+    "quads": 684,
+    "color": "#261b17"
+  },
+  "HAIR_011": {
+    "name": "Side-Swept Bangs",
+    "glb": "character_hair_011_v11.glb",
+    "glb_size_kb": 531.0,
+    "renders": {
+      "front": "hair_011_front.png",
+      "three_quarter": "hair_011_three_quarter.png",
+      "side": "hair_011_side.png",
+      "back": "hair_011_back.png"
+    },
+    "quads": 1094,
+    "color": "#1a1b20"
+  },
+  "HAIR_012": {
+    "name": "Messy Short Hair",
+    "glb": "character_hair_012_v11.glb",
+    "glb_size_kb": 528.7,
+    "renders": {
+      "front": "hair_012_front.png",
+      "three_quarter": "hair_012_three_quarter.png",
+      "side": "hair_012_side.png",
+      "back": "hair_012_back.png"
+    },
+    "quads": 1092,
+    "color": "#1d1716"
+  }
+}
