@@ -1,0 +1,52 @@
+{
+  "HAIR_001": {
+    "name": "Classic Bowl Cut",
+    "glb": "character_hair_001_v15.glb",
+    "glb_size_kb": 474.3,
+    "renders": {
+      "front": "hair_001_front.png",
+      "three_quarter_left": "hair_001_three_quarter_left.png",
+      "three_quarter_right": "hair_001_three_quarter_right.png",
+      "profile_left": "hair_001_profile_left.png",
+      "profile_right": "hair_001_profile_right.png",
+      "back": "hair_001_back.png",
+      "fringe_closeup": "hair_001_fringe_closeup.png"
+    },
+    "quads": 828,
+    "color": "#2b201c"
+  },
+  "HAIR_002": {
+    "name": "Sporty Short",
+    "glb": "character_hair_002_v15.glb",
+    "glb_size_kb": 535.7,
+    "renders": {
+      "front": "hair_002_front.png",
+      "three_quarter_left": "hair_002_three_quarter_left.png",
+      "three_quarter_right": "hair_002_three_quarter_right.png",
+      "profile_left": "hair_002_profile_left.png",
+      "profile_right": "hair_002_profile_right.png",
+      "back": "hair_002_back.png",
+      "crown_closeup": "hair_002_crown_closeup.png",
+      "nape_closeup": "hair_002_nape_closeup.png"
+    },
+    "quads": 1116,
+    "color": "#161b26"
+  },
+  "HAIR_004": {
+    "name": "Side-Parted Short",
+    "glb": "character_hair_004_v15.glb",
+    "glb_size_kb": 530.2,
+    "renders": {
+      "front": "hair_004_front.png",
+      "three_quarter_left": "hair_004_three_quarter_left.png",
+      "three_quarter_right": "hair_004_three_quarter_right.png",
+      "profile_left": "hair_004_profile_left.png",
+      "profile_right": "hair_004_profile_right.png",
+      "back": "hair_004_back.png",
+      "fringe_profile_closeup": "hair_004_fringe_profile_closeup.png",
+      "fringe_root_closeup": "hair_004_fringe_root_closeup.png"
+    },
+    "quads": 1088,
+    "color": "#241c19"
+  }
+}
