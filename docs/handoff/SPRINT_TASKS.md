@@ -200,7 +200,7 @@ npm run test:e2e          # bot chơi hết 4 Trang
 ## T-06 · Số hóa kịch bản Trang 1–4 thành dữ liệu (Gemini Pro)
 
 ### MỤC TIÊU
-- ID: **T-06**. Agent: **Gemini Pro**. Trạng thái: **đang chờ T-05** (cần file mẫu và schema chốt).
+- ID: **T-06**. Agent: **Gemini Pro**. Trạng thái: **bắt đầu được ngay (21/11 tối)** — kịch bản Trang 1–4 đã có trong git. Bộ hướng dẫn cho Antigravity: `docs/handoff/gemini/` (bắt đầu từ `00_BAT_DAU_ANTIGRAVITY.md`). Gemini tự tạo `d_g07_01.ts`, `d_g07_02.ts` và cắm vào `pack/release(test)/chapters/hub`, nên phần dữ liệu của T-05 gộp vào đây; T-05 còn lại là Claude Code kiểm và sửa lỗi.
 - Việc: biến kịch bản chữ thành dữ liệu để game đọc, cho **Trang 1 → Trang 4** (Mốc 1). Không làm Trang 5–9 trong đợt này.
 - Kết quả phải bàn giao: 4 file `.ts` theo đúng mẫu, nội dung thật thay `[PLACEHOLDER]`, kèm bảng đối chiếu "câu nào trong kịch bản → bước nào trong dữ liệu".
 
