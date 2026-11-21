@@ -82,7 +82,7 @@ export const quests: Quest[] = [
         objective: 'Viết điều ước lên cánh buồm thuyền giấy',
         prompt: {
           speaker: 'NPC_C',
-          text: 'Viết một điều ước lên buồm đi. Thuyền chạy tới đâu, ước mơ theo tới đó.',
+          text: 'Viết một điều ước lên buồm đi. Thuyền chạy tới đâu, điều ước theo tới đó.',
         },
         options: [
           { id: 'friendship', tone: 'gentle', text: 'Mai mốt vẫn chơi chung vầy.', set_flags: { 'm1.wish': 'friendship' } },
@@ -91,16 +91,33 @@ export const quests: Quest[] = [
         ],
       },
       {
+        id: 'q_m1_main_02.s06',
+        kind: 'photo',
+        mode: 'handheld',
+        camera_id: 'cam.d0701.boats',
+        subjects: [],
+        album_entry_id: 'alb.d.g07.01.01',
+        objective: 'Chụp ảnh năm chiếc thuyền giấy vừa thả xuống rãnh nước',
+      },
+      {
+        id: 'q_m1_main_02.s07',
+        kind: 'minigame',
+        game: 'mg_boat_race',
+        level: 'min',
+        objective: 'Đua thuyền giấy xuôi dòng rãnh nước mưa',
+      },
+      {
         id: 'q_m1_main_02.s04',
-        kind: 'interact',
-        target: 'itr.thcs.gutter',
-        objective: 'Thả thuyền xuống rãnh nước trước hiên',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Xem kết quả cuộc đua thuyền giấy',
         lines: [
           { speaker: 'NPC_A', text: 'Sao lật rồi? Ai thấy không? Có người tác động dòng nước!' },
           { speaker: 'NPC_B', text: 'Ông thả lệch. Tui thấy rõ.' },
           { speaker: 'NPC_D', text: 'Thuyền tớ… hình như xa nhất.' },
-          { speaker: 'NPC_A', text: 'Hư cấu! Thuyền cậu gắn động cơ hả? Ván sau tớ phục thù!' },
+          { speaker: 'NPC_A', text: 'Hư cấu! Thuyền cậu gắn động cơ hả?' },
           { speaker: 'NPC_B', text: 'Thua thì nhận đi.' },
+          { speaker: 'NPC_A', text: 'Ván sau tớ phục thù!' },
         ],
       },
       {
@@ -109,7 +126,7 @@ export const quests: Quest[] = [
         objective: 'Ký tên lên chiếc thuyền vớt được',
         lines: [
           { speaker: 'NPC_C', text: 'Thuyền của {player_name} trôi mất rồi. Ghi lại điều ước lên buồm này đi.' },
-          { speaker: 'NPC_A', text: 'À mà chưa giới thiệu! Tớ là Đức, đây là {player_name}, còn đây là Châu Tổng.' },
+          { speaker: 'NPC_A', text: 'À mà chưa giới thiệu! Tớ là Đức, đây là {player_name}, còn đây là Châu Tổng khó tính.' },
           { speaker: 'NPC_B', text: 'Giới thiệu người ta thì bớt bình luận giùm.' },
           { speaker: 'NPC_C', text: 'Hạ nè. Lớp bên.' },
           { speaker: 'NPC_D', text: 'Quân. Cũng lớp bên.' },
@@ -188,7 +205,7 @@ export const fragments: MemoryFragment[] = [
 ];
 
 export const entries: AlbumEntry[] = [
-  { id: 'alb.d.g07.01.01', page_id: 'page.d.g07.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0701.boats', at_step_id: 'q_m1_main_02.s05' } },
+  { id: 'alb.d.g07.01.01', page_id: 'page.d.g07.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0701.boats', at_step_id: 'q_m1_main_02.s06' } },
   { id: 'alb.d.g07.01.02', page_id: 'page.d.g07.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g07.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.01.03', page_id: 'page.d.g07.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.01.03', source: 'sticker_art', required_for_restore: true },
   { id: 'alb.d.g07.01.04', page_id: 'page.d.g07.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g07.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_side_03', replayable: true },
