@@ -51,6 +51,19 @@
 - Build: `VERCEL_ENV=production vite build` (ra `/tmp`, ngoài repo) **thành công**; tìm `botStep|__game|gameTools` trong `assets/*.js` → **không thấy**.
 - Playwright toàn bộ (`npx playwright test --workers=1`): xem mục "Kết quả cuối" bên dưới.
 
+### Kết quả cuối (T-02)
+| Lỗi | Kết luận | Bằng chứng |
+|---|---|---|
+| A-01 | Đạt | ca e2e đỏ (commit `38836ec`) → xanh (commit `3486af5`); Playwright toàn bộ **38 đạt, 1 bỏ qua** (27,9 phút; trước đó 37 đạt, 1 bỏ qua → +1 ca mới, không lùi). Ca bỏ qua: "nút gửi event thử → server nhận" (không bật Firestore Emulator) |
+| A-02 | Đạt | unit đỏ (`b1d9c77`: 2 failed) → xanh (`705f55b`: 21 đạt); `npm test` 271 đạt / 1 bỏ qua; gói nội dung hiện tại 0 lỗi |
+| Tài liệu | Đạt | `README.md`, `02_QUEST_SYSTEM.md` §6 (commit `afa533c`) |
+
+- Kiểm khác: `tsc` đạt · `validate:world` 0 lỗi · build production sạch công cụ test.
+- Commit: `38836ec`, `3486af5`, `b1d9c77`, `705f55b`, `afa533c` (+ commit handoff này). Nhánh `feat/t02-a01-a02`, **đã push** lên origin (nhánh mới, không force, không đụng `dev`/`main`/`feat/sprint-0412`). Chưa gộp vào `feat/sprint-0412` — cần chủ dự án duyệt.
+- Chưa xác minh: chơi tay A-01 trên trình duyệt thật của chủ dự án (mới có e2e Chrome headless); ca e2e không kiểm trường hợp "đã đứng sẵn khi bước vừa kích hoạt" ngoài ca Menu (cùng cơ chế, cùng đường code).
+- Lệch nhỏ cần biết: SPRINT_TASKS dặn sửa `tests/e2e/game.spec.ts`, ca mới nằm ở `world.spec.ts` (nơi có sẵn `openDay`, `teleportTo`, Esc/Menu).
+- Việc tiếp theo: T-05 (khung Trang 2–3) hoặc T-04; gộp `feat/t02-a01-a02` vào `feat/sprint-0412` sau khi duyệt.
+
 ---
 
 ## S2 — tiến độ (cập nhật 17/11/2026, 01:30 UTC+7, sau phiên 2c) — ĐỌC TRƯỚC
