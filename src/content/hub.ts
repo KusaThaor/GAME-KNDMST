@@ -128,4 +128,6 @@ export const PDES: PresentDayEvent[] = [
   { id: 'pde_12', type: 'SHELF', trigger: { day: 'd.g08.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_01' }], once: true },
   { id: 'pde_15', type: 'RESTORE', trigger: { day: 'd.g09.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.01' }], once: true },
   { id: 'pde_16', type: 'SHELF', trigger: { day: 'd.g09.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_03' }], once: true },
+  { id: 'pde_17', type: 'RESTORE', trigger: { day: 'd.g09.02' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.02' }], once: true },
+  { id: 'pde_18', type: 'SHELF', trigger: { day: 'd.g09.02' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_04' }], once: true },
 ];
