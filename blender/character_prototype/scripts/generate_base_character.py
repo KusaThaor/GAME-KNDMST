@@ -15,6 +15,7 @@ Includes:
 import bpy
 import bmesh
 import math
+import mathutils
 import os
 import shutil
 
@@ -49,7 +50,7 @@ def hex_to_lin(hex_code, alpha=1.0):
     b = int(h[4:6], 16) / 255.0
     return (r ** 2.2, g ** 2.2, b ** 2.2, alpha)
 
-def create_mat(name, hex_color, roughness=0.55, metallic=0.0, emission=None):
+def create_mat(name, hex_color, roughness=0.55, metallic=0.0, emission=None, specular=0.5):
     mat = bpy.data.materials.get(name)
     if not mat:
         mat = bpy.data.materials.new(name)
@@ -61,9 +62,17 @@ def create_mat(name, hex_color, roughness=0.55, metallic=0.0, emission=None):
     bsdf.inputs["Base Color"].default_value = hex_to_lin(hex_color)
     bsdf.inputs["Roughness"].default_value = roughness
     bsdf.inputs["Metallic"].default_value = metallic
+    if "Specular IOR Level" in bsdf.inputs:
+        bsdf.inputs["Specular IOR Level"].default_value = specular
+    elif "Specular" in bsdf.inputs:
+        bsdf.inputs["Specular"].default_value = specular
     if emission:
-        bsdf.inputs["Emission Color"].default_value = hex_to_lin(emission)
-        bsdf.inputs["Emission Strength"].default_value = 1.0
+        if "Emission Color" in bsdf.inputs:
+            bsdf.inputs["Emission Color"].default_value = hex_to_lin(emission)
+        elif "Emission" in bsdf.inputs:
+            bsdf.inputs["Emission"].default_value = hex_to_lin(emission)
+        if "Emission Strength" in bsdf.inputs:
+            bsdf.inputs["Emission Strength"].default_value = 1.0
     mat.node_tree.links.new(bsdf.outputs["BSDF"], out.inputs["Surface"])
     return mat
 
@@ -188,13 +197,15 @@ def build_smooth_arm(side, sign, mats, col):
     cx = side * 0.120
 
     # Short Puffed Sleeve with Rounded Shoulder Dome (White Shirt)
-    r_shoulder_dome = add_ring(bm, 0.380, 0.036, 0.040, cx - side * 0.012, 0.004, segs)
-    cap_ring(bm, r_shoulder_dome, (cx - side * 0.018, 0.004, 0.385), mat_shirt, reverse=False)
-    r_shoulder      = add_ring(bm, 0.368, 0.048, 0.048, cx, 0.004, segs)
-    r_sleeve_mid    = add_ring(bm, 0.338, 0.047, 0.047, cx + side * 0.003, 0.005, segs)
-    r_sleeve_cuff   = add_ring(bm, 0.312, 0.044, 0.044, cx + side * 0.006, 0.006, segs)
+    r_shoulder_dome = add_ring(bm, 0.380, 0.034, 0.038, cx - side * 0.008, 0.004, segs)
+    cap_ring(bm, r_shoulder_dome, (cx - side * 0.012, 0.004, 0.383), mat_shirt, smooth=True)
+    r_shoulder_mid  = add_ring(bm, 0.370, 0.045, 0.046, cx - side * 0.003, 0.004, segs)
+    r_shoulder      = add_ring(bm, 0.355, 0.048, 0.048, cx, 0.004, segs)
+    r_sleeve_mid    = add_ring(bm, 0.332, 0.046, 0.046, cx + side * 0.003, 0.005, segs)
+    r_sleeve_cuff   = add_ring(bm, 0.308, 0.044, 0.044, cx + side * 0.006, 0.006, segs)
 
-    bridge_rings(bm, r_shoulder_dome, r_shoulder, mat_shirt)
+    bridge_rings(bm, r_shoulder_dome, r_shoulder_mid, mat_shirt)
+    bridge_rings(bm, r_shoulder_mid, r_shoulder, mat_shirt)
     bridge_rings(bm, r_shoulder, r_sleeve_mid, mat_shirt)
     bridge_rings(bm, r_sleeve_mid, r_sleeve_cuff, mat_shirt)
 
@@ -275,7 +286,8 @@ def build_smooth_torso_and_legs(mats, col):
 
     segs = 18  # 18-segment quad loops for smooth torso silhouette
     r_neck      = add_ring(bm, 0.405, 0.068, 0.062, 0,  0.005, segs) # Neck opening
-    r_chest_top = add_ring(bm, 0.380, 0.120, 0.088, 0,  0.003, segs) # Upper chest
+    r_shoulder  = add_ring(bm, 0.388, 0.106, 0.080, 0,  0.004, segs) # Shoulder slope
+    r_chest_top = add_ring(bm, 0.375, 0.120, 0.088, 0,  0.003, segs) # Upper chest
     r_chest_mid = add_ring(bm, 0.340, 0.118, 0.085, 0,  0.000, segs) # Mid chest
     r_ribs      = add_ring(bm, 0.290, 0.108, 0.078, 0, -0.002, segs) # Lower ribs
     r_waist     = add_ring(bm, 0.252, 0.100, 0.074, 0, -0.002, segs) # Shirt tuck
@@ -285,7 +297,8 @@ def build_smooth_torso_and_legs(mats, col):
     r_pelvis_mid= add_ring(bm, 0.185, 0.106, 0.080, 0, -0.002, segs) # Pelvis fullness
     r_pelvis_bot= add_ring(bm, 0.160, 0.100, 0.074, 0, -0.002, segs) # Crotch base
 
-    bridge_rings(bm, r_neck, r_chest_top, mat_shirt)
+    bridge_rings(bm, r_neck, r_shoulder, mat_shirt)
+    bridge_rings(bm, r_shoulder, r_chest_top, mat_shirt)
     bridge_rings(bm, r_chest_top, r_chest_mid, mat_shirt)
     bridge_rings(bm, r_chest_mid, r_ribs, mat_shirt)
     bridge_rings(bm, r_ribs, r_waist, mat_shirt)
@@ -308,8 +321,10 @@ def build_smooth_torso_and_legs(mats, col):
         r_knee_2 = add_ring(bm, 0.115, 0.0385, 0.0385, cx, 0.004, lsegs) # PIVOT
         r_knee_3 = add_ring(bm, 0.105, 0.038, 0.038, cx, 0.002, lsegs)
 
-        r_shin_mid = add_ring(bm, 0.075, 0.037, 0.037, cx, 0, lsegs)
-        r_ankle    = add_ring(bm, 0.040, 0.038, 0.038, cx, 0, lsegs)
+        r_shin_mid = add_ring(bm, 0.070, 0.040, 0.040, cx, 0.002, lsegs)
+        r_ankle    = add_ring(bm, 0.045, 0.041, 0.042, cx, 0.002, lsegs)
+        r_cuff     = add_ring(bm, 0.033, 0.042, 0.043, cx, 0.003, lsegs)
+        r_cuff_in  = add_ring(bm, 0.037, 0.039, 0.040, cx, 0.003, lsegs)
 
         bridge_rings(bm, r_thigh_top, r_thigh_mid, mat_pants)
         bridge_rings(bm, r_thigh_mid, r_knee_1, mat_pants)
@@ -317,14 +332,19 @@ def build_smooth_torso_and_legs(mats, col):
         bridge_rings(bm, r_knee_2, r_knee_3, mat_pants)
         bridge_rings(bm, r_knee_3, r_shin_mid, mat_pants)
         bridge_rings(bm, r_shin_mid, r_ankle, mat_pants)
+        bridge_rings(bm, r_ankle, r_cuff, mat_pants)
+        bridge_rings(bm, r_cuff, r_cuff_in, mat_pants)
 
-        # Bata Canvas Sneakers & Gum Rubber Soles
-        r_shoe_top = add_ring(bm, 0.035, 0.040, 0.044, cx, 0.006, lsegs)
-        r_shoe_mid = add_ring(bm, 0.022, 0.044, 0.058, cx, 0.016, lsegs)
-        r_shoe_bot = add_ring(bm, 0.012, 0.046, 0.060, cx, 0.016, lsegs)
-        r_sole_bot = add_ring(bm, 0.000, 0.047, 0.062, cx, 0.016, lsegs)
+        # Bata Canvas Sneakers with Concealed Ankle Shaft
+        r_shaft_top = add_ring(bm, 0.054, 0.035, 0.035, cx, 0.002, lsegs)
+        r_shaft_mid = add_ring(bm, 0.044, 0.036, 0.036, cx, 0.003, lsegs)
+        r_shoe_top  = add_ring(bm, 0.034, 0.038, 0.040, cx, 0.005, lsegs)
+        r_shoe_mid  = add_ring(bm, 0.022, 0.044, 0.058, cx, 0.016, lsegs)
+        r_shoe_bot  = add_ring(bm, 0.012, 0.046, 0.060, cx, 0.016, lsegs)
+        r_sole_bot  = add_ring(bm, 0.000, 0.047, 0.062, cx, 0.016, lsegs)
 
-        bridge_rings(bm, r_ankle, r_shoe_top, mat_shoe)
+        bridge_rings(bm, r_shaft_top, r_shaft_mid, mat_shoe)
+        bridge_rings(bm, r_shaft_mid, r_shoe_top, mat_shoe)
         bridge_rings(bm, r_shoe_top, r_shoe_mid, mat_shoe)
         bridge_rings(bm, r_shoe_mid, r_shoe_bot, mat_shoe)
         bridge_rings(bm, r_shoe_bot, r_sole_bot, mat_sole)
@@ -357,6 +377,8 @@ def build_smooth_torso_and_legs(mats, col):
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     sub = collar.modifiers.new("Subdiv", "SUBSURF")
     sub.levels = 1
+    bpy.context.view_layer.objects.active = collar
+    bpy.ops.object.modifier_apply(modifier="Subdiv")
     collar.data.materials.append(mats["shirt"])
     apply_smooth_shading(collar)
     col.objects.link(collar)
@@ -380,6 +402,8 @@ def build_smooth_hair(mats, col):
     sub = cap.modifiers.new("Subdiv", "SUBSURF")
     sub.levels = 2
     sub.render_levels = 2
+    bpy.context.view_layer.objects.active = cap
+    bpy.ops.object.modifier_apply(modifier="Subdiv")
     cap.data.materials.append(mats["hair"])
     apply_smooth_shading(cap)
     col.objects.link(cap)
@@ -396,6 +420,8 @@ def build_smooth_hair(mats, col):
     sub = bangs.modifiers.new("Subdiv", "SUBSURF")
     sub.levels = 2
     sub.render_levels = 2
+    bpy.context.view_layer.objects.active = bangs
+    bpy.ops.object.modifier_apply(modifier="Subdiv")
     bangs.data.materials.append(mats["hair"])
     apply_smooth_shading(bangs)
     col.objects.link(bangs)
@@ -413,6 +439,8 @@ def build_smooth_hair(mats, col):
         sub = burn.modifiers.new("Subdiv", "SUBSURF")
         sub.levels = 2
         sub.render_levels = 2
+        bpy.context.view_layer.objects.active = burn
+        bpy.ops.object.modifier_apply(modifier="Subdiv")
         burn.data.materials.append(mats["hair"])
         apply_smooth_shading(burn)
         col.objects.link(burn)
@@ -424,7 +452,50 @@ def build_smooth_hair(mats, col):
 # =============================================================================
 # 5. ACCESSORIES & FACIAL FEATURES
 # =============================================================================
-def build_accessories_and_face(mats, col_acc, col_face):
+def create_conforming_oval_mesh(head_obj, cx, cz, rx, rz, segs=24, z_offset_front=0.0022, z_offset_back=-0.0008):
+    mw = head_obj.matrix_world
+    imw = mw.inverted()
+
+    def get_head_y(x, z):
+        ray_orig = mathutils.Vector((x, 0.300, z))
+        ray_dir = mathutils.Vector((0, -1.0, 0))
+        hit, loc, norm, f_idx = head_obj.ray_cast(imw @ ray_orig, imw.to_3x3() @ ray_dir)
+        if hit:
+            return (mw @ loc).y
+        return 0.152
+
+    bm = bmesh.new()
+    y_center = get_head_y(cx, cz)
+    v_front_center = bm.verts.new((cx, y_center + z_offset_front, cz))
+    v_back_center = bm.verts.new((cx, y_center + z_offset_back, cz))
+
+    front_ring = []
+    back_ring = []
+
+    for i in range(segs):
+        theta = 2.0 * math.pi * i / segs
+        px = cx + rx * math.cos(theta)
+        pz = cz + rz * math.sin(theta)
+        py = get_head_y(px, pz)
+
+        vf = bm.verts.new((px, py + z_offset_front, pz))
+        vb = bm.verts.new((px, py + z_offset_back, pz))
+        front_ring.append(vf)
+        back_ring.append(vb)
+
+    bm.verts.ensure_lookup_table()
+    for i in range(segs):
+        i_next = (i + 1) % segs
+        bm.faces.new((v_front_center, front_ring[i], front_ring[i_next]))
+        bm.faces.new((v_back_center, back_ring[i_next], back_ring[i]))
+        bm.faces.new((front_ring[i], back_ring[i], back_ring[i_next], front_ring[i_next]))
+
+    bm.faces.ensure_lookup_table()
+    for f in bm.faces:
+        f.smooth = True
+    return bm
+
+def build_accessories_and_face(mats, col_acc, col_face, head_obj):
     head_z = 0.525
     eye_x  = 0.066
     eye_z  = 0.520
@@ -442,6 +513,8 @@ def build_accessories_and_face(mats, col_acc, col_face):
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     sub = nose.modifiers.new("Subdiv", "SUBSURF")
     sub.levels = 1
+    bpy.context.view_layer.objects.active = nose
+    bpy.ops.object.modifier_apply(modifier="Subdiv")
     nose.data.materials.append(mats["skin"])
     apply_smooth_shading(nose)
     col_face.objects.link(nose)
@@ -458,57 +531,58 @@ def build_accessories_and_face(mats, col_acc, col_face):
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         sub = brow.modifiers.new("Subdiv", "SUBSURF")
         sub.levels = 1
+        bpy.context.view_layer.objects.active = brow
+        bpy.ops.object.modifier_apply(modifier="Subdiv")
         brow.data.materials.append(mats["hair"])
         apply_smooth_shading(brow)
         col_face.objects.link(brow)
         bpy.context.scene.collection.objects.unlink(brow)
         eyebrows.append(brow)
 
-    # Enlarged Chibi Eyes & Sparkling Highlights
+    # Upright Anime Chibi Eyes & Sparkling Highlights (Conforming directly to curved cheek)
     eyes = []
     highlights = []
+    eye_rx = 0.017
+    eye_rz = 0.023
+
     for side, sign in [(-1, "L"), (1, "R")]:
         cx = side * eye_x
-        # Pupil (Enlarged for cute, warm, expressive stylized look)
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx, face_y - 0.003, eye_z))
-        eye = bpy.context.active_object
-        eye.name = f"Eye_{sign}"
-        eye.scale = (0.032, 0.008, 0.039)
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-        sub = eye.modifiers.new("Subdiv", "SUBSURF")
-        sub.levels = 1
+
+        # 1. Dark Oval Eye (32-segment smooth quad/fan geometry)
+        bm_eye = create_conforming_oval_mesh(head_obj, cx, eye_z, eye_rx, eye_rz, segs=32, z_offset_front=0.0022, z_offset_back=-0.0008)
+        eye_mesh = bpy.data.meshes.new(f"Eye_{sign}_Mesh")
+        bm_eye.to_mesh(eye_mesh)
+        bm_eye.free()
+        eye = bpy.data.objects.new(f"Eye_{sign}", eye_mesh)
         eye.data.materials.append(mats["eye_black"])
         apply_smooth_shading(eye)
         col_face.objects.link(eye)
-        bpy.context.scene.collection.objects.unlink(eye)
         eyes.append(eye)
 
-        # Highlight 1 (Upper primary sparkle)
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx + side * 0.008, face_y + 0.003, eye_z + 0.011))
-        hl1 = bpy.context.active_object
-        hl1.name = f"Eye_HL1_{sign}"
-        hl1.scale = (0.012, 0.004, 0.013)
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-        sub = hl1.modifiers.new("Subdiv", "SUBSURF")
-        sub.levels = 1
+        # 2. Large Upper-Outer Highlight (Eye_HL1)
+        hl1_cx = cx + side * 0.0022
+        hl1_cz = eye_z + 0.0110
+        bm_hl1 = create_conforming_oval_mesh(head_obj, hl1_cx, hl1_cz, rx=0.0052, rz=0.0062, segs=20, z_offset_front=0.0028, z_offset_back=0.0018)
+        hl1_mesh = bpy.data.meshes.new(f"Eye_HL1_{sign}_Mesh")
+        bm_hl1.to_mesh(hl1_mesh)
+        bm_hl1.free()
+        hl1 = bpy.data.objects.new(f"Eye_HL1_{sign}", hl1_mesh)
         hl1.data.materials.append(mats["eye_hl"])
         apply_smooth_shading(hl1)
         col_face.objects.link(hl1)
-        bpy.context.scene.collection.objects.unlink(hl1)
         highlights.append(hl1)
 
-        # Highlight 2 (Lower secondary sparkle)
-        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx - side * 0.008, face_y + 0.003, eye_z - 0.010))
-        hl2 = bpy.context.active_object
-        hl2.name = f"Eye_HL2_{sign}"
-        hl2.scale = (0.007, 0.004, 0.007)
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-        sub = hl2.modifiers.new("Subdiv", "SUBSURF")
-        sub.levels = 1
+        # 3. Small Lower-Inner Highlight (Eye_HL2)
+        hl2_cx = cx - side * 0.0022
+        hl2_cz = eye_z - 0.0110
+        bm_hl2 = create_conforming_oval_mesh(head_obj, hl2_cx, hl2_cz, rx=0.0034, rz=0.0042, segs=16, z_offset_front=0.0028, z_offset_back=0.0018)
+        hl2_mesh = bpy.data.meshes.new(f"Eye_HL2_{sign}_Mesh")
+        bm_hl2.to_mesh(hl2_mesh)
+        bm_hl2.free()
+        hl2 = bpy.data.objects.new(f"Eye_HL2_{sign}", hl2_mesh)
         hl2.data.materials.append(mats["eye_hl"])
         apply_smooth_shading(hl2)
         col_face.objects.link(hl2)
-        bpy.context.scene.collection.objects.unlink(hl2)
         highlights.append(hl2)
 
     # Sweet smile mouth
@@ -519,6 +593,8 @@ def build_accessories_and_face(mats, col_acc, col_face):
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     sub = mouth.modifiers.new("Subdiv", "SUBSURF")
     sub.levels = 1
+    bpy.context.view_layer.objects.active = mouth
+    bpy.ops.object.modifier_apply(modifier="Subdiv")
     mouth.data.materials.append(mats["mouth"])
     apply_smooth_shading(mouth)
     col_face.objects.link(mouth)
@@ -535,6 +611,8 @@ def build_accessories_and_face(mats, col_acc, col_face):
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         sub = blush.modifiers.new("Subdiv", "SUBSURF")
         sub.levels = 1
+        bpy.context.view_layer.objects.active = blush
+        bpy.ops.object.modifier_apply(modifier="Subdiv")
         blush.data.materials.append(mats["blush"])
         apply_smooth_shading(blush)
         col_face.objects.link(blush)
@@ -1151,8 +1229,8 @@ def main():
         "shoe":        create_mat("M_Shoe", "#f5f4ef", roughness=0.55),
         "sole":        create_mat("M_Sole", "#b5a99d", roughness=0.70),
         "nametag":     create_mat("M_Nametag", "#d2e6fa", roughness=0.40),
-        "eye_black":   create_mat("M_Eye_Black", "#121216", roughness=0.15),
-        "eye_hl":      create_mat("M_Eye_Highlight", "#ffffff", roughness=0.10, emission="#ffffff"),
+        "eye_black":   create_mat("M_Eye_Black", "#121216", roughness=0.70, specular=0.05),
+        "eye_hl":      create_mat("M_Eye_Highlight", "#ffffff", roughness=0.20, emission="#ffffff"),
         "blush":       create_mat("M_Blush", "#f58897", roughness=0.70),
         "mouth":       create_mat("M_Mouth", "#823030", roughness=0.40),
     }
@@ -1169,7 +1247,7 @@ def main():
     hair_objs = build_smooth_hair(mats, col_hair)
 
     log("6. Building Facial Features (Enlarged Eyes, Eyebrows, Nose, Mouth, Blush)...")
-    features = build_accessories_and_face(mats, col_acc, col_face)
+    features = build_accessories_and_face(mats, col_acc, col_face, head_obj)
 
     log("7. Building Standard 19-Bone Humanoid Armature...")
     arm_rig = build_humanoid_armature(col_rig)
@@ -1207,6 +1285,10 @@ def main():
     log(f"11. Updating Skinned Character Blend File: {OUTPUT_SKINNED_BLEND}")
     bpy.ops.wm.save_as_mainfile(filepath=OUTPUT_SKINNED_BLEND)
 
+    canonical_v1 = os.path.join(PROJECT_ROOT, "blender", "character_prototype", "scenes", "Chibi_Base_Canonical_v1.blend")
+    shutil.copy2(OUTPUT_BASE_BLEND, canonical_v1)
+    log(f"11b. Synchronized Canonical Blend: {canonical_v1}")
+
     log("12. Exporting real-time GLB models for Three.js (Canonical 16 Actions)...")
     # Remove temporary deformation test action so GLB contains exactly the 16 game actions
     temp_act = bpy.data.actions.get("Action_Deform_Poses_Test")
@@ -1237,6 +1319,26 @@ def main():
 
     log(f"Exporting: {OUTPUT_GLB_ACTIVE}")
     bpy.ops.export_scene.gltf(filepath=OUTPUT_GLB_ACTIVE, **export_settings)
+
+    fixed_glb = os.path.join(PROJECT_ROOT, "assets", "characters", "vietnamese_student_fixed.glb")
+    shutil.copy2(OUTPUT_GLB_BASE, fixed_glb)
+    log(f"12b. Synchronized Fixed GLB: {fixed_glb}")
+
+    # Synchronize to public and dist web folders if present
+    for target_dir in [
+        os.path.join(PROJECT_ROOT, "public", "assets", "characters"),
+        os.path.join(PROJECT_ROOT, "dist", "assets", "characters"),
+        r"C:\Users\Admin\.gemini\antigravity\brain\ce5fb559-46a0-4bd7-bc18-cdd305c60e60"
+    ]:
+        if os.path.exists(target_dir):
+            try:
+                shutil.copy2(OUTPUT_GLB_BASE, os.path.join(target_dir, "vietnamese_student_base.glb"))
+                shutil.copy2(OUTPUT_GLB_BASE, os.path.join(target_dir, "vietnamese_student.glb"))
+                shutil.copy2(OUTPUT_GLB_BASE, os.path.join(target_dir, "vietnamese_student_fixed.glb"))
+                shutil.copy2(OUTPUT_GLB_SKINNED, os.path.join(target_dir, "vietnamese_student_skinned.glb"))
+                log(f"12c. Synchronized GLBs to: {target_dir}")
+            except Exception as e:
+                log(f"Sync error for {target_dir}: {e}")
 
     log("=== BASE CHARACTER SYSTEM GENERATION & EXPORT COMPLETE ===")
 

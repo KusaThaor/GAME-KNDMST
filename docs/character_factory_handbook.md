@@ -107,7 +107,36 @@ Hệ thống cho phép phối đồ tự do cho các nhân vật học sinh Vi�
 
 ---
 
-## 7. CẤU HÌNH NHÂN VẬT JSON (CONFIGURATION SPECIFICATION)
+## 7. DANH MỤC THƯ VIỆN KIỂU TÓC MODULAR (HAIRSTYLE LIBRARY V2 — 12 ASSETS)
+
+Hệ thống cung cấp 12 kiểu tóc chibi cách điệu bằng kỹ thuật Procedural Clump Extrusion, phủ kín vòm da đầu, giải phóng vành tai và gọng kính, mang bề mặt satin lì tự nhiên:
+
+| Mã ID | Tên tiếng Việt | Tên tiếng Anh | Số đỉnh (Verts) | Dung lượng GLB | Mô tả & Bối cảnh Học đường |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| `HAIR_001` | Tóc úp nồi học trò | Classic Bowl Cut | 775 | 360 KB | Tóc úp nồi ngây ngô, tròn trịa của nam sinh đầu cấp 2 |
+| `HAIR_002` | Tóc ngắn thể thao vuốt nhọn | Sporty Short | 835 | 363 KB | Tóc ngắn vuốt nhọn năng động, cá tính cho các bạn thích đá bóng |
+| `HAIR_003` | Tóc tém bob nữ sinh | Rounded Bob | 823 | 362 KB | Tóc tém bob ngắn ôm nhẹ má bầu bĩnh của nữ sinh gương mẫu |
+| `HAIR_004` | Tóc ngắn rẽ ngôi 7/3 | Side-Parted Short | 667 | 354 KB | Rẽ ngôi lệch 7/3 chỉn chu của lớp trưởng hoặc học sinh giỏi |
+| `HAIR_005` | Tóc thẳng ngang lưng lửng | Medium Straight | 1003 | 372 KB | Tóc thẳng dài suôn mượt dịu dàng, hai lọn mai buông rủ |
+| `HAIR_006` | Tóc đuôi ngựa buộc thấp | Low Ponytail | 817 | 363 KB | Đuôi ngựa buộc túm thấp sau gáy kèm dây thun cam san hô |
+| `HAIR_007` | Tóc đuôi ngựa buộc cao | High Ponytail | 985 | 372 KB | Đuôi ngựa cột cao đỉnh đầu bồng bềnh, hoạt bát |
+| `HAIR_008` | Tóc hai bên buộc đôi | Twin Pigtails | 1105 | 379 KB | Hai chùm tóc uốn cong tinh nghịch thắt nơ ruy băng vàng |
+| `HAIR_009` | Tóc tết bím học sinh | Braided Hair | 1177 | 383 KB | Bím tóc thắt so le truyền thống đoan trang, hoài niệm |
+| `HAIR_010` | Tóc ngang vai uốn cúp C | Shoulder-Length Hair | 931 | 368 KB | Tóc dài chạm vai với ngọn tóc uốn cúp chữ C ôm nhẹ cổ áo |
+| `HAIR_011` | Tóc mái xéo phong trào | Side-Swept Bangs | 667 | 354 KB | Mái xéo trào lưu tuổi teen và âm nhạc học đường 2012-2013 |
+| `HAIR_012` | Tóc ngắn layer đánh rối | Messy Short Hair | 889 | 366 KB | Tóc tỉa tầng layer đánh rối lãng tử của cậu học trò nghệ thuật |
+
+### 6 Bảng Màu Tóc Chuẩn Mực:
+- `COLOR_01` — **Natural Jet Black** (`#1c1615`): Đen tuyền học sinh tự nhiên.
+- `COLOR_02` — **Soft Charcoal** (`#161b26`): Đen khói ánh xanh thể thao.
+- `COLOR_03` — **Chestnut Brown** (`#2b1b17`): Nâu hạt dẻ trầm ấm.
+- `COLOR_04` — **Warm Auburn** (`#4a2c1b`): Nâu đồng ánh ấm mùa thu.
+- `COLOR_05` — **Deep Blue-Black** (`#182030`): Xanh đen huyền ảo phong cách anime.
+- `COLOR_06` — **Honey Brown** (`#613d28`): Nâu mật ong dạo phố.
+
+---
+
+## 8. CẤU HÌNH NHÂN VẬT JSON (CONFIGURATION SPECIFICATION)
 
 ### Cách 1: Sử dụng mã Preset nhanh (`outfit_preset`)
 ```json
@@ -118,13 +147,14 @@ Hệ thống cho phép phối đồ tự do cho các nhân vật học sinh Vi�
   "skin_tone": "SKIN_02",
   "hair_style": "HAIR_003",
   "hair_color": "#2b1b17",
+  "hair_tie_color": "#e0564c",
   "outfit_preset": "PRESET_002",
   "accessories": ["ACC_001", "ACC_003"],
   "default_expression": "Happy"
 }
 ```
 
-### Cách 2: Phối ghép chi tiết từng món đồ (`top_id`, `bottom_id`, `footwear_id`, `socks_id`)
+### Cách 2: Phối ghép chi tiết từng món đồ (`top_id`, `bottom_id`, `footwear_id`, `socks_id`, `hair_style`)
 ```json
 {
   "character_id": "student_phong",
@@ -147,32 +177,38 @@ Hệ thống cho phép phối đồ tự do cho các nhân vật học sinh Vi�
 
 ---
 
-## 8. DANH MỤC BẢNG SO SÁNH & HÌNH ẢNH MINH CHỨNG (VISUAL SHEETS)
+## 9. DANH MỤC BẢNG SO SÁNH & HÌNH ẢNH MINH CHỨNG (VISUAL SHEETS)
 
-Các bảng tổng hợp thị giác đã được kết xuất trực tiếp từ Blender và đóng gói bằng PIL:
-
+### 9.1. Bảng Thị Giác Thư Viện Trang Phục (Clothing Library Sheets)
 1. **Bảng Thư viện Hạ thân (8 Bottoms):** [bottom_library_comparison_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/sheets/bottom_library_comparison_sheet.png)
 2. **Bảng Thư viện Áo (8 Tops):** [top_library_comparison_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/sheets/top_library_comparison_sheet.png)
 3. **Bảng 12 Bộ Phối Mẫu (12 Presets):** [outfit_combination_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/sheets/outfit_combination_sheet.png)
 4. **Bảng Kiểm thử Chuyển động (Animation Clothing Audit):** [animation_clothing_test_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/sheets/animation_clothing_test_sheet.png)
 5. **Bảng Quan sát 360° Đa Góc Nhìn (Modular Turnaround Sheet):** [turnaround_modular_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/sheets/turnaround_modular_sheet.png)
 
+### 9.2. Bảng Thị Giác Thư Viện Kiểu Tóc (Hairstyle Library Sheets)
+1. **Bảng Xoay 4 Hướng Toàn Diện (Turnaround Matrix):** [hairstyles_12_turnaround_matrix.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/hairstyles_v2/sheets/hairstyles_12_turnaround_matrix.png)
+2. **Bảng Dàn Hàng Silhouette Mặt Trước (Front Lineup):** [hairstyles_12_front_lineup.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/hairstyles_v2/sheets/hairstyles_12_front_lineup.png)
+3. **Bảng Phối Cảnh 3/4 & Kiểm Thử Phụ Kiện (3/4 Lineup):** [hairstyles_12_threequarter_lineup.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/hairstyles_v2/sheets/hairstyles_12_threequarter_lineup.png)
+4. **Bảng 6 Biến Thể Màu Sắc (Color Variants Sheet):** [hairstyles_color_variants_sheet.png](file:///C:/Users/Admin/Desktop/GAME/GAME-KNDMST/blender/character_prototype/factory/previews/hairstyles_v2/sheets/hairstyles_color_variants_sheet.png)
+
 ---
 
-## 9. QUY TRÌNH KIỂM THỬ TỰ ĐỘNG (AUTOMATED TEST COMMANDS)
+## 10. QUY TRÌNH KIỂM THỬ TỰ ĐỘNG (AUTOMATED TEST COMMANDS)
 
 ### Kiểm thử Toàn diện Thư viện Trang phục
 ```powershell
 Start-Process -FilePath "blender-launcher.exe" -ArgumentList "-b", "-P", "blender/character_prototype/factory/validate_clothing_library.py" -Wait
 ```
 
+### Kiểm thử Toàn diện Thư viện Kiểu Tóc (Blender & Three.js)
+```powershell
+Start-Process -FilePath "blender-launcher.exe" -ArgumentList "-b", "-P", "blender/character_prototype/factory/build_and_render_all_hairstyles.py" -Wait
+python blender/character_prototype/factory/composite_hairstyles_sheets.py
+node blender/character_prototype/factory/validate_hairstyles_three.mjs
+```
+
 ### Kiểm thử Tương thích Three.js Runtime
 ```bash
 node blender/character_prototype/factory/validate_factory_three.mjs
-```
-
-### Sinh Toàn bộ 5 Bảng Thị giác (Visual Sheets)
-```powershell
-Start-Process -FilePath "blender-launcher.exe" -ArgumentList "-b", "-P", "blender/character_prototype/factory/render_clothing_frames.py" -Wait
-python blender/character_prototype/factory/composite_clothing_sheets.py
 ```

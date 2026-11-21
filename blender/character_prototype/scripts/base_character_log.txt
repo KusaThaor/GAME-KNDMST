@@ -10,8 +10,13 @@
 9. Transferring / building all 16 Animation Actions + Deformation Poses...
 10. Saving Master Base Blend File: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\vietnamese_student_base.blend
 11. Updating Skinned Character Blend File: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\vietnamese_student_skinned.blend
+11b. Synchronized Canonical Blend: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\Chibi_Base_Canonical_v1.blend
 12. Exporting real-time GLB models for Three.js (Canonical 16 Actions)...
 Exporting: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\assets\characters\vietnamese_student_base.glb
 Exporting: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\assets\characters\vietnamese_student_skinned.glb
 Exporting: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\assets\characters\vietnamese_student.glb
+12b. Synchronized Fixed GLB: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\assets\characters\vietnamese_student_fixed.glb
+12c. Synchronized GLBs to: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\public\assets\characters
+12c. Synchronized GLBs to: C:\Users\Admin\Desktop\GAME\GAME-KNDMST\dist\assets\characters
+12c. Synchronized GLBs to: C:\Users\Admin\.gemini\antigravity\brain\ce5fb559-46a0-4bd7-bc18-cdd305c60e60
 === BASE CHARACTER SYSTEM GENERATION & EXPORT COMPLETE ===
