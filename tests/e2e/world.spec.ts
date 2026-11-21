@@ -985,4 +985,31 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     expect(after.quests).toEqual(before.quests);
     expect(errors).toEqual([]);
   });
+
+  test('A-01: bước goto hoàn thành khi người chơi vào bán kính lúc Menu đang mở, rồi đóng Menu — không cần đi ra rồi quay vào', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    const batches = await captureCollect(page);
+    // Trang 4, Side q_m1_side_02: 5 bước goto, bước đầu tới itr.thcs.gutter
+    await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s01');
+    const quests0 = await page.evaluate(() => window.__game!.state().quests as Record<string, string>);
+    expect(quests0['q_m1_side_02']).toBe('available');                  // đúng trạng thái xuất phát của ca
+    expect((await state(page)).active).not.toContain('q_m1_side_02.s02');
+    await page.keyboard.press('Escape');                                 // Menu mở → giao diện khóa
+    await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
+    expect(await page.evaluate(() => window.__game!.teleportTo('itr.thcs.gutter'))).toBe(true);   // dựng vị trí: đứng ngay đích
+    await frames(page, 30);
+    expect((await page.evaluate(() => window.__game!.state().quests as Record<string, string>))['q_m1_side_02']).toBe('available');   // còn khóa → chưa tiến
+    await page.keyboard.press('Escape');                                 // đóng Menu, KHÔNG di chuyển
+    await expect(page.locator('[data-testid="panel-menu"]')).toHaveCount(0);
+    await expect.poll(async () => (await state(page)).active, { timeout: 15_000 }).toContain('q_m1_side_02.s02');
+    expect((await page.evaluate(() => window.__game!.state().quests as Record<string, string>))['q_m1_side_02']).toBe('active');
+    // đứng yên trong bán kính: không hoàn thành lại, không phát lặp event
+    await frames(page, 60);
+    await page.evaluate(() => window.__game!.flush());
+    const done = batches.flatMap((b) => b.events ?? []).filter((e) => e.name === 'quest_step_completed' && (e.props as { step_id?: string } | undefined)?.step_id === 'q_m1_side_02.s01');
+    expect(done).toHaveLength(1);
+    expect((await state(page)).active).toContain('q_m1_side_02.s02');
+    expect(errors).toEqual([]);
+  });
 });

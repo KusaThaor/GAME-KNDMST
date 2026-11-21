@@ -1,5 +1,33 @@
 # DEV_SESSION_HANDOFF
 
+## T-02 — Lưới an toàn quest (A-01, A-02) — phiên 22/11/2026 (Sonnet, Medium)
+
+**Nhánh làm việc:** `feat/t02-a01-a02`, tạo từ `feat/sprint-0412` @ `d5531b2` (chưa push; `dev`, `main` không đụng).
+**Đặc tả:** `docs/handoff/SPRINT_TASKS.md` mục T-02 · `docs/ai-handoff/04_NEXT_TASK_FOR_CLAUDE.md` · `docs/ai-handoff/01_PROJECT_AUDIT.md` (A-01, A-02).
+
+| Lỗi | Trạng thái |
+|---|---|
+| A-01 (`proximity()`, bước `goto`) | DANG LAM |
+| A-02 (luật `optional_quest_unstartable`) | CHUA LAM |
+
+### Checkpoint 0 — baseline (đầu phiên)
+- Baseline chạy thật: `npx tsc --noEmit` đạt · `npm test` 266 đạt / 1 bỏ qua · `npm run validate:world` 0 lỗi (6 khu).
+- Hành vi mong đợi A-01: bước `goto` đang chờ (hoặc bước đầu `goto` của Side/Daily đang `available`) hoàn thành khi người chơi đứng trong bán kính và giao diện không khóa — kể cả đã đứng sẵn, hoặc vào bán kính lúc giao diện khóa rồi mở lại. Không hoàn thành hai lần.
+- Hành vi mong đợi A-02: `validateContent` báo lỗi mã `optional_quest_unstartable` khi Side/Daily có bước đầu không thuộc `talk | interact | goto | collect | place`. Gói hiện tại phải 0 lỗi.
+- Test: e2e `tests/e2e/world.spec.ts` (ca mới "A-01") · unit `tests/unit/validate.test.ts` (A-02).
+- Lệnh hẹp: `npx playwright test tests/e2e/world.spec.ts -g "A-01" --workers=1` · `npx vitest run tests/unit/validate.test.ts`.
+- Bước tiếp theo: chạy ca e2e A-01 (đỏ), ghi kết quả đỏ vào đây. → xong, xem Checkpoint 1.
+
+### Checkpoint 1 — A-01 test ĐỎ (trước khi sửa)
+- File đã đổi: `tests/e2e/world.spec.ts` (ca "A-01: bước goto hoàn thành khi người chơi vào bán kính lúc Menu đang mở…"), `docs/DEV_SESSION_HANDOFF.md`.
+- Ca dựng: `?day=d.g07.03&step=q_m1_main_05.s01` → xác nhận `q_m1_side_02` = `available` → Esc mở Menu → `teleportTo('itr.thcs.gutter')` → đóng Menu (Esc), không đi.
+- Lệnh: `npx playwright test tests/e2e/world.spec.ts -g "A-01" --workers=1` → **ĐỎ (1 failed, 39,6 giây)**.
+- Lỗi thực tế: sau khi đóng Menu, chờ 15 giây mà `active` vẫn chỉ là `["q_m1_main_05.s01"]`; không bao giờ có `q_m1_side_02.s02` (`expect(received).toContain("q_m1_side_02.s02")`). Các điều kiện đầu ca (quest `available`, Menu mở được, dịch chuyển được) đều qua → đỏ đúng nguyên nhân A-01: `arrive` chỉ phát ở khung hình đầu vào bán kính, lúc đó giao diện khóa nên bị bỏ lỡ.
+- Còn lại: sửa `proximity()` (A-01), A-02, tài liệu, build, push.
+- Bước tiếp theo: sửa `proximity()` trong `src/game/game.ts`, chạy lại ca A-01 tới xanh.
+
+---
+
 ## S2 — tiến độ (cập nhật 17/11/2026, 01:30 UTC+7, sau phiên 2c) — ĐỌC TRƯỚC
 Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
 
