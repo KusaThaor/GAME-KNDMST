@@ -5,6 +5,5 @@
 import type { Chapter } from './types';
 
 export const CHAPTERS: Chapter[] = [
-  { id: 'ch_g06', label: '[PLACEHOLDER] Mốc 1 · lớp 6', memory_day_ids: ['d.g06.01'] },
-  { id: 'ch_g07', label: '[PLACEHOLDER] Mốc 1 · lớp 7', memory_day_ids: ['d.g07.03'] },
+  { id: 'ch_m1', label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', memory_day_ids: ['d.g06.01', 'd.g07.03'] }, // CHỜ T-05: thêm d.g07.01, d.g07.02 vào giữa (thứ tự đích: g06.01, g07.01, g07.02, g07.03)
 ];

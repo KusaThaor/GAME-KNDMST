@@ -81,7 +81,7 @@ describe('cầu nối analytics (F8)', () => {
 
   it('memory_day_* mang milestone_id, school_year, memory_day_id, chapter_label, is_replay', () => {
     const t = setup(); playAll(t);
-    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6', is_replay: false });
+    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', is_replay: false });
     expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.03']);
     expect(t.of('milestone_completed')).toEqual([{ milestone_id: 'm1' }]);
   });
