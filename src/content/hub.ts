@@ -45,7 +45,7 @@ export const HUB_QUESTS: Quest[] = [
     steps: [{ id: 'q_hub_pd_03.s01', kind: 'compose_message', thread_id: 'thread.old_group', objective: `${P} Soạn và gửi một tin`, openers: [
       { id: 'playful', tone: 'playful', text: `${P} Cách mở lời 1 (rộn ràng)` },
       { id: 'gentle', tone: 'gentle', text: `${P} Cách mở lời 2 (ấm áp)` },
-      { id: 'curious', tone: 'curious', text: `${P} Cách mở lời 3 (sâu lắng)` },
+      { id: 'deep', tone: 'deep', text: `${P} Cách mở lời 3 (sâu lắng)` },
     ] }],
   },
 ];

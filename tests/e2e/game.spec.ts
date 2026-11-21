@@ -159,7 +159,7 @@ test.describe('phần khung game', () => {
     expect(dropped).toEqual([]);                                          // server sẽ nhận hết, không bỏ event nào
     const events = batches.flatMap((b) => b.events);
     const names = events.map((e) => e.name);
-    for (const n of ['game_load_started', 'game_ready', 'game_started', 'appearance_selected', 'artifact_opened', 'memory_day_started', 'memory_day_completed',
+    for (const n of ['game_load_started', 'game_ready', 'game_started', 'appearance_selected', 'artifact_opened', 'page_started', 'page_completed',
       'quest_started', 'quest_step_completed', 'quest_completed', 'choice_made', 'photo_attempt', 'photo_kept', 'zone_entered',
       'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'public_demo_completed', 'feedback_shown', 'feedback_skipped']) {
       expect(names, `thiếu event ${n}`).toContain(n);
@@ -170,9 +170,9 @@ test.describe('phần khung game', () => {
     for (const e of events.filter((x) => x.name.startsWith('memory_day_'))) {
       expect(e.props?.milestone_id).toBe('m1');
       expect(String(e.props?.memory_day_id)).toMatch(/^d\.g0[67]\.\d\d$/);
-      expect(String(e.props?.chapter_label)).toContain('Chương');
+      expect(String(e.props?.chapter_label)).toContain('Mốc');
     }
-    expect(events.filter((e) => e.name === 'memory_day_completed').map((e) => e.props?.memory_day_id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(events.filter((e) => e.name === 'page_completed').map((e) => e.props?.page_id)).toEqual(['d.g06.01', 'd.g07.03']);
     expect(events.find((e) => e.name === 'appearance_selected')?.props).toEqual({ gender: 'female' });
     const wire = JSON.stringify(batches);
     expect(wire).not.toContain(NAME);
@@ -258,7 +258,7 @@ test.describe('phần khung game', () => {
     // nhảy bước không được sinh event đo lường giả cho đoạn bị bỏ qua
     await page.evaluate(() => window.__game!.flush());
     const names = batches.flatMap((b) => b.events).map((e) => e.name);
-    expect(names).not.toContain('memory_day_completed');
+    expect(names).not.toContain('page_completed');
     expect(names).not.toContain('quest_completed');
     expect(errors).toEqual([]);
   });

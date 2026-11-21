@@ -176,9 +176,14 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     } else if (s.kind === 'photo') {
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
+      // Skeleton đo lường (GDD 02 §5.1): khung minigame thật chưa có, thẻ giả chỉ báo "complete".
+      const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: null, difficulty: null };
+      const t0 = Date.now();
+      bus.emit('minigame_started', mg);
       ui.set({ minigame: { game: s.game } });
       if ((await wait('minigame')) === CANCEL || !alive()) return;
       ui.set({ minigame: null });
+      bus.emit('minigame_finished', { ...mg, result: 'complete', duration_s: Math.round((Date.now() - t0) / 1000), stars: null, hints_used: null, score: null });
       engine.complete(s.id);
     } else if (s.kind === 'free') {
       ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });

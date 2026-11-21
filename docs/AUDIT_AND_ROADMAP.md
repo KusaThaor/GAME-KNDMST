@@ -1,6 +1,6 @@
 # AUDIT_AND_ROADMAP — Kiểm toán code và kế hoạch sprint tới 04/12
 
-Lập 21/11/2026. Chuẩn đối chiếu: `docs/gdd/` v1.0 APPROVED. Code kiểm: `origin/feature/s2-world-camera-blender` @ `6307e00` (đã gồm toàn bộ `dev`). Asset kiểm: `origin/feature/asset-workshop` @ `51baf28` + local (3 commit chưa push, 372 thay đổi chưa commit — **chưa kiểm được phần này**).
+Lập 21/11/2026 (cập nhật cùng ngày: 4 điểm lệch GDD đã sửa trên `feat/sprint-0412`). Chuẩn đối chiếu: `docs/gdd/` v1.0 APPROVED. Code kiểm: `origin/feature/s2-world-camera-blender` @ `6307e00` (đã gồm toàn bộ `dev`). Asset kiểm: `origin/feature/asset-workshop` @ `51baf28` + local (3 commit chưa push, 372 thay đổi chưa commit — **chưa kiểm được phần này**).
 Cách kiểm: đọc mã và báo cáo trong repo, không chạy lại test. Số liệu test lấy từ `docs/S2_TEST_REPORT.md` (chặng 1, 15/11), **chưa chạy lại**.
 
 Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]** · **[Chưa code]**
@@ -12,7 +12,7 @@ Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]**
 |---|---|---|
 | Hub — Phòng 2026 (`hub_room`) | [Đang dở dang] | Có `hubScene.ts`: khối thô, góc cố định, rê chuột sáng vật, 4 vật chạm (Hộp, Album, Kệ, Điện thoại). Chưa có model thật, tường ảnh, bàn học, ánh sáng theo tiến trình |
 | Hub — nhập tên, chọn nam/nữ | [Đang dở dang] | Có hồ sơ + lưu tên (tối đa 12 ký tự, chỉ ở máy). Chưa có kiểm tra với GDD §4 bước 0 |
-| Hub — điện thoại, nhóm chat, soạn tin kết demo | [Code lệch GDD v1.0] | Luồng có (`phone_ui`, `compose_message`), chữ toàn `[PLACEHOLDER]`. Sắc thái tin là `curious` ("Sâu lắng"); GDD ghi `deep` |
+| Hub — điện thoại, nhóm chat, soạn tin kết demo | [Đang dở dang] | Luồng có (`phone_ui`, `compose_message`), chữ toàn `[PLACEHOLDER]`. Sắc thái tin đã đổi `curious` → `deep` (21/11, nhánh `feat/sprint-0412`) |
 | Hub — chuyển Mốc ("Mấy năm sau…", hộp phấn) | [Chưa code] | Chỉ có Present-day Event giả (pde_01–06) |
 | Trang 1 `d.g06.01` Mật lệnh số 01 | [Đang dở dang] | Có Ngày giả cùng ID đúng; Main/Side/Daily giả, không có nội dung thật |
 | Trang 2 `d.g07.01` Thuyền giấy | [Chưa code] | Không có file Ngày. Cần rãnh nước thả thuyền (Z02b) + đua thuyền |
@@ -23,7 +23,7 @@ Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]**
 | Trang 7 `d.g09.01` Báo tường + Sudoku | [Chưa code] | Chưa có Sudoku |
 | Trang 8 `d.g09.02` Rã băng + Hội trại | [Chưa code] | Chưa thấy biến thể đêm của sân (Z02) |
 | Trang 9 `d.g09.03` Vẫn đủ năm đứa | [Chưa code] | — |
-| Nhãn "Chương" trong menu/báo cáo | [Code lệch GDD v1.0] | `chapters.ts` còn "Chương lớp 6/7"; GDD §2.2 cấm dùng "Chương" làm đơn vị chơi |
+| Nhãn "Chương" trong menu/báo cáo | [Hoàn thành] | Đã đổi thành "Mốc 1 · lớp 6/7" (21/11). Tên kiểu `Chapter` và ID `ch_*` giữ nguyên để khỏi đổi schema |
 | Kết demo (Đã gửi… + form phản hồi) | [Đang dở dang] | Có `public_demo_completed` trước form (đúng thứ tự); nội dung placeholder |
 
 ### 1.2 Bản đồ, nhân vật, điều khiển
@@ -32,7 +32,7 @@ Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]**
 | `map_thcs`: 6 khu (lớp, hành lang, sân, cổng, bãi, căn cứ) | [Hoàn thành] | 6 GLB từ Blender, `validate:world` 0 lỗi (báo cáo 15/11). Xe quà vặt, tiệm tạp hóa, đồ Hội trại: chưa kiểm |
 | Biến thể theo năm học (ánh sáng/thời tiết) | [Đang dở dang] | Có preset (sáng, chiều…), chưa kiểm đủ 4 năm + đêm Hội trại |
 | Điều khiển + camera thứ ba | [Hoàn thành] | Pitch 5–65° (chủ dự án chốt 16/11), chạm + chuột + touchpad |
-| Nhân vật | [Code lệch GDD v1.0] | `s2` dựng nhân vật bằng code, hệ số cao theo `Grade 6/9`. GDD cần model 3D có xương cao 1,3–1,5 m. Model của asset-workshop cao ≈ 0,70 m, chưa gộp |
+| Nhân vật | [Code lệch GDD v1.0] | `s2` dựng nhân vật bằng code (fallback chạy được). GDD cần model 3D có xương cao 1,3–1,5 m; model asset-workshop cao ≈ 0,70 m. Đã tách `CharacterRigAdapter` (`src/actors/player/rigAdapter.ts`) để cắm GLB khi fix xong |
 | Cây phượng, cây bàng | [Code lệch GDD v1.0] | `s2` dùng cây dựng bằng code (`props.ts`). Bản GLB của asset-workshop nặng 12.224 tam giác/cây, GDD tối đa 3.000 |
 
 ### 1.3 Minigame
@@ -56,7 +56,7 @@ Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]**
 | IndexedDB: ảnh Album dạng JPEG Blob | [Hoàn thành] | `photoStoreIdb.ts`; ảnh nén JPEG ở `view.ts` (0,85), lưu Blob, không base64 |
 | Menu: Chơi tiếp / Chơi lại một Trang / Xóa tiến trình | [Đang dở dang] | Có chơi lại (`ReplayState`); chưa kiểm menu đủ ba nút |
 | Gửi event theo lô lên Firestore | [Hoàn thành] | Gom ~60 giây, `batch_id` chống ghi trùng, `sendBeacon` khi đóng tab, ghi 1 document mỗi lô (`event_batches`), rules chặn client. Chỉ có test Emulator bị bỏ qua |
-| Event GDD §5.1 | [Code lệch GDD v1.0] | Code dùng `memory_day_started/completed`; GDD muốn `page_started/completed`. Thiếu `minigame_started/finished`, `hub_opened`, `end_message_sent`. `public_demo_completed` đã có |
+| Event GDD §5.1 | [Đang dở dang] | Đã đổi sang `page_started/completed` (`page_id`, có `duration_s`), thêm `minigame_started/finished`, `hub_opened`, `end_message_sent`, `public_demo_completed` đã có. Còn thiếu: nơi phát `hub_opened` (chưa có Khu Vui Chơi), minigame thật (hiện chỉ phát từ thẻ giả), bổ sung vào `07_ANALYTICS_REQUIREMENTS` |
 
 ### 1.5 Chất lượng và kiểm thử
 | Mục | Nhãn | Ghi chú ngắn |

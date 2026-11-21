@@ -47,7 +47,7 @@ Engine không cần sửa. Chỉ thêm dữ liệu rồi chạy lệnh kiểm.
    - `artifact` — đúng **một** kỷ vật dẫn vào Ngày (`art_<mốc>_NN`), `appear_when` = điều kiện sáng lên (thường là xong Ngày trước).
    - `fragments`, `entries` — mảnh ký ức và các ô của trang Album (`frag.<ngày>.NN`, `alb.<ngày>.NN`); ít nhất một ô `required_for_restore: true`.
 2. **Thêm vào `DAYS`** trong `src/content/pack.ts`.
-3. **Khai trong `src/content/release.ts`** (bản nào có Ngày này, theo thứ tự chơi) và **`src/content/chapters.ts`** (Ngày thuộc nhãn chương nào).
+3. **Khai trong `src/content/release.ts`** (bản nào có Ngày này, theo thứ tự chơi) và **`src/content/chapters.ts`** (Trang thuộc nhóm Mốc nào; cấu trúc dữ liệu một Trang: `docs/PAGE_DATA_GUIDE.md`).
 4. **Thêm Present-day Event** trong `src/content/hub.ts`: thường là một `RESTORE` (phục hồi trang) và một `SHELF` (kỷ vật lên kệ) với `trigger: { day: '<id Ngày>' }`.
 5. Nếu Ngày dùng năm học/biến thể mới: thêm biến thể vào `MAPS` trong `src/content/base.ts` và hình ảnh của nó (trang trí, ánh sáng) vào `src/world/variants.ts`.
 6. **Kiểm:**

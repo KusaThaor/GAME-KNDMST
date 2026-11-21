@@ -76,7 +76,7 @@ describe('QuestEngine — Ngày ký ức', () => {
     expect(t.engine.complete('q_m1_main_01.s02', { option_id: 'zzz' })).toBe(false);
     expect(t.engine.complete('q_m1_main_01.s02', { option_id: 'b' })).toBe(true);
     expect(t.save.flags['m1.greet']).toBe('gentle');
-    expect(t.save.relationships['chr_duc'].tone_counts).toEqual({ playful: 0, gentle: 1, curious: 0 });
+    expect(t.save.relationships['chr_duc'].tone_counts).toEqual({ playful: 0, gentle: 1, deep: 0 });
     expect(t.of('choice_made')[0]).toMatchObject({ choice_id: 'c_m1_01', option_id: 'b', tone: 'gentle', measured: true, is_replay: false });
   });
 
@@ -130,7 +130,7 @@ describe('QuestEngine — Ngày ký ức', () => {
 
   it('Side có điều kiện: locked cho tới khi flag có', () => {
     const pack = makePack();
-    pack.quests.find((q) => q.id === 'q_m1_side_01')!.available_when = { all: [{ flag: 'm1.greet', equals: 'curious' }] };
+    pack.quests.find((q) => q.id === 'q_m1_side_01')!.available_when = { all: [{ flag: 'm1.greet', equals: 'deep' }] };
     const t = setup(pack);
     t.engine.startDay('d.g06.01');
     expect(t.engine.questState('q_m1_side_01')).toBe('locked');
@@ -322,7 +322,7 @@ describe('QuestEngine — chơi lại', () => {
     t.engine.startDay('d.g06.01', { replay: true });
     playDay1Main(t.engine, 'c');
     expect(t.save.flags['m1.greet']).toBe('playful');
-    expect(t.save.relationships['chr_duc'].tone_counts).toEqual({ playful: 1, gentle: 0, curious: 0 });
+    expect(t.save.relationships['chr_duc'].tone_counts).toEqual({ playful: 1, gentle: 0, deep: 0 });
     expect(t.of('choice_made')[0]).toMatchObject({ option_id: 'c', is_replay: true });
     for (const n of ['day_started', 'quest_started', 'step_completed', 'quest_completed'] as const) {
       expect(t.of(n).every((e) => e.is_replay === true)).toBe(true);

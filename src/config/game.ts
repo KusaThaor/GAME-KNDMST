@@ -11,5 +11,5 @@ export const GAME_CONFIG = {
   /** Camera và phím: xem src/config/camera.ts. */
   move: { walk: 3.2, run: 5.5, interact_radius: 1.5, area_radius: 2.5 },
   /** 3 sắc thái lựa chọn (RETAINED). */
-  tone_labels: { playful: 'Rộn ràng', gentle: 'Ấm áp', curious: 'Sâu lắng' } as Record<Tone, string>,
+  tone_labels: { playful: 'Rộn ràng', gentle: 'Ấm áp', deep: 'Sâu lắng' } as Record<Tone, string>,
 } as const;

@@ -8,9 +8,9 @@
 import * as THREE from 'three';
 import { CameraManager, type LookInput } from '../../actors/camera/cameraManager';
 import type { Motion } from '../../actors/character/animate';
-import { buildCharacter } from '../../actors/character/build';
 import type { CharacterId } from '../../actors/character/presets';
-import { rigAvatar, type Avatar } from '../../actors/player/avatar';
+import type { Avatar } from '../../actors/player/avatar';
+import { DEFAULT_RIG_ADAPTER, type CharacterRigAdapter } from '../../actors/player/rigAdapter';
 import { DEFAULT_MOVE, PlayerController, type MoveConfig, type MoveIntent } from '../../actors/player/controller';
 import { CAMERA_PRESETS, DEFAULT_CAMERA_PRESET, type CameraPreset } from '../../config/camera';
 import { GAME_CONFIG } from '../../config/game';
@@ -38,6 +38,8 @@ export interface DaySceneOptions {
   style?: ArtStyle;
   /** Tải lại trang giữa Ngày: đứng ở điểm xuất hiện của khu này thay vì điểm xuất hiện của Ngày. */
   startZone?: string | null;
+  /** Chỗ cắm model nhân vật (mặc định: nhân vật dựng bằng code). Xem actors/player/rigAdapter.ts. */
+  rigAdapter?: CharacterRigAdapter;
   /** Tự cung cấp dữ liệu GLB (test). */
   fetchAsset?: (url: string) => Promise<ArrayBuffer>;
 }
@@ -122,6 +124,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   const groundAt = (p: { x: number; y: number; z: number }) => world.ground(p.x, p.z, p.y) ?? p.y;
 
   // ---- nhân vật ----
+  const rigAdapter = opts.rigAdapter ?? DEFAULT_RIG_ADAPTER;
   const rigOf = (ref: string): CharacterId => {
     const chr = idx.resolveActor(ref);
     const rig = chr?.age_variants[year?.age_variant ?? 'AGE_G6_7']?.rig_id ?? chr?.age_variants.AGE_G6_7?.rig_id ?? 'duc';
@@ -131,7 +134,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   const targets: DayTarget[] = [];
   const npcColliders: ColliderShape[] = [];
   bound.npcs.forEach((n, i) => {
-    const avatar = rigAvatar(buildCharacter(rigOf(n.actor), grade, { scarf: decor.scarf }), i + 1);
+    const avatar = rigAdapter.create({ id: rigOf(n.actor), grade, scarf: decor.scarf, seed: i + 1 });
     const y = groundAt(n);
     avatar.root.position.set(n.x, y, n.z);
     avatar.root.rotation.y = n.facing;
@@ -161,7 +164,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   standRing.rotation.x = -Math.PI / 2; standRing.visible = false; gizmos.add(standRing);
 
   // ---- Player: hình (Avatar) + điều khiển + camera + theo dõi khu ----
-  const player = rigAvatar(buildCharacter(rigOf('player'), grade, { scarf: decor.scarf }), 0);
+  const player = rigAdapter.create({ id: rigOf('player'), grade, scarf: decor.scarf, seed: 0 });
   scene.add(player.root);
   actors.set('player', player);
   const move: MoveConfig = { ...DEFAULT_MOVE, walk: GAME_CONFIG.move.walk, run: GAME_CONFIG.move.run };

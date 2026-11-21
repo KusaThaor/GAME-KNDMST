@@ -25,7 +25,7 @@ export function makePack(): ContentPack {
       ],
       spawn_points: [{ id: 'spawn.yard', position: [0, 6] }],
     }],
-    chapters: [{ id: 'ch_g06', label: `${P} Chương lớp 6`, memory_day_ids: ['d.g06.01'] }, { id: 'ch_g07', label: `${P} Chương lớp 7`, memory_day_ids: ['d.g07.03'] }],
+    chapters: [{ id: 'ch_g06', label: `${P} Mốc 1 · lớp 6`, memory_day_ids: ['d.g06.01'] }, { id: 'ch_g07', label: `${P} Mốc 1 · lớp 7`, memory_day_ids: ['d.g07.03'] }],
     days: [
       {
         id: 'd.g06.01', title: `${P} Ngày 1`, school_year_id: 'g06', map_id: 'map_thcs', map_variant: 'g06',
@@ -59,7 +59,7 @@ export function makePack(): ContentPack {
           { id: 'q_m1_main_01.s02', kind: 'choice', choice_id: 'c_m1_01', about: ['NPC_A'], measured: true, options: [
             { id: 'a', tone: 'playful', text: `${P} A`, set_flags: { 'm1.greet': 'playful' } },
             { id: 'b', tone: 'gentle', text: `${P} B`, set_flags: { 'm1.greet': 'gentle' } },
-            { id: 'c', tone: 'curious', text: `${P} C`, set_flags: { 'm1.greet': 'curious' } },
+            { id: 'c', tone: 'deep', text: `${P} C`, set_flags: { 'm1.greet': 'deep' } },
           ] },
           { id: 'q_m1_main_01.s03', kind: 'interact', target: 'itr.thcs.desk' },
         ],
@@ -95,7 +95,7 @@ export function makePack(): ContentPack {
         steps: [
           { id: 'q_hub_pd_02.s01', kind: 'phone_ui', screen: 'group_chat', thread_id: 'thread.group' },
           { id: 'q_hub_pd_02.s02', kind: 'compose_message', thread_id: 'thread.group', openers: [
-            { id: 'a', tone: 'playful', text: `${P} mở lời A` }, { id: 'b', tone: 'gentle', text: `${P} mở lời B` }, { id: 'c', tone: 'curious', text: `${P} mở lời C` },
+            { id: 'a', tone: 'playful', text: `${P} mở lời A` }, { id: 'b', tone: 'gentle', text: `${P} mở lời B` }, { id: 'c', tone: 'deep', text: `${P} mở lời C` },
           ] },
         ],
       },

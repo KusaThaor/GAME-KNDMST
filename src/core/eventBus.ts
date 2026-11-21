@@ -2,6 +2,9 @@
 import type { PhotoMode, QuestType, StepKind, Tone } from '../content/types';
 import type { QuestState } from './save';
 
+export type MinigameContext = 'story' | 'hub' | 'side';
+export type MinigameResult = 'win' | 'lose' | 'draw' | 'complete' | 'quit';
+
 export interface PhotoCriteria { all_in_frame: boolean; player_in_zone: boolean; posed_in_time: boolean }
 
 export interface GameEvents {
@@ -24,6 +27,11 @@ export interface GameEvents {
   step_completed: { quest_id: string; step_id: string; kind: StepKind; quest_type: QuestType; memory_day_id: string | null; is_replay: boolean };
   choice_made: { step_id: string; choice_id: string; option_id: string; tone: Tone | null; measured: boolean; is_replay: boolean };
   message_sent: { quest_id: string; step_id: string; tone: Tone | null };
+  /** Minigame (GDD 02 §1.1, §5.1). `game_id`: caro | sudoku | bottle | boat | ... (khung thật chưa có — hiện chỉ phát từ thẻ giả). */
+  minigame_started: { game_id: string; context: MinigameContext; page_id: string | null; opponent_id: string | null; difficulty: string | null };
+  minigame_finished: { game_id: string; context: MinigameContext; page_id: string | null; opponent_id: string | null; difficulty: string | null; result: MinigameResult; duration_s: number; stars: number | null; hints_used: number | null; score: number | null };
+  /** Mở Bảng trò chơi ở Căn cứ (Khu Vui Chơi). Chưa có nơi phát — khung Khu Vui Chơi chưa làm. */
+  hub_opened: { page_id: string | null };
   photo_attempt: { step_id: string | null; mode: PhotoMode | 'free'; retry_index: number } & PhotoCriteria;
   photo_kept: { step_id: string | null; mode: PhotoMode | 'free'; retry_index: number } & PhotoCriteria;
   free_photo_taken: { memory_day_id: string; zone_id: string | null };

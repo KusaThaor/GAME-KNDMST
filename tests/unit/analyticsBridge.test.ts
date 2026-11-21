@@ -60,7 +60,7 @@ function playAll(t: ReturnType<typeof setup>) {
   e.complete('q_m1_main_05.s04'); e.complete('q_m1_main_05.s05');
   e.enterHub(); hub.refresh(); hub.runPdes();
   e.complete('q_hub_pd_02.s01');
-  e.complete('q_hub_pd_03.s01', { option_id: 'curious' });
+  e.complete('q_hub_pd_03.s01', { option_id: 'deep' });
   bus.emit('feedback_shown', { placement: 'demo_end' });
   bus.emit('feedback_skipped', { placement: 'demo_end' });
 }
@@ -72,7 +72,7 @@ describe('cầu nối analytics (F8)', () => {
 
   it('có đủ event mới sau khi chơi hết gói giả', () => {
     const t = setup(); playAll(t);
-    for (const n of ['game_started', 'appearance_selected', 'artifact_opened', 'memory_day_started', 'memory_day_completed', 'milestone_completed',
+    for (const n of ['game_started', 'appearance_selected', 'artifact_opened', 'page_started', 'page_completed', 'milestone_completed',
       'quest_started', 'quest_step_completed', 'quest_completed', 'choice_made', 'photo_attempt', 'photo_kept',
       'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'public_demo_completed', 'feedback_shown', 'feedback_skipped'] as const) {
       expect(t.names(), n).toContain(n);
@@ -81,8 +81,8 @@ describe('cầu nối analytics (F8)', () => {
 
   it('memory_day_* mang milestone_id, school_year, memory_day_id, chapter_label, is_replay', () => {
     const t = setup(); playAll(t);
-    expect(t.of('memory_day_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', memory_day_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Chương lớp 6', is_replay: false });
-    expect(t.of('memory_day_completed').map((p) => p.memory_day_id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6', is_replay: false });
+    expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.03']);
     expect(t.of('milestone_completed')).toEqual([{ milestone_id: 'm1' }]);
   });
 
@@ -95,7 +95,7 @@ describe('cầu nối analytics (F8)', () => {
 
   it('pd_quest_step chỉ có sắc thái, không có nội dung tin nhắn', () => {
     const t = setup(); playAll(t);
-    expect(t.of('pd_quest_step').at(-1)).toEqual({ quest_id: 'q_hub_pd_03', step_id: 'q_hub_pd_03.s01', choice_tone: 'curious' });
+    expect(t.of('pd_quest_step').at(-1)).toEqual({ quest_id: 'q_hub_pd_03', step_id: 'q_hub_pd_03.s01', choice_tone: 'deep' });
     expect(t.of('choice_made')).toEqual([{ choice_id: 'c_m1_05_tone', tone: 'gentle', memory_day_id: 'd.g07.03', is_replay: false }]);
   });
 
@@ -120,14 +120,14 @@ describe('cầu nối analytics (F8)', () => {
     expect(r.batch?.events).toHaveLength(t.sent.length);
   });
 
-  it('chơi lại: event mang is_replay=true và không phát lại memory_day_completed "thật"', () => {
+  it('chơi lại: event mang is_replay=true và không phát lại page_completed "thật"', () => {
     const t = setup(); playAll(t);
     t.sent.length = 0;
     t.hub.openArtifact('art_m1_01');
     t.engine.startDay('d.g06.01', { replay: true });
     t.engine.trigger('interact', 'NPC_A'); t.engine.complete('q_m1_main_01.s01');
     t.engine.trigger('interact', 'itr.thcs.stone_bench'); t.engine.complete('q_m1_main_01.s02');
-    for (const n of ['artifact_opened', 'memory_day_started', 'memory_day_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
+    for (const n of ['artifact_opened', 'page_started', 'page_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
       expect(t.of(n).length, n).toBeGreaterThan(0);
       expect(t.of(n).every((p) => p.is_replay === true), n).toBe(true);
     }
@@ -151,7 +151,7 @@ describe('danh sách event', () => {
     const names = new Set<string>(EVENT_NAMES);
     expect(names.has('chapter_started')).toBe(false);
     expect(names.has('chapter_completed')).toBe(false);
-    for (const n of ['artifact_opened', 'memory_day_started', 'memory_day_completed', 'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'choice_made']) expect(names.has(n), n).toBe(true);
+    for (const n of ['artifact_opened', 'page_started', 'page_completed', 'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'choice_made']) expect(names.has(n), n).toBe(true);
   });
   it('server bỏ event mang nội dung tin nhắn / ghi chú / tên', () => {
     const u = () => crypto.randomUUID();

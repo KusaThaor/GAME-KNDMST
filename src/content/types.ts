@@ -7,7 +7,7 @@
 export type MilestoneId = 'm1' | 'm2' | 'm3';
 export type QuestScope = MilestoneId | 'hub';
 export type QuestType = 'main' | 'side' | 'daily' | 'event' | 'pd';
-export type Tone = 'playful' | 'gentle' | 'curious';
+export type Tone = 'playful' | 'gentle' | 'deep';
 export type Gender = 'male' | 'female';
 export type AgeVariant = 'AGE_G6_7' | 'AGE_G8_9' | 'AGE_G10_12' | 'ADULT_2026';
 export type FlagValue = string | number | boolean;
@@ -44,7 +44,7 @@ export interface DialogueLine {
 
 export interface ChoiceOption {
   id: string;
-  /** 3 sắc thái: playful = "Rộn ràng", gentle = "Ấm áp", curious = "Sâu lắng". Bỏ trống = lựa chọn nội dung. */
+  /** 3 sắc thái: playful = "Rộn ràng", gentle = "Ấm áp", deep = "Sâu lắng". Bỏ trống = lựa chọn nội dung. */
   tone?: Tone;
   text: string;
   set_flags?: Record<string, FlagValue>;
@@ -119,7 +119,7 @@ export interface MapDef {
   spawn_points: { id: string; position?: [number, number]; facing?: number }[];
 }
 
-/** Chương chỉ là nhãn gom danh sách Ngày (D-04). */
+/** Nhóm Trang (nhãn "Mốc …"), chỉ để hiện menu và báo cáo (D-04). Tên kiểu dữ liệu `Chapter` giữ nguyên để khỏi đổi schema. */
 export interface Chapter { id: string; label: string; memory_day_ids: string[] }
 
 /**

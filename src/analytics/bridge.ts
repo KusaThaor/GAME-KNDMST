@@ -11,14 +11,17 @@ import type { SaveState } from '../core/save';
 
 export interface TrackerLike { track(name: EventName, props?: Record<string, PropValue>): void; setAttempt(id: string | null): void }
 
-export function attachAnalytics(deps: { bus: EventBus; idx: ContentIndex; save: SaveState; tracker: TrackerLike }): () => void {
+export function attachAnalytics(deps: { bus: EventBus; idx: ContentIndex; save: SaveState; tracker: TrackerLike; now?: () => number }): () => void {
   const { bus, idx, save, tracker } = deps;
+  const now = deps.now ?? Date.now;
   tracker.setAttempt(save.attempt_id);
   const T = (name: EventName, props?: Record<string, PropValue>) => tracker.track(name, props);
-  const dayProps = (dayId: string, is_replay: boolean) => ({
-    milestone_id: idx.milestoneOfDay(dayId) ?? null, school_year: idx.days.get(dayId)?.school_year_id ?? null,
-    memory_day_id: dayId, chapter_label: idx.chapterLabel(dayId) ?? null, is_replay,
+  // GDD v1.0: Trang = đơn vị chơi; page_id giữ mã d.gNN.KK. Số liệu "memory_day_id" ở các event khác (quest, ảnh…) giữ nguyên.
+  const pageProps = (pageId: string, is_replay: boolean) => ({
+    milestone_id: idx.milestoneOfDay(pageId) ?? null, school_year: idx.days.get(pageId)?.school_year_id ?? null,
+    page_id: pageId, chapter_label: idx.chapterLabel(pageId) ?? null, is_replay,
   });
+  const pageStart = new Map<string, number>();
   const questProps = (quest_id: string, quest_type: string, memory_day_id: string | null, is_replay: boolean) => ({
     quest_id, quest_type, milestone_id: idx.quests.get(quest_id)?.scope ?? null, memory_day_id, is_replay,
   });
@@ -29,9 +32,16 @@ export function attachAnalytics(deps: { bus: EventBus; idx: ContentIndex; save: 
     bus.on('game_resumed', (e) => T('game_resumed', { memory_day_id: e.memory_day_id, step_id: e.step_id })),
     bus.on('profile_set', (e) => T('appearance_selected', { gender: e.gender })),
     bus.on('artifact_opened', (e) => T('artifact_opened', { artifact_id: e.artifact_id, memory_day_id: e.memory_day_id, is_replay: e.is_replay })),
-    bus.on('day_started', (e) => { if (!e.resumed) T('memory_day_started', dayProps(e.day_id, e.is_replay)); }),
+    bus.on('day_started', (e) => {
+      if (e.resumed) return;
+      pageStart.set(e.day_id, now());
+      T('page_started', pageProps(e.day_id, e.is_replay));
+    }),
     bus.on('day_completed', (e) => {
-      T('memory_day_completed', dayProps(e.day_id, e.is_replay));
+      const t0 = pageStart.get(e.day_id);
+      pageStart.delete(e.day_id);
+      // duration_s chỉ có khi đã thấy page_started trong lần chạy này (tải lại giữa Trang thì bỏ trống, không đoán).
+      T('page_completed', { ...pageProps(e.day_id, e.is_replay), ...(t0 === undefined ? {} : { duration_s: Math.max(0, Math.round((now() - t0) / 1000)) }) });
       if (e.is_replay) return;
       const m = idx.milestoneOfDay(e.day_id);
       const sameMilestone = idx.releaseDays.filter((d) => idx.milestoneOfDay(d.id) === m);
@@ -39,7 +49,15 @@ export function attachAnalytics(deps: { bus: EventBus; idx: ContentIndex; save: 
     }),
     bus.on('quest_started', (e) => T('quest_started', questProps(e.quest_id, e.quest_type, e.memory_day_id, e.is_replay))),
     bus.on('quest_completed', (e) => T('quest_completed', questProps(e.quest_id, e.quest_type, e.memory_day_id, e.is_replay))),
-    bus.on('message_sent', (e) => lastTone.set(e.step_id, e.tone)),
+    // Tin nhắn kết demo: chỉ gửi sắc thái (playful/gentle/deep), không bao giờ gửi nội dung (GDD 02 §5.1).
+    bus.on('message_sent', (e) => { lastTone.set(e.step_id, e.tone); T('end_message_sent', { tone: e.tone }); }),
+    bus.on('minigame_started', (e) => {
+      T('minigame_started', { game_id: e.game_id, context: e.context, page_id: e.page_id, opponent_id: e.opponent_id, difficulty: e.difficulty });
+    }),
+    bus.on('minigame_finished', (e) => {
+      T('minigame_finished', { game_id: e.game_id, context: e.context, page_id: e.page_id, opponent_id: e.opponent_id, difficulty: e.difficulty, result: e.result, duration_s: e.duration_s, stars: e.stars, hints_used: e.hints_used, score: e.score });
+    }),
+    bus.on('hub_opened', (e) => T('hub_opened', { page_id: e.page_id })),
     bus.on('step_completed', (e) => {
       T('quest_step_completed', { ...questProps(e.quest_id, e.quest_type, e.memory_day_id, e.is_replay), step_id: e.step_id });
       if (e.quest_type === 'pd') T('pd_quest_step', { quest_id: e.quest_id, step_id: e.step_id, choice_tone: lastTone.get(e.step_id) ?? null });

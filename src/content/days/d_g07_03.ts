@@ -47,7 +47,7 @@ export const quests: Quest[] = [
         options: [
           { id: 'playful', tone: 'playful', text: `${P} Trả lời kiểu hưởng ứng`, set_flags: { 'm1.placeholder_tone': 'playful' } },
           { id: 'gentle', tone: 'gentle', text: `${P} Trả lời kiểu dung hòa`, set_flags: { 'm1.placeholder_tone': 'gentle' } },
-          { id: 'curious', tone: 'curious', text: `${P} Trả lời kiểu khơi gợi`, set_flags: { 'm1.placeholder_tone': 'curious' } },
+          { id: 'deep', tone: 'deep', text: `${P} Trả lời kiểu khơi gợi`, set_flags: { 'm1.placeholder_tone': 'deep' } },
         ] },
       { id: 'q_m1_main_05.s03', kind: 'interact', target: 'itr.thcs.tripod_spot', objective: `${P} Đặt máy ảnh` },
       { id: 'q_m1_main_05.s04', kind: 'photo', mode: 'timer', camera_id: 'cam.d0703.group', subjects: ['player', 'NPC_A', 'NPC_B', 'NPC_C', 'NPC_D'], album_entry_id: 'alb.d.g07.03.01',
