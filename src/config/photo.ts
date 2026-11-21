@@ -7,7 +7,7 @@ import type { PhotoCriteria } from '../core/eventBus';
 export interface PhotoConfig {
   quality_display: 'marks' | 'score';
   score_weights: Record<keyof PhotoCriteria, number>;
-  /** Thời gian hẹn giờ (GDD v0.3 §7.1: thử 10s và 8s — chốt ở spike). */
+  /** Thời gian hẹn giờ (kịch bản chốt 10 giây). */
   timer_seconds: number;
   free_roll_max_per_day: number;
   jpeg: { width: number; height: number; quality: number };
@@ -16,7 +16,7 @@ export interface PhotoConfig {
 export const PHOTO_CONFIG: PhotoConfig = {
   quality_display: 'marks',
   score_weights: { all_in_frame: 40, player_in_zone: 30, posed_in_time: 30 },
-  timer_seconds: 8,
+  timer_seconds: 10,
   free_roll_max_per_day: 12,
   jpeg: { width: 1024, height: 768, quality: 0.85 },
 };
