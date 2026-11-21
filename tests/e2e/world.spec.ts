@@ -47,8 +47,14 @@ async function freeInDay(page: Page) {
     const ready = await page.evaluate(() => window.__game!.ready());
     if (ready && s.mode === 'day' && !s.ui.dialogue && !s.ui.panel && s.camera && !s.camera.locked) return s;
     if (Date.now() - t0 > 90_000) throw new Error(`không vào được Ngày: ${JSON.stringify(s)}`);
-    // bot chỉ được bấm qua đồng ý/lời dẫn trước khi vào Ngày; trong Ngày không để bot đi
-    if (s.mode !== 'day' || s.ui.dialogue) await page.evaluate(() => window.__game!.botStep({ name: 'Bot' }));
+    // bot chỉ được bấm qua đồng ý/lời dẫn trước khi vào Ngày; trong Ngày không để bot đi.
+    // Kiểm lại điều kiện ngay trong lượt gọi bot: giữa lượt đọc `s` ở trên và lượt này game có thể vừa vào Ngày,
+    // khi đó botStep sẽ dịch chuyển người chơi tới mục tiêu quest (làm hỏng ca 10: tải lại về sân thay vì hành lang).
+    await page.evaluate(() => {
+      const g = window.__game!;
+      const now = g.state() as unknown as { mode: string | null; ui: { dialogue: string | null } };
+      if (now.mode !== 'day' || now.ui.dialogue) g.botStep({ name: 'Bot' });
+    });
     await page.waitForTimeout(100);
   }
 }
@@ -965,7 +971,8 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     await expect.poll(async () => (await state(page)).zone, { timeout: 60_000 }).toBe('zone.thcs.corridor');
     await page.keyboard.up('KeyW');
     const before = await page.evaluate(() => window.__game!.state() as { step: string; quests: unknown });
-    await page.waitForTimeout(1000);                                         // tự lưu khi đổi khu chạy sau một nhịp
+    // tự lưu khi đổi khu ghi đồng bộ; chờ điều kiện thật thay cho chờ cứng
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('htx.save') ?? '{}').current?.zone_id ?? null)).toBe('zone.thcs.corridor');
     // mở lại như người chơi thật (không kèm ?day=, vì tham số đó dựng lại bản lưu từ đầu)
     await page.goto('/?play=1');
     await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
