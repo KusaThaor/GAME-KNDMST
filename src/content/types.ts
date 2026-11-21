@@ -288,5 +288,5 @@ export interface ContentConfig {
   cast: CastTable;
   release: ReleaseDef;
   /** Bản production không được chứa nội dung chưa phải HUMAN_CANON. */
-  environment: 'test' | 'production';
+  environment: 'test' | 'test_m2' | 'production';
 }

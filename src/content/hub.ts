@@ -152,7 +152,8 @@ export const HUB_QUESTS: Quest[] = [
         thread_id: 'thread.old_group',
         objective: 'Soạn và gửi một tin nhắn cho nhóm bạn',
         openers: [
-          { id: 'caro', tone: 'playful', text: 'Ê. Ván caro hồi lớp 8 vẫn đang 4–3 đó nha. Ai gỡ?' },
+          // Tỉ số caro theo Phương án B (chủ dự án duyệt): dùng biến động {quan}–{duc} từ cờ minigames.caro.series, fallback '4–3'.
+          { id: 'caro', tone: 'playful', text: 'Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?' },
           { id: 'rules', tone: 'gentle', text: 'Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?' },
           { id: 'rule6', tone: 'deep', text: 'Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha.' },
         ],

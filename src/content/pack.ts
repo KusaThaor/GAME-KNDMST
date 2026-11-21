@@ -30,6 +30,6 @@ export const CONTENT: ContentPack = {
 };
 
 /** Cấu hình nội dung theo môi trường. `castName` chỉ dùng cho công cụ test (?cast=B). */
-export function contentConfig(environment: 'test' | 'production', castName: string = ACTIVE_CAST): ContentConfig {
+export function contentConfig(environment: 'test' | 'test_m2' | 'production', castName: string = ACTIVE_CAST): ContentConfig {
   return { cast: CAST_TABLES[castName] ?? CAST_TABLES[ACTIVE_CAST], release: RELEASES[environment], environment };
 }

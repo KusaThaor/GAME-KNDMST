@@ -21,38 +21,29 @@
 # CỤM CÂU HỎI MỐC 2 (TRANG 5–9 & KẾT DEMO MỐC 2)
 > **Phiên làm việc:** 21/11/2026 (Số hóa kịch bản Mốc 2: Trang 5, 6, 7, 8, 9, chuyển Mốc và kết demo)  
 > **Agent thực hiện:** Gemini Pro (Antigravity)  
+> **Trạng thái:** ĐÃ ĐƯỢC CHỦ DỰ ÁN PHÊ DUYỆT (21/11/2026)
 
 ### Câu hỏi 1: Điểm đứng / máy ảnh chưa có trong `map_thcs.index.json`
-- **Vấn đề:** Một số bối cảnh trong kịch bản (tiệm tạp hóa xem U23 ở Trang 8, sân trường ban đêm đốt lửa trại Hội trại ở Trang 8, góc hiên thư viện ở Trang 6) hiện chưa có marker chuyên biệt hoặc preset ánh sáng ban đêm trong `map_thcs.index.json`. Dữ liệu hiện tạm dùng marker gần nhất (`itr.thcs.grocery`, `cam.thcs.yard_group`, `spot.thcs.yard_bench`).
-- **Phương án A (Khuyên dùng):** Tạm dùng các marker gần nhất trong `map_thcs` như hiện tại; khi đội 3D/world hoàn thiện asset sẽ bổ sung marker chuyên biệt (`cam.thcs.night_camp`, `cam.thcs.grocery_tv`, `itr.thcs.library_porch`).
-- **Phương án B:** Giữ nguyên các marker hiện có, chỉ cần thêm preset ánh sáng ban đêm (`night_camp`) vào `src/world/variants.ts`.
-- **Phương án C:** Tách tiệm tạp hóa và khu hội trại thành các zone/bản đồ riêng biệt.
-*(Nếu không chọn, mặc định giữ Phương án A).*
+- **Vấn đề:** Một số bối cảnh trong kịch bản (tiệm tạp hóa xem U23 ở Trang 8, sân trường ban đêm đốt lửa trại Hội trại ở Trang 8, góc hiên thư viện ở Trang 6) hiện chưa có marker chuyên biệt hoặc preset ánh sáng ban đêm trong `map_thcs.index.json`.
+- **Quyết định duyệt:** **Phương án A (Khuyên dùng)**.
+- **Thực thi:** Dữ liệu tạm dùng các marker gần nhất trong `map_thcs` (`itr.thcs.grocery`, `cam.thcs.yard_group`, `spot.thcs.yard_bench`). Đội 3D/world sẽ bổ sung marker chuyên biệt (`cam.thcs.night_camp`, `cam.thcs.grocery_tv`, `itr.thcs.library_porch`) và preset ánh sáng ban đêm (`night_camp`) trong đợt cập nhật asset tiếp theo.
 
 ### Câu hỏi 2: Màn giao diện đặc thù chưa có loại bước tương ứng
-- **Vấn đề:** Màn chọn thư Valentine (`UI_LETTER_PICKER` - chọn người nhận, loại thư, bỏ vào khe) và màn chép bố cục báo tường khổ A5 chưa có loại bước riêng trong engine (hiện chỉ có `talk`, `interact`, `choice`, `minigame`, `cutscene`).
-- **Phương án A (Khuyên dùng):** Kết hợp bước `choice` (chọn người nhận, sắc thái) nối tiếp bước `minigame` (`mg_letter_picker` / `mg_wall_paper`) như đã triển khai để vừa lưu cờ phân nhánh chuẩn, vừa kích hoạt giao diện minigame.
-- **Phương án B:** Chuyển hoàn toàn logic lựa chọn vào bên trong UI minigame 2D, minigame tự bắn event lưu cờ khi kết thúc.
-- **Phương án C:** Mở rộng schema engine để bổ sung loại bước mới `custom_ui`.
-*(Nếu không chọn, mặc định giữ Phương án A).*
+- **Vấn đề:** Màn chọn thư Valentine (`UI_LETTER_PICKER` - chọn người nhận, loại thư, bỏ vào khe) và màn chép bố cục báo tường khổ A5 chưa có loại bước riêng trong engine.
+- **Quyết định duyệt:** **Phương án A (Khuyên dùng)**.
+- **Thực thi:** Dữ liệu kết hợp bước `choice` (chọn người nhận, sắc thái) nối tiếp bước `minigame` (`mg_letter_picker` / `mg_wall_paper`) để vừa lưu cờ phân nhánh chuẩn theo Phụ lục B, vừa kích hoạt giao diện minigame mà không cần thêm kind bước mới.
 
 ### Câu hỏi 3: Cách đưa tỉ số Caro vào tin nhắn kết thúc demo
-- **Vấn đề:** Kịch bản văn học v1.4 quy định tỉ số trên nắp hộp phấn là "QUÂN 4 – ĐỨC 3 (CHƯA XONG)" (cố định), trong khi GDD `02` §2.1 đề xuất tỉ số động (3–4 hoặc 4–3 tùy ván đánh của Player). Trong tin nhắn kết thúc demo: "Ê. Ván caro hồi lớp 8 vẫn đang 4–3 đó nha. Ai gỡ?", cần chốt định dạng hiển thị.
-- **Phương án A (Khuyên dùng):** Cố định tỉ số "4–3" đúng nguyên văn kịch bản v1.4 đã chốt ("QUÂN 4 – ĐỨC 3 (CHƯA XONG)").
-- **Phương án B:** Dùng biến động `{quan}–{duc}` lấy từ cờ `minigames.caro.series` nếu người chơi đã đánh caro, fallback về "4–3".
-- **Phương án C:** Bỏ con số tỉ số trong tin nhắn, chỉ giữ câu rủ chung "Ván caro hồi lớp 8 vẫn chưa xong đó nha. Ai gỡ?".
-*(Nếu không chọn, mặc định giữ Phương án A).*
+- **Vấn đề:** Cần thống nhất hiển thị tỉ số caro trong tin nhắn kết thúc demo ("Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?").
+- **Quyết định duyệt:** **Phương án B**.
+- **Thực thi:** Đã cập nhật `q_hub_pd_06.s02` trong `src/content/hub.ts` dùng chuỗi text: `'Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?'`. Engine hiển thị tin nhắn sẽ nội suy `{quan}` và `{duc}` từ cờ `minigames.caro.series` đã ghi nhận ở Trang 5, nếu cờ chưa tồn tại hoặc người chơi bỏ qua thì tự động fallback về tỉ số cố định `"4–3"`.
 
 ### Câu hỏi 4: Điểm kết thúc demo Mốc 2 và cấu hình `release.ts`
-- **Vấn đề:** `release.ts` hiện đang dừng ở Trang 4 (Mốc 1) và không được sửa theo chỉ đạo. Toàn bộ Trang 5–9 và nhiệm vụ kết thúc demo Mốc 2 (`q_hub_pd_05`, `q_hub_pd_06`) đã được số hóa sẵn sàng.
-- **Phương án A (Khuyên dùng):** Giữ nguyên `release.ts` ở Mốc 1 cho tới khi chủ dự án duyệt xong toàn bộ nội dung Trang 5–9; sau đó Claude Code sẽ cập nhật `end_day_id: 'd.g09.03'`, `end_step_id: 'q_hub_pd_06.s02'`.
-- **Phương án B:** Bổ sung profile `test_m2` trong `release.ts` để phục vụ test tự động riêng cho Mốc 2.
-- **Phương án C:** Đợi duyệt từng Trang, sau đó mở rộng trực tiếp profile `test`.
-*(Nếu không chọn, mặc định giữ Phương án A).*
+- **Vấn đề:** Cần cấu hình điểm kết thúc demo Mốc 2 mà không ảnh hưởng tới bản đo Mốc 1 đang sử dụng profile `test`.
+- **Quyết định duyệt:** **Phương án B**.
+- **Thực thi:** Đã bổ sung profile `test_m2` trong `src/content/release.ts` bao gồm toàn bộ 9 Ngày (`d.g06.01` đến `d.g09.03`), `end_day_id: 'd.g09.03'`, `end_step_id: 'q_hub_pd_06.s02'`. Giữ nguyên profile `test` (4 Trang Mốc 1) cho bản đo đạc. Đã cập nhật `ContentConfig` trong `types.ts`, `pack.ts` và bổ sung unit test xác thực độc lập.
 
 ### Câu hỏi 5: Đăng ký mã minigame vào runtime
-- **Vấn đề:** Đã khai báo 17 mã minigame theo đúng danh mục chỉ định (`mg_wipe_board`, `mg_caro`, `mg_mailbox_craft`, `mg_apology_letter`, `mg_letter_picker`, `mg_ball_toss`, `mg_photo_hunt`, `mg_base_decor`, `mg_sudoku`, `mg_wall_paper`, `mg_flag_color`, `mg_chair_row`, `mg_cheer_rhythm`, `mg_sign_shirt`, `mg_rule6`, `mg_fingerprint`, `mg_bottle_flip`).
-- **Phương án A (Khuyên dùng):** Đội dev khi tạo registry kiểm tra minigame sẽ đăng ký các mã trên kèm stub tự động pass hoặc nút "Bỏ qua" để bảo đảm trải nghiệm không bị đứt gãy.
-- **Phương án B:** Cho phép engine bỏ qua kiểm tra registry nếu minigame đang ở trạng thái phát triển.
-- **Phương án C:** Chỉ giữ 3 minigame chính, các minigame còn lại hạ cấp thành tương tác `interact`.
-*(Nếu không chọn, mặc định giữ Phương án A).*
+- **Vấn đề:** Chuẩn bị runtime cho 17 mã minigame mới được số hóa ở Mốc 2.
+- **Quyết định duyệt:** **Phương án A (Khuyên dùng)**.
+- **Thực thi:** Đội dev runtime khi xây dựng minigame registry sẽ đăng ký đủ 17 mã minigame (`mg_wipe_board`, `mg_caro`, `mg_mailbox_craft`, `mg_apology_letter`, `mg_letter_picker`, `mg_ball_toss`, `mg_photo_hunt`, `mg_base_decor`, `mg_sudoku`, `mg_wall_paper`, `mg_flag_color`, `mg_chair_row`, `mg_cheer_rhythm`, `mg_sign_shirt`, `mg_rule6`, `mg_fingerprint`, `mg_bottle_flip`) kèm stub pass-through/bỏ qua để đảm bảo quy trình chạy test và gameplay luôn thông suốt.

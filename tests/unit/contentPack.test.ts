@@ -15,6 +15,13 @@ describe('gói nội dung trong repo', () => {
     const r = validateContent(CONTENT, contentConfig('test'));
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
   });
+  it('hợp lệ ở môi trường test_m2 (đủ 9 Ngày Mốc 1 + Mốc 2)', () => {
+    const r = validateContent(CONTENT, contentConfig('test_m2'));
+    expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
+    expect(RELEASES.test_m2.memory_day_ids).toHaveLength(9);
+    expect(RELEASES.test_m2.end_day_id).toBe('d.g09.03');
+    expect(RELEASES.test_m2.end_step_id).toBe('q_hub_pd_06.s02');
+  });
   it('hợp lệ ở production (nội dung giả không được lọt vào)', () => {
     const r = validateContent(CONTENT, contentConfig('production'));
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
