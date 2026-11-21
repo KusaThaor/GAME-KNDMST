@@ -583,7 +583,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     openPanel(p) {
       const s = ui.get();
-      if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
+      // Menu (Esc) mở được cả khi đang có thoại/thông báo/màn kết Trang: thứ bên dưới đứng chờ, đóng menu là tiếp tục.
+      // Không mở khi đang chuyển cảnh hay đang điền form (tên, đồng ý, phản hồi).
+      if (p === 'menu') { if (s.fade.on || s.profile || s.consentAsk || s.feedback || s.panel) return; }
+      else if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
       if (s.mode === 'day' && p !== 'menu' && p !== 'journal') return;
       if (s.mode === 'hub' && p === 'journal') return;
       ui.set({ panel: p, wipeArmed: false, prompt: null });
@@ -673,11 +676,25 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   });
 
   // ---------- bàn phím, chuột ----------
+  /**
+   * Space/Enter = bấm nút "đi tiếp" của thứ đang hiện, đúng như click (thoại, thông báo, màn kết Trang, thẻ minigame tạm,
+   * thẻ "Đi tiếp", tạo dáng khi hẹn giờ). Bảng đang mở (menu…) thì không đụng tới thứ bên dưới. Trả true nếu đã dùng phím.
+   */
+  function continueKey(): boolean {
+    const s = ui.get();
+    if (s.panel || s.fade.on) return false;
+    if (s.dialogue || s.notice) { actions.next(); return true; }
+    if (s.dayEnd) { actions.continueDayEnd(); return true; }
+    if (s.minigame) { actions.minigameDone(); return true; }
+    if (s.photo?.phase === 'countdown') { actions.photoPose(); return true; }
+    if (s.free && !s.choice && !s.endPrompt) { actions.freeContinue(); return true; }
+    return false;
+  }
   input.onKey((code) => {
     const s = ui.get();
-    if (code === 'Space' || code === 'Enter') { if (s.dialogue || s.notice) actions.next(); else actions.photoPose(); }
+    if (code === 'Space' || code === 'Enter') return continueKey();
     else if (isControl('interact', code)) interact();
-    else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
+    else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice && !s.panel) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
     else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
     else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
     else if (isControl('camera_mode', code) && !locked()) toggleCameraMode();

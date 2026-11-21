@@ -32,7 +32,8 @@ export interface GameInput {
   releasePointer(): void;
   /** Game báo lúc nào ĐƯỢC khóa con trỏ (đang ở Ngày ký ức, không có thoại/bảng). Mặc định: luôn được. */
   setLockGuard(fn: () => boolean): void;
-  onKey(fn: (code: string) => void): void;
+  /** `fn` trả `true` = game đã dùng phím này → chặn hành vi mặc định (vd. nút đang giữ tiêu điểm không bị "bấm" thêm lần nữa). */
+  onKey(fn: (code: string) => boolean | void): void;
   onPointer(fn: (kind: 'move' | 'click', ndcX: number, ndcY: number) => void): void;
   onActivity(fn: () => void): void;
   /** Con trỏ vừa được khóa/thả. `byUser` = người chơi tự thả bằng Esc (không phải game gọi releasePointer). */
@@ -87,7 +88,7 @@ export function createInput(el: HTMLElement): GameInput {
   let device: InputDevice = coarse ? 'touch' : 'keyboard';
   const gestures = new LookGestures(POINTER_INPUT);
   const wheelRouter = new WheelRouter(POINTER_INPUT);
-  const keyFns: ((code: string) => void)[] = [], ptrFns: ((k: 'move' | 'click', x: number, y: number) => void)[] = [], actFns: (() => void)[] = [];
+  const keyFns: ((code: string) => boolean | void)[] = [], ptrFns: ((k: 'move' | 'click', x: number, y: number) => void)[] = [], actFns: (() => void)[] = [];
   const lockFns: ((locked: boolean, byUser: boolean) => void)[] = [];
   const devFns: ((d: InputDevice) => void)[] = [];
   const typing = (e: Event) => { const t = e.target as HTMLElement | null; return !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA'); };
@@ -150,11 +151,19 @@ export function createInput(el: HTMLElement): GameInput {
     if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
     act();
     setDevice('keyboard');
-    if (!e.repeat) keyFns.forEach((f) => f(e.code));
+    if (!e.repeat) {
+      let used = false;
+      for (const f of keyFns) if (f(e.code) === true) used = true;
+      if (used) e.preventDefault();
+    }
     down.add(e.code);
     if (e.code !== 'Escape') tryResume();
   };
-  const ku = (e: KeyboardEvent) => { down.delete(e.code); };
+  const ku = (e: KeyboardEvent) => {
+    down.delete(e.code);
+    // Space trên một nút đang giữ tiêu điểm: trình duyệt "bấm" nút lúc NHẢ phím → chặn, game đã xử lý ở keydown
+    if (e.code === 'Space' && !typing(e)) e.preventDefault();
+  };
   const pd = (e: PointerEvent) => {
     act();
     swallowClick = false;
