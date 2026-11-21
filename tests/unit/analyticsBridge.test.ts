@@ -47,6 +47,27 @@ function playAll(t: ReturnType<typeof setup>) {
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_01.s01');
   e.trigger('interact', 'itr.thcs.stone_bench'); e.complete('q_m1_main_01.s02');
   e.enterHub(); hub.refresh(); hub.runPdes();
+
+  hub.openArtifact('art_m1_02');
+  e.startDay('d.g07.01');
+  e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_02.s01');
+  e.trigger('interact', 'NPC_C'); e.complete('q_m1_main_02.s02');
+  e.complete('q_m1_main_02.s03', { option_id: 'friendship' });
+  e.trigger('interact', 'itr.thcs.gutter'); e.complete('q_m1_main_02.s04');
+  e.complete('q_m1_main_02.s05');
+  e.answerEndPrompt('leave');
+  e.enterHub(); hub.refresh(); hub.runPdes();
+
+  hub.openArtifact('art_m1_03');
+  e.startDay('d.g07.02');
+  e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_03.s01');
+  e.trigger('arrive', 'itr.thcs.old_table');
+  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
+  e.trigger('interact', 'itr.thcs.old_table'); e.complete('q_m1_main_03.s04');
+  e.complete('q_m1_main_03.s05');
+  e.answerEndPrompt('leave');
+  e.enterHub(); hub.refresh(); hub.runPdes();
+
   album.markViewed(); album.markBackViewed('alb.d.g07.03.02');
   hub.openArtifact('art_m1_05');
   e.startDay('d.g07.03');
@@ -82,7 +103,7 @@ describe('cầu nối analytics (F8)', () => {
   it('memory_day_* mang milestone_id, school_year, memory_day_id, chapter_label, is_replay', () => {
     const t = setup(); playAll(t);
     expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', is_replay: false });
-    expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03']);
     expect(t.of('milestone_completed')).toEqual([{ milestone_id: 'm1' }]);
   });
 
@@ -96,7 +117,11 @@ describe('cầu nối analytics (F8)', () => {
   it('pd_quest_step chỉ có sắc thái, không có nội dung tin nhắn', () => {
     const t = setup(); playAll(t);
     expect(t.of('pd_quest_step').at(-1)).toEqual({ quest_id: 'q_hub_pd_03', step_id: 'q_hub_pd_03.s01', choice_tone: 'deep' });
-    expect(t.of('choice_made')).toEqual([{ choice_id: 'c_m1_05_tone', tone: 'gentle', memory_day_id: 'd.g07.03', is_replay: false }]);
+    expect(t.of('choice_made')).toEqual([
+      { choice_id: 'c_m1_02_wish', tone: 'gentle', memory_day_id: 'd.g07.01', is_replay: false },
+      { choice_id: 'c_m1_03_decor', tone: 'deep', memory_day_id: 'd.g07.02', is_replay: false },
+      { choice_id: 'c_m1_05_tone', tone: 'gentle', memory_day_id: 'd.g07.03', is_replay: false },
+    ]);
   });
 
   it('public_demo_completed được ghi TRƯỚC khi form hiện; bỏ qua form không đổi trạng thái hoàn thành', () => {

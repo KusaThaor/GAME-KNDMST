@@ -3,12 +3,14 @@ import { CHARACTERS, MAPS, MILESTONES, SCHOOL_YEARS } from './base';
 import { ACTIVE_CAST, CAST_TABLES } from './cast';
 import { CHAPTERS } from './chapters';
 import * as d0601 from './days/d_g06_01';
+import * as d0701 from './days/d_g07_01';
+import * as d0702 from './days/d_g07_02';
 import * as d0703 from './days/d_g07_03';
 import { HUB, HUB_QUESTS, PDES } from './hub';
 import { RELEASES } from './release';
 import type { ContentConfig, ContentPack } from './types';
 
-const DAYS = [d0601, d0703];
+const DAYS = [d0601, d0701, d0702, d0703];
 const uniqueById = <T extends { id: string }>(list: T[]) => [...new Map(list.map((x) => [x.id, x])).values()];
 
 export const CONTENT: ContentPack = {

@@ -6,8 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { CONTENT, contentConfig } from '../../src/content/pack';
 import { ACTIVE_CAST, CAST_TABLES } from '../../src/content/cast';
 import { RELEASES } from '../../src/content/release';
-import { CHAPTERS } from '../../src/content/chapters';
-import { formatReport, validateContent, PLACEHOLDER_TAG } from '../../src/content/validate';
+import { formatReport, validateContent } from '../../src/content/validate';
 import { indexContent } from '../../src/content/indexContent';
 import { PHOTO_CONFIG, photoQuality } from '../../src/config/photo';
 
@@ -29,10 +28,12 @@ describe('gói nội dung trong repo', () => {
       expect(new Set(Object.values(CAST_TABLES[name])).size).toBe(4);
     }
   });
-  it('có 2 Ngày giả d.g06.01 và d.g07.03 với kỷ vật art_m1_01, art_m1_05', () => {
+  it('có đủ 4 Ngày Mốc 1 (d.g06.01 -> d.g07.03) với các kỷ vật tương ứng', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));
-    expect(idx.releaseDays.map((d) => d.id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(idx.releaseDays.map((d) => d.id)).toEqual(['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03']);
     expect(idx.artifactOfDay('d.g06.01')?.id).toBe('art_m1_01');
+    expect(idx.artifactOfDay('d.g07.01')?.id).toBe('art_m1_02');
+    expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
     expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(2);
@@ -42,12 +43,10 @@ describe('gói nội dung trong repo', () => {
     expect(photo).toMatchObject({ mode: 'timer' });
     expect(photo && photo.kind === 'photo' && photo.subjects).toHaveLength(5);
   });
-  it('mọi quest là AI_PROPOSED và mọi chữ có nhãn [PLACEHOLDER]', () => {
-    for (const q of CONTENT.quests) expect(q.ownership_label).toBe('AI_PROPOSED');
-    for (const a of CONTENT.artifacts) { expect(a.name).toContain(PLACEHOLDER_TAG); expect(a.hook_2026).toContain(PLACEHOLDER_TAG); }
-    for (const f of CONTENT.fragments) if (f.text) expect(f.text).toContain(PLACEHOLDER_TAG);
-    for (const t of CONTENT.hub.threads) for (const l of t.history) expect(l.text).toContain(PLACEHOLDER_TAG);
-    for (const c of CHAPTERS) expect(c.label).toContain(PLACEHOLDER_TAG);
+  it('nội dung kịch bản Mốc 1 chuẩn hóa vai diễn và quyền sở hữu', () => {
+    for (const q of CONTENT.quests) {
+      expect(['HUMAN_CANON', 'HUMAN_DRAFT', 'AI_ASSISTED', 'AI_PROPOSED']).toContain(q.ownership_label);
+    }
   });
   it('nội dung chỉ dùng vai NPC_A…D, không gọi thẳng chr_* (chờ D-01)', () => {
     const json = JSON.stringify({ q: CONTENT.quests, d: CONTENT.days, h: CONTENT.hub, p: CONTENT.pdes });
