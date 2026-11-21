@@ -55,6 +55,58 @@ describe('validateContent', () => {
     expect(codes(validateContent(p, makeConfig()))).toContain('side_blocks_main:q_m1_side_01');
   });
 
+  describe('A-02: Side/Daily phải mở đầu bằng hành động trong thế giới', () => {
+    const quest = (p: ReturnType<typeof makePack>, id: string) => p.quests.find((q) => q.id === id)!;
+    const dlg = [{ speaker: 'narrator', text: '[PLACEHOLDER] lời dẫn' }];
+
+    it('Side mở đầu bằng cutscene → lỗi optional_quest_unstartable (kèm cách sửa)', () => {
+      const p = makePack();
+      const q = quest(p, 'q_m1_side_01');
+      q.steps = [{ id: 'q_m1_side_01.s01', kind: 'cutscene', lines: dlg }, ...q.steps.slice(1)];
+      const r = validateContent(p, makeConfig());
+      expect(codes(r)).toContain('optional_quest_unstartable:q_m1_side_01');
+      const msg = r.errors.find((e) => e.code === 'optional_quest_unstartable')!.message;
+      expect(msg).toContain('cutscene');
+      expect(msg).toMatch(/talk|goto|interact/);
+    });
+
+    it('Daily mở đầu bằng bước không phải hành động (free) → lỗi', () => {
+      const p = makePack();
+      quest(p, 'q_m1_daily_01').steps = [{ id: 'q_m1_daily_01.s01', kind: 'free', prompt: '[PLACEHOLDER]' }];
+      expect(codes(validateContent(p, makeConfig()))).toContain('optional_quest_unstartable:q_m1_daily_01');
+    });
+
+    it('chỉ xét BƯỚC ĐẦU: Side mở bằng talk, có cutscene ở bước sau → không lỗi mới', () => {
+      const p = makePack();
+      const q = quest(p, 'q_m1_side_01');
+      q.steps = [q.steps[0], { id: 'q_m1_side_01.s02', kind: 'cutscene', lines: dlg }];
+      expect(codes(validateContent(p, makeConfig())).filter((c) => c.startsWith('optional_quest_unstartable'))).toEqual([]);
+    });
+
+    it('Main mở đầu bằng cutscene vẫn hợp lệ (luật chỉ áp cho Side/Daily)', () => {
+      const p = makePack();
+      const q = quest(p, 'q_m1_main_05');
+      q.steps = [{ id: 'q_m1_main_05.s01', kind: 'cutscene', lines: dlg }, ...q.steps.slice(1).map((s, i) => ({ ...s, id: `q_m1_main_05.s0${i + 2}` }))];
+      expect(codes(validateContent(p, makeConfig())).filter((c) => c.startsWith('optional_quest_unstartable'))).toEqual([]);
+    });
+
+    it('5 loại bước đầu hợp lệ (talk | interact | goto | collect | place) → không báo nhầm', () => {
+      const first = [
+        { kind: 'talk', with: 'NPC_B', lines: dlg },
+        { kind: 'interact', target: 'itr.thcs.board' },
+        { kind: 'goto', target: 'itr.thcs.tree' },
+        { kind: 'collect', item: 'item.x', targets: ['itr.thcs.tree'], count: 1 },
+        { kind: 'place', item: 'item.x', target: 'itr.thcs.tree' },
+      ] as const;
+      for (const f of first) {
+        const p = makePack();
+        const q = quest(p, 'q_m1_side_01');
+        q.steps = [{ id: 'q_m1_side_01.s01', ...f } as (typeof q.steps)[number]];
+        expect(codes(validateContent(p, makeConfig())).filter((c) => c.startsWith('optional_quest_unstartable')), f.kind).toEqual([]);
+      }
+    });
+  });
+
   it('trang phải có ít nhất 1 ô required_for_restore', () => {
     const p = makePack();
     for (const e of p.album_entries) if (e.page_id === 'page.d.g07.03') e.required_for_restore = false;

@@ -8,7 +8,7 @@
 | Lỗi | Trạng thái |
 |---|---|
 | A-01 (`proximity()`, bước `goto`) | XONG phần sửa + test xanh (e2e toàn bộ chưa chạy lại — xem Checkpoint 2) |
-| A-02 (luật `optional_quest_unstartable`) | CHUA LAM |
+| A-02 (luật `optional_quest_unstartable`) | DANG LAM (test đỏ đã lưu, chưa sửa validator) |
 
 ### Checkpoint 0 — baseline (đầu phiên)
 - Baseline chạy thật: `npx tsc --noEmit` đạt · `npm test` 266 đạt / 1 bỏ qua · `npm run validate:world` 0 lỗi (6 khu).
@@ -31,7 +31,14 @@
 - Sửa: mỗi khung hình, với đích đang trong bán kính và `!locked()`, hỏi `engine.peek('arrive', id)` rồi `engine.trigger('arrive', id)`; không còn nhớ "đã vào vòng". Bước đã xong không còn khớp → không hoàn thành hai lần.
 - Kết quả thật: ca "A-01" **XANH** (1 passed, 57 giây; kiểm cả "đúng 1 event `quest_step_completed` cho `q_m1_side_02.s01` khi đứng yên") · `npx tsc --noEmit` đạt · `npm test` 266 đạt / 1 bỏ qua (không giảm) · `game.spec.ts` ca "bot chơi hết bản thử" và ca "?day=&step=" xanh (2 passed, 4,5 phút).
 - Chưa chạy: toàn bộ Playwright (~32 phút) — chạy một lần cuối phiên.
-- Bước tiếp theo: viết unit test đỏ A-02 trong `tests/unit/validate.test.ts`.
+- Bước tiếp theo: viết unit test đỏ A-02 trong `tests/unit/validate.test.ts`. → xong, xem Checkpoint 3.
+
+### Checkpoint 3 — A-02 test ĐỎ (trước khi sửa validator)
+- File đã đổi: `tests/unit/validate.test.ts` (nhóm "A-02: Side/Daily phải mở đầu bằng hành động trong thế giới", 5 ca).
+- Ca đỏ (bắt lỗi thiếu luật): Side mở bằng `cutscene`; Daily mở bằng `free`. Ca bảo vệ báo nhầm (đã xanh từ đầu, phải giữ xanh): Side mở bằng `talk` rồi `cutscene` ở bước sau; Main mở bằng `cutscene`; 5 loại bước đầu hợp lệ `talk|interact|goto|collect|place`.
+- Lệnh: `npx vitest run tests/unit/validate.test.ts` → **ĐỎ: 2 failed, 19 passed** (`expected [] to include 'optional_quest_unstartable:q_m1_side_01'` / `…:q_m1_daily_01`). `tsc` đạt.
+- Còn lại: thêm luật trong `src/content/validate.ts`, chạy lại unit + validator trên gói thật, tài liệu, build, push.
+- Bước tiếp theo: thêm luật `optional_quest_unstartable` vào khối kiểm quest của `src/content/validate.ts`.
 
 ---
 
