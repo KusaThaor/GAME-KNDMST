@@ -1,0 +1,94 @@
+=== SCENE OBJECTS ===
+Name: Blush_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Blush_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Body_Head, Type: MESH, Parent: None
+  Vertices: 181, Polygons: 180
+  Modifiers: ['Armature (ARMATURE)']
+  Vertex groups: ['Head', 'Neck']
+Name: Character_Arm_L, Type: MESH, Parent: None
+  Vertices: 209, Polygons: 220
+  Modifiers: ['Armature (ARMATURE)']
+  Vertex groups: ['UpperArm.L', 'Forearm.L', 'Hand.L', 'Chest']
+Name: Character_Arm_R, Type: MESH, Parent: None
+  Vertices: 209, Polygons: 220
+  Modifiers: ['Armature (ARMATURE)']
+  Vertex groups: ['UpperArm.R', 'Forearm.R', 'Hand.R', 'Chest']
+Name: Character_Torso_Legs, Type: MESH, Parent: None
+  Vertices: 490, Polygons: 470
+  Modifiers: ['Armature (ARMATURE)']
+  Vertex groups: ['Chest', 'Spine', 'Hips', 'Thigh.L', 'Thigh.R', 'Shin.L', 'Shin.R', 'Foot.L', 'Foot.R']
+Name: Ear_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Ear_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Eye_HL1_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.L']
+Name: Eye_HL1_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.R']
+Name: Eye_HL2_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.L']
+Name: Eye_HL2_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.R']
+Name: Eye_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.L']
+Name: Eye_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Eye.R']
+Name: Eyebrow_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Eyebrow_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Hair_Bangs, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Hair_Cap, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Hair_Sideburn_L, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Hair_Sideburn_R, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Mouth, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Nose, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Head']
+Name: Shirt_Collar, Type: MESH, Parent: None
+  Vertices: 8, Polygons: 6
+  Modifiers: ['Subdiv (SUBSURF)', 'Armature (ARMATURE)']
+  Vertex groups: ['Chest']
+Name: Student_Armature, Type: ARMATURE, Parent: None

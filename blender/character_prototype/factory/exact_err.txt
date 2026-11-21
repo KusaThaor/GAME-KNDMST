@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\run_exact_test.py", line 9, in <module>
+    test_triangle_geometry.run_test()
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\test_triangle_geometry.py", line 434, in run_test
+    build_vietnamese_red_scarf_fig13_exact(factory.arm, f"test_{fname}")
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\test_triangle_geometry.py", line 182, in build_vietnamese_red_scarf_fig13_exact
+    bm.faces.new([row_i0[0], ti_0, to_0, row_o0[0]])
+ValueError: faces.new(verts): face already exists

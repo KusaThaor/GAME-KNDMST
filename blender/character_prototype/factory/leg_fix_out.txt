@@ -1,0 +1,1 @@
+min_rad_dot=0.0355, max_rad_dot=0.0404, count=70

@@ -1,0 +1,4 @@
+Body_Arm_Skin_L face 0: center=<Vector (-0.0961, 0.0138, 0.2950)>, normal=<Vector (-0.9645, -0.2201, 0.1461)>, rad_dot=0.037
+Body_Arm_Skin_R face 0: center=<Vector (0.1559, 0.0138, 0.2950)>, normal=<Vector (-0.9688, -0.2211, -0.1116)>, rad_dot=-0.101
+Body_Leg_Skin_L face 0: center=<Vector (-0.0184, 0.0094, 0.1275)>, normal=<Vector (-0.9747, -0.2225, 0.0212)>, rad_dot=-0.038
+Body_Leg_Skin_R face 0: center=<Vector (0.0916, 0.0094, 0.1275)>, normal=<Vector (-0.9747, -0.2225, 0.0212)>, rad_dot=-0.145

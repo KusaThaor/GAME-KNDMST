@@ -12,3 +12,8 @@ service-account*.json
 firebase-debug.log
 *.blend1
 __pycache__/
+
+# Rác t?m (asset workshop)
+*.bak
+*.bak_*
+*_runtime_validation.json

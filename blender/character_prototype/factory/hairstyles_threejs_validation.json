@@ -1,0 +1,212 @@
+{
+  "timestamp": "2026-11-17T08:39:19.414Z",
+  "threejs_version": "187",
+  "verdict": "PASS",
+  "total_validated": 12,
+  "results": [
+    {
+      "hair_id": "HAIR_001",
+      "glb_file": "character_hair_001.glb",
+      "file_size_kb": "351.6",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_001",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_002",
+      "glb_file": "character_hair_002.glb",
+      "file_size_kb": "354.9",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_002",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_003",
+      "glb_file": "character_hair_003.glb",
+      "file_size_kb": "354.3",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_003",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_004",
+      "glb_file": "character_hair_004.glb",
+      "file_size_kb": "345.8",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_004",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_005",
+      "glb_file": "character_hair_005.glb",
+      "file_size_kb": "364.1",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_005",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_006",
+      "glb_file": "character_hair_006.glb",
+      "file_size_kb": "355.1",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_006",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_007",
+      "glb_file": "character_hair_007.glb",
+      "file_size_kb": "364.2",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_007",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_008",
+      "glb_file": "character_hair_008.glb",
+      "file_size_kb": "370.6",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_008",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_009",
+      "glb_file": "character_hair_009.glb",
+      "file_size_kb": "374.6",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_009",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_010",
+      "glb_file": "character_hair_010.glb",
+      "file_size_kb": "360.1",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_010",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_011",
+      "glb_file": "character_hair_011.glb",
+      "file_size_kb": "345.8",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_011",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    },
+    {
+      "hair_id": "HAIR_012",
+      "glb_file": "character_hair_012.glb",
+      "file_size_kb": "357.8",
+      "head_bone_found": true,
+      "head_mesh_found": true,
+      "morph_targets_count": 0,
+      "hair_mesh_found": true,
+      "hair_material": {
+        "name": "M_Acc_Clip_hair_hair_012",
+        "roughness": 0.30000001192092896,
+        "metalness": 0,
+        "colorHex": "#f4b513"
+      },
+      "animation_actions_count": 16,
+      "status": "PASS"
+    }
+  ]
+}

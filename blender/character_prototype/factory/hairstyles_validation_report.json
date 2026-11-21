@@ -1,0 +1,458 @@
+{
+  "pipeline_version": "2.0.0",
+  "hairstyles_count": 12,
+  "hairstyles": {
+    "HAIR_001": {
+      "id": "HAIR_001",
+      "name": "Classic Bowl Cut",
+      "vietnamese_name": "T\u00f3c \u00fap n\u1ed3i h\u1ecdc tr\u00f2",
+      "style": "classic_bowl_cut",
+      "description": "M\u00e1i t\u00f3c \u00fap n\u1ed3i (bowl cut) tr\u00f2n tr\u1ecba, ng\u00e2y th\u01a1 hi\u1ec1n l\u00e0nh c\u1ee7a nam sinh \u0111\u1ea7u c\u1ea5p 2",
+      "default_color": "#1c1615",
+      "raw_verts": 775,
+      "raw_faces": 738,
+      "bounds": {
+        "x": [
+          -0.1959,
+          0.1959
+        ],
+        "y": [
+          -0.1966,
+          0.1645
+        ],
+        "z": [
+          0.4064,
+          0.713
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_001_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_001.glb",
+      "glb_size_bytes": 360080,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_001_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_001_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_001_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_001_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_002": {
+      "id": "HAIR_002",
+      "name": "Sporty Short",
+      "vietnamese_name": "T\u00f3c ng\u1eafn th\u1ec3 thao vu\u1ed1t nh\u1ecdn",
+      "style": "sporty_spiky",
+      "description": "M\u00e1i t\u00f3c ng\u1eafn vu\u1ed1t nh\u1ecdn n\u0103ng \u0111\u1ed9ng, th\u1ec3 thao, c\u00e1 t\u00ednh c\u1ee7a nam sinh th\u00edch \u0111\u00e1 b\u00f3ng",
+      "default_color": "#161b26",
+      "raw_verts": 835,
+      "raw_faces": 790,
+      "bounds": {
+        "x": [
+          -0.1909,
+          0.1909
+        ],
+        "y": [
+          -0.1916,
+          0.1587
+        ],
+        "z": [
+          0.4099,
+          0.708
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_002_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_002.glb",
+      "glb_size_bytes": 363404,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_002_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_002_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_002_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_002_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_003": {
+      "id": "HAIR_003",
+      "name": "Rounded Bob",
+      "vietnamese_name": "T\u00f3c t\u00e9m bob n\u1eef sinh",
+      "style": "rounded_bob",
+      "description": "M\u00e1i t\u00f3c t\u00e9m bob ng\u1eafn d\u1ec5 th\u01b0\u01a1ng \u00f4m nh\u1eb9 \u0111\u00f4i m\u00e1 b\u1ea7u b\u0129nh c\u1ee7a n\u1eef sinh g\u01b0\u01a1ng m\u1eabu",
+      "default_color": "#221714",
+      "raw_verts": 823,
+      "raw_faces": 786,
+      "bounds": {
+        "x": [
+          -0.2125,
+          0.2125
+        ],
+        "y": [
+          -0.1976,
+          0.1625
+        ],
+        "z": [
+          0.4057,
+          0.714
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_003_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_003.glb",
+      "glb_size_bytes": 362768,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_003_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_003_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_003_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_003_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_004": {
+      "id": "HAIR_004",
+      "name": "Side-Parted Short",
+      "vietnamese_name": "T\u00f3c ng\u1eafn r\u1ebd ng\u00f4i 7/3",
+      "style": "side_parted_short",
+      "description": "Ki\u1ec3u t\u00f3c r\u1ebd ng\u00f4i 7/3 l\u1ecbch s\u1ef1, ch\u1ec9n chu c\u1ee7a l\u1edbp tr\u01b0\u1edfng ho\u1eb7c h\u1ecdc sinh g\u01b0\u01a1ng m\u1eabu",
+      "default_color": "#1a1c22",
+      "raw_verts": 667,
+      "raw_faces": 638,
+      "bounds": {
+        "x": [
+          -0.1929,
+          0.1929
+        ],
+        "y": [
+          -0.1936,
+          0.1786
+        ],
+        "z": [
+          0.4085,
+          0.71
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_004_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_004.glb",
+      "glb_size_bytes": 354072,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_004_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_004_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_004_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_004_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_005": {
+      "id": "HAIR_005",
+      "name": "Medium Straight",
+      "vietnamese_name": "T\u00f3c th\u1eb3ng ngang l\u01b0ng l\u1eedng",
+      "style": "medium_straight",
+      "description": "M\u00e1i t\u00f3c th\u1eb3ng d\u00e0i ngang l\u01b0ng m\u1ec1m m\u1ea1i, d\u1ecbu d\u00e0ng c\u1ee7a n\u1eef sinh thanh xu\u00e2n",
+      "default_color": "#1e1816",
+      "raw_verts": 1003,
+      "raw_faces": 958,
+      "bounds": {
+        "x": [
+          -0.2105,
+          0.2105
+        ],
+        "y": [
+          -0.1976,
+          0.1645
+        ],
+        "z": [
+          0.337,
+          0.714
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_005_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_005.glb",
+      "glb_size_bytes": 372824,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_005_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_005_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_005_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_005_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_006": {
+      "id": "HAIR_006",
+      "name": "Low Ponytail",
+      "vietnamese_name": "T\u00f3c \u0111u\u00f4i ng\u1ef1a bu\u1ed9c th\u1ea5p",
+      "style": "low_ponytail",
+      "description": "T\u00f3c \u0111u\u00f4i ng\u1ef1a bu\u1ed9c th\u1ea5p sau g\u00e1y g\u1ecdn g\u00e0ng, thanh l\u1ecbch cho gi\u1edd t\u1ef1 h\u1ecdc",
+      "default_color": "#1b1717",
+      "raw_verts": 817,
+      "raw_faces": 784,
+      "bounds": {
+        "x": [
+          -0.1949,
+          0.1949
+        ],
+        "y": [
+          -0.2092,
+          0.1645
+        ],
+        "z": [
+          0.3283,
+          0.712
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_006_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_006.glb",
+      "glb_size_bytes": 363636,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_006_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_006_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_006_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_006_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_007": {
+      "id": "HAIR_007",
+      "name": "High Ponytail",
+      "vietnamese_name": "T\u00f3c \u0111u\u00f4i ng\u1ef1a bu\u1ed9c cao",
+      "style": "high_ponytail",
+      "description": "T\u00f3c \u0111u\u00f4i ng\u1ef1a bu\u1ed9c cao b\u1ed3ng b\u1ec1nh k\u00e8m n\u01a1, tr\u00e0n \u0111\u1ea7y n\u0103ng l\u01b0\u1ee3ng ho\u1ea1t b\u00e1t",
+      "default_color": "#1a1818",
+      "raw_verts": 985,
+      "raw_faces": 940,
+      "bounds": {
+        "x": [
+          -0.1959,
+          0.1959
+        ],
+        "y": [
+          -0.2382,
+          0.1645
+        ],
+        "z": [
+          0.4021,
+          0.728
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_007_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_007.glb",
+      "glb_size_bytes": 372936,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_007_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_007_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_007_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_007_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_008": {
+      "id": "HAIR_008",
+      "name": "Twin Pigtails",
+      "vietnamese_name": "T\u00f3c hai b\u00ean bu\u1ed9c \u0111\u00f4i",
+      "style": "twin_pigtails",
+      "description": "T\u00f3c hai ch\u00f9m bu\u1ed9c \u0111\u00f4i hai b\u00ean nh\u00ed nh\u1ea3nh, h\u1ed3n nhi\u00ean \u0111\u1eb7c tr\u01b0ng h\u1ecdc sinh nh\u1ecf nh\u1eafn",
+      "default_color": "#221714",
+      "raw_verts": 1105,
+      "raw_faces": 1048,
+      "bounds": {
+        "x": [
+          -0.2672,
+          0.2672
+        ],
+        "y": [
+          -0.1966,
+          0.1645
+        ],
+        "z": [
+          0.3814,
+          0.713
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_008_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_008.glb",
+      "glb_size_bytes": 379528,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_008_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_008_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_008_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_008_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_009": {
+      "id": "HAIR_009",
+      "name": "Braided Hair",
+      "vietnamese_name": "T\u00f3c t\u1ebft b\u00edm h\u1ecdc sinh",
+      "style": "braided_hair",
+      "description": "B\u00edm t\u00f3c t\u1ebft truy\u1ec1n th\u1ed1ng \u0111oan trang, d\u1ecbu d\u00e0ng, ho\u00e0i ni\u1ec7m h\u1ecdc \u0111\u01b0\u1eddng 2012-2013",
+      "default_color": "#1c1615",
+      "raw_verts": 1177,
+      "raw_faces": 1112,
+      "bounds": {
+        "x": [
+          -0.1959,
+          0.1959
+        ],
+        "y": [
+          -0.2129,
+          0.1645
+        ],
+        "z": [
+          0.2746,
+          0.713
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_009_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_009.glb",
+      "glb_size_bytes": 383640,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_009_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_009_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_009_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_009_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_010": {
+      "id": "HAIR_010",
+      "name": "Shoulder-Length Hair",
+      "vietnamese_name": "T\u00f3c ngang vai u\u1ed1n c\u00fap C",
+      "style": "shoulder_length_curled",
+      "description": "T\u00f3c ngang vai n\u1eef t\u00ednh v\u1edbi ng\u1ecdn t\u00f3c u\u1ed1n c\u00fap ch\u1eef C nh\u1eb9 nh\u00e0ng \u00f4m c\u1ed5 \u00e1o",
+      "default_color": "#261b17",
+      "raw_verts": 931,
+      "raw_faces": 886,
+      "bounds": {
+        "x": [
+          -0.224,
+          0.224
+        ],
+        "y": [
+          -0.1976,
+          0.1645
+        ],
+        "z": [
+          0.3804,
+          0.714
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_010_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_010.glb",
+      "glb_size_bytes": 368788,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_010_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_010_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_010_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_010_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_011": {
+      "id": "HAIR_011",
+      "name": "Side-Swept Bangs",
+      "vietnamese_name": "T\u00f3c m\u00e1i x\u00e9o phong tr\u00e0o 2012-2013",
+      "style": "side_swept_bangs",
+      "description": "M\u00e1i x\u00e9o c\u00e1 t\u00ednh g\u1eafn li\u1ec1n v\u1edbi tr\u00e0o l\u01b0u tu\u1ed5i teen v\u00e0 \u00e2m nh\u1ea1c h\u1ecdc \u0111\u01b0\u1eddng 2012-2013",
+      "default_color": "#1a1b20",
+      "raw_verts": 667,
+      "raw_faces": 638,
+      "bounds": {
+        "x": [
+          -0.1949,
+          0.1972
+        ],
+        "y": [
+          -0.1956,
+          0.1857
+        ],
+        "z": [
+          0.4071,
+          0.712
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_011_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_011.glb",
+      "glb_size_bytes": 354072,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_011_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_011_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_011_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_011_back.png"
+      },
+      "status": "PASS"
+    },
+    "HAIR_012": {
+      "id": "HAIR_012",
+      "name": "Messy Short Hair",
+      "vietnamese_name": "T\u00f3c ng\u1eafn layer \u0111\u00e1nh r\u1ed1i t\u1ef1 nhi\u00ean",
+      "style": "messy_short_layers",
+      "description": "T\u00f3c ng\u1eafn t\u1ec9a layer \u0111\u00e1nh r\u1ed1i nh\u1eb9 l\u00e3ng t\u1eed, ph\u00f3ng kho\u00e1ng c\u1ee7a c\u1eadu h\u1ecdc tr\u00f2 ngh\u1ec7 thu\u1eadt",
+      "default_color": "#1d1716",
+      "raw_verts": 889,
+      "raw_faces": 840,
+      "bounds": {
+        "x": [
+          -0.1929,
+          0.1929
+        ],
+        "y": [
+          -0.1936,
+          0.1705
+        ],
+        "z": [
+          0.4085,
+          0.7125
+        ]
+      },
+      "blend_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_blend\\hair_012_source.blend",
+      "glb_path": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\outputs\\hairstyles_glb\\character_hair_012.glb",
+      "glb_size_bytes": 366404,
+      "rendered_views": {
+        "front": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_012_front.png",
+        "three_quarter": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_012_three_quarter.png",
+        "side": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_012_side.png",
+        "back": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\hair_012_back.png"
+      },
+      "status": "PASS"
+    }
+  },
+  "color_variants": [
+    {
+      "color_id": "COLOR_01",
+      "name": "Natural Jet Black",
+      "hex": "#1c1615",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_01.png"
+    },
+    {
+      "color_id": "COLOR_02",
+      "name": "Soft Charcoal",
+      "hex": "#161b26",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_02.png"
+    },
+    {
+      "color_id": "COLOR_03",
+      "name": "Chestnut Brown",
+      "hex": "#2b1b17",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_03.png"
+    },
+    {
+      "color_id": "COLOR_04",
+      "name": "Warm Auburn Copper",
+      "hex": "#4a2c1b",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_04.png"
+    },
+    {
+      "color_id": "COLOR_05",
+      "name": "Deep Blue-Black",
+      "hex": "#182030",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_05.png"
+    },
+    {
+      "color_id": "COLOR_06",
+      "name": "Honey Brown",
+      "hex": "#613d28",
+      "image": "C:\\Users\\Admin\\Desktop\\GAME\\GAME-KNDMST\\blender\\character_prototype\\factory\\previews\\hairstyles_v2\\color_variant_color_06.png"
+    }
+  ],
+  "summary": {
+    "all_passed": true,
+    "total_styles": 12,
+    "glb_exports_valid": true,
+    "source_blends_saved": true
+  }
+}

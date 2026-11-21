@@ -1,0 +1,2701 @@
+"""
+=============================================================================
+CHIBI MODULAR HAIRSTYLE GENERATOR V11 — FULL 12-HAIRSTYLE PRODUCTION LIBRARY
+Hành Trình Thanh Xuân — Cozy Vietnamese School-Life Narrative Game (2012–2013)
+
+Senior Stylized Character Artist & Procedural Geometry Engineer
+All 12 Hairstyles Rebuilt with V11 Geometry Standards:
+- Seamless cranial dome with inward beveled physical thickness (14mm rim)
+- Soft, cubic-smooth tapered locks with rounded caps (no sharp horns/spikes)
+- Continuous skull coverage down to natural nape hairline (Z ~ 0.448m)
+- High ponytail prominently visible from front view (crest Z ~ 0.730m)
+- Readable twin braids with bulbous interlocking plait segments and scrunchies
+- Calibrated satin-matte shader (roughness=0.68, specular=0.18, sheen=0.25)
+=============================================================================
+"""
+
+import bpy
+import bmesh
+import math
+from mathutils import Vector, Matrix, Euler
+import os
+import sys
+
+FACTORY_DIR = r"C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory"
+if FACTORY_DIR not in sys.path:
+    sys.path.insert(0, FACTORY_DIR)
+
+CANONICAL_BLEND = r"C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\scenes\Chibi_Base_Canonical_v1.blend"
+PREVIEW_OUT_DIR = os.path.join(FACTORY_DIR, "previews", "all_12_v11")
+GLB_OUT_DIR = os.path.join(FACTORY_DIR, "outputs", "hairstyles_glb")
+BLEND_OUT_DIR = os.path.join(FACTORY_DIR, "outputs", "hairstyles_blend")
+
+os.makedirs(PREVIEW_OUT_DIR, exist_ok=True)
+os.makedirs(GLB_OUT_DIR, exist_ok=True)
+os.makedirs(BLEND_OUT_DIR, exist_ok=True)
+
+# ---------------------------------------------------------------------------
+# COLOR UTILITIES
+# ---------------------------------------------------------------------------
+
+def hex_to_linear_rgb(hex_code, alpha=1.0):
+    hex_clean = hex_code.lstrip('#')
+    if len(hex_clean) == 3:
+        hex_clean = ''.join([c*2 for c in hex_clean])
+    r = int(hex_clean[0:2], 16) / 255.0
+    g = int(hex_clean[2:4], 16) / 255.0
+    b = int(hex_clean[4:6], 16) / 255.0
+    def srgb_to_linear(c):
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return (srgb_to_linear(r), srgb_to_linear(g), srgb_to_linear(b), alpha)
+
+# ---------------------------------------------------------------------------
+# SHADERS
+# ---------------------------------------------------------------------------
+
+def create_chibi_hair_material(mat_name, hex_color="#2b201c", roughness=0.68, sheen=0.25):
+    mat = bpy.data.materials.get(mat_name)
+    if not mat:
+        mat = bpy.data.materials.new(mat_name)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    nodes.clear()
+    
+    out_node = nodes.new("ShaderNodeOutputMaterial")
+    bsdf = nodes.new("ShaderNodeBsdfPrincipled")
+    mat.node_tree.links.new(bsdf.outputs["BSDF"], out_node.inputs["Surface"])
+    
+    col = hex_to_linear_rgb(hex_color)
+    bsdf.inputs["Base Color"].default_value = col
+    bsdf.inputs["Roughness"].default_value = roughness
+    bsdf.inputs["Metallic"].default_value = 0.0
+    
+    if "Specular IOR Level" in bsdf.inputs:
+        bsdf.inputs["Specular IOR Level"].default_value = 0.18
+    elif "Specular" in bsdf.inputs:
+        bsdf.inputs["Specular"].default_value = 0.18
+        
+    if "Sheen Weight" in bsdf.inputs:
+        bsdf.inputs["Sheen Weight"].default_value = sheen
+        if "Sheen Tint" in bsdf.inputs:
+            bsdf.inputs["Sheen Tint"].default_value = (min(1.0, col[0] * 1.3), min(1.0, col[1] * 1.3), min(1.0, col[2] * 1.3), 1.0)
+    elif "Sheen" in bsdf.inputs:
+        bsdf.inputs["Sheen"].default_value = sheen
+        
+    return mat
+
+def create_accessory_material(mat_name, hex_color="#f5b82e", roughness=0.45):
+    mat = bpy.data.materials.get(mat_name)
+    if not mat:
+        mat = bpy.data.materials.new(mat_name)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    nodes.clear()
+    
+    out_node = nodes.new("ShaderNodeOutputMaterial")
+    bsdf = nodes.new("ShaderNodeBsdfPrincipled")
+    mat.node_tree.links.new(bsdf.outputs["BSDF"], out_node.inputs["Surface"])
+    
+    col = hex_to_linear_rgb(hex_color)
+    bsdf.inputs["Base Color"].default_value = col
+    bsdf.inputs["Roughness"].default_value = roughness
+    bsdf.inputs["Metallic"].default_value = 0.0
+    if "Specular IOR Level" in bsdf.inputs:
+        bsdf.inputs["Specular IOR Level"].default_value = 0.35
+    elif "Specular" in bsdf.inputs:
+        bsdf.inputs["Specular"].default_value = 0.35
+    return mat
+
+# ---------------------------------------------------------------------------
+# GEOMETRY UTILITIES
+# ---------------------------------------------------------------------------
+
+def apply_clean_subsurf(obj, levels=1):
+    for p in obj.data.polygons:
+        p.use_smooth = True
+    m = obj.modifiers.new("Subsurf", 'SUBSURF')
+    m.levels = levels
+    m.render_levels = levels
+
+def bind_hair_to_armature(hair_obj, armature_obj):
+    if not armature_obj:
+        return
+    for m in hair_obj.modifiers:
+        if m.type == 'ARMATURE':
+            hair_obj.modifiers.remove(m)
+    hair_obj.parent = armature_obj
+    mod = hair_obj.modifiers.new("Armature", 'ARMATURE')
+    mod.object = armature_obj
+    vg = hair_obj.vertex_groups.get("Head")
+    if not vg:
+        vg = hair_obj.vertex_groups.new(name="Head")
+    all_indices = [v.index for v in hair_obj.data.vertices]
+    if all_indices:
+        vg.add(all_indices, 1.0, 'REPLACE')
+
+def add_smooth_hair_band(bm, center, axis=(0, 0, 1), major_r=0.018, minor_r=0.006, segs_u=16, segs_v=8, mat_index=1):
+    """Creates a neat, simple stylized hair band that hair passes visibly through."""
+    axis = Vector(axis).normalized()
+    up = Vector((0, 0, 1)) if abs(axis.z) < 0.88 else Vector((0, 1, 0))
+    u_dir = axis.cross(up).normalized()
+    v_dir = axis.cross(u_dir).normalized()
+    
+    rings = []
+    for i in range(segs_u):
+        ang_u = 2.0 * math.pi * i / segs_u
+        c_ring = center + (u_dir * math.cos(ang_u) + v_dir * math.sin(ang_u)) * major_r
+        rad_dir = (c_ring - center).normalized()
+        ring_v = []
+        for j in range(segs_v):
+            ang_v = 2.0 * math.pi * j / segs_v
+            p = c_ring + (rad_dir * math.cos(ang_v) + axis * math.sin(ang_v)) * minor_r
+            ring_v.append(bm.verts.new(p))
+        rings.append(ring_v)
+        
+    for i in range(segs_u):
+        inxt = (i + 1) % segs_u
+        for j in range(segs_v):
+            jnxt = (j + 1) % segs_v
+            f = bm.faces.new((rings[i][j], rings[i][jnxt], rings[inxt][jnxt], rings[inxt][j]))
+            f.material_index = mat_index
+
+def add_ribbon_bow(bm, center, facing=(0, -1, 0.3), width=0.040, height=0.020, mat_index=1):
+    """Creates a cute chibi ribbon bow attached to a hair tie."""
+    facing = Vector(facing).normalized()
+    up = Vector((0, 0, 1))
+    right = facing.cross(up).normalized()
+    knot_r = 0.007
+    
+    # Center knot (octahedron)
+    kv = [
+        bm.verts.new(center + facing * knot_r),
+        bm.verts.new(center - facing * knot_r),
+        bm.verts.new(center + right * knot_r),
+        bm.verts.new(center - right * knot_r),
+        bm.verts.new(center + up * knot_r),
+        bm.verts.new(center - up * knot_r),
+    ]
+    knot_faces = [
+        (kv[0], kv[2], kv[4]), (kv[0], kv[4], kv[3]), (kv[0], kv[3], kv[5]), (kv[0], kv[5], kv[2]),
+        (kv[1], kv[4], kv[2]), (kv[1], kv[3], kv[4]), (kv[1], kv[5], kv[3]), (kv[1], kv[2], kv[5])
+    ]
+    for kf in knot_faces:
+        f = bm.faces.new(kf)
+        f.material_index = mat_index
+        
+    # Bow wings
+    for sign in [-1, 1]:
+        w_tip = center + right * (sign * width) + up * (height * 0.35)
+        w_mid_t = center + right * (sign * width * 0.6) + up * (height * 0.8)
+        w_mid_b = center + right * (sign * width * 0.6) - up * (height * 0.3)
+        w_root_t = center + right * (sign * knot_r) + up * (knot_r * 0.8)
+        w_root_b = center + right * (sign * knot_r) - up * (knot_r * 0.8)
+        
+        v_rt = bm.verts.new(w_root_t)
+        v_rb = bm.verts.new(w_root_b)
+        v_mt = bm.verts.new(w_mid_t)
+        v_mb = bm.verts.new(w_mid_b)
+        v_tip = bm.verts.new(w_tip)
+        
+        f1 = bm.faces.new((v_rt, v_mt, v_mb, v_rb))
+        f2 = bm.faces.new((v_mt, v_tip, v_mb))
+        f1.material_index = mat_index
+        f2.material_index = mat_index
+
+def catmull_rom_spline(control_points, samples_per_segment=8):
+    """Generates a dense, perfectly smooth C1-continuous 3D curve through control points."""
+    pts = [Vector(p) for p in control_points]
+    if len(pts) < 2:
+        return [(pts[0], 0.0)]
+    
+    # Pad ends for Catmull-Rom
+    p_start = pts[0] + (pts[0] - pts[1])
+    p_end = pts[-1] + (pts[-1] - pts[-2])
+    all_p = [p_start] + pts + [p_end]
+    
+    curve = []
+    num_segs = len(pts) - 1
+    
+    for i in range(num_segs):
+        p0 = all_p[i]
+        p1 = all_p[i + 1]
+        p2 = all_p[i + 2]
+        p3 = all_p[i + 3]
+        
+        for s in range(samples_per_segment if i < num_segs - 1 else samples_per_segment + 1):
+            t = s / float(samples_per_segment)
+            t2 = t * t
+            t3 = t2 * t
+            
+            # Catmull-Rom basis matrix evaluation
+            pos = 0.5 * (
+                (2.0 * p1) +
+                (-p0 + p2) * t +
+                (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2 +
+                (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3
+            )
+            global_t = (i + t) / float(num_segs)
+            curve.append((pos, global_t))
+            
+    return curve
+
+def add_smooth_spline_lock(bm, control_points, width_profile, thick_profile, samples=24, n_pts=12, mat_index=0):
+    """
+    Extrudes a continuous, perfectly smooth stylized hair lock along a Catmull-Rom spline.
+    Zero sharp elbows, zero pipe joints, gradual cubic taper, rounded hemispherical caps.
+    """
+    curve_pts = catmull_rom_spline(control_points, samples_per_segment=max(4, samples // (len(control_points) - 1)))
+    w_start, w_mid, w_end = width_profile
+    th_start, th_mid, th_end = thick_profile
+    
+    slices = []
+    for i, (pt, t) in enumerate(curve_pts):
+        # Cubic bell-taper envelope
+        if t < 0.35:
+            fac = t / 0.35
+            w = w_start + (w_mid - w_start) * (fac ** 0.85)
+            th = th_start + (th_mid - th_start) * (fac ** 0.85)
+        else:
+            fac = (t - 0.35) / 0.65
+            w = w_mid + (w_end - w_mid) * (fac ** 1.25)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.25)
+            
+        if i < len(curve_pts) - 1:
+            tangent = (curve_pts[i + 1][0] - pt).normalized()
+        else:
+            tangent = (pt - curve_pts[i - 1][0]).normalized()
+            
+        up = Vector((0, 0, 1))
+        if abs(tangent.dot(up)) > 0.88:
+            up = Vector((0, 1, 0))
+        binormal = tangent.cross(up).normalized()
+        normal = binormal.cross(tangent).normalized()
+        
+        ring = []
+        for k in range(n_pts):
+            ang = 2.0 * math.pi * k / n_pts
+            vx = math.cos(ang) * (w * 0.5)
+            vy = math.sin(ang) * (th * 0.5)
+            p = pt + binormal * vx + normal * vy
+            ring.append(bm.verts.new(p))
+        slices.append(ring)
+        
+    for i in range(len(slices) - 1):
+        s1 = slices[i]
+        s2 = slices[i + 1]
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((s1[k], s1[kn], s2[kn], s2[k]))
+            f.material_index = mat_index
+            
+    # Rounded Caps
+    s0 = slices[0]
+    c0 = bm.verts.new(Vector(curve_pts[0][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((c0, s0[kn], s0[k]))
+        f.material_index = mat_index
+        
+    se = slices[-1]
+    ce = bm.verts.new(Vector(curve_pts[-1][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ce, se[k], se[kn]))
+        f.material_index = mat_index
+
+# =============================================================================
+# 1. REFINED HAIR_001: CLASSIC BOWL CUT (V12)
+# =============================================================================
+
+def add_soft_tapered_lock(bm, spine_points, width_profile, thick_profile, segs=8, n_pts=12, mat_index=0):
+    """
+    Extrudes a soft, continuous, beautifully curved stylized hair lock with gradual taper.
+    No abrupt joints, no pinched sections, no sharp horn-like spikes.
+    """
+    total_steps = segs * (len(spine_points) - 1)
+    curve_pts = []
+    for i in range(total_steps + 1):
+        t = i / total_steps
+        scaled_t = t * (len(spine_points) - 1)
+        idx = min(int(scaled_t), len(spine_points) - 2)
+        local_t = scaled_t - idx
+        p1 = Vector(spine_points[idx])
+        p2 = Vector(spine_points[idx + 1])
+        smooth_t = local_t * local_t * (3.0 - 2.0 * local_t)
+        curve_pts.append((p1.lerp(p2, smooth_t), t))
+        
+    w_start, w_mid, w_end = width_profile
+    th_start, th_mid, th_end = thick_profile
+    
+    slices = []
+    for i, (pt, t) in enumerate(curve_pts):
+        if t < 0.40:
+            fac = t / 0.40
+            w = w_start + (w_mid - w_start) * (fac ** 0.85)
+            th = th_start + (th_mid - th_start) * (fac ** 0.85)
+        else:
+            fac = (t - 0.40) / 0.60
+            w = w_mid + (w_end - w_mid) * (fac ** 1.15)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.15)
+            
+        if i < len(curve_pts) - 1:
+            tangent = (curve_pts[i + 1][0] - pt).normalized()
+        else:
+            tangent = (pt - curve_pts[i - 1][0]).normalized()
+            
+        up = Vector((0, 0, 1))
+        if abs(tangent.dot(up)) > 0.88:
+            up = Vector((0, 1, 0))
+        binormal = tangent.cross(up).normalized()
+        normal = binormal.cross(tangent).normalized()
+        
+        ring = []
+        for k in range(n_pts):
+            ang = 2.0 * math.pi * k / n_pts
+            vx = math.cos(ang) * (w * 0.5)
+            vy = math.sin(ang) * (th * 0.5)
+            p = pt + binormal * vx + normal * vy
+            ring.append(bm.verts.new(p))
+        slices.append(ring)
+        
+    for i in range(len(slices) - 1):
+        s1 = slices[i]
+        s2 = slices[i + 1]
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((s1[k], s1[kn], s2[kn], s2[k]))
+            f.material_index = mat_index
+            
+    # Rounded Caps
+    s0 = slices[0]
+    c0 = bm.verts.new(Vector(curve_pts[0][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((c0, s0[kn], s0[k]))
+        f.material_index = mat_index
+        
+    se = slices[-1]
+    ce = bm.verts.new(Vector(curve_pts[-1][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ce, se[k], se[kn]))
+        f.material_index = mat_index
+
+# =============================================================================
+# 12 MODULAR HAIRSTYLE IMPLEMENTATIONS (V11 FULL PRODUCTION)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# HAIR_001: Classic Bowl Cut (Approved V11)
+# -----------------------------------------------------------------------------
+def add_volumetric_spline_lock(bm, control_points, width_profile, thick_profile, samples=24, n_pts=12, mat_index=0):
+    """
+    Extrudes a full, substantial hair bundle along a Catmull-Rom spline.
+    Uses smooth cubic bell envelope with full width and depth.
+    """
+    curve_pts = catmull_rom_spline(control_points, samples_per_segment=max(4, samples // (len(control_points) - 1)))
+    w_start, w_mid, w_end = width_profile
+    th_start, th_mid, th_end = thick_profile
+
+    slices = []
+    for i, (pt, t) in enumerate(curve_pts):
+        # Cubic envelope: expands quickly from root, holds fullness through 75%, tapers softly at end
+        if t < 0.25:
+            fac = t / 0.25
+            w = w_start + (w_mid - w_start) * (fac ** 0.70)
+            th = th_start + (th_mid - th_start) * (fac ** 0.70)
+        elif t < 0.75:
+            # Full body region
+            w = w_mid
+            th = th_mid
+        else:
+            fac = (t - 0.75) / 0.25
+            w = w_mid + (w_end - w_mid) * (fac ** 1.15)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.15)
+
+        if i < len(curve_pts) - 1:
+            tangent = (curve_pts[i + 1][0] - pt).normalized()
+        else:
+            tangent = (pt - curve_pts[i - 1][0]).normalized()
+
+        up = Vector((0, 0, 1))
+        if abs(tangent.dot(up)) > 0.88:
+            up = Vector((0, 1, 0))
+        binormal = tangent.cross(up).normalized()
+        normal = binormal.cross(tangent).normalized()
+
+        ring = []
+        for k in range(n_pts):
+            ang = 2.0 * math.pi * k / n_pts
+            vx = math.cos(ang) * (w * 0.5)
+            vy = math.sin(ang) * (th * 0.5)
+            p = pt + binormal * vx + normal * vy
+            ring.append(bm.verts.new(p))
+        slices.append(ring)
+
+    for i in range(len(slices) - 1):
+        s1 = slices[i]
+        s2 = slices[i + 1]
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((s1[k], s1[kn], s2[kn], s2[k]))
+            f.material_index = mat_index
+
+    # Soft rounded caps
+    s0 = slices[0]
+    c0 = bm.verts.new(Vector(curve_pts[0][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((c0, s0[kn], s0[k]))
+        f.material_index = mat_index
+
+    se = slices[-1]
+    ce = bm.verts.new(Vector(curve_pts[-1][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ce, se[k], se[kn]))
+        f.material_index = mat_index
+
+# ---------------------------------------------------------------------------
+# FULL LOOSE HAIR ENVELOPE BUILDER
+# ---------------------------------------------------------------------------
+
+def build_loose_hair_envelope(bm, center_y, center_z, rx, ry, rz,
+                              fringe_phi_deg, side_phi_deg, rear_phi_deg,
+                              fringe_harmonics, side_bulge=0.0,
+                              inward_curl_z=None, inward_curl_fac=(0.0, 0.0),
+                              num_rings=20, segs=40):
+    """
+    Constructs a complete, unbroken volumetric hair mantle comprising crown,
+    left side, right side, and rear hair down to the specified haircut perimeter.
+    Includes inward beveled physical thickness (15-18mm) along the entire perimeter.
+    """
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            # Determine angular zone: Forehead / Fringe vs Sides vs Rear
+            if cos_u > 0.20:
+                # Face opening / fringe
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = sum(amp * math.cos(theta_f * freq + phase) for amp, freq, phase in fringe_harmonics)
+                max_phi = math.radians(fringe_phi_deg) + fringe_var
+                puff = 0.006 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.12:
+                # Rear mantle flowing down to haircut perimeter
+                back_fac = -cos_u
+                max_phi = math.radians(rear_phi_deg) + back_fac * math.radians(8.0)
+                puff = 0.006 + 0.006 * math.sin(v * math.pi)
+            else:
+                # Lateral sides framing cheeks/jaw
+                side_fac = abs(sin_u)
+                max_phi = math.radians(side_phi_deg)
+                puff = 0.006 + side_bulge * math.sin(v * math.pi)
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Inward C-curl tuck around cheeks/jaw/collar
+            if inward_curl_z is not None and pz < inward_curl_z:
+                tuck_norm = (inward_curl_z - pz) / 0.10
+                tuck_norm = min(1.0, max(0.0, tuck_norm))
+                # Tuck in X and forward in Y
+                px -= math.copysign(inward_curl_fac[0] * tuck_norm, px)
+                py += inward_curl_fac[1] * tuck_norm
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    # Grid faces
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    # Apex cap
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.006)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    # Inward beveled physical thickness around entire perimeter hem
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.016 + Vector((0, 0, 0.006))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    return ring_verts
+
+def add_continuous_rmf_spline_lock(bm, control_points, width_profile, thick_profile, samples=28, n_pts=12, mat_index=0, initial_binormal=(1,0,0)):
+    """
+    Sweeps a cross-section along a 3D spline using Wang et al. (2008) double-reflection
+    Rotation Minimizing Frame (RMF). Mathematically guaranteed to produce continuous
+    cross-sections with ZERO twist, ZERO flip, and ZERO gaps across all bend angles.
+    """
+    curve_pts = catmull_rom_spline(control_points, samples_per_segment=max(4, samples // (len(control_points) - 1)))
+    num_pts = len(curve_pts)
+    w_start, w_mid, w_end = width_profile
+    th_start, th_mid, th_end = thick_profile
+
+    # Tangents
+    tangents = []
+    for i in range(num_pts):
+        if i == 0:
+            t = (curve_pts[1][0] - curve_pts[0][0]).normalized()
+        elif i == num_pts - 1:
+            t = (curve_pts[-1][0] - curve_pts[-2][0]).normalized()
+        else:
+            t = (curve_pts[i + 1][0] - curve_pts[i - 1][0]).normalized()
+        tangents.append(t)
+
+    # Initial frame
+    t0 = tangents[0]
+    b0 = Vector(initial_binormal).normalized()
+    b0 = (b0 - t0 * t0.dot(b0)).normalized()
+    n0 = t0.cross(b0).normalized()
+
+    binormals = [b0]
+    normals = [n0]
+
+    # Double reflection RMF (Parallel Transport)
+    for i in range(num_pts - 1):
+        t1, t2 = tangents[i], tangents[i + 1]
+        v = curve_pts[i + 1][0] - curve_pts[i][0]
+        c1 = v.dot(v)
+        if c1 > 1e-12:
+            rL = binormals[i] - (2.0 / c1) * v.dot(binormals[i]) * v
+            tL = t1 - (2.0 / c1) * v.dot(t1) * v
+            v_t = t2 - tL
+            c2 = v_t.dot(v_t)
+            b_next = rL - (2.0 / c2) * v_t.dot(rL) * v_t if c2 > 1e-12 else rL
+        else:
+            b_next = binormals[i]
+        b_next = (b_next - t2 * t2.dot(b_next)).normalized()
+        n_next = t2.cross(b_next).normalized()
+        binormals.append(b_next)
+        normals.append(n_next)
+
+    slices = []
+    for i, (pt, t) in enumerate(curve_pts):
+        if t < 0.25:
+            fac = t / 0.25
+            w = w_start + (w_mid - w_start) * (fac ** 0.70)
+            th = th_start + (th_mid - th_start) * (fac ** 0.70)
+        elif t < 0.75:
+            w = w_mid
+            th = th_mid
+        else:
+            fac = (t - 0.75) / 0.25
+            w = w_mid + (w_end - w_mid) * (fac ** 1.15)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.15)
+
+        bn = binormals[i]
+        nm = normals[i]
+        ring = []
+        for k in range(n_pts):
+            ang = 2.0 * math.pi * k / n_pts
+            vx = math.cos(ang) * (w * 0.5)
+            vy = math.sin(ang) * (th * 0.5)
+            p = pt + bn * vx + nm * vy
+            ring.append(bm.verts.new(p))
+        slices.append(ring)
+
+    for i in range(len(slices) - 1):
+        s1 = slices[i]
+        s2 = slices[i + 1]
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((s1[k], s1[kn], s2[kn], s2[k]))
+            f.material_index = mat_index
+
+    # Soft rounded caps at root and tip
+    s0 = slices[0]
+    c0 = bm.verts.new(Vector(curve_pts[0][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((c0, s0[kn], s0[k]))
+        f.material_index = mat_index
+
+    se = slices[-1]
+    ce = bm.verts.new(Vector(curve_pts[-1][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ce, se[k], se[kn]))
+        f.material_index = mat_index
+
+
+def smoothstep(edge0, edge1, x):
+    t = max(0.0, min(1.0, (x - edge0) / (edge1 - edge0)))
+    return t * t * (3.0 - 2.0 * t)
+
+def add_flattened_curved_hair_lock(bm, control_points, width_profile, thick_profile, normal_guide=(0,1,0), samples=24, n_pts=10, mat_index=0):
+    """
+    Sweeps a FLATTENED ribbon cross-section (width >> thickness) along a spline,
+    keeping the wide face oriented along the forehead curvature so it hugs the head
+    and NEVER produces a cylindrical rod or outward-pointing horn.
+    """
+    curve_pts = catmull_rom_spline(control_points, samples_per_segment=max(4, samples // (len(control_points) - 1)))
+    num_pts = len(curve_pts)
+    w_start, w_mid, w_end = width_profile
+    th_start, th_mid, th_end = thick_profile
+
+    # Tangents
+    tangents = []
+    for i in range(num_pts):
+        if i == 0:
+            t = (curve_pts[1][0] - curve_pts[0][0]).normalized()
+        elif i == num_pts - 1:
+            t = (curve_pts[-1][0] - curve_pts[-2][0]).normalized()
+        else:
+            t = (curve_pts[i + 1][0] - curve_pts[i - 1][0]).normalized()
+        tangents.append(t)
+
+    # Compute frames where 'normal' is oriented outward from cranial center
+    cranial_center = Vector((0.0, -0.010, 0.528))
+    slices = []
+    for i, (pt, t) in enumerate(curve_pts):
+        if t < 0.25:
+            fac = t / 0.25
+            w = w_start + (w_mid - w_start) * (fac ** 0.70)
+            th = th_start + (th_mid - th_start) * (fac ** 0.70)
+        elif t < 0.75:
+            w = w_mid
+            th = th_mid
+        else:
+            fac = (t - 0.75) / 0.25
+            w = w_mid + (w_end - w_mid) * (fac ** 1.15)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.15)
+
+        tang = tangents[i]
+        # Outward normal pointing away from skull
+        outward = (pt - cranial_center).normalized()
+        # Normal in cross section: outward projected perpendicular to tangent
+        n_dir = (outward - tang * tang.dot(outward)).normalized()
+        # Binormal: along forehead sideways sweep
+        b_dir = tang.cross(n_dir).normalized()
+
+        ring = []
+        for k in range(n_pts):
+            ang = 2.0 * math.pi * k / n_pts
+            # Elliptical / rounded flattened profile
+            vx = math.cos(ang) * (w * 0.5)
+            vy = math.sin(ang) * (th * 0.5)
+            p = pt + b_dir * vx + n_dir * vy
+            ring.append(bm.verts.new(p))
+        slices.append(ring)
+
+    for i in range(len(slices) - 1):
+        s1 = slices[i]
+        s2 = slices[i + 1]
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((s1[k], s1[kn], s2[kn], s2[k]))
+            f.material_index = mat_index
+
+    # Caps
+    s0 = slices[0]
+    c0 = bm.verts.new(Vector(curve_pts[0][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((c0, s0[kn], s0[k]))
+        f.material_index = mat_index
+
+    se = slices[-1]
+    ce = bm.verts.new(Vector(curve_pts[-1][0]))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ce, se[k], se[kn]))
+        f.material_index = mat_index
+
+# =============================================================================
+# 1. HAIR_001: CLASSIC BOWL CUT (V15 REFINEMENT — SOFT GROUPED FRINGE)
+# =============================================================================
+
+
+def add_ribbon_lock(bm, control_points, width_prof, thick_prof, cranial_center=Vector((0.0, -0.010, 0.528)), samples=20, n_pts=10, mat_idx=0, cupping_bias=0.0):
+    spline_data = catmull_rom_spline(control_points, samples_per_segment=max(4, samples // max(1, len(control_points) - 1)))
+    num_pts = len(spline_data)
+    w_start, w_mid, w_end = width_prof
+    th_start, th_mid, th_end = thick_prof
+
+    tangents = []
+    for i in range(num_pts):
+        if i == 0:
+            t = (spline_data[1][0] - spline_data[0][0]).normalized()
+        elif i == num_pts - 1:
+            t = (spline_data[-1][0] - spline_data[-2][0]).normalized()
+        else:
+            t = (spline_data[i + 1][0] - spline_data[i - 1][0]).normalized()
+        tangents.append(t)
+
+    ring_verts = []
+    for i, (pt, u) in enumerate(spline_data):
+        if u < 0.35:
+            fac = u / 0.35
+            w = w_start + (w_mid - w_start) * (fac ** 0.8)
+            th = th_start + (th_mid - th_start) * (fac ** 0.8)
+        elif u < 0.70:
+            w = w_mid
+            th = th_mid
+        else:
+            fac = (u - 0.70) / 0.30
+            w = w_mid + (w_end - w_mid) * (fac ** 1.15)
+            th = th_mid + (th_end - th_mid) * (fac ** 1.15)
+
+        tang = tangents[i]
+        outward = (pt - cranial_center).normalized()
+        n_dir = (outward - tang * tang.dot(outward)).normalized()
+        if cupping_bias != 0.0:
+            # inward cupping toward forehead or jaw
+            n_dir = (n_dir + Vector((0, 0, cupping_bias * u))).normalized()
+        b_dir = tang.cross(n_dir).normalized()
+
+        ring = []
+        for k in range(n_pts):
+            theta = 2.0 * math.pi * k / float(n_pts)
+            cos_t, sin_t = math.cos(theta), math.sin(theta)
+            # Flattened cushion profile
+            offset = b_dir * (w * 0.5 * cos_t) + n_dir * (th * 0.5 * sin_t)
+            offset += n_dir * (th * 0.18 * (1.0 - cos_t * cos_t))
+            v = bm.verts.new(pt + offset)
+            ring.append(v)
+        ring_verts.append(ring)
+
+    for i in range(num_pts - 1):
+        for k in range(n_pts):
+            kn = (k + 1) % n_pts
+            f = bm.faces.new((ring_verts[i][k], ring_verts[i][kn], ring_verts[i+1][kn], ring_verts[i+1][k]))
+            f.material_index = mat_idx
+
+    # End cap
+    tip_pt = spline_data[-1][0] + tangents[-1] * (th_end * 0.35)
+    v_tip = bm.verts.new(tip_pt)
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((ring_verts[-1][k], ring_verts[-1][kn], v_tip))
+        f.material_index = mat_idx
+
+    # Root cap
+    v_root = bm.verts.new(spline_data[0][0] - tangents[0] * (th_start * 0.25))
+    for k in range(n_pts):
+        kn = (k + 1) % n_pts
+        f = bm.faces.new((v_root, ring_verts[0][kn], ring_verts[0][k]))
+        f.material_index = mat_idx
+
+
+def build_hair_001(arm, char_id, color_hex="#2b201c"):
+    """
+    HAIR_001: Classic Bowl Cut (V15)
+    - Compact, tidy rounded bowl silhouette with soft horizontal fringe baseline.
+    - Broken into 4 broad, shallow groupings with subtle length differences (Z ~ 0.568m to 0.578m).
+    - Small falling tip near center-left to break machine-flat edge without deep V cuts or sawtooth teeth.
+    - 14mm inward beveled rim giving real physical thickness.
+    - Temples blend softly into sides; tidy snug nape contour (Z ~ 0.448m).
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.186, 0.175, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    # Start ring from small non-zero radius to avoid collapsed apex singularity
+    for r in range(num_rings):
+        # r goes from 0 to num_rings - 1, with v going from 0.05 to 1.0
+        v = (r + 1) / float(num_rings)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.18:  # Brow fringe
+                theta_f = math.atan2(sin_u, cos_u)
+                # 4 broad shallow groups across brow + small falling tip at theta_f ~ -0.15
+                group_relief = 0.010 * math.cos(theta_f * 3.5) + 0.005 * math.sin(theta_f * 5.0)
+                # Soft falling tip
+                if -0.30 < theta_f < 0.0:
+                    group_relief += 0.008 * math.cos((theta_f + 0.15) * 10.0)
+
+                max_phi = math.radians(65.0) + group_relief
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.003
+            else:  # Temples & sides
+                max_phi = math.radians(73.5)
+                puff = 0.004
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Ear clearance
+            if abs(cos_u) < 0.22 and v > 0.60:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.038:
+                    pz += (0.038 - ear_dist) * 0.85
+                    px = math.copysign(max(abs(px), 0.183), px)
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    # Faces between rings
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    # Apex cap: clean outward-pointing faces
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.006)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        # Note vertex order: (apex, ring_verts[0][sn], ring_verts[0][s]) for outward normal!
+        bm.faces.new((apex, ring_verts[0][sn], ring_verts[0][s]))
+
+    # Inward beveled physical thickness at lower perimeter
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # Subtle soft falling brow lock supplementing fringe
+    fall_lock = [
+        Vector((-0.030, 0.125, 0.635)),
+        Vector((-0.040, 0.142, 0.605)),
+        Vector((-0.045, 0.143, 0.562))
+    ]
+    add_flattened_curved_hair_lock(bm, fall_lock, width_profile=(0.024, 0.032, 0.012), thick_profile=(0.010, 0.014, 0.006), samples=16, n_pts=8)
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_001", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+
+def build_hair_002(arm, char_id, color_hex="#161b26"):
+    """
+    HAIR_002: Sporty Short (V15)
+    - Cures the pale spot: eliminates all 36 inverted-normal faces and zero-area collapsed ring.
+    - Cures pointed crown: replaces pinched single-point apex with a controlled, rounded top dome.
+    - Genuine sporty short silhouette: compact close-fitting sides, snug nape, zero bowl overhang.
+    - Top volume forms a connected directional group with restrained forward/upward lift.
+    - 3 broad, soft short directional groups at the front (open athletic brow Z ~ 0.595m).
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.183, 0.172, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    # Ring 0 starts at small non-zero radius (v = 0.06) so it never collapses to a point
+    for r in range(num_rings):
+        v = (r + 1) / float(num_rings)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.15:  # Forehead: open athletic brow
+                theta_f = math.atan2(sin_u, cos_u)
+                crest_swelling = 0.006 * math.cos(theta_f * 2.5)
+                max_phi = math.radians(56.5) + crest_swelling
+                puff = 0.004 + 0.004 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Close-fitting nape (no bowl overhang!)
+                back_fac = -cos_u
+                max_phi = math.radians(98.0) + back_fac * math.radians(20.0)
+                puff = 0.001  # Snug to skull
+            else:  # Close-cropped sides
+                max_phi = math.radians(72.0)
+                puff = 0.002
+
+            # Connected directional lifted top volume (rising smoothly toward front-top)
+            if v < 0.50:
+                top_fac = math.cos((v / 0.50) * (math.pi * 0.5))  # Smooth cosine falloff
+                # Broad directional lift: forward and slightly upward
+                dir_lift = (0.7 + 0.3 * cos_u + 0.12 * sin_u)
+                puff += 0.015 * top_fac * dir_lift
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Ear clearance
+            if abs(cos_u) < 0.22 and v > 0.60:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.038:
+                    pz += (0.038 - ear_dist) * 0.85
+                    px = math.copysign(max(abs(px), 0.182), px)
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    # Faces between rings
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    # Rounded crown cap: gentle smooth apex with OUTWARD-pointing normal!
+    # Apex placed at (0.004, center_y + 0.006, center_z + rz + 0.015) for a natural rounded crown
+    apex = bm.verts.new(Vector((0.004, center_y + 0.006, center_z + rz + 0.015)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        # Correct vertex order ensures normal points OUTWARD (fixes pale spot!)
+        bm.faces.new((apex, ring_verts[0][sn], ring_verts[0][s]))
+
+    # Inward beveled physical rim at lower perimeter
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.012 + Vector((0, 0, 0.004))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # ADD CONNECTED FRONT DIRECTIONAL HAIR GROUPS (ATHLETIC TEXTURED TUFTS)
+    # 1. Center athletic lifted group
+    c_tuft = [
+        Vector(( 0.000, 0.090, 0.655)),
+        Vector(( 0.005, 0.125, 0.638)),
+        Vector(( 0.008, 0.138, 0.598))
+    ]
+    add_flattened_curved_hair_lock(bm, c_tuft, width_profile=(0.034, 0.046, 0.018), thick_profile=(0.012, 0.016, 0.006), samples=16, n_pts=8)
+
+    # 2. Right athletic tuft
+    r_tuft = [
+        Vector(( 0.038, 0.080, 0.650)),
+        Vector(( 0.048, 0.115, 0.632)),
+        Vector(( 0.052, 0.126, 0.595))
+    ]
+    add_flattened_curved_hair_lock(bm, r_tuft, width_profile=(0.028, 0.038, 0.014), thick_profile=(0.010, 0.014, 0.006), samples=16, n_pts=8)
+
+    # 3. Left athletic tuft
+    l_tuft = [
+        Vector((-0.038, 0.080, 0.650)),
+        Vector((-0.046, 0.115, 0.632)),
+        Vector((-0.050, 0.126, 0.595))
+    ]
+    add_flattened_curved_hair_lock(bm, l_tuft, width_profile=(0.028, 0.038, 0.014), thick_profile=(0.010, 0.014, 0.006), samples=16, n_pts=8)
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_002", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+
+def catmull_rom_basis(p0, p1, p2, p3, t):
+    t2 = t * t
+    t3 = t2 * t
+    return 0.5 * (
+        (2.0 * p1) +
+        (-p0 + p2) * t +
+        (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2 +
+        (-p0 + 3.0 * p1 - 3.0 * p2 + p3) * t3
+    )
+
+
+def build_hair_003(arm, char_id, color_hex="#221714", mat_mode="production"):
+    """
+    Constructs the V17 Chin-Length Rounded Bob.
+    Returns: Blender object 'Hair_HAIR_003' bound to the rig.
+    """
+    bm = bmesh.new()
+
+    cranial_center = Vector((0.0, -0.010, 0.528))
+    center_y = -0.010
+    center_z = 0.528
+
+    mat_scalp = 0
+    mat_crown = 1
+    mat_fringe = 2
+    mat_sides = 3
+    mat_rear = 1
+
+    # =========================================================================
+    # 1. INNER SCALP CAP (Watertight Protective Underlayer)
+    # =========================================================================
+    # Prevents any exposed scalp under all viewing angles
+    rx_s, ry_s, rz_s = 0.174, 0.166, 0.154
+    num_rings_s, segs_s = 14, 28
+    scalp_rings = []
+    for r in range(num_rings_s):
+        v = (r + 1) / float(num_rings_s)
+        phi = v * math.radians(102.0) # covers past equator
+        row = []
+        for s in range(segs_s):
+            u = 2.0 * math.pi * s / segs_s
+            px = rx_s * math.sin(phi) * math.sin(u)
+            py = ry_s * math.sin(phi) * math.cos(u) + center_y
+            pz = center_z + rz_s * math.cos(phi)
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        scalp_rings.append(row)
+
+    apex_s = bm.verts.new(Vector((0.0, center_y, center_z + rz_s)))
+    for s in range(segs_s):
+        sn = (s + 1) % segs_s
+        f = bm.faces.new((apex_s, scalp_rings[0][s], scalp_rings[0][sn]))
+        f.material_index = mat_scalp
+
+    for r in range(num_rings_s - 1):
+        for s in range(segs_s):
+            sn = (s + 1) % segs_s
+            f = bm.faces.new((scalp_rings[r][s], scalp_rings[r][sn], scalp_rings[r+1][sn], scalp_rings[r+1][s]))
+            f.material_index = mat_scalp
+
+    # =========================================================================
+    # 2. MAIN BOB VOLUME (Crown, Rear Mass, and Outer Sides)
+    # =========================================================================
+    # Lofted volume from crown apex to chin/nape level
+    # Rear features 4-5 broad stylized lobes with an inward curled bottom hem.
+    rx_b, ry_b, rz_b = 0.188, 0.178, 0.168
+    num_rings_b, segs_b = 22, 40
+    bob_rings = []
+    
+    for r in range(num_rings_b):
+        v = (r + 1) / float(num_rings_b)
+        row = []
+        for s in range(segs_b):
+            u = 2.0 * math.pi * s / segs_b
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            # Check if in front face opening (cos_u > 0.35)
+            if cos_u > 0.35:
+                # Front crown: slopes down to Z ~ 0.635m to merge seamlessly with fringe roots
+                max_phi = math.radians(52.0)
+                puff = 0.008 + 0.004 * math.sin(v * math.pi)
+                phi = v * max_phi
+                px = (rx_b + puff) * math.sin(phi) * sin_u
+                py = (ry_b + puff) * math.sin(phi) * cos_u + center_y
+                pz = center_z + (rz_b + puff) * math.cos(phi)
+            else:
+                # Sides & Back: flows all the way down to chin/nape level
+                target_edge_z = 0.422 + 0.005 * math.cos(u * 4.0)
+
+                if v < 0.38:
+                    phi = (v / 0.38) * math.radians(88.0)
+                    puff = 0.009 + 0.005 * math.sin(v * math.pi * 2.5)
+                    px = (rx_b + puff) * math.sin(phi) * sin_u
+                    py = (ry_b + puff) * math.sin(phi) * cos_u + center_y
+                    pz = center_z + (rz_b + puff) * math.cos(phi)
+                else:
+                    fac = (v - 0.38) / 0.62
+                    phi = math.radians(88.0)
+                    base_pz = center_z + rz_b * math.cos(phi)
+                    pz = base_pz + fac * (target_edge_z - base_pz)
+
+                    # 4-5 stylized lobes across the rear
+                    rear_fac = max(0.0, -cos_u)
+                    lobes = 0.007 * (math.cos(4.0 * u) + 0.3 * math.cos(2.0 * u)) * rear_fac
+                    puff = 0.010 + lobes + 0.005 * math.sin(fac * math.pi)
+
+                    # Inward cupping curl around neck and lower jaw
+                    tuck = fac * fac
+                    tuck_y = 0.016 * tuck * rear_fac
+                    tuck_x = -math.copysign(0.014 * tuck * (1.0 - rear_fac), sin_u)
+
+                    px = (rx_b + puff) * math.sin(phi) * sin_u + tuck_x
+                    py = (ry_b + puff) * math.sin(phi) * cos_u + center_y + tuck_y
+
+            # Ear clearance on sides
+            if abs(cos_u) < 0.22 and 0.45 < v < 0.88:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.038:
+                    px = math.copysign(max(abs(px), 0.188), px)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        bob_rings.append(row)
+
+    # Apex vertex
+    apex_b = bm.verts.new(Vector((0.0, center_y, center_z + rz_b + 0.010)))
+    for s in range(segs_b):
+        sn = (s + 1) % segs_b
+        f = bm.faces.new((apex_b, bob_rings[0][s], bob_rings[0][sn]))
+        f.material_index = mat_crown
+
+    for r in range(num_rings_b - 1):
+        for s in range(segs_b):
+            sn = (s + 1) % segs_b
+            f = bm.faces.new((bob_rings[r][s], bob_rings[r][sn], bob_rings[r+1][sn], bob_rings[r+1][s]))
+            f.material_index = mat_crown if r < 6 else mat_rear
+
+    # Inward rolled hem at chin/nape rim
+    rim_outer = bob_rings[-1]
+    rim_inner = []
+    for s in range(segs_b):
+        vo = rim_outer[s]
+        cos_u = math.cos(2.0 * math.pi * s / segs_b)
+        if cos_u <= 0.35: # on rear/side perimeter
+            p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.015 + Vector((0, 0, 0.006))
+        else: # front crown lip
+            p_in = vo.co + Vector((0, -0.010, 0.004))
+        rim_inner.append(bm.verts.new(p_in))
+
+    for s in range(segs_b):
+        sn = (s + 1) % segs_b
+        f = bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+        f.material_index = mat_rear
+
+    # =========================================================================
+    # 3. CONTINUOUS FRINGE WITH GROUPED TIPS (5 Sculpted Locks)
+    # =========================================================================
+    # The upper 60% is a CONTINUOUS quad grid (sharing vertices across boundaries).
+    # The lower 40% splits into 5 soft, broad, tapered lock tips.
+    # Lock definitions from character-left to character-right:
+    # 0: Left Temple Transition lock
+    # 1: Left-Center Main lock
+    # 2: Center Accent lock (subtle notch)
+    # 3: Right-Center Main lock
+    # 4: Right Temple Transition lock
+
+    lock_specs = [
+        # Lock 0: Left temple transition
+        {
+            "ctrl_x": [-0.102, -0.110, -0.116, -0.118],
+            "ctrl_y": [ 0.095,  0.125,  0.150,  0.154],
+            "ctrl_z": [ 0.636,  0.612,  0.585,  0.562],
+            "width":  [ 0.024,  0.026,  0.022,  0.016],
+            "thick":  [ 0.010,  0.011,  0.009,  0.006],
+            "taper_ang": -0.15
+        },
+        # Lock 1: Left-center main broad lock
+        {
+            "ctrl_x": [-0.052, -0.054, -0.050, -0.046],
+            "ctrl_y": [ 0.118,  0.145,  0.168,  0.170],
+            "ctrl_z": [ 0.640,  0.614,  0.582,  0.554],
+            "width":  [ 0.026,  0.028,  0.026,  0.020],
+            "thick":  [ 0.011,  0.012,  0.010,  0.007],
+            "taper_ang": -0.08
+        },
+        # Lock 2: Center accent lock (slightly shorter wedge)
+        {
+            "ctrl_x": [ 0.000,  0.001,  0.003,  0.004],
+            "ctrl_y": [ 0.124,  0.150,  0.170,  0.171],
+            "ctrl_z": [ 0.642,  0.618,  0.590,  0.568],
+            "width":  [ 0.022,  0.024,  0.020,  0.015],
+            "thick":  [ 0.010,  0.012,  0.009,  0.006],
+            "taper_ang": 0.0
+        },
+        # Lock 3: Right-center main broad lock
+        {
+            "ctrl_x": [ 0.052,  0.054,  0.050,  0.046],
+            "ctrl_y": [ 0.118,  0.145,  0.168,  0.170],
+            "ctrl_z": [ 0.640,  0.614,  0.582,  0.552],
+            "width":  [ 0.026,  0.028,  0.026,  0.020],
+            "thick":  [ 0.011,  0.012,  0.010,  0.007],
+            "taper_ang": 0.08
+        },
+        # Lock 4: Right temple transition
+        {
+            "ctrl_x": [ 0.102,  0.110,  0.116,  0.118],
+            "ctrl_y": [ 0.095,  0.125,  0.150,  0.154],
+            "ctrl_z": [ 0.636,  0.612,  0.585,  0.562],
+            "width":  [ 0.024,  0.026,  0.022,  0.016],
+            "thick":  [ 0.010,  0.011,  0.009,  0.006],
+            "taper_ang": 0.15
+        },
+    ]
+
+    N_ROWS = 12
+    N_COLS = 5 # 5 points across each ribbon (4 quads wide)
+    SPLIT_ROW = 7 # Rows 0..7 share boundary vertices; rows 8..11 separate into distinct lock tips
+
+    # Generate grid coordinates for all 5 locks
+    # Each vertex will have an outer surface position and an inner thickness position
+    all_lock_grids_outer = []
+    all_lock_grids_inner = []
+
+    for l_idx, spec in enumerate(lock_specs):
+        c_x, c_y, c_z = spec["ctrl_x"], spec["ctrl_y"], spec["ctrl_z"]
+        w_prof, th_prof = spec["width"], spec["thick"]
+        t_ang = spec["taper_ang"]
+
+        grid_outer = []
+        grid_inner = []
+
+        for r in range(N_ROWS):
+            v = r / float(N_ROWS - 1)
+            # Evaluate spline position
+            seg = v * 2.9999
+            i_seg = int(seg)
+            t_seg = seg - i_seg
+            p0 = Vector((c_x[max(0, i_seg - 1)], c_y[max(0, i_seg - 1)], c_z[max(0, i_seg - 1)]))
+            p1 = Vector((c_x[i_seg], c_y[i_seg], c_z[i_seg]))
+            p2 = Vector((c_x[min(3, i_seg + 1)], c_y[min(3, i_seg + 1)], c_z[min(3, i_seg + 1)]))
+            p3 = Vector((c_x[min(3, i_seg + 2)], c_y[min(3, i_seg + 2)], c_z[min(3, i_seg + 2)]))
+            spine_pos = catmull_rom_basis(p0, p1, p2, p3, t_seg)
+
+            # Evaluate width and thickness
+            w = w_prof[i_seg] * (1.0 - t_seg) + w_prof[min(3, i_seg + 1)] * t_seg
+            th = th_prof[i_seg] * (1.0 - t_seg) + th_prof[min(3, i_seg + 1)] * t_seg
+
+            # Inward curl at tips
+            if v > 0.60:
+                curl_fac = (v - 0.60) / 0.40
+                spine_pos.y -= 0.007 * curl_fac * curl_fac
+                spine_pos.z += 0.003 * curl_fac
+
+            # Normal vector: pointing outwards from cranial center
+            n_vec = (spine_pos - cranial_center).normalized()
+            # Tangent vector down the spine
+            if r < N_ROWS - 1:
+                t_next = (v + 0.05) * 2.9999
+                i_n = int(t_next)
+                t_n = t_next - i_n
+                p_next = catmull_rom_basis(
+                    Vector((c_x[max(0, i_n-1)], c_y[max(0, i_n-1)], c_z[max(0, i_n-1)])),
+                    Vector((c_x[i_n], c_y[i_n], c_z[i_n])),
+                    Vector((c_x[min(3, i_n+1)], c_y[min(3, i_n+1)], c_z[min(3, i_n+1)])),
+                    Vector((c_x[min(3, i_n+2)], c_y[min(3, i_n+2)], c_z[min(3, i_n+2)])),
+                    t_n
+                )
+                tangent = (p_next - spine_pos).normalized()
+            else:
+                tangent = Vector((0, 0, -1))
+
+            # Lateral binormal
+            binormal = tangent.cross(n_vec).normalized()
+            # Rotate binormal slightly if taper_ang is set
+            rot_mat = Matrix.Rotation(t_ang * v, 3, tangent)
+            binormal = rot_mat @ binormal
+
+            row_outer = []
+            row_inner = []
+            for c in range(N_COLS):
+                u = (c / float(N_COLS - 1)) * 2.0 - 1.0 # -1 to +1
+                # Cross-section cupping: center puffs outward slightly, edges curl back
+                cupping = (1.0 - u * u) * 0.003
+                pos_o = spine_pos + binormal * (u * 0.5 * w) + n_vec * cupping
+                pos_i = pos_o - n_vec * th
+
+                row_outer.append(pos_o)
+                row_inner.append(pos_i)
+
+            grid_outer.append(row_outer)
+            grid_inner.append(row_inner)
+
+        all_lock_grids_outer.append(grid_outer)
+        all_lock_grids_inner.append(grid_inner)
+
+    # Convert coordinates to BMesh vertices with shared root boundaries
+    all_lock_verts_outer = []
+    all_lock_verts_inner = []
+
+    for l_idx in range(5):
+        v_grid_o = []
+        v_grid_i = []
+        for r in range(N_ROWS):
+            row_vo = []
+            row_vi = []
+            for c in range(N_COLS):
+                # Check if this vertex should be shared with previous lock's right edge
+                if r <= SPLIT_ROW and c == 0 and l_idx > 0:
+                    # Share vertex with previous lock's last column
+                    shared_vo = all_lock_verts_outer[l_idx - 1][r][-1]
+                    shared_vi = all_lock_verts_inner[l_idx - 1][r][-1]
+                    # Blend the position slightly for smooth transition
+                    avg_co_o = 0.5 * (shared_vo.co + all_lock_grids_outer[l_idx][r][c])
+                    avg_co_i = 0.5 * (shared_vi.co + all_lock_grids_inner[l_idx][r][c])
+                    shared_vo.co = avg_co_o
+                    shared_vi.co = avg_co_i
+                    row_vo.append(shared_vo)
+                    row_vi.append(shared_vi)
+                else:
+                    vo = bm.verts.new(all_lock_grids_outer[l_idx][r][c])
+                    vi = bm.verts.new(all_lock_grids_inner[l_idx][r][c])
+                    row_vo.append(vo)
+                    row_vi.append(vi)
+            v_grid_o.append(row_vo)
+            v_grid_i.append(row_vi)
+        all_lock_verts_outer.append(v_grid_o)
+        all_lock_verts_inner.append(v_grid_i)
+
+    # Connect faces for each lock (outer surface, inner surface, and side/tip thickness walls)
+    for l_idx in range(5):
+        v_o = all_lock_verts_outer[l_idx]
+        v_i = all_lock_verts_inner[l_idx]
+
+        for r in range(N_ROWS - 1):
+            for c in range(N_COLS - 1):
+                # Outer face
+                f_out = bm.faces.new((v_o[r][c], v_o[r+1][c], v_o[r+1][c+1], v_o[r][c+1]))
+                f_out.material_index = mat_fringe
+                # Inner face (flipped normal)
+                f_in = bm.faces.new((v_i[r][c+1], v_i[r+1][c+1], v_i[r+1][c], v_i[r][c]))
+                f_in.material_index = mat_fringe
+
+        # Thickness border along tip (row N_ROWS - 1)
+        r_tip = N_ROWS - 1
+        for c in range(N_COLS - 1):
+            f_tip = bm.faces.new((v_o[r_tip][c], v_o[r_tip][c+1], v_i[r_tip][c+1], v_i[r_tip][c]))
+            f_tip.material_index = mat_fringe
+
+        # Lateral borders when separated (rows SPLIT_ROW to N_ROWS - 1)
+        for r in range(SPLIT_ROW, N_ROWS - 1):
+            # Left edge wall (c=0)
+            if l_idx == 0 or r > SPLIT_ROW:
+                f_lw = bm.faces.new((v_o[r+1][0], v_o[r][0], v_i[r][0], v_i[r+1][0]))
+                f_lw.material_index = mat_fringe
+            # Right edge wall (c=N_COLS-1)
+            if l_idx == 4 or r > SPLIT_ROW:
+                f_rw = bm.faces.new((v_o[r][N_COLS-1], v_o[r+1][N_COLS-1], v_i[r+1][N_COLS-1], v_i[r][N_COLS-1]))
+                f_rw.material_index = mat_fringe
+
+        # Far lateral outer borders (always closed for Lock 0 left and Lock 4 right)
+        if l_idx == 0:
+            for r in range(0, SPLIT_ROW):
+                f_lw = bm.faces.new((v_o[r+1][0], v_o[r][0], v_i[r][0], v_i[r+1][0]))
+                f_lw.material_index = mat_fringe
+        if l_idx == 4:
+            for r in range(0, SPLIT_ROW):
+                f_rw = bm.faces.new((v_o[r][N_COLS-1], v_o[r+1][N_COLS-1], v_i[r+1][N_COLS-1], v_i[r][N_COLS-1]))
+                f_rw.material_index = mat_fringe
+
+    # =========================================================================
+    # 4. CHEEK-FRAMING SIDE LOCKS (Temple to Chin Inward C-Curl)
+    # =========================================================================
+    # Left and Right broad locks flowing along cheeks, cupping the chin/jawline.
+    # Seamlessly anchoring at the temple junction.
+    side_locks = [
+        # Right cheek lock (+X)
+        {
+            "ctrl_x": [ 0.108,  0.138,  0.150,  0.142,  0.130],
+            "ctrl_y": [ 0.088,  0.085,  0.082,  0.080,  0.082],
+            "ctrl_z": [ 0.630,  0.575,  0.515,  0.465,  0.422],
+            "width":  [ 0.026,  0.034,  0.036,  0.030,  0.018],
+            "thick":  [ 0.012,  0.015,  0.016,  0.013,  0.008],
+            "side_sign": 1
+        },
+        # Left cheek lock (-X)
+        {
+            "ctrl_x": [-0.108, -0.138, -0.150, -0.142, -0.130],
+            "ctrl_y": [ 0.088,  0.085,  0.082,  0.080,  0.082],
+            "ctrl_z": [ 0.630,  0.575,  0.515,  0.465,  0.422],
+            "width":  [ 0.026,  0.034,  0.036,  0.030,  0.018],
+            "thick":  [ 0.012,  0.015,  0.016,  0.013,  0.008],
+            "side_sign": -1
+        }
+    ]
+
+    for s_spec in side_locks:
+        c_x, c_y, c_z = s_spec["ctrl_x"], s_spec["ctrl_y"], s_spec["ctrl_z"]
+        w_prof, th_prof = s_spec["width"], s_spec["thick"]
+        sign = s_spec["side_sign"]
+
+        N_SIDE_ROWS = 14
+        N_SIDE_COLS = 5
+        side_v_o = []
+        side_v_i = []
+
+        for r in range(N_SIDE_ROWS):
+            v = r / float(N_SIDE_ROWS - 1)
+            seg = v * 3.9999
+            i_seg = int(seg)
+            t_seg = seg - i_seg
+            p0 = Vector((c_x[max(0, i_seg - 1)], c_y[max(0, i_seg - 1)], c_z[max(0, i_seg - 1)]))
+            p1 = Vector((c_x[i_seg], c_y[i_seg], c_z[i_seg]))
+            p2 = Vector((c_x[min(4, i_seg + 1)], c_y[min(4, i_seg + 1)], c_z[min(4, i_seg + 1)]))
+            p3 = Vector((c_x[min(4, i_seg + 2)], c_y[min(4, i_seg + 2)], c_z[min(4, i_seg + 2)]))
+            spine_pos = catmull_rom_basis(p0, p1, p2, p3, t_seg)
+
+            w = w_prof[i_seg] * (1.0 - t_seg) + w_prof[min(4, i_seg + 1)] * t_seg
+            th = th_prof[i_seg] * (1.0 - t_seg) + th_prof[min(4, i_seg + 1)] * t_seg
+
+            # Inward C-curl under jaw
+            if v > 0.65:
+                curl = (v - 0.65) / 0.35
+                spine_pos.x -= sign * 0.012 * curl * curl
+                spine_pos.y += 0.008 * curl * curl
+
+            n_vec = (spine_pos - Vector((0.0, center_y, spine_pos.z))).normalized()
+            tangent = Vector((0, 0, -1))
+            binormal = tangent.cross(n_vec).normalized() * sign
+
+            row_vo = []
+            row_vi = []
+            for c in range(N_SIDE_COLS):
+                u = (c / float(N_SIDE_COLS - 1)) * 2.0 - 1.0
+                cupping = (1.0 - u * u) * 0.003
+                pos_o = spine_pos + binormal * (u * 0.5 * w) + n_vec * cupping
+                pos_i = pos_o - n_vec * th
+                row_vo.append(bm.verts.new(pos_o))
+                row_vi.append(bm.verts.new(pos_i))
+
+            side_v_o.append(row_vo)
+            side_v_i.append(row_vi)
+
+        for r in range(N_SIDE_ROWS - 1):
+            for c in range(N_SIDE_COLS - 1):
+                f_out = bm.faces.new((side_v_o[r][c], side_v_o[r+1][c], side_v_o[r+1][c+1], side_v_o[r][c+1]))
+                f_out.material_index = mat_sides
+                f_in = bm.faces.new((side_v_i[r][c+1], side_v_i[r+1][c+1], side_v_i[r+1][c], side_v_i[r][c]))
+                f_in.material_index = mat_sides
+
+        # Tip cap
+        r_tip = N_SIDE_ROWS - 1
+        for c in range(N_SIDE_COLS - 1):
+            f_tip = bm.faces.new((side_v_o[r_tip][c], side_v_o[r_tip][c+1], side_v_i[r_tip][c+1], side_v_i[r_tip][c]))
+            f_tip.material_index = mat_sides
+
+        # Edge walls
+        for r in range(N_SIDE_ROWS - 1):
+            f_lw = bm.faces.new((side_v_o[r+1][0], side_v_o[r][0], side_v_i[r][0], side_v_i[r+1][0]))
+            f_lw.material_index = mat_sides
+            f_rw = bm.faces.new((side_v_o[r][N_SIDE_COLS-1], side_v_o[r+1][N_SIDE_COLS-1], side_v_i[r+1][N_SIDE_COLS-1], side_v_i[r][N_SIDE_COLS-1]))
+            f_rw.material_index = mat_sides
+
+    # Finalize BMesh
+    mesh = bpy.data.meshes.new(f"Hair_HAIR_003_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_003", mesh)
+    bpy.context.scene.collection.objects.link(obj)
+
+    # Materials
+    if mat_mode == "diagnostic":
+        colors = [
+            ("M_Diag_Scalp", (0.15, 0.18, 0.22, 1.0)),     # Slate
+            ("M_Diag_CrownRear", (0.35, 0.72, 0.45, 1.0)), # Sage green
+            ("M_Diag_Fringe", (0.95, 0.50, 0.25, 1.0)),    # Warm coral
+            ("M_Diag_Sides", (0.30, 0.65, 0.95, 1.0)),     # Sky blue
+        ]
+        for mname, rgba in colors:
+            mat = bpy.data.materials.new(f"{mname}_{char_id}")
+            mat.use_nodes = True
+            bsdf = mat.node_tree.nodes.get("Principled BSDF")
+            if bsdf:
+                bsdf.inputs["Base Color"].default_value = rgba
+                bsdf.inputs["Roughness"].default_value = 0.55
+                bsdf.inputs["Specular IOR Level"].default_value = 0.15
+            obj.data.materials.append(mat)
+    else:
+        mat = bpy.data.materials.new(f"M_Hair_{char_id}")
+        mat.use_nodes = True
+        bsdf = mat.node_tree.nodes.get("Principled BSDF")
+        if bsdf:
+            # Calibrated stylized dark brunette (#241c19)
+            bsdf.inputs["Base Color"].default_value = (0.018, 0.010, 0.007, 1.0)
+            bsdf.inputs["Roughness"].default_value = 0.65
+            bsdf.inputs["Specular IOR Level"].default_value = 0.18
+            if "Sheen Weight" in bsdf.inputs:
+                bsdf.inputs["Sheen Weight"].default_value = 0.20
+        obj.data.materials.append(mat)
+
+    for poly in obj.data.polygons:
+        poly.use_smooth = True
+
+    # Rig binding to Head bone
+    vg = obj.vertex_groups.new(name="Head")
+    all_v_indices = list(range(len(obj.data.vertices)))
+    vg.add(all_v_indices, 1.0, 'REPLACE')
+
+    mod = obj.modifiers.new(name="Armature", type='ARMATURE')
+    mod.object = arm
+
+    return obj
+
+def build_hair_004(arm, char_id, color_hex="#241c19"):
+    """
+    HAIR_004: Side-Parted Short (V15)
+    - Completely replaces the narrow protruding rod/horn fringe.
+    - Broad, flattened, softly curved side-swept fringe (width 52mm >> thickness 11mm).
+    - Hugs forehead curvature with close 4mm clearance (eliminates large empty wedge).
+    - Seamless root concealed beneath crown at off-center part (X ~ -0.045m).
+    - Sweeps gracefully sideways and downward across brow, ending softly above right eyebrow/temple.
+    - Both eyes remain completely unobstructed; reads as a stylish side-part haircut from all angles.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.186, 0.175, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = (r + 1) / float(num_rings)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.15:  # Forehead base
+                asym = sin_u * 0.08
+                max_phi = math.radians(64.0) + asym
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.003
+            else:  # Sides
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            # Subtle directional crown volume over the off-center part
+            if v < 0.45:
+                part_fac = math.sin(v * math.pi) * max(0.0, cos_u)
+                puff += 0.008 * part_fac
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Ear clearance
+            if abs(cos_u) < 0.22 and v > 0.60:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.038:
+                    pz += (0.038 - ear_dist) * 0.85
+                    px = math.copysign(max(abs(px), 0.183), px)
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.006)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][sn], ring_verts[0][s]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # REBUILT BROAD FLATTENED SIDE-SWEPT FRINGE (HUGGING FOREHEAD CURVATURE)
+    # Spine starts buried inside crown at off-center part X = -0.045m, sweeps sideways and gently down
+    sweep_spine = [
+        Vector((-0.045, 0.095, 0.640)),   # Root concealed inside crown
+        Vector((-0.015, 0.125, 0.625)),   # Emerges close against forehead
+        Vector(( 0.030, 0.134, 0.605)),   # Follows forehead skull radius (y ~ 0.134m)
+        Vector(( 0.075, 0.126, 0.575)),   # Sweeps past right brow
+        Vector(( 0.112, 0.098, 0.535))    # Tapers softly beside outer eyebrow above temple
+    ]
+    # Width 52mm >> Thickness 11mm (flattened ribbon, NOT a rod!)
+    add_flattened_curved_hair_lock(
+        bm, sweep_spine,
+        width_profile=(0.042, 0.054, 0.018),   # Broad 54mm width!
+        thick_profile=(0.010, 0.012, 0.006),  # Thin 12mm thickness!
+        samples=24, n_pts=10, mat_index=0
+    )
+
+    # Secondary supporting under-layer (softens volume and ensures zero scalp exposure)
+    under_spine = [
+        Vector((-0.025, 0.108, 0.625)),
+        Vector(( 0.018, 0.128, 0.605)),
+        Vector(( 0.058, 0.124, 0.575))
+    ]
+    add_flattened_curved_hair_lock(
+        bm, under_spine,
+        width_profile=(0.026, 0.036, 0.014),
+        thick_profile=(0.008, 0.010, 0.004),
+        samples=16, n_pts=8, mat_index=0
+    )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_004", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+# ---------------------------------------------------------------------------
+# STUDIO ENVIRONMENT
+# ---------------------------------------------------------------------------
+
+
+def build_hair_005(arm, char_id, color_hex="#1e1816"):
+    """
+    HAIR_005: Medium Straight (V13 Rebuild)
+    - Complete straight hairstyle extending below jaw to lower neck/chest (Z ~ 0.345m).
+    - Length carried through the REAR hair as well as front sides (full curtain mantle).
+    - Broad side masses with real depth, gently curved rear mass with soft stepped ends.
+    - Visibly longer and straighter than the rounded bob.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.189, 0.178, 0.166
+
+    fringe_harmonics = [
+        (0.020, 3.0, 0.0),
+        (0.007, 4.5, 0.3)
+    ]
+    build_loose_hair_envelope(
+        bm, center_y, center_z, rx, ry, rz,
+        fringe_phi_deg=65.0,      # Fringe above brow
+        side_phi_deg=114.0,       # Sides flowing past collar to chest (Z ~ 0.355m)
+        rear_phi_deg=118.0,       # Full rear mantle to upper back (Z ~ 0.345m)
+        fringe_harmonics=fringe_harmonics,
+        side_bulge=0.006,         # Sleek straight profile
+        inward_curl_z=0.380,      # Subtle drape toward chest
+        inward_curl_fac=(0.008, 0.006),
+        num_rings=24, segs=40
+    )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_005", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+def build_hair_006(arm, char_id, color_hex="#1b1717", tie_hex="#e0564c"):
+    """
+    HAIR_006: Low Ponytail (V13 Rebuild)
+    - Full, soft low ponytail replacing the thin pointed tail.
+    - Gathered naturally at lower rear head into a sturdy root bundle.
+    - Ponytail bundle thickness doubled (width 68mm, depth 52mm) with soft rounded tip.
+    - Readable width and depth in rear and profile views.
+    - Tie small but visible (#e0564c).
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.185, 0.174, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.18:  # Bangs
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = 0.022 * math.cos(theta_f * 3.0)
+                max_phi = math.radians(65.5) + fringe_var
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape gathering zone
+                back_fac = -cos_u
+                max_phi = math.radians(98.0) + back_fac * math.radians(22.0)
+                # Broad gathering cone
+                gather_pull = 0.014 * (v ** 1.3)
+                puff = 0.004 + gather_pull
+            else:  # Sides
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Broad convergence toward sturdy low root (0, -0.165, 0.465)
+            if cos_u < -0.30 and v > 0.45:
+                conv_fac = (v - 0.45) / 0.55 * (-cos_u - 0.30) / 0.70
+                px *= (1.0 - 0.28 * conv_fac)
+                py -= 0.014 * conv_fac
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.005)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.013 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # Hair tie band around gathered root
+    tie_center = Vector((0.0, -0.165, 0.465))
+    tie_axis = Vector((0.0, -0.707, -0.707))
+    add_smooth_hair_band(bm, tie_center, axis=tie_axis, major_r=0.024, minor_r=0.007, segs_u=16, segs_v=8, mat_index=1)
+
+    # SUBSTANTIALLY FULLER LOW PONYTAIL BUNDLE (Doubled cross-section)
+    tail_spine = [
+        Vector((0.0, -0.150, 0.470)),
+        Vector((0.0, -0.195, 0.450)),
+        Vector((0.0, -0.222, 0.395)),
+        Vector((0.0, -0.208, 0.340))
+    ]
+    add_volumetric_spline_lock(
+        bm, tail_spine,
+        width_profile=(0.042, 0.068, 0.022),   # Full 68mm width!
+        thick_profile=(0.032, 0.052, 0.016),  # Full 52mm depth!
+        samples=24, n_pts=12, mat_index=0
+    )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_006", mesh)
+    mat_hair = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    mat_tie = create_accessory_material(f"M_Tie_{char_id}", tie_hex, roughness=0.45)
+    obj.data.materials.append(mat_hair)
+    obj.data.materials.append(mat_tie)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+def build_hair_007(arm, char_id, color_hex="#1a1818", tie_hex="#4a8ec2"):
+    """
+    HAIR_007: High Ponytail (V15)
+    - Rebuilt with Wang et al. (2008) double-reflection Rotation Minimizing Frame (RMF).
+    - Single, continuous swept volume from gathered root inside tie band down to upper back.
+    - Zero twists, zero flips, zero gaps or breaks in profile/rear.
+    - Full tail length: Crest at Z ~ 0.725m, falling under natural gravity to Z ~ 0.395m.
+    - Substantial cross section: 78mm width x 58mm depth, gradually tapering to tip.
+    - Subtle falling forehead wisp + 2 temple wisps framing ears with roots inside crown.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.185, 0.174, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.18:  # Brow fringe
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = 0.014 * math.cos(theta_f * 3.0)
+                max_phi = math.radians(65.0) + fringe_var
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.003
+            else:  # Sides
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            # Upward gather sweep toward high crown tie point (0, -0.115, 0.675)
+            if cos_u < 0.10 and v < 0.55:
+                gather_fac = (1.0 - v / 0.55) * max(0.0, -cos_u)
+                puff += 0.016 * gather_fac
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.008)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.013 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # Sturdy high tie band & bow
+    tie_center = Vector((0.0, -0.115, 0.675))
+    tie_axis = Vector((0.0, -0.500, 0.866))
+    add_smooth_hair_band(bm, tie_center, axis=tie_axis, major_r=0.024, minor_r=0.007, segs_u=16, segs_v=8, mat_index=1)
+    add_ribbon_bow(bm, tie_center + Vector((0.0, -0.012, 0.012)), facing=(0.0, -1.0, 0.2), width=0.042, height=0.020, mat_index=1)
+
+    # CONTINUOUS PONYTAIL SWEPT VOLUME (RMF PARALLEL TRANSPORT — ZERO BREAKS)
+    # Root starts securely INSIDE gather base beneath tie, sweeps through crest, down to upper back
+    flowing_tail_spine = [
+        Vector((0.0, -0.075, 0.650)),   # Deep root inside gather base
+        Vector((0.0, -0.115, 0.675)),   # Center of tie band
+        Vector((0.0, -0.165, 0.725)),   # High ponytail crest prominently visible from front
+        Vector((0.0, -0.230, 0.655)),   # Sweeps backward and down under natural gravity
+        Vector((0.0, -0.245, 0.540)),   # Mid-descent, clear separation from rear skull
+        Vector((0.0, -0.230, 0.450)),   # Lower tail
+        Vector((0.0, -0.210, 0.395))    # Tapered tip reaching upper back/shoulder line
+    ]
+    add_continuous_rmf_spline_lock(
+        bm, flowing_tail_spine,
+        width_profile=(0.046, 0.078, 0.022),   # Full 78mm width!
+        thick_profile=(0.038, 0.058, 0.016),  # Full 58mm depth!
+        samples=32, n_pts=14, mat_index=0, initial_binormal=(1.0, 0.0, 0.0)
+    )
+
+    # SOFT FRONT & TEMPLE FALLING WISPS
+    # 1. Subtle falling forehead wisp
+    fw = [
+        Vector((-0.020, 0.125, 0.635)),
+        Vector((-0.010, 0.142, 0.608)),
+        Vector(( 0.015, 0.142, 0.582))
+    ]
+    add_continuous_rmf_spline_lock(bm, fw, width_profile=(0.018, 0.024, 0.010), thick_profile=(0.008, 0.012, 0.004), samples=16, n_pts=8)
+
+    # 2. Left temple wisp framing ear
+    tw_l = [
+        Vector((-0.162, 0.035, 0.550)),
+        Vector((-0.168, 0.028, 0.518)),
+        Vector((-0.170, 0.020, 0.488))
+    ]
+    add_continuous_rmf_spline_lock(bm, tw_l, width_profile=(0.016, 0.024, 0.008), thick_profile=(0.008, 0.012, 0.004), samples=16, n_pts=8)
+
+    # 3. Right temple wisp framing ear
+    tw_r = [
+        Vector(( 0.162, 0.035, 0.550)),
+        Vector(( 0.168, 0.028, 0.518)),
+        Vector(( 0.170, 0.020, 0.488))
+    ]
+    add_continuous_rmf_spline_lock(bm, tw_r, width_profile=(0.016, 0.024, 0.008), thick_profile=(0.008, 0.012, 0.004), samples=16, n_pts=8)
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_007", mesh)
+    mat_hair = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    mat_tie = create_accessory_material(f"M_Tie_{char_id}", tie_hex, roughness=0.45)
+    obj.data.materials.append(mat_hair)
+    obj.data.materials.append(mat_tie)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+
+def build_hair_008(arm, char_id, color_hex="#2b201c", tie_hex="#f5b82e"):
+    """
+    HAIR_008: Twin Pigtails (V13 Rebuild)
+    - Reopened and rebuilt with substantially fuller pigtail bundles.
+    - Preserves continuous rear cranium coverage down to natural nape (Z = 0.448m).
+    - Doubled bundle volume (width 74mm, depth 54mm) with chubby buoyant teardrops.
+    - Roots gathered inside readable ties with cute ribbon bows.
+    - Tapers gradually near soft rounded ends; zero horn/banana shapes.
+    - Safe clearance from cheeks, ears, and shoulders.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.187, 0.176, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.15:  # Forehead fringe
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = 0.024 * math.cos(theta_f * 3.0)
+                max_phi = math.radians(65.0) + fringe_var
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Rear nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.004
+            else:  # Lateral lobes
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            # Conical gather pull toward twin pigtail roots (X=+-0.145, Y=-0.065, Z=0.550)
+            if abs(sin_u) > 0.45 and cos_u < 0.20 and v > 0.30:
+                gather_fac = (v - 0.30) / 0.70 * (abs(sin_u) - 0.45) / 0.55
+                puff += 0.018 * gather_fac
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.005)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # TWIN VOLUMINOUS PIGTAIL BUNDLES
+    for sign in [-1, 1]:
+        root_pt = Vector((sign * 0.145, -0.065, 0.550))
+        tie_axis = Vector((sign * 0.707, -0.400, 0.580)).normalized()
+
+        # Readable hair tie band with ribbon bow
+        add_smooth_hair_band(bm, root_pt, axis=tie_axis, major_r=0.024, minor_r=0.007, segs_u=16, segs_v=8, mat_index=1)
+        add_ribbon_bow(bm, root_pt + Vector((sign * 0.010, -0.015, 0.010)),
+                       facing=(sign * 0.5, -0.866, 0.2), width=0.040, height=0.020, mat_index=1)
+
+        # Full, chubby pigtail bundle
+        pigtail_spine = [
+            root_pt + tie_axis * 0.010,
+            Vector((sign * 0.190, -0.080, 0.520)),
+            Vector((sign * 0.205, -0.075, 0.465)),
+            Vector((sign * 0.185, -0.055, 0.415))
+        ]
+        add_volumetric_spline_lock(
+            bm, pigtail_spine,
+            width_profile=(0.042, 0.074, 0.022),   # Full 74mm chubby teardrop width!
+            thick_profile=(0.034, 0.054, 0.016),  # Full 54mm depth!
+            samples=24, n_pts=12, mat_index=0
+        )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_008", mesh)
+    mat_hair = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    mat_tie = create_accessory_material(f"M_Tie_{char_id}", tie_hex, roughness=0.45)
+    obj.data.materials.append(mat_hair)
+    obj.data.materials.append(mat_tie)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+def build_hair_009(arm, char_id, color_hex="#1c1615", tie_hex="#e0564c"):
+    """
+    HAIR_009: Braided Hair (V13 Rebuild)
+    - Full cranium coverage with smooth center parting (zero vertex pinches or pale shading marks).
+    - Dense, continuous interwoven twin braids with deeply overlapping chevron plait lobes (zero air gaps).
+    - Broad gathered roots at nape (X = +-0.085m, Y = -0.125m, Z = 0.460m).
+    - Tapers gradually from 46mm at root to 24mm at ties.
+    - Puffy scrunchies (#e0564c) and soft rounded tassels.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.186, 0.175, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.18:  # Bangs
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = 0.022 * math.cos(theta_f * 3.0)
+                max_phi = math.radians(65.5) + fringe_var
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape gathering
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(22.0)
+                puff = 0.004
+            else:  # Sides
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            # Subtle smooth center parting groove (broad Gaussian, no pinched crease)
+            if abs(sin_u) < 0.20 and (cos_u < 0.15 or v < 0.35):
+                crease_fac = math.cos((sin_u / 0.20) * (math.pi * 0.5)) ** 2
+                puff -= 0.004 * crease_fac
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.004)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # DENSE INTERWOVEN CHEVRON BRAIDS
+    for sign in [-1, 1]:
+        braid_guide = [
+            Vector((sign * 0.085, -0.125, 0.460)),
+            Vector((sign * 0.110, -0.130, 0.415)),
+            Vector((sign * 0.122, -0.122, 0.365)),
+            Vector((sign * 0.125, -0.110, 0.325))
+        ]
+        guide_curve = catmull_rom_spline(braid_guide, samples_per_segment=8)
+
+        # 4 Tiers with 50% longitudinal overlap for continuous dense weave
+        num_tiers = 4
+        for tier in range(num_tiers):
+            t_center = (tier + 0.4) / float(num_tiers)
+            idx = int(t_center * (len(guide_curve) - 1))
+            pt_center, _ = guide_curve[idx]
+            tangent = (guide_curve[min(idx + 1, len(guide_curve) - 1)][0] - guide_curve[max(0, idx - 1)][0]).normalized()
+
+            up = Vector((0, 0, 1))
+            right = tangent.cross(up).normalized()
+
+            tier_scale = 1.0 - 0.30 * (tier / float(num_tiers))
+            lobe_w = 0.042 * tier_scale
+            lobe_th = 0.028 * tier_scale
+            lobe_len = 0.042 * tier_scale  # Extended length ensures deep overlap!
+
+            for sub_lobe in [-1, 1]:
+                sub_offset = (sub_lobe * 0.40) * lobe_w
+                sub_center = pt_center + right * sub_offset + tangent * (sub_lobe * 0.008)
+
+                tilt_tangent = (tangent - right * (sub_lobe * 0.40 * sign)).normalized()
+                l_spine = [
+                    sub_center - tilt_tangent * (lobe_len * 0.5),
+                    sub_center,
+                    sub_center + tilt_tangent * (lobe_len * 0.5)
+                ]
+                add_volumetric_spline_lock(
+                    bm, l_spine,
+                    width_profile=(lobe_w * 0.65, lobe_w, lobe_w * 0.60),
+                    thick_profile=(lobe_th * 0.65, lobe_th, lobe_th * 0.60),
+                    samples=6, n_pts=6, mat_index=0
+                )
+
+        # Braid end hair tie
+        pt_end, _ = guide_curve[-1]
+        tan_end = (guide_curve[-1][0] - guide_curve[-2][0]).normalized()
+        add_smooth_hair_band(bm, pt_end, axis=tan_end, major_r=0.018, minor_r=0.006, segs_u=12, segs_v=6, mat_index=1)
+
+        # Soft rounded brush tuft / tassel
+        tassel_spine = [
+            pt_end,
+            pt_end + tan_end * 0.016,
+            pt_end + tan_end * 0.034
+        ]
+        add_volumetric_spline_lock(
+            bm, tassel_spine,
+            width_profile=(0.018, 0.024, 0.008),
+            thick_profile=(0.014, 0.018, 0.006),
+            samples=6, n_pts=6, mat_index=0
+        )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_009", mesh)
+    mat_hair = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    mat_tie = create_accessory_material(f"M_Tie_{char_id}", tie_hex, roughness=0.45)
+    obj.data.materials.append(mat_hair)
+    obj.data.materials.append(mat_tie)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+def build_hair_010(arm, char_id, color_hex="#261b17"):
+    """
+    HAIR_010: Shoulder-Length Loose Hair (V15)
+    - Full continuous mantle extending cleanly to shoulder line (Z ~ 0.368m).
+    - Hat-brim forehead band eliminated: forehead hair flows down smoothly from crown.
+    - Asymmetrical side-swept fringe distinct from bob haircut.
+    - Soft arched face opening: smoothstep blend from brow to shoulders.
+    - Surface volume sculpted into longitudinal flowing waves across upper back.
+    - Long face-framing strands beside cheeks flowing down to collar.
+    - Inward C-curl cupping shoulders with verified shirt and scarf clearance.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.188, 0.177, 0.166
+    num_rings = 24
+    segs = 40
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / float(num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+            theta = math.atan2(abs(sin_u), cos_u)
+
+            # Temple transition curve: smoothstep from forehead (theta < 0.92) to side/rear (theta > 1.42)
+            t_side = smoothstep(0.92, 1.42, theta)
+
+            # Asymmetrical side-swept fringe baseline (distinct from bob)
+            fringe_z = 0.570 + 0.008 * sin_u + 0.004 * math.cos(theta * 3.0)
+            shoulder_z = 0.368 + 0.004 * math.cos(u * 5.0)  # organic relief
+            target_edge_z = fringe_z * (1.0 - t_side) + shoulder_z * t_side
+
+            phi_fringe = math.radians(64.5)
+            phi_shoulder = math.radians(90.0)
+            target_edge_phi = phi_fringe * (1.0 - t_side) + phi_shoulder * t_side
+
+            if v < 0.40:
+                # Upper cranial dome
+                phi = (v / 0.40) * target_edge_phi
+                puff = 0.006 + 0.006 * math.sin(v * math.pi * 2.0)
+                px = (rx + puff) * math.sin(phi) * sin_u
+                py = (ry + puff) * math.sin(phi) * cos_u + center_y
+                pz = center_z + (rz + puff) * math.cos(phi)
+            else:
+                # Vertical extension down to shoulder line
+                fac = (v - 0.40) / 0.60
+                phi = target_edge_phi
+                base_pz = center_z + rz * math.cos(phi)
+                pz = base_pz + fac * (target_edge_z - base_pz)
+
+                # Flowing rear mantle waves & cheek fullness
+                puff = 0.009 + 0.007 * math.sin(v * math.pi)
+                rear_fac = max(0.0, -cos_u)
+                surface_waves = 0.009 * (math.cos(3.0 * u - 0.2) + 0.35 * math.cos(5.0 * u)) * rear_fac * math.sin(v * math.pi)
+                puff += surface_waves
+
+                px = (rx + puff) * math.sin(phi) * sin_u
+                py = (ry + puff) * math.sin(phi) * cos_u + center_y
+
+                # Gentle flare over shoulders, then inward C-curl at collar
+                if fac > 0.35 and t_side > 0.30:
+                    tuck = (fac - 0.35) / 0.65
+                    px -= math.copysign(0.014 * tuck * t_side, px)
+                    py += 0.010 * tuck * t_side
+
+            # Ear clearance
+            if abs(cos_u) < 0.20 and 0.45 < v < 0.75:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.035:
+                    px = math.copysign(max(abs(px), 0.184), px)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.006)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    # Inward beveled physical thickness at the lower perimeter (14mm)
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # SOFT FALLING LOCKS (DISTINCT ASYMMETRIC ARRANGEMENT)
+    # 1. Side-swept forehead lock A
+    s1 = [
+        Vector((-0.055, 0.120, 0.640)),
+        Vector((-0.030, 0.140, 0.605)),
+        Vector((-0.010, 0.142, 0.564))
+    ]
+    add_continuous_rmf_spline_lock(bm, s1, width_profile=(0.026, 0.036, 0.014), thick_profile=(0.012, 0.016, 0.006), samples=16, n_pts=8)
+
+    # 2. Side-swept forehead lock B
+    s2 = [
+        Vector((-0.005, 0.125, 0.645)),
+        Vector(( 0.020, 0.144, 0.608)),
+        Vector(( 0.045, 0.140, 0.560))
+    ]
+    add_continuous_rmf_spline_lock(bm, s2, width_profile=(0.030, 0.040, 0.016), thick_profile=(0.014, 0.018, 0.006), samples=16, n_pts=8)
+
+    # 3. Soft brow accent lock C
+    s3 = [
+        Vector(( 0.048, 0.120, 0.635)),
+        Vector(( 0.068, 0.134, 0.598)),
+        Vector(( 0.082, 0.130, 0.556))
+    ]
+    add_continuous_rmf_spline_lock(bm, s3, width_profile=(0.020, 0.030, 0.012), thick_profile=(0.010, 0.014, 0.006), samples=16, n_pts=8)
+
+    # 4. Long left face-framing strand down to collar
+    s4 = [
+        Vector((-0.160, 0.060, 0.535)),
+        Vector((-0.168, 0.048, 0.460)),
+        Vector((-0.160, 0.030, 0.380))
+    ]
+    add_continuous_rmf_spline_lock(bm, s4, width_profile=(0.026, 0.038, 0.016), thick_profile=(0.014, 0.018, 0.008), samples=20, n_pts=10)
+
+    # 5. Long right face-framing strand down to collar
+    s5 = [
+        Vector(( 0.160, 0.060, 0.535)),
+        Vector(( 0.168, 0.048, 0.460)),
+        Vector(( 0.160, 0.030, 0.380))
+    ]
+    add_continuous_rmf_spline_lock(bm, s5, width_profile=(0.026, 0.038, 0.016), thick_profile=(0.014, 0.018, 0.008), samples=20, n_pts=10)
+
+    # 6. Soft rear layered wave lock across upper back
+    s6 = [
+        Vector(( 0.000, -0.200, 0.520)),
+        Vector(( 0.000, -0.218, 0.445)),
+        Vector(( 0.000, -0.198, 0.370))
+    ]
+    add_continuous_rmf_spline_lock(bm, s6, width_profile=(0.032, 0.048, 0.018), thick_profile=(0.016, 0.022, 0.008), samples=18, n_pts=10)
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_010", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+# ---------------------------------------------------------------------------
+# STUDIO ENVIRONMENT
+# ---------------------------------------------------------------------------
+
+
+def build_hair_011(arm, char_id, color_hex="#1a1b20"):
+    """
+    HAIR_011: Side-Swept Bangs (V13 Rebuild)
+    - Replaced isolated thin diagonal strand with broad swept fringe mass (width 88mm, depth 28mm).
+    - Blends smoothly into crown and temple at off-center part (X = -0.065m).
+    - Real 3D width, thickness, and gentle curvature across forehead.
+    - Secondary supporting under-lock for rich layered depth.
+    - Both eyes and eyebrows remain completely readable.
+    - Medium layered silhouette with side sections framing cheeks (Z ~ 0.430m).
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.187, 0.176, 0.165
+    num_rings, segs = 18, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.15:  # Forehead base with sweep origin
+                asym = sin_u * 0.10
+                max_phi = math.radians(64.0) + asym
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.003
+            else:  # Sides framing jaw
+                max_phi = math.radians(88.0)
+                puff = 0.006 + 0.005 * math.sin(v * math.pi)
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.005)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.014 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # BROAD, VOLUMETRIC SWEPT FRINGE MASS (Real 88mm width & 28mm depth)
+    main_sweep_spine = [
+        Vector((-0.065, 0.125, 0.655)),
+        Vector((-0.010, 0.148, 0.640)),
+        Vector(( 0.055, 0.142, 0.605)),
+        Vector(( 0.115, 0.125, 0.545)),
+        Vector(( 0.140, 0.095, 0.475))
+    ]
+    add_volumetric_spline_lock(
+        bm, main_sweep_spine,
+        width_profile=(0.048, 0.088, 0.024),   # Broad 88mm sweep width!
+        thick_profile=(0.022, 0.028, 0.010),  # Full 28mm depth!
+        samples=24, n_pts=12, mat_index=0
+    )
+
+    # Layered supporting under-lock
+    under_sweep_spine = [
+        Vector((-0.045, 0.120, 0.645)),
+        Vector(( 0.025, 0.136, 0.612)),
+        Vector(( 0.090, 0.120, 0.558))
+    ]
+    add_volumetric_spline_lock(
+        bm, under_sweep_spine,
+        width_profile=(0.032, 0.052, 0.018),
+        thick_profile=(0.016, 0.020, 0.008),
+        samples=16, n_pts=10, mat_index=0
+    )
+
+    # Sleek minor side lock
+    minor_side_spine = [
+        Vector((-0.080, 0.115, 0.640)),
+        Vector((-0.115, 0.100, 0.575)),
+        Vector((-0.130, 0.075, 0.505))
+    ]
+    add_volumetric_spline_lock(
+        bm, minor_side_spine,
+        width_profile=(0.028, 0.042, 0.016),
+        thick_profile=(0.014, 0.018, 0.006),
+        samples=16, n_pts=8, mat_index=0
+    )
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_011", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+def build_hair_012(arm, char_id, color_hex="#1d1716"):
+    """
+    HAIR_012: Messy Short Hair (V12 Production)
+    - Controlled irregularity with broad, chunky, rounded locks (inspired by Animal Crossing).
+    - Modest crown lift (+15mm) with mild asymmetry.
+    - Casual tousled fringe clumps maintaining complete eye readability.
+    - Sides and nape remain neat and compact (clearing ears & collar).
+    - ZERO disconnected spikes or needle cones: all tufts sink smoothly into cranial volume.
+    """
+    bm = bmesh.new()
+    center_y, center_z = -0.010, 0.528
+    rx, ry, rz = 0.185, 0.174, 0.165
+    num_rings, segs = 16, 36
+
+    ring_verts = []
+    for r in range(num_rings):
+        v = r / (num_rings - 1)
+        row = []
+        for s in range(segs):
+            u = 2.0 * math.pi * s / segs
+            sin_u, cos_u = math.sin(u), math.cos(u)
+
+            if cos_u > 0.15:  # Forehead: casual uneven tousled fringe
+                theta_f = math.atan2(sin_u, cos_u)
+                fringe_var = 0.028 * math.cos(theta_f * 3.5 + 0.4) + 0.014 * math.sin(theta_f * 2.1)
+                max_phi = math.radians(65.0) + fringe_var
+                puff = 0.005 + 0.005 * math.sin(v * math.pi)
+            elif cos_u < -0.15:  # Nape
+                back_fac = -cos_u
+                max_phi = math.radians(95.0) + back_fac * math.radians(24.0)
+                puff = 0.003
+            else:  # Sides
+                max_phi = math.radians(74.0)
+                puff = 0.004
+
+            # Controlled crown lift with mild asymmetry
+            if v < 0.40:
+                crown_fac = (1.0 - v / 0.40)
+                asym_fac = 1.0 + 0.25 * sin_u
+                puff += 0.010 * crown_fac * asym_fac
+
+            phi = v * max_phi
+            px = (rx + puff) * math.sin(phi) * sin_u
+            py = (ry + puff) * math.sin(phi) * cos_u + center_y
+            pz = center_z + (rz + puff) * math.cos(phi)
+
+            # Ear clearance
+            if abs(cos_u) < 0.22 and v > 0.60:
+                ear_dist = math.sqrt((abs(px) - 0.166)**2 + (py + 0.005)**2 + (pz - 0.515)**2)
+                if ear_dist < 0.038:
+                    pz += (0.038 - ear_dist) * 0.85
+                    px = math.copysign(max(abs(px), 0.183), px)
+            row.append(bm.verts.new(Vector((px, py, pz))))
+        ring_verts.append(row)
+
+    for r in range(num_rings - 1):
+        for s in range(segs):
+            sn = (s + 1) % segs
+            bm.faces.new((ring_verts[r][s], ring_verts[r][sn], ring_verts[r+1][sn], ring_verts[r+1][s]))
+
+    apex = bm.verts.new(Vector((0.0, center_y, center_z + rz + 0.010)))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((apex, ring_verts[0][s], ring_verts[0][sn]))
+
+    # Inward beveled physical thickness
+    rim_outer = ring_verts[-1]
+    rim_inner = []
+    for s in range(segs):
+        vo = rim_outer[s]
+        p_in = vo.co + (Vector((0.0, center_y, vo.co.z)) - vo.co).normalized() * 0.013 + Vector((0, 0, 0.005))
+        rim_inner.append(bm.verts.new(p_in))
+    for s in range(segs):
+        sn = (s + 1) % segs
+        bm.faces.new((rim_outer[s], rim_outer[sn], rim_inner[sn], rim_inner[s]))
+
+    # Broad, rounded tousled locks with Catmull-Rom smooth curves
+    messy_spline_locks = [
+        # Crown left tuft
+        ([(-0.035, 0.020, 0.665), (-0.058, 0.048, 0.698), (-0.082, 0.072, 0.692)],
+         (0.034, 0.048, 0.018), (0.018, 0.024, 0.008)),
+        # Crown right tuft
+        ([( 0.030, 0.030, 0.665), ( 0.052, 0.062, 0.695), ( 0.076, 0.088, 0.685)],
+         (0.034, 0.046, 0.018), (0.018, 0.022, 0.008)),
+        # Mid crown tuft
+        ([( 0.005, -0.030, 0.665), ( 0.015, -0.065, 0.698), ( 0.020, -0.095, 0.695)],
+         (0.036, 0.050, 0.020), (0.018, 0.024, 0.008)),
+        # Front brow tousled wisp
+        ([(-0.020, 0.085, 0.640), (-0.035, 0.125, 0.620), (-0.040, 0.145, 0.585)],
+         (0.028, 0.038, 0.014), (0.012, 0.018, 0.006)),
+    ]
+    for spine, wp, tp in messy_spline_locks:
+        add_smooth_spline_lock(bm, spine, width_profile=wp, thick_profile=tp, samples=20, n_pts=10, mat_index=0)
+
+    mesh = bpy.data.meshes.new(f"Hair_Mesh_{char_id}")
+    bm.to_mesh(mesh)
+    bm.free()
+
+    obj = bpy.data.objects.new("Hair_HAIR_012", mesh)
+    mat = create_chibi_hair_material(f"M_Hair_{char_id}", color_hex, roughness=0.68)
+    obj.data.materials.append(mat)
+    apply_clean_subsurf(obj, levels=1)
+    bpy.context.collection.objects.link(obj)
+    bind_hair_to_armature(obj, arm)
+    return obj
+
+ACTIVE_HAIRSTYLES = ["HAIR_001", "HAIR_002", "HAIR_003", "HAIR_004", "HAIR_007", "HAIR_010"]
+ARCHIVED_HAIRSTYLES = ["HAIR_005", "HAIR_006", "HAIR_008", "HAIR_009", "HAIR_011", "HAIR_012"]
+
+HAIR_DISPATCHER = {
+    "HAIR_001": build_hair_001,
+    "HAIR_002": build_hair_002,
+    "HAIR_003": build_hair_003,
+    "HAIR_004": build_hair_004,
+    "HAIR_007": build_hair_007,
+    "HAIR_010": build_hair_010,
+}
+
+ARCHIVED_DISPATCHER = {
+    "HAIR_005": build_hair_005,
+    "HAIR_006": build_hair_006,
+    "HAIR_008": build_hair_008,
+    "HAIR_009": build_hair_009,
+    "HAIR_011": build_hair_011,
+    "HAIR_012": build_hair_012,
+}
+
+HAIR_CATALOG = {
+    "HAIR_001": {
+        "id": "HAIR_001",
+        "name": "Classic Bowl Cut",
+        "vietnamese_name": "Tóc úp nồi học trò",
+        "style": "classic_bowl_cut",
+        "preset_group": "male",
+        "status": "production_active",
+        "description": "Mái tóc úp nồi tròn trịa, ngây thơ hiền lành của nam sinh đầu cấp 2. Đường viền mềm mại, không răng cưa.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#2b201c"
+    },
+    "HAIR_002": {
+        "id": "HAIR_002",
+        "name": "Sporty Short",
+        "vietnamese_name": "Tóc ngắn thể thao vuốt nhẹ",
+        "style": "sporty_spiky",
+        "preset_group": "male",
+        "status": "production_active",
+        "description": "Mái tóc ngắn vuốt nhẹ năng động, thể thao, cá tính của nam sinh thích đá bóng. Khối vuốt liền mạch, gáy ôm sát.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#161b26"
+    },
+    "HAIR_003": {
+        "id": "HAIR_003",
+        "name": "Chin-Length Rounded Bob",
+        "vietnamese_name": "Tóc tém bob nữ sinh",
+        "style": "rounded_bob",
+        "preset_group": "female",
+        "status": "production_active",
+        "description": "Mái tóc tém bob tròn trịa ôm nhẹ hai má và gáy kéo dài đến ngang cằm, mái cong tự nhiên trên trán.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#221714"
+    },
+    "HAIR_004": {
+        "id": "HAIR_004",
+        "name": "Side-Parted Short",
+        "vietnamese_name": "Tóc ngắn rẽ ngôi 7/3",
+        "style": "side_parted_short",
+        "preset_group": "male",
+        "status": "production_active",
+        "description": "Tóc rẽ ngôi lệch 7/3 bồng bềnh tự nhiên của lớp trưởng gương mẫu. Mối rẽ liền mạch vào đỉnh đầu, mái xéo nhẹ.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#241c19"
+    },
+    "HAIR_007": {
+        "id": "HAIR_007",
+        "name": "High Ponytail",
+        "vietnamese_name": "Tóc đuôi ngựa buộc cao",
+        "style": "high_ponytail",
+        "preset_group": "female",
+        "status": "production_active",
+        "description": "Tóc đuôi ngựa buộc cao bồng bềnh kèm nơ vải, lượn mềm mại xuống lưng trên, tràn đầy năng lượng hoạt bát.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#1a1818",
+        "tie_color": "#4a8ec2"
+    },
+    "HAIR_010": {
+        "id": "HAIR_010",
+        "name": "Shoulder-Length Loose Hair",
+        "vietnamese_name": "Tóc ngang vai xõa tự nhiên",
+        "style": "shoulder_length_loose",
+        "preset_group": "female",
+        "status": "production_active",
+        "description": "Tóc xõa ngang vai nữ sinh dịu dàng với ngọn uốn cong ôm nhẹ bờ vai và cổ áo đồng phục.",
+        "anchor_bone": "Head",
+        "color_support": True,
+        "default_color": "#261b17"
+    }
+}
+
+def remove_existing_hair():
+    """Removes any existing hair objects from the active Blender scene."""
+    all_hair_objs = [o for o in bpy.data.objects if o.name.startswith("Hair_")]
+    for o in all_hair_objs:
+        bpy.data.objects.remove(o, do_unlink=True)
+
+def equip_character_hair(arm, hair_id, hair_color_hex="#1c1615", char_id="student", tie_color_hex=None):
+    """
+    Main entry point for Character Factory to equip any of the 12 hairstyles.
+    - Cleans up old hair objects.
+    - Generates new procedural hair geometry (V11 Production).
+    - Configures material and colors.
+    - Binds to Head bone and Armature modifier.
+    - Returns the created hairstyle object.
+    """
+    remove_existing_hair()
+    
+    if hair_id not in HAIR_DISPATCHER:
+        print(f"[HairstyleLibrary] Unknown hair_id: {hair_id}, falling back to HAIR_001")
+        hair_id = "HAIR_001"
+        
+    builder_fn = HAIR_DISPATCHER[hair_id]
+    
+    catalog_info = HAIR_CATALOG.get(hair_id, {})
+    default_tie = catalog_info.get("tie_color", "#e0564c")
+    effective_tie = tie_color_hex or default_tie
+    
+    if hair_id in ("HAIR_006", "HAIR_007", "HAIR_008", "HAIR_009"):
+        obj = builder_fn(arm, char_id, hair_color_hex, tie_hex=effective_tie)
+    else:
+        obj = builder_fn(arm, char_id, hair_color_hex)
+        
+    print(f"[HairstyleLibrary] Equipped {hair_id} ({catalog_info.get('name', 'Hair')}) on {char_id} with color {hair_color_hex}")
+    return obj
+
+def create_stylized_hair_material(mat_name, hex_color="#2b201c", roughness=0.68):
+    return create_chibi_hair_material(mat_name, hex_color, roughness)
+
+def create_hair_tie_material(mat_name, hex_color="#e0564c", roughness=0.45):
+    return create_accessory_material(mat_name, hex_color, roughness)
+
+if __name__ == "__main__":
+    print(f"Hairstyle Library V2 (Production V11) loaded successfully. Available styles: {len(HAIR_CATALOG)}")

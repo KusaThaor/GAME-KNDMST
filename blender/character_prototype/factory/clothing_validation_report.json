@@ -11,17 +11,17 @@
           "id": "BOTTOM_001",
           "name": "Long School Trousers",
           "objects_created": 1,
-          "total_vertices": 268,
+          "total_vertices": 324,
           "materials": [
             "M_Bottom_test_bottom_001"
           ],
           "vertex_groups": [
-            "Spine",
+            "Thigh.R",
+            "Hips",
             "Shin.R",
             "Thigh.L",
-            "Shin.L",
-            "Hips",
-            "Thigh.R"
+            "Spine",
+            "Shin.L"
           ],
           "status": "PASS"
         },
@@ -34,10 +34,10 @@
             "M_Bottom_test_bottom_002"
           ],
           "vertex_groups": [
-            "Thigh.L",
-            "Spine",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Thigh.R",
+            "Spine"
           ],
           "status": "PASS"
         },
@@ -50,10 +50,10 @@
             "M_Bottom_test_bottom_003"
           ],
           "vertex_groups": [
-            "Thigh.L",
-            "Spine",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Thigh.R",
+            "Spine"
           ],
           "status": "PASS"
         },
@@ -66,11 +66,11 @@
             "M_Bottom_test_bottom_004"
           ],
           "vertex_groups": [
-            "Chest",
-            "Spine",
-            "Thigh.L",
+            "Thigh.R",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Chest",
+            "Spine"
           ],
           "status": "PASS"
         },
@@ -83,10 +83,10 @@
             "M_Bottom_test_bottom_005"
           ],
           "vertex_groups": [
-            "Thigh.L",
-            "Spine",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Thigh.R",
+            "Spine"
           ],
           "status": "PASS"
         },
@@ -99,10 +99,10 @@
             "M_Bottom_test_bottom_006"
           ],
           "vertex_groups": [
-            "Thigh.L",
-            "Spine",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Thigh.R",
+            "Spine"
           ],
           "status": "PASS"
         },
@@ -110,18 +110,18 @@
           "id": "BOTTOM_007",
           "name": "PE Sports Pants",
           "objects_created": 1,
-          "total_vertices": 276,
+          "total_vertices": 332,
           "materials": [
             "M_Bottom_test_bottom_007",
             "M_Bottom_Stripe_test_bottom_007"
           ],
           "vertex_groups": [
-            "Spine",
+            "Thigh.R",
+            "Hips",
             "Shin.R",
             "Thigh.L",
-            "Shin.L",
-            "Hips",
-            "Thigh.R"
+            "Spine",
+            "Shin.L"
           ],
           "status": "PASS"
         },
@@ -134,11 +134,11 @@
             "M_Bottom_test_bottom_008"
           ],
           "vertex_groups": [
-            "Chest",
-            "Spine",
-            "Thigh.L",
+            "Thigh.R",
             "Hips",
-            "Thigh.R"
+            "Thigh.L",
+            "Chest",
+            "Spine"
           ],
           "status": "PASS"
         }
@@ -153,7 +153,7 @@
           "id": "TOP_001",
           "name": "White School Shirt",
           "objects_created": 4,
-          "total_vertices": 210,
+          "total_vertices": 286,
           "materials": [
             "M_Top_test_top_001",
             "M_Top_test_top_001",
@@ -161,13 +161,13 @@
             "M_Top_Collar_test_top_001"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -175,7 +175,7 @@
           "id": "TOP_002",
           "name": "Blue PE Shirt",
           "objects_created": 4,
-          "total_vertices": 210,
+          "total_vertices": 286,
           "materials": [
             "M_Top_test_top_002",
             "M_Top_test_top_002",
@@ -183,13 +183,13 @@
             "M_Top_Collar_test_top_002"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -197,7 +197,7 @@
           "id": "TOP_003",
           "name": "Basic T-Shirt",
           "objects_created": 4,
-          "total_vertices": 210,
+          "total_vertices": 286,
           "materials": [
             "M_Top_test_top_003",
             "M_Top_test_top_003",
@@ -205,13 +205,13 @@
             "M_Top_Collar_test_top_003"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -219,7 +219,7 @@
           "id": "TOP_004",
           "name": "Polo Shirt",
           "objects_created": 4,
-          "total_vertices": 210,
+          "total_vertices": 286,
           "materials": [
             "M_Top_test_top_004",
             "M_Top_test_top_004",
@@ -227,13 +227,13 @@
             "M_Top_Collar_test_top_004"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -241,7 +241,7 @@
           "id": "TOP_005",
           "name": "Casual Blouse",
           "objects_created": 4,
-          "total_vertices": 210,
+          "total_vertices": 286,
           "materials": [
             "M_Top_test_top_005",
             "M_Top_test_top_005",
@@ -249,13 +249,13 @@
             "M_Top_Collar_test_top_005"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -263,20 +263,20 @@
           "id": "TOP_006",
           "name": "Light Cardigan",
           "objects_created": 3,
-          "total_vertices": 286,
+          "total_vertices": 362,
           "materials": [
             "M_Top_test_top_006",
             "M_Top_test_top_006",
             "M_Top_test_top_006"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -284,7 +284,7 @@
           "id": "TOP_007",
           "name": "Casual Long-Sleeve Shirt",
           "objects_created": 4,
-          "total_vertices": 294,
+          "total_vertices": 370,
           "materials": [
             "M_Top_test_top_007",
             "M_Top_test_top_007",
@@ -292,13 +292,13 @@
             "M_Top_Collar_test_top_007"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         },
@@ -306,7 +306,7 @@
           "id": "TOP_008",
           "name": "Light Jacket",
           "objects_created": 4,
-          "total_vertices": 294,
+          "total_vertices": 370,
           "materials": [
             "M_Top_test_top_008",
             "M_Top_test_top_008",
@@ -314,13 +314,13 @@
             "M_Top_Collar_test_top_008"
           ],
           "vertex_groups": [
-            "UpperArm.R",
-            "Forearm.R",
+            "Hips",
+            "UpperArm.L",
             "Chest",
             "Spine",
-            "Hips",
+            "UpperArm.R",
             "Forearm.L",
-            "UpperArm.L"
+            "Forearm.R"
           ],
           "status": "PASS"
         }
@@ -335,15 +335,15 @@
           "id": "FOOTWEAR_001",
           "name": "White Sneakers",
           "objects_created": 1,
-          "total_vertices": 114,
+          "total_vertices": 170,
           "materials": [
             "M_Shoe_test_footwear_001",
             "M_Sole_test_footwear_001"
           ],
           "vertex_groups": [
-            "Foot.R",
-            "Foot.L",
             "Shin.L",
+            "Foot.L",
+            "Foot.R",
             "Shin.R"
           ],
           "status": "PASS"
@@ -352,15 +352,15 @@
           "id": "FOOTWEAR_002",
           "name": "Canvas Low-Tops",
           "objects_created": 1,
-          "total_vertices": 114,
+          "total_vertices": 170,
           "materials": [
             "M_Shoe_test_footwear_002",
             "M_ToeCap_test_footwear_002",
             "M_Sole_test_footwear_002"
           ],
           "vertex_groups": [
-            "Foot.R",
-            "Foot.L"
+            "Foot.L",
+            "Foot.R"
           ],
           "status": "PASS"
         },
@@ -374,8 +374,8 @@
             "M_Sole_test_footwear_003"
           ],
           "vertex_groups": [
-            "Foot.R",
-            "Foot.L"
+            "Foot.L",
+            "Foot.R"
           ],
           "status": "PASS"
         },
@@ -389,8 +389,8 @@
             "M_Sole_test_footwear_004"
           ],
           "vertex_groups": [
-            "Foot.R",
-            "Foot.L"
+            "Foot.L",
+            "Foot.R"
           ],
           "status": "PASS"
         }
@@ -557,8 +557,8 @@
     },
     "glb_roundtrip_test": {
       "status": "PASS",
-      "file_size_bytes": 350412,
-      "file_size_kb": 342.19921875
+      "file_size_bytes": 444656,
+      "file_size_kb": 434.234375
     }
   }
 }

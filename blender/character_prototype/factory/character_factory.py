@@ -104,175 +104,9 @@ class CharacterFactory:
             if obj and obj.data.materials:
                 obj.data.materials[0] = mat_skin
 
-    def equip_hair(self, hair_id, hair_color_hex, char_id):
-        # 1. Clean up any existing hair meshes
-        all_hair_names = [
-            "Hair_Cap", "Hair_Bangs", "Hair_Sideburn_L", "Hair_Sideburn_R",
-            "Hair_Spiky_Cap", "Hair_Spike_Front", "Hair_Spike_L", "Hair_Spike_R",
-            "Hair_Spiky_Sideburn_L", "Hair_Spiky_Sideburn_R",
-            "Hair_Bob_Cap", "Hair_Bob_Bangs", "Hair_Bob_Side_L", "Hair_Bob_Side_R"
-        ]
-        remove_objects_by_names(all_hair_names)
-
-        # 2. Setup hair material
-        mat_hair_name = f"M_Hair_{char_id}"
-        mat_hair = create_or_update_mat(mat_hair_name, hair_color_hex, roughness=0.48)
-
-        head_z = 0.525
-
-        if hair_id == "HAIR_001":
-            # Classic Bowl Cut
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, -0.012, head_z + 0.040))
-            cap = bpy.context.active_object
-            cap.name = "Hair_Cap"
-            cap.scale = (0.42, 0.40, 0.32)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = cap.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            cap.data.materials.append(mat_hair)
-            apply_smooth(cap)
-            vg = cap.vertex_groups.new(name="Head")
-            vg.add(list(range(len(cap.data.vertices))), 1.0, 'REPLACE')
-            m = cap.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, 0.075, head_z + 0.065))
-            bangs = bpy.context.active_object
-            bangs.name = "Hair_Bangs"
-            bangs.scale = (0.34, 0.18, 0.12)
-            bangs.rotation_euler = (math.radians(-15), 0, 0)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = bangs.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            bangs.data.materials.append(mat_hair)
-            apply_smooth(bangs)
-            vg = bangs.vertex_groups.new(name="Head")
-            vg.add(list(range(len(bangs.data.vertices))), 1.0, 'REPLACE')
-            m = bangs.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            for side, sign in [(-1, "L"), (1, "R")]:
-                bpy.ops.mesh.primitive_cube_add(size=1.0, location=(side * 0.165, 0.025, head_z + 0.005))
-                sideburn = bpy.context.active_object
-                sideburn.name = f"Hair_Sideburn_{sign}"
-                sideburn.scale = (0.04, 0.10, 0.12)
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                sub = sideburn.modifiers.new("Subdiv", "SUBSURF")
-                sub.levels = 2
-                sideburn.data.materials.append(mat_hair)
-                apply_smooth(sideburn)
-                vg = sideburn.vertex_groups.new(name="Head")
-                vg.add(list(range(len(sideburn.data.vertices))), 1.0, 'REPLACE')
-                m = sideburn.modifiers.new("Armature", 'ARMATURE')
-                m.object = self.arm
-
-        elif hair_id == "HAIR_002":
-            # Sporty Spiky Hair
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, -0.015, head_z + 0.038))
-            s_cap = bpy.context.active_object
-            s_cap.name = "Hair_Spiky_Cap"
-            s_cap.scale = (0.41, 0.39, 0.30)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = s_cap.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            s_cap.data.materials.append(mat_hair)
-            apply_smooth(s_cap)
-            vg = s_cap.vertex_groups.new(name="Head")
-            vg.add(list(range(len(s_cap.data.vertices))), 1.0, 'REPLACE')
-            m = s_cap.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, 0.070, head_z + 0.090))
-            s_crest = bpy.context.active_object
-            s_crest.name = "Hair_Spike_Front"
-            s_crest.scale = (0.16, 0.22, 0.14)
-            s_crest.rotation_euler = (math.radians(-35), 0, 0)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = s_crest.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            s_crest.data.materials.append(mat_hair)
-            apply_smooth(s_crest)
-            vg = s_crest.vertex_groups.new(name="Head")
-            vg.add(list(range(len(s_crest.data.vertices))), 1.0, 'REPLACE')
-            m = s_crest.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            for side, sign in [(-1, "L"), (1, "R")]:
-                bpy.ops.mesh.primitive_cube_add(size=1.0, location=(side * 0.120, 0.040, head_z + 0.075))
-                s_side = bpy.context.active_object
-                s_side.name = f"Hair_Spike_{sign}"
-                s_side.scale = (0.14, 0.18, 0.12)
-                s_side.rotation_euler = (math.radians(-25), math.radians(side * 15), math.radians(side * -10))
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                sub = s_side.modifiers.new("Subdiv", "SUBSURF")
-                sub.levels = 2
-                s_side.data.materials.append(mat_hair)
-                apply_smooth(s_side)
-                vg = s_side.vertex_groups.new(name="Head")
-                vg.add(list(range(len(s_side.data.vertices))), 1.0, 'REPLACE')
-                m = s_side.modifiers.new("Armature", 'ARMATURE')
-                m.object = self.arm
-
-                bpy.ops.mesh.primitive_cube_add(size=1.0, location=(side * 0.170, 0.035, head_z + 0.010))
-                s_burn = bpy.context.active_object
-                s_burn.name = f"Hair_Spiky_Sideburn_{sign}"
-                s_burn.scale = (0.025, 0.050, 0.090)
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                sub = s_burn.modifiers.new("Subdiv", "SUBSURF")
-                sub.levels = 2
-                s_burn.data.materials.append(mat_hair)
-                apply_smooth(s_burn)
-                vg = s_burn.vertex_groups.new(name="Head")
-                vg.add(list(range(len(s_burn.data.vertices))), 1.0, 'REPLACE')
-                m = s_burn.modifiers.new("Armature", 'ARMATURE')
-                m.object = self.arm
-
-        elif hair_id == "HAIR_003":
-            # Rounded Bob Hair
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, -0.015, head_z + 0.042))
-            b_cap = bpy.context.active_object
-            b_cap.name = "Hair_Bob_Cap"
-            b_cap.scale = (0.43, 0.41, 0.32)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = b_cap.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            b_cap.data.materials.append(mat_hair)
-            apply_smooth(b_cap)
-            vg = b_cap.vertex_groups.new(name="Head")
-            vg.add(list(range(len(b_cap.data.vertices))), 1.0, 'REPLACE')
-            m = b_cap.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            bpy.ops.mesh.primitive_cube_add(size=1.0, location=(0.0, 0.076, head_z + 0.062))
-            b_bangs = bpy.context.active_object
-            b_bangs.name = "Hair_Bob_Bangs"
-            b_bangs.scale = (0.36, 0.20, 0.12)
-            b_bangs.rotation_euler = (math.radians(-20), 0, 0)
-            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-            sub = b_bangs.modifiers.new("Subdiv", "SUBSURF")
-            sub.levels = 2
-            b_bangs.data.materials.append(mat_hair)
-            apply_smooth(b_bangs)
-            vg = b_bangs.vertex_groups.new(name="Head")
-            vg.add(list(range(len(b_bangs.data.vertices))), 1.0, 'REPLACE')
-            m = b_bangs.modifiers.new("Armature", 'ARMATURE')
-            m.object = self.arm
-
-            for side, sign in [(-1, "L"), (1, "R")]:
-                bpy.ops.mesh.primitive_cube_add(size=1.0, location=(side * 0.174, 0.015, head_z - 0.010))
-                b_side = bpy.context.active_object
-                b_side.name = f"Hair_Bob_Side_{sign}"
-                b_side.scale = (0.042, 0.115, 0.150)
-                b_side.rotation_euler = (math.radians(-8), math.radians(side * -5), math.radians(side * -8))
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                sub = b_side.modifiers.new("Subdiv", "SUBSURF")
-                sub.levels = 2
-                b_side.data.materials.append(mat_hair)
-                apply_smooth(b_side)
-                vg = b_side.vertex_groups.new(name="Head")
-                vg.add(list(range(len(b_side.data.vertices))), 1.0, 'REPLACE')
-                m = b_side.modifiers.new("Armature", 'ARMATURE')
-                m.object = self.arm
+    def equip_hair(self, hair_id, hair_color_hex, char_id, tie_color_hex=None):
+        import hairstyle_library
+        return hairstyle_library.equip_character_hair(self.arm, hair_id, hair_color_hex, char_id, tie_color_hex)
 
     def equip_modular_clothing(self, clothing_spec, skin_hex, char_id):
         """Equips complete modular clothing system using clothing_library"""
@@ -556,6 +390,17 @@ class CharacterFactory:
         print(f"[Factory] GLB Export complete! Size: {file_size:,} bytes ({file_size/1024:.1f} KB)")
         return file_size
 
+    def validate_eye_integrity(self, allow_glasses=False):
+        """Safeguard: Verifies that canonical eyes exist unaltered and no unintended facial meshes intrude."""
+        canonical_eyes = {"Eye_L", "Eye_R", "Eye_HL1_L", "Eye_HL1_R", "Eye_HL2_L", "Eye_HL2_R"}
+        existing_objs = {o.name for o in bpy.data.objects}
+        missing = canonical_eyes - existing_objs
+        if missing:
+            raise RuntimeError(f"[Factory Error] Canonical eye objects missing: {missing}")
+        if not allow_glasses and "Acc_Glasses" in existing_objs:
+            raise RuntimeError("[Factory Error] Acc_Glasses detected when accessories did not request it!")
+        return True
+
     def build_character(self, config, output_glb_path, output_blend_path=None):
         char_id = config.get("character_id", "student_custom")
         print(f"\n==================================================")
@@ -574,15 +419,21 @@ class CharacterFactory:
         # 2. Hairstyle
         hair_id = config.get("hair_style", "HAIR_001")
         hair_color = config.get("hair_color", "#1c1615")
-        self.equip_hair(hair_id, hair_color, char_id)
+        tie_color = config.get("hair_tie_color")
+        self.equip_hair(hair_id, hair_color, char_id, tie_color)
 
         # 3. Modular Clothing System (Top, Bottom, Footwear, Socks, Adaptive Limbs)
         resolved_clothing = asset_registry.resolve_clothing_config(config, self.registry)
         self.equip_modular_clothing(resolved_clothing, skin_hex, char_id)
 
         # 4. Accessories
-        accessories = config.get("accessories", [])
+        accessories = config.get("accessories")
+        if accessories is None and resolved_clothing.get("preset_used"):
+            pdata = self.registry["categories"]["OUTFIT_PRESETS"].get(resolved_clothing["preset_used"], {})
+            accessories = pdata.get("accessories", [])
+        accessories = accessories or []
         self.equip_accessories(accessories, char_id)
+        self.validate_eye_integrity(allow_glasses=("ACC_002" in accessories))
 
         # 5. Facial system
         expr = config.get("default_expression", "Neutral")
