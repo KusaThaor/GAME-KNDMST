@@ -1,0 +1,9 @@
+Starting test_apply_fixes...
+Imports successful.
+Rendered: test_shoulder_front.png
+Rendered: test_shoulder_elevated_3quarter.png
+Rendered: test_shoulder_back.png
+Rendered: test_shoe_front.png
+Rendered: test_shoe_back.png
+Rendered: test_shoe_3quarter.png
+ALL TEST RENDERS COMPLETED SUCCESSFULLY!

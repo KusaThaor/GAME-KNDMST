@@ -1,0 +1,89 @@
+{
+  "HAIR_001": {
+    "name": "Classic Bowl Cut",
+    "gender": "male",
+    "glb": "character_hair_001_v14.glb",
+    "glb_size_kb": 443.5,
+    "renders": {
+      "front": "hair_001_front.png",
+      "three_quarter": "hair_001_three_quarter.png",
+      "side": "hair_001_side.png",
+      "back": "hair_001_back.png"
+    },
+    "quads": 684,
+    "color": "#2b201c"
+  },
+  "HAIR_002": {
+    "name": "Sporty Short",
+    "gender": "male",
+    "glb": "character_hair_002_v14.glb",
+    "glb_size_kb": 443.5,
+    "renders": {
+      "front": "hair_002_front.png",
+      "three_quarter": "hair_002_three_quarter.png",
+      "side": "hair_002_side.png",
+      "back": "hair_002_back.png"
+    },
+    "quads": 684,
+    "color": "#161b26"
+  },
+  "HAIR_003": {
+    "name": "Chin-Length Rounded Bob",
+    "gender": "female",
+    "glb": "character_hair_003_v14.glb",
+    "glb_size_kb": 477.6,
+    "renders": {
+      "front": "hair_003_front.png",
+      "three_quarter": "hair_003_three_quarter.png",
+      "side": "hair_003_side.png",
+      "back": "hair_003_back.png",
+      "closeup": "hair_003_closeup.png"
+    },
+    "quads": 840,
+    "color": "#221714"
+  },
+  "HAIR_004": {
+    "name": "Side-Parted Short",
+    "gender": "male",
+    "glb": "character_hair_004_v14.glb",
+    "glb_size_kb": 521.3,
+    "renders": {
+      "front": "hair_004_front.png",
+      "three_quarter": "hair_004_three_quarter.png",
+      "side": "hair_004_side.png",
+      "back": "hair_004_back.png"
+    },
+    "quads": 1048,
+    "color": "#241c19"
+  },
+  "HAIR_007": {
+    "name": "High Ponytail",
+    "gender": "female",
+    "glb": "character_hair_007_v14.glb",
+    "glb_size_kb": 552.8,
+    "renders": {
+      "front": "hair_007_front.png",
+      "three_quarter": "hair_007_three_quarter.png",
+      "side": "hair_007_side.png",
+      "back": "hair_007_back.png",
+      "closeup": "hair_007_closeup.png"
+    },
+    "quads": 1184,
+    "color": "#1a1818"
+  },
+  "HAIR_010": {
+    "name": "Shoulder-Length Loose Hair",
+    "gender": "female",
+    "glb": "character_hair_010_v14.glb",
+    "glb_size_kb": 495.1,
+    "renders": {
+      "front": "hair_010_front.png",
+      "three_quarter": "hair_010_three_quarter.png",
+      "side": "hair_010_side.png",
+      "back": "hair_010_back.png",
+      "closeup": "hair_010_closeup.png"
+    },
+    "quads": 920,
+    "color": "#261b17"
+  }
+}

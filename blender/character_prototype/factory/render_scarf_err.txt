@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_all_scarf_views.py", line 127, in <module>
+    render_and_export()
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_all_scarf_views.py", line 73, in render_and_export
+    factory.load_base()
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\character_factory.py", line 63, in load_base
+    bpy.ops.wm.open_mainfile(filepath=self.canonical_blend)
+  File "C:\Program Files\WindowsApps\BlenderFoundation.Blender4.5LTS_4.5.16.0_x64__ppwjx1n5r4v9t\Blender\4.5\scripts\modules\bpy\ops.py", line 109, in __call__
+    ret = _op_call(self.idname_py(), kw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: Cannot read file "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\vietnamese_student_base.blend": No such file or directory
+
