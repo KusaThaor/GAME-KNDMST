@@ -110,6 +110,11 @@ body.game canvas { display: block; }
 .g-marks span { opacity: .5; } .g-marks span.ok { opacity: 1; color: #2f7d3b; }
 .g-free { pointer-events: auto; position: absolute; left: 50%; bottom: 120px; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; background: rgba(255,250,238,.95); padding: 8px 14px; border-radius: 12px; font-weight: 700; }
 .g-quest { display: flex; gap: 8px; align-items: center; font-size: 15px; }
+.g-box3d { position: absolute; left: 50%; top: calc(16px + env(safe-area-inset-top)); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); background: rgba(255,250,238,.92); border: 3px solid var(--ink); border-radius: 14px; padding: 8px 14px; font-size: 15px; pointer-events: none; }
+.g-box3d button { pointer-events: auto; }
+.g-box3d-hint { opacity: .8; }
+.g-box3d-hover { font-weight: 800; min-width: 1em; }
+.g-box3d[data-first="true"] .g-box3d-hint { font-weight: 800; color: #9a5a00; opacity: 1; }
 .g-menu { min-width: 300px; z-index: 4; }   /* Esc mở được cả khi đang có thoại: menu luôn nằm trên khung thoại */
 .g-notice.fx-album_restore { animation: g-restore 1.2s ease-out; }
 @keyframes g-restore { from { filter: blur(6px) grayscale(1); opacity: .2; } to { filter: none; opacity: 1; } }

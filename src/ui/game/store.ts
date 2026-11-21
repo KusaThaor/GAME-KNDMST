@@ -56,8 +56,11 @@ export interface UiState {
   minigame: { game: string } | null;
   free: { text: string } | null;
   notice: { title: string; text: string; effect: string } | null;
-  panel: 'box' | 'album' | 'phone' | 'menu' | 'journal' | null;
+  /** 'box3d' = đang nhìn cận cảnh vào Hộp Kỷ Vật ở phòng 2026; 'box' = bảng kỷ vật trên kệ (xem lại ký ức). */
+  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | null;
   box: BoxView | null;
+  /** Lớp chữ khi đang nhìn vào Hộp Kỷ Vật: dòng hướng dẫn + tên món dưới con trỏ. */
+  boxView: { hint: string; hover: string | null; first: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
   feedback: boolean;
@@ -70,7 +73,7 @@ export interface UiState {
 export const initialUi: UiState = {
   ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
-  panel: null, box: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
+  panel: null, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
 
 export interface UiActions {
@@ -88,6 +91,8 @@ export interface UiActions {
   openPanel(p: NonNullable<UiState['panel']>): void;
   closePanel(): void;
   openArtifact(id: string): void;
+  /** Bấm một món trong Hộp Kỷ Vật (cận cảnh): đồ linh tinh nói một câu; kỷ vật đang sáng đưa về quá khứ. */
+  boxPick(id: string): void;
   albumFlip(pageId: string): void;
   albumSelect(entryId: string, index: number): void;
   phoneOpenThread(id: string | null): void;
