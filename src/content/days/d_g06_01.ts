@@ -50,7 +50,7 @@ export const quests: Quest[] = [
         id: 'q_m1_main_01.s01',
         kind: 'talk',
         with: 'NPC_A',
-        objective: 'Làm quen bạn mới và giải mật lệnh',
+        objective: 'Làm quen bạn mới và tìm phòng học lớp 6A2',
         lines: [
           { speaker: 'NPC_A', text: 'Ê, bạn gì ơi! Vở của cậu nè, suýt bay xuống sân luôn đó.' },
           { speaker: 'player', text: 'À, cảm ơn cậu nha.' },
@@ -59,6 +59,14 @@ export const quests: Quest[] = [
           { speaker: 'NPC_A', text: 'Yên tâm, để tớ dẫn. Tớ mới đi lạc có… hai lần thôi!' },
           { speaker: 'player', text: 'Ủa, vậy cậu có chắc biết đường không?' },
           { speaker: 'NPC_A', text: 'Ơ… chuyện nhỏ! Đi theo tớ là được!' },
+        ],
+      },
+      {
+        id: 'q_m1_main_01.s03',
+        kind: 'talk',
+        with: 'NPC_B',
+        objective: 'Vào lớp 6A2 và nhận mật lệnh từ Đức',
+        lines: [
           { speaker: 'NPC_A', text: 'Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.' },
           { speaker: 'player', text: 'Sao nhìn giống cậu vẽ linh tinh hơn vậy?' },
           { speaker: 'NPC_B', text: 'Hai người làm gì đó? Đang trong giờ học mà.' },
@@ -69,20 +77,90 @@ export const quests: Quest[] = [
         ],
       },
       {
+        id: 'q_m1_main_01.s04',
+        kind: 'minigame',
+        game: 'mg_decode',
+        level: 'min',
+        objective: 'Ghép ký hiệu để giải mật lệnh của Đức',
+      },
+      {
         id: 'q_m1_main_01.s02',
-        kind: 'interact',
-        target: 'itr.thcs.stone_bench',
-        objective: 'Xuống sân đá cầu, trực nhật và chụp ảnh bộ ba',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Xuống sân trường đá cầu giờ ra chơi',
         lines: [
           { speaker: 'NPC_A', text: 'Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!' },
           { speaker: 'NPC_B', text: 'Ừ, giỏi dữ chưa. Đá hụt cầu bay vô bụi rồi kìa, để tui đi lượm.' },
+        ],
+      },
+      {
+        id: 'q_m1_main_01.s05',
+        kind: 'minigame',
+        game: 'mg_shuttlecock',
+        level: 'min',
+        objective: 'Canh nhịp chuyền cầu cùng Đức và Châu',
+      },
+      {
+        id: 'q_m1_main_01.s06',
+        kind: 'minigame',
+        game: 'mg_wipe_board',
+        level: 'min',
+        objective: 'Lau sạch bảng đen lớp học',
+      },
+      {
+        id: 'q_m1_main_01.s07',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Trực nhật cuối buổi cùng các bạn',
+        lines: [
           { speaker: 'NPC_A', text: 'Mai mày nhớ ra chơi xuống sân với tao nha! …Ủa. Cậu. Với tớ.' },
           { speaker: 'NPC_B', text: 'Mới quen một bữa mà {g:ông|bà} mày tao rồi hả?' },
           { speaker: 'NPC_A', text: 'Thì quen rồi còn gì!' },
           { speaker: 'player', text: 'Ngày đầu ở trường mới… hình như cũng không tệ như mình nghĩ.' },
+        ],
+      },
+      {
+        id: 'q_m1_main_01.s08',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Ghé tiệm tạp hóa mua gói mì tôm cuối cùng',
+        lines: [
           { speaker: 'NPC_A', text: 'Ra tiệm tạp hóa đi! Còn đúng một gói mì nè, mua lẹ chia ba!' },
           { speaker: 'NPC_B', text: 'Chia đều. Không bàn cãi nữa.' },
+        ],
+      },
+      {
+        id: 'q_m1_main_01.s09',
+        kind: 'minigame',
+        game: 'mg_noodle_squeeze',
+        level: 'min',
+        objective: 'Bóp vụn gói mì và lắc đều gói gia vị',
+      },
+      {
+        id: 'q_m1_main_01.s10',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Chuẩn bị chụp tấm ảnh đầu tiên của bộ ba',
+        lines: [
           { speaker: 'NPC_A', text: '{player_name} có máy ảnh mà! Quay ngược máy lại tự sướng đi!' },
+        ],
+      },
+      {
+        id: 'q_m1_main_01.s11',
+        kind: 'photo',
+        mode: 'handheld',
+        camera_id: 'cam.d0601.bench',
+        subjects: ['player', 'NPC_A', 'NPC_B'],
+        album_entry_id: 'alb.d.g06.01.01',
+        stand_zone: { marker: 'spot.thcs.yard_bench_1', radius: 1.1 },
+        objective: 'Cầm máy ảnh compact quay ngược chụp tự sướng ba đứa mình',
+      },
+      {
+        id: 'q_m1_main_01.s12',
+        kind: 'talk',
+        with: 'NPC_A',
+        objective: 'Chọn ảnh giữ lại làm kỷ niệm',
+        lines: [
           { speaker: 'NPC_B', text: 'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.' },
           { speaker: 'player', text: 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.' },
           { speaker: 'NPC_A', text: 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!' },
@@ -158,7 +236,7 @@ export const fragments: MemoryFragment[] = [
 ];
 
 export const entries: AlbumEntry[] = [
-  { id: 'alb.d.g06.01.01', page_id: 'page.d.g06.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g06.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0601.bench', at_step_id: 'q_m1_main_01.s02' } },
+  { id: 'alb.d.g06.01.01', page_id: 'page.d.g06.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g06.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0601.bench', at_step_id: 'q_m1_main_01.s11' } },
   { id: 'alb.d.g06.01.02', page_id: 'page.d.g06.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g06.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g06.01.03', page_id: 'page.d.g06.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g06.01.03', source: 'sticker_art', required_for_restore: true },
   { id: 'alb.d.g06.01.04', page_id: 'page.d.g06.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g06.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_side_01', replayable: true },
