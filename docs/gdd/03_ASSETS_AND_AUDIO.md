@@ -2,9 +2,9 @@
 
 | Trường | Giá trị |
 |---|---|
-| Phiên bản | **v1.0 APPROVED** |
-| Ngày cập nhật | 20/11/2026 (UTC+7) |
-| Trạng thái | **APPROVED** — chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
+| Phiên bản | **v1.2-draft** (nền v1.0 APPROVED 20/11) |
+| Ngày cập nhật | 21/11/2026 (UTC+7) |
+| Trạng thái | **v1.0 APPROVED 20/11; v1.2-draft: asset hòm thư Valentine đã được chủ dự án CHỐT HƯỚNG ngày 21/11 (chiều) để triển khai — chỉ còn chờ concept hình.** Chưa đóng dấu APPROVED cả file; các mục khác vẫn APPROVED. Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
 | Phạm vi | Bản public: phòng 2026 + `map_thcs` (Trang 1–9) + Khu Vui Chơi Căn cứ |
 | Nguồn | `01_NARRATIVE_AND_SCENES.md`, `02_GAMEPLAY_AND_MECHANICS.md`, `GDD.md` v0.3 §4, §8.4, §10, §12.3, §13, `BLENDER_PIPELINE.md` v0.1, kiểm tra repo ngày 20/11 (nhánh `feature/asset-workshop`, `feature/s2-world-camera-blender`), quyết định chủ dự án 20/11 |
 
@@ -58,10 +58,10 @@ Căn cứ hiện có: đo ngày 13/11 trên trình duyệt giả lập (chưa ph
 ### 1.3 Nhân vật *(CONFIRMED 20/11: dựng model 3D semi-chibi, chiều cao chuẩn hóa ~1,3–1,5 m)*
 | Hạng mục | Quy chuẩn |
 |---|---|
-| Chiều cao | Lớp 6–7: **1,30–1,40 m** · lớp 8–9: **1,40–1,50 m**. Quân cao nhất nhóm (chạm mức trên); Hạ và Đức ở mức dưới *(chia theo người: PROPOSED)* |
+| Chiều cao | Lớp 6–7: **1,30–1,40 m** · lớp 8–9: **1,55–1,65 m** — **CONFIRMED 21/11 (tối):** chủ dự án chốt lấy theo số đo thật của nhân vật đang chạy trong game (lớp 9 đo được 1,579–1,727 m, xem `docs/handoff/DEMO_AUDIT.md` §3.2); dải cũ **1,40–1,50 m SUPERSEDED**. Quân cao nhất nhóm (chạm mức trên); Hạ và Đức ở mức dưới *(chia theo người: PROPOSED)* |
 | Tỉ lệ | Semi-chibi: đầu to, khoảng 3–3,5 đầu cho cả thân |
-| Kiểm tra bắt buộc | Đứng cạnh `PRP_DESK_2SEAT` (mặt bàn ≈ 0,7 m): mặt bàn phải ngang khoảng hông nhân vật. Lỗi 0,70 m ở nhánh asset ngày 20/11 phải sửa |
-| Bộ xương | **Một bộ xương dùng chung** cho mọi nhân vật học sinh, để dùng chung hoạt ảnh |
+| Kiểm tra bắt buộc | Đứng cạnh `PRP_DESK_2SEAT` (mặt bàn ≈ 0,7 m): mặt bàn phải ngang khoảng hông nhân vật. Model nhánh `feature/asset-workshop` đo lại ngày 21/11 cao **0,63–0,77 m** — phải chuẩn hóa về dải trên. Lưu ý gốc tọa độ: `prp_desk_2seat.glb` hiện có `min.y = −0,663` (gốc ở mặt bàn), sai quy chuẩn §1.1 |
+| Bộ xương | **Một bộ xương dùng chung** cho mọi nhân vật học sinh, để dùng chung hoạt ảnh. **CONFIRMED 21/11 (tối) — hướng asset:** dùng **base mesh + bộ xương chung đã có** ở `feature/asset-workshop` (20 xương, 16 hoạt ảnh), phụ kiện và biến thể gắn thêm bằng code/preset; **không** sửa tay từng `.glb` riêng cho 5 nhân vật |
 | Biến thể tuổi | `AGE_G6_7` và `AGE_G8_9` = đổi tỉ lệ xương + tóc + phụ kiện, không dựng lại từ đầu |
 | Trang phục | Áo sơ mi trắng có bảng tên, quần tây xanh đậm, giày bata; khăn quàng đỏ (lớp 6–7, phụ kiện gắn rời); áo thun lớp (Hội trại) |
 | Nhận diện | Không đổi các dấu hiệu ở `01` §2.1 khi chưa được duyệt |
@@ -90,7 +90,7 @@ Căn cứ hiện có: đo ngày 13/11 trên trình duyệt giả lập (chưa ph
 ### 2.1 Nhân vật
 | Mã | Tên | Dùng ở | Cách làm | Tầng | Trạng thái |
 |---|---|---|---|---|---|
-| `CHR_PLAYER_M` | Player nam (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] — nhánh asset có nhân vật có xương nhưng chỉ cao 0,70 m |
+| `CHR_PLAYER_M` | Player nam (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] — nhánh asset có nhân vật có xương (20 xương, 16 hoạt ảnh, 3.314–3.772 tam giác) nhưng chỉ cao 0,63–0,77 m; chuẩn hóa theo §1.3 |
 | `CHR_PLAYER_F` | Player nữ (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] |
 | `CHR_DUC` | Đức "Tí Nổ" — gầy, tóc dựng, bút bi | Mọi Trang | Blender | A | [Cần chỉnh sửa] |
 | `CHR_QUAN` | Quân "Bắp" — to cao, tóc húi cua | Trang 2–9 | Blender | A | [Cần chỉnh sửa] |
@@ -188,9 +188,16 @@ Căn cứ hiện có: đo ngày 13/11 trên trình duyệt giả lập (chưa ph
 | `PRP_PAPER_BOAT_x3` | Thuyền giấy 3 kiểu gấp (buồm / mui / đôi) | 2 | Script | A | [Cần tạo mới] |
 | `PRP_TRASH_FLOAT` | Rác trôi trên rãnh: lá, vỏ kẹo, que kem | 2 | Script | A | [Cần tạo mới] |
 | `PRP_CARDBOARD_BOX` | Thùng giấy cũ (dựng Căn cứ) | 3 | Script | A | [Cần tạo mới] |
-| `PRP_BASKETBALL_OLD` | Quả bóng cũ + bơm | 5 | Script | A | [Cần tạo mới] |
+| `PRP_BASKETBALL_OLD` | Quả bóng cũ + bơm | 5, **6** *(nhánh Thử thách ném rổ)* | Script | A | [Cần tạo mới] |
 | `PRP_WATER_BOTTLE` | Chai nước nhựa (có mức nước nhìn thấy, mặc định 1/3) | 5, lật chai | Script | B | [Cần tạo mới] |
 | `PRP_PHONE_OLD_2017` | Điện thoại cũ của anh trai Đức | 6 | Script | A | [Cần tạo mới] |
+| `PRP_VALENTINE_MAILBOX` | **Hòm thư Valentine** — hộp giày có khe thư, **ngăn chung**, nắp; dán giấy 3 mặt; màu và họa tiết đổi theo `boxStyle` (`02` §4.2). Hình ở Căn cứ Trang 6, 7, 9 | 6 (làm ở Cảnh B, dùng ở Cảnh B và D), 7, 9 (nền) | Script (thân hộp, khe, ngăn) + canvas (giấy, họa tiết) | A | **[Đã có ý tưởng]** — chờ concept hòm thư |
+| `PRP_MAILBOX_RULES_BOARD` | Bảng nội quy hòm thư, 3 điều (chữ canvas); vài kiểu bảng để chọn | 6, 7, 9 (nền) | 2D trên mặt phẳng | A | **[Đã có ý tưởng]** — chờ concept bảng |
+| `PRP_CRAFT_SUPPLIES` | Giấy màu, bút, keo, ruy-băng, hình trái tim / ngôi sao (vật liệu làm hòm thư) | 6 | Script + 2D | A | [Cần tạo mới] |
+| `PRP_VALENTINE_LETTER` | Lá thư + phong bì (thư riêng 3 loại, thư chung; chữ lấy từ danh sách chọn sẵn) **và thư xin lỗi của Đức** (phong bì ghi "Hạ", 4 dòng thân thư cố định + 3 câu mở đầu để chọn) | 6 (Cảnh B, D) | Script + chữ canvas | A | [Cần tạo mới] |
+| `PRP_VALENTINE_SNACKS` | Ba món ăn vặt + bảng giá nhỏ (nhánh Kèo ăn vặt, xe quà vặt Z03) | 6 | Script | A | [Cần tạo mới] |
+| `PRP_SHOP_LIST_ITEMS` | Băng keo, ghim giấy, 1 món cho Căn cứ + sổ mua sắm của Châu (nhánh Danh sách mua sắm, tiệm tạp hóa Z03) | 6 | Script | A | [Cần tạo mới] |
+| `PRP_DECOR_SET` | Bộ trang trí Căn cứ 4 nhóm: đồ treo (dây cờ giấy, dây đèn) · đồ đặt bàn (bình hoa giấy, hộp bánh) · ảnh/kỷ niệm (kéo ảnh trong Album dán tường) · vật trang trí trung tâm (bảng "Valentine năm đứa", gấu bông) — **Minigame 3**, nhánh chung "Một buổi Valentine của năm đứa" (`02` §2.5.3c). Tên món là gợi ý, chốt khi dựng | 6 | Script | A | [Cần tạo mới] |
 | `PRP_SLIME` | Slime | 7 | Script | A | [Cần tạo mới] |
 | `PRP_HIGHLIGHTER_YELLOW` | Bút highlight vàng của Châu | 7 | Script | A | [Cần tạo mới] |
 | `PRP_PAPER_FLAG` | Lá cờ giấy tô sáp | 8 | Script + vùng tô | A | [Cần tạo mới] |
@@ -236,7 +243,12 @@ Toàn bộ dựng bằng Preact + canvas, font Nunito; nền sáng, góc bo, c�
 | `UI_MG_POWERBAR` | Thanh lực, vòng canh nhịp, thanh thăng bằng | Đá cầu, thuyền, lò cò, cổ vũ | A | [Cần tạo mới] |
 | `UI_CARO_BOARD` | Bàn caro 12×12 / 15×15 trên nền bảng đen, quân X/O nét phấn, chọn đối thủ Đức/Quân | Trang 5 | A | [Cần tạo mới] |
 | `UI_SUDOKU_PAPER` | Giấy tập ô li, lưới 6×6 / 9×9, bàn số, ghi chú nháp, gợi ý (còn x/3), đồng hồ của Châu 6 phút | Trang 7 cảnh A | A | [Cần tạo mới] |
-| `UI_MINI_K` | Màn ghép cặp mật lệnh, ghép luật, đặt đồ vào ô (K3/K4) | Trang 1, 3, 4, 7, 8, 9 | A | [Cần tạo mới] |
+| `UI_MINI_K` | Màn ghép cặp mật lệnh, ghép luật, đặt đồ vào ô (K3/K4) | Trang 1, 3, 4, **6**, 7, 8, 9 | A | [Cần tạo mới] |
+| `UI_MAILBOX_CRAFT` | Màn làm hòm thư: bàn vật liệu, hộp, 5 bước (màu nền · dán 3 mặt · trang trí · khe + ngăn chung + nắp · bảng nội quy), chọn kiểu bảng | Trang 6 Cảnh B | A | [Cần tạo mới] |
+| `UI_APOLOGY_LETTER` | Màn thư xin lỗi của Đức: chọn 1 trong 3 câu mở đầu → lật từng dòng thư viết tay → kéo thư (phong bì ghi "Hạ") vào khe hòm. Dùng chung khung với `UI_LETTER_READ` (`02` §2.5.1b) | Trang 6 Cảnh B | A | [Cần tạo mới] |
+| `UI_LETTER_PICKER` | Chọn người nhận (Đức / Châu / Quân / Hạ / cả nhóm) → loại thư (3) hoặc câu thư chung (4) hoặc bảng vẽ tranh nhỏ (kéo thả hình có sẵn); xem trước thư; nút "Bỏ vào hòm". **Chỉ chọn từ danh sách, không nhập chữ tự do** | Trang 6 Cảnh D | A | [Cần tạo mới] |
+| `UI_LETTER_READ` | Hiện lá thư khi mở chung ở ngăn chung (và khung đọc thư xin lỗi); nút "Cho mọi người xem / Giữ riêng" cho ảnh "Player × bạn" | Trang 6 Cảnh D | A | [Cần tạo mới] |
+| `UI_VALENTINE_MINI` | Giao diện **3 minigame** buổi chiều Valentine (`02` §2.5.3a–c): **(1)** Ném bóng — thanh lực xanh-vàng-đỏ, bộ đếm vòng/quả, nút "Chơi lại vòng", "Bỏ qua"; **(2)** Săn góc ảnh — lưới 3×3 mờ + ô đích trên khung ngắm, dấu "Đúng gợi ý", nút "Giữ ảnh này", màn Hạ chọn ảnh; **(3)** Trang trí Căn cứ — khay vật phẩm 4 nhóm, ô đặt, khay ảnh Album. Thêm khung câu hỏi nhanh "Đoán xem ai là người…" và nút "Bỏ qua" dùng chung | Trang 6 nhánh chiều | A | [Đã có ý tưởng] |
 | `UI_BOTTLE_HUD` | Đường kéo, đường dự đoán (chế độ Dễ), điểm 5 lượt, ảnh khoảnh khắc | Lật chai | B | [Cần tạo mới] |
 | `UI_OPPONENT_SELECT` | Chọn trò + chọn 1 trong 4 bạn, mỗi bạn hiện độ khó của trò đó và tỉ số đã đấu | Khu Vui Chơi | B | [Cần tạo mới] |
 | `UI_PORTRAIT_x4` | Ảnh chân dung 4 bạn cho màn chọn đối thủ — **chụp từ model trong game**, không vẽ riêng | Khu Vui Chơi | B | [Cần tạo mới] |
@@ -273,6 +285,9 @@ Toàn bộ dựng bằng Preact + canvas, font Nunito; nền sáng, góc bo, c�
 | `SFX_KEYS_JINGLE` | Chùm chìa khóa bác bảo vệ | Trang 5 | A | [Cần tạo mới] |
 | `SFX_GATE_LOCK` | Cổng sắt khóa | Trang 5 | A | [Cần tạo mới] |
 | `SFX_PHONE_VIBRATE` | Điện thoại rung | Trang 6, 9, kết demo | A | [Cần tạo mới] |
+| `SFX_GLUE_PAPER` | Dán giấy, bóc băng keo, gắn khe thư | Trang 6 (làm hòm thư) | A | [Cần tạo mới] |
+| `SFX_LETTER_DROP` | Thả thư vào khe hòm | Trang 6 | A | [Cần tạo mới] |
+| `SFX_MAILBOX_OPEN` | Mở nắp hòm thư | Trang 6 (tối 14/2) | A | [Cần tạo mới] |
 | `SFX_MSG_SEND` | Gửi tin nhắn | Kết demo | A | [Cần tạo mới] |
 | `SFX_CROWD_CHEER` | Cả tiệm hò reo / im lặng / vỗ tay | Trang 8 | A | [Cần tạo mới] |
 | `SFX_CHEER_DRUM` | Trống cổ vũ theo nhịp | Trang 8 | A | [Cần tạo mới] |
@@ -324,7 +339,11 @@ Mỗi asset chỉ đánh dấu xong khi đã xem trong game (đúng gốc `min.y
 | 3 | Nhạc nền | Chủ dự án chọn bản có giấy phép |
 | 4 | Ngân sách tam giác, dung lượng | Đo lại trên laptop thật, sửa bảng §1.2 |
 | 5 | Ba lô màu của Player | Đề xuất từ 13/11, chưa duyệt |
+| 6 | Hình hòm thư Valentine và bảng nội quy | **Chặn việc dựng hình cuối.** Chưa có concept; cần ChatGPT/Gemini phác 1 hình hòm thư + 1–2 kiểu bảng nội quy trước khi dựng (quy trình: concept → duyệt → dựng) |
 
 ## 7. Changelog
+- **v1.3-draft — 21/11/2026 (tối):** Chủ dự án chốt sau kiểm toán Chặng 2: **hướng asset = base mesh + xương chung, phụ kiện gắn bằng code**; **chiều cao lớp 8–9 đổi thành 1,55–1,65 m** (lấy theo số đo thật trong game). Cập nhật §1.3 (chiều cao, kiểm tra bắt buộc, bộ xương) và dòng `CHR_PLAYER_M`. Bằng chứng số đo: `docs/handoff/DEMO_AUDIT.md`.
+- **v1.2-draft — 21/11/2026 (chiều):** Chốt của chủ dự án: hòm thư làm ở Cảnh B (thứ Sáu), Đức xin lỗi bằng thư, **3 minigame đầy đủ**. `UI_MAILBOX_CRAFT` chuyển sang Cảnh B; thêm `UI_APOLOGY_LETTER`; `PRP_VALENTINE_LETTER` thêm thư xin lỗi; `UI_VALENTINE_MINI` gom về 3 minigame và lên Tầng A; `PRP_VALENTINE_SNACKS`, `PRP_SHOP_LIST_ITEMS` bỏ "bản đầy đủ: B"; `PRP_DECOR_SET` ghi rõ 4 nhóm cho Minigame 3. Điểm còn mở #6 (concept hòm thư + bảng) vẫn chờ.
+- **v1.1-draft — 21/11/2026:** Thêm asset **Hòm thư Valentine** (Trang 6, chỉ đạo chủ dự án 21/11): 7 dòng đạo cụ (`PRP_VALENTINE_MAILBOX`, `PRP_MAILBOX_RULES_BOARD`, `PRP_CRAFT_SUPPLIES`, `PRP_VALENTINE_LETTER`, `PRP_VALENTINE_SNACKS`, `PRP_SHOP_LIST_ITEMS`, `PRP_DECOR_SET`), 4 dòng UI (`UI_MAILBOX_CRAFT`, `UI_LETTER_PICKER`, `UI_LETTER_READ`, `UI_VALENTINE_MINI`), 3 SFX, điểm còn mở #6; mở rộng `UI_MINI_K` và `PRP_BASKETBALL_OLD` sang Trang 6. Giữ `PRP_LEAF_DRAWING`, `UI_CONFESSION`, `PRP_PHONE_OLD_2017`, `PRP_BROOM`. Các mục khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Cập nhật: chữ trên nắp hộp phấn lấy theo tỉ số caro; giao diện Sudoku ở Trang 7 có đồng hồ 6 phút; màn hướng dẫn luật bắt buộc cho mọi minigame.
 - **v1.0-draft — 20/11/2026:** Bản đầu. Quy chuẩn kỹ thuật (gốc `min.y = 0`, mét, Y lên, màu tươi sáng, nhân vật 1,3–1,5 m), ngân sách khởi điểm, kiểm kê 3D theo nhóm (nhân vật, trường, Hội trại, phòng 2026, kỷ vật, đạo cụ, Khu Vui Chơi), 25 màn giao diện 2D, hiệu ứng âm thanh và nhạc nền. Ghi các lỗi asset tìm thấy khi kiểm repo ngày 20/11.

@@ -1,34 +1,34 @@
 # SESSION_HANDOFF
-Phiên bản v8 · Cập nhật 20/11/2026, 23:xx (UTC+7) · Bộ ngữ cảnh v1.0.
+Phiên bản v10 · Cập nhật 21/11/2026 chiều (UTC+7) · Bộ ngữ cảnh v1.0 (GDD 00–03 đang ở v1.2-draft, xem dưới).
 
 ## Mục tiêu hiện tại
-Dựng bản public (Mốc 1 + Mốc 2, 9 Trang) theo bộ GDD **APPROVED v1.0** `claude/gdd/00`–`03`, kịp hạn chuẩn bị 04/12.
+Dựng bản public (Mốc 1 + Mốc 2, 9 Trang) kịp hạn chuẩn bị 04/12 theo GDD `docs/gdd/00`–`03`. Việc đang chạy: **Trang 6 "Valentine — Hòm thư của năm đứa"** đã được chủ dự án chốt hướng, sẵn sàng giao cho dev.
 
-## Quyết định mới đã duyệt (20/11)
-- Bộ GDD 4 file APPROVED v1.0 là GDD hiện hành duy nhất; `GDD.md` v0.3 và `GDD_MASTER_v1_DRAFT` SUPERSEDED.
-- 9 Trang, bỏ "6 chương". Phòng 2026 tươi sáng từ đầu. Căn cứ trong trường. Không dựng căn-tin (dùng Z03). Hội trại ở sân trường tháng 3/2018. Nhân vật model 3D có xương, 1,3–1,5 m.
-- Minigame chơi thật, thua không chặn truyện: caro Trang 5 (AI Đức dễ / Quân khó, 12×12), Sudoku Trang 7 cảnh A (đồng hồ Châu 6 phút), lật chai ở Z03, đua thuyền (Quân luôn nhất), Khu Vui Chơi Căn cứ (Ô ăn quan, Lò cò, Bi ve; chọn bạn = chọn độ khó).
-- Tỉ số caro theo loạt ván từ 3–3; nắp hộp phấn và tin nhắn cuối lấy động.
-- Lần trêu thứ ba Trang 6 ở ghế đá. Giữ luật mặc định các trò, có màn hướng dẫn trong game.
-- Lưu trên máy (localStorage + IndexedDB, ảnh dạng Blob JPEG); Firebase chỉ số liệu ẩn danh + form.
-- Năm học lớp 6 = 2014–2015; chủ dự án tự sửa ô hướng dẫn Project.
+## Quyết định mới (21/11 chiều) — CONFIRMED
+- Hai sự kiện nối nhau: **thứ Năm 9/2 confession** của Hạ → **thứ Sáu 10/2 cả nhóm làm hòm thư, Đức xin lỗi bằng thư** (lời giữ nguyên chữ) → thứ Hai 13/2 Toán → **thứ Ba 14/2 Valentine**.
+- Giữ 4 cảnh. Buổi chiều Valentine làm **3 minigame đầy đủ**, nhánh còn lại rút gọn; mọi minigame có nút "Bỏ qua".
+- Ảnh chính = ảnh nhóm bên hòm thư. Bảng nội quy đủ 3 điều. Lời thư do Claude chỉnh (ủy quyền).
+- Hòm thư nghĩa **tình bạn**; nghĩa cũ "thả thính" vẫn SUPERSEDED.
+
+## Cách mình hiểu (PROPOSED, báo chủ dự án)
+- **3 minigame nào:** chủ dự án chưa chỉ định → mặc định Ném bóng tính điểm · Săn góc ảnh · Trang trí Căn cứ.
+- **"Điều 6 giữ y nguyên"** hiểu là câu hỏi số 6 (bảng nội quy đủ 3 điều). Điều 6 sổ luật Trang 3 không đổi.
 
 ## Trạng thái từng việc
-- Tài liệu: 4 file `claude/gdd/` APPROVED v1.0, đã lưu Project và gửi chủ dự án để chép vào `docs/gdd/`. `00_README` lên v1.0.
-- Code: chưa có minigame nào. Theo kiểm repo 20/11: chưa có nội dung thật; Mốc 2 chưa có bản đồ lớp 8–9; nhân vật nhánh asset cao 0,70 m; cây quá nặng; form phản hồi mới là chỗ giữ chỗ; chưa thử Firestore thật.
+- Tài liệu: nhánh `docs/valentine-mailbox-main-flow` có `00`–`03` v1.2-draft, kịch bản v1.6-draft, `IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`, file rà soát. **Chưa gộp**, chưa APPROVED cả file.
+- Code: chưa làm gì cho Trang 6.
 
 ## Đã kiểm tra / chưa kiểm tra
-- Đã: đối chiếu chéo 4 file (mã Trang, tỉ số caro, vị trí Sudoku, căn-tin, ghế đá).
-- Chưa: mọi thông số minigame chưa chơi thử; ngân sách tam giác chưa đo trên máy thật; không đọc được bản kịch bản v1.4 đầy đủ (không có trong Project/GitHub, quyền thư mục máy bị chặn).
+- Đã: đối chiếu ngày (14/2/2017 = thứ Ba); ngày–cảnh–tham chiếu chéo khớp giữa kịch bản và `00`–`03`; mọi lựa chọn thư đều có đường đi tiếp (bảng ở `02` §2.5.5).
+- Chưa: chơi thử; concept hình hòm thư + bảng; giá nhánh ăn vặt; lời mẫu phản ứng/câu chốt do AI viết; chưa xác minh quan hệ hai nhánh code.
 
 ## File cần đọc cho tác vụ kế tiếp
-`claude/gdd/02` §1, §6 (khung minigame, thứ tự làm) → `claude/gdd/03` §1 (quy chuẩn asset) → `claude/gdd/01` (Trang đang làm) → `07_ANALYTICS_REQUIREMENTS` (thêm event mới ở `02` §5).
+`docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md` → `02` §2.5 → kịch bản Trang 6 → `03` (dòng Valentine).
 
 ## Điểm chưa rõ
-- Danh sách nâng/gộp/lùi từng Side; nhân lực thật (D-10).
-- Ảnh chính Trang 3 và Trang 6; "bạn thư viện" có xuất hiện lại không; tên tạm "Tú".
-- Ngoại hình cô Diệp, bác bảo vệ, chú chủ tiệm; hình 3 kiểu cổng trại; nhạc nền có giấy phép.
-- Kịch bản v1.4 cần được đưa vào Project hoặc `docs/gdd/scripts/`.
+- Ba minigame có đúng ý chủ dự án không; concept hòm thư; tên "Tú".
+- Danh sách Side; nhân lực; ảnh chính Trang 3; "bạn thư viện" có trở lại không; ngoại hình NPC; nhạc nền.
+- `docs/PAGE_DATA_GUIDE.md` dòng 82 (nhánh `feat/sprint-0412`) còn ghi Trang 6 "Confession" — chưa sửa vì khác nhánh.
 
 ## Một bước tiếp theo
-Trong Project Dev: dựng khung minigame chung + lưu + event đo (`02` §1, §4, §5), rồi caro.
+Dev (Claude khác) chọn nhánh code theo `WORKSPACE.md`, rồi dựng Trang 6 theo file bàn giao; chủ dự án xác nhận 3 minigame trước khi dev bắt tay vào các trò.

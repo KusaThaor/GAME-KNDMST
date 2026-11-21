@@ -19,7 +19,7 @@ Nhãn: **[Hoàn thành]** · **[Đang dở dang]** · **[Code lệch GDD v1.0]**
 | Trang 3 `d.g07.02` Căn cứ bí mật | [Chưa code] | Có khu `zone.thcs.base` (Z05) trong bản đồ, chưa có nội dung |
 | Trang 4 `d.g07.03` Đủ năm đứa | [Đang dở dang] | Có Ngày giả cùng ID đúng (Side `q_m1_side_02`, `itr.thcs.gutter`). Nội dung giả |
 | Trang 5 `d.g08.01` Lên lớp 8 + Caro | [Chưa code] | Chưa có Caro, hộp phấn KV-01 |
-| Trang 6 `d.g08.02` Confession | [Chưa code] | Chưa có màn 2D confession; chưa có ghế đá (lần trêu thứ ba) |
+| Trang 6 `d.g08.02` Confession | [Chưa code] | Chưa có màn 2D confession; chưa có ghế đá (lần trêu thứ ba). **21/11:** Trang 6 thêm Hòm thư Valentine ở Main (GDD v1.2-draft, nhánh `docs/valentine-mailbox-main-flow`; hướng đã được chủ dự án chốt chiều 21/11, bàn giao dev ở `docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`) — thêm màn làm hòm thư, thư xin lỗi, chọn thư, 3 minigame buổi chiều; trạng thái code không đổi |
 | Trang 7 `d.g09.01` Báo tường + Sudoku | [Chưa code] | Chưa có Sudoku |
 | Trang 8 `d.g09.02` Rã băng + Hội trại | [Chưa code] | Chưa thấy biến thể đêm của sân (Z02) |
 | Trang 9 `d.g09.03` Vẫn đủ năm đứa | [Chưa code] | — |
@@ -96,7 +96,7 @@ Quy ước: Claude Code = code game (TS, test); Blender/Patch MCP = model, rig, 
 ### Tuần 2 (28/11–04/12): Mốc 2, minigame bắt buộc, đóng gói
 | Nhóm | Việc |
 |---|---|
-| Claude Code | (1) Nạp nội dung Trang 1–9. (2) Caro 12×12 (AI Đức dễ / Quân khó) + tỉ số loạt ván. (3) Sudoku Trang 7 (đồng hồ 6 phút). (4) Màn 2D confession + kết demo. (5) Biến thể đêm Hội trại (Z02). (6) Nếu còn thời gian: Lật chai → Bắn bi ve. (7) Chạy e2e toàn tuyến, build production, kiểm môi trường `test`/`production` |
+| Claude Code | (1) Nạp nội dung Trang 1–9. (2) Caro 12×12 (AI Đức dễ / Quân khó) + tỉ số loạt ván. (3) Sudoku Trang 7 (đồng hồ 6 phút). (4) Màn 2D confession + kết demo *(21/11 chiều: chủ dự án đã chốt hướng Trang 6 — thêm giao diện làm hòm thư, thư xin lỗi, chọn thư Valentine, 3 minigame đầy đủ + 2 nhánh rút gọn của buổi chiều — `02` §2.5; bàn giao ở `docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`)*. (5) Biến thể đêm Hội trại (Z02). (6) Nếu còn thời gian: Lật chai → Bắn bi ve. (7) Chạy e2e toàn tuyến, build production, kiểm môi trường `test`/`production` |
 | Blender/Patch MCP | (1) Kỷ vật 9 Trang (hộp phấn KV-01 trước). (2) Xe quà vặt, tiệm tạp hóa. (3) Đồ Hội trại. (4) Hoạt ảnh Tầng A còn thiếu |
 | Gemini Pro | (1) Số hóa nội dung Trang 5–9 và Hội trại Phần 1, 4. (2) Hướng dẫn minigame, thoại thắng/thua. (3) Bản kiểm lỗi chính tả, tên riêng, năm học (2014–2015) |
 
