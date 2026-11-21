@@ -47,3 +47,6 @@ npm run dev                           # rồi mở /?play=1
 
 ## 6. Trạng thái một dòng
 Khung chơi (phòng 2026 → kỷ vật → Ngày ký ức → ảnh → Album → điện thoại → kết demo) **chạy xuyên suốt với nội dung giả**; bản đồ 6 khu, camera và điều khiển xong; **nội dung thật và minigame thật là phần còn thiếu lớn nhất**. Chi tiết: `docs/handoff/DEMO_AUDIT.md`.
+
+## 7. Số hóa kịch bản (Antigravity/Gemini)
+Hướng dẫn + prompt: `docs/handoff/gemini/` (`00_BAT_DAU_ANTIGRAVITY.md` cho chủ dự án, `GEMINI_RULES.md`, `PROMPT_T06_SO_HOA.md`, `QUESTIONS_LOG.md`). Gemini làm trên nhánh `content/m1-so-hoa`; Claude Code chỉ kiểm bằng máy (`tsc`, `npm test`) rồi mới gộp vào `feat/sprint-0412`.
