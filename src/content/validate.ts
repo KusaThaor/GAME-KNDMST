@@ -8,6 +8,8 @@ import { CAST_ROLES, type Condition, type ContentConfig, type ContentPack, type 
 export interface Issue { code: string; id: string; message: string }
 export interface ValidationReport { errors: Issue[]; warnings: Issue[] }
 
+/** Loại bước đầu mà engine khởi động được Side/Daily (khớp `matchesWith()` trong questEngine.ts). */
+const STARTABLE_FIRST_STEPS: readonly string[] = ['talk', 'interact', 'goto', 'collect', 'place'];
 const SLUG = '[a-z0-9_]+';
 const DAY = 'd\\.g(?:0[6-9]|1[0-2])\\.\\d{2}';
 const SCOPE = '(?:m1|m2|m3|hub)';
@@ -134,6 +136,11 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
     if (q.type === 'main' || q.type === 'event') need(days, q.memory_day_id, `quest ${q.id}`);
     else if (q.memory_day_id) need(days, q.memory_day_id, `quest ${q.id}`);
     if ((q.type === 'side' || q.type === 'daily') && q.blocks_main) err('side_blocks_main', q.id, `quest ${q.type} "${q.id}" phải có blocks_main=false`);
+    // A-02: engine chỉ khởi động Side/Daily khi người chơi làm đúng bước ĐẦU trong thế giới (trigger()), nên bước đầu phải là hành động.
+    const first = q.steps[0];
+    if ((q.type === 'side' || q.type === 'daily') && first && !STARTABLE_FIRST_STEPS.includes(first.kind)) {
+      err('optional_quest_unstartable', q.id, `quest ${q.type} "${q.id}": bước đầu "${first.id}" là "${first.kind}" nên quest không bao giờ bắt đầu (cuối Ngày bị tính là bỏ lỡ). Hãy đổi bước đầu thành một trong: ${STARTABLE_FIRST_STEPS.join(', ')} (ví dụ nói chuyện với nhân vật hoặc đi tới một điểm), rồi đặt ${first.kind} làm bước sau`);
+    }
     if (!q.steps.length) err('empty_quest', q.id, `quest "${q.id}" không có bước nào`);
     checkCond(q.available_when, `quest ${q.id}`);
     checkFlags(q.rewards?.flags, `quest ${q.id}`);

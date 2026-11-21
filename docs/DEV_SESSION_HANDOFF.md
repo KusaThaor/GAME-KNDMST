@@ -8,7 +8,7 @@
 | Lỗi | Trạng thái |
 |---|---|
 | A-01 (`proximity()`, bước `goto`) | XONG phần sửa + test xanh (e2e toàn bộ chưa chạy lại — xem Checkpoint 2) |
-| A-02 (luật `optional_quest_unstartable`) | DANG LAM (test đỏ đã lưu, chưa sửa validator) |
+| A-02 (luật `optional_quest_unstartable`) | XONG phần sửa + test xanh |
 
 ### Checkpoint 0 — baseline (đầu phiên)
 - Baseline chạy thật: `npx tsc --noEmit` đạt · `npm test` 266 đạt / 1 bỏ qua · `npm run validate:world` 0 lỗi (6 khu).
@@ -38,7 +38,13 @@
 - Ca đỏ (bắt lỗi thiếu luật): Side mở bằng `cutscene`; Daily mở bằng `free`. Ca bảo vệ báo nhầm (đã xanh từ đầu, phải giữ xanh): Side mở bằng `talk` rồi `cutscene` ở bước sau; Main mở bằng `cutscene`; 5 loại bước đầu hợp lệ `talk|interact|goto|collect|place`.
 - Lệnh: `npx vitest run tests/unit/validate.test.ts` → **ĐỎ: 2 failed, 19 passed** (`expected [] to include 'optional_quest_unstartable:q_m1_side_01'` / `…:q_m1_daily_01`). `tsc` đạt.
 - Còn lại: thêm luật trong `src/content/validate.ts`, chạy lại unit + validator trên gói thật, tài liệu, build, push.
-- Bước tiếp theo: thêm luật `optional_quest_unstartable` vào khối kiểm quest của `src/content/validate.ts`.
+- Bước tiếp theo: thêm luật `optional_quest_unstartable` vào khối kiểm quest của `src/content/validate.ts`. → xong, xem Checkpoint 4.
+
+### Checkpoint 4 — A-02 test XANH (sau khi sửa)
+- File đã đổi: `src/content/validate.ts` (hằng `STARTABLE_FIRST_STEPS` + luật trong khối kiểm quest, lỗi tiếng Việt kèm cách sửa).
+- Kết quả thật: `npx vitest run tests/unit/validate.test.ts` **21 đạt** (5 ca A-02 đều đạt) · `npm test` **271 đạt / 1 bỏ qua** (trước 266; +5 ca mới) · `npx tsc --noEmit` đạt · `npm run validate:world` 0 lỗi, 0 nhắc.
+- Gói nội dung hiện tại qua validator **0 lỗi**: `tests/unit/contentPack.test.ts` (môi trường test, production, mọi bảng vai D-01) đạt trong lần `npm test` trên.
+- Bước tiếp theo: cập nhật `README.md` (mục "Thêm một Ngày ký ức mới") và `docs/ai-handoff/02_QUEST_SYSTEM.md` §6.
 
 ---
 
