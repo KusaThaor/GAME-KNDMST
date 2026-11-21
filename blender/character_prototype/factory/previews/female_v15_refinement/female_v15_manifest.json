@@ -1,0 +1,51 @@
+{
+  "HAIR_003": {
+    "name": "Chin-Length Rounded Bob",
+    "glb": "character_hair_003_v15.glb",
+    "glb_size_kb": 703.5,
+    "renders": {
+      "front": "hair_003_front.png",
+      "three_quarter": "hair_003_three_quarter.png",
+      "profile_left": "hair_003_profile_left.png",
+      "profile_right": "hair_003_profile_right.png",
+      "back": "hair_003_back.png",
+      "fringe_closeup": "hair_003_fringe_closeup.png",
+      "profile_closeup": "hair_003_profile_closeup.png"
+    },
+    "quads": 1896,
+    "color": "#221714"
+  },
+  "HAIR_007": {
+    "name": "High Ponytail",
+    "glb": "character_hair_007_v15.glb",
+    "glb_size_kb": 664.1,
+    "renders": {
+      "front": "hair_007_front.png",
+      "three_quarter": "hair_007_three_quarter.png",
+      "profile_left": "hair_007_profile_left.png",
+      "profile_right": "hair_007_profile_right.png",
+      "back": "hair_007_back.png",
+      "bend_closeup": "hair_007_bend_closeup.png",
+      "fringe_closeup": "hair_007_fringe_closeup.png",
+      "wireframe_connection": "hair_007_wireframe_connection.png"
+    },
+    "quads": 1704,
+    "color": "#1a1818"
+  },
+  "HAIR_010": {
+    "name": "Shoulder-Length Loose Hair",
+    "glb": "character_hair_010_v15.glb",
+    "glb_size_kb": 741.8,
+    "renders": {
+      "front": "hair_010_front.png",
+      "three_quarter": "hair_010_three_quarter.png",
+      "profile_left": "hair_010_profile_left.png",
+      "profile_right": "hair_010_profile_right.png",
+      "back": "hair_010_back.png",
+      "fringe_closeup": "hair_010_fringe_closeup.png",
+      "profile_closeup": "hair_010_profile_closeup.png"
+    },
+    "quads": 2072,
+    "color": "#261b17"
+  }
+}
