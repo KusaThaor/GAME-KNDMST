@@ -43,7 +43,7 @@ Engine không cần sửa. Chỉ thêm dữ liệu rồi chạy lệnh kiểm.
 
 1. **Tạo file `src/content/days/d_gNN_KK.ts`** (chép từ `d_g06_01.ts`), xuất 5 thứ:
    - `day` — ID `d.gNN.KK`, năm học, bản đồ + biến thể, chỗ đứng NPC (dùng vai `NPC_A…NPC_D`, không ghi thẳng `chr_*`), điểm tương tác `itr.<map>.<tên>`, máy ảnh ảo `cam.<…>.<…>`, `main_chain`, `side_quests`, `daily_pool`, `album_page_id`.
-   - `quests` — Main/Side/Daily của Ngày; ID `q_<m1|m2|m3>_<main|side|daily|event>_NN`, bước `<quest_id>.sNN`. Side/Daily phải có `blocks_main: false`.
+   - `quests` — Main/Side/Daily của Ngày; ID `q_<m1|m2|m3>_<main|side|daily|event>_NN`, bước `<quest_id>.sNN`. Side/Daily phải có `blocks_main: false` và **bước đầu phải là `talk | interact | goto | collect | place`** (hành động trong thế giới). Bước đầu là `cutscene`, `free`, `choice`, `photo`, `minigame`… thì quest không bao giờ bắt đầu: validator báo lỗi `optional_quest_unstartable` — sửa bằng cách mở đầu quest bằng một hành động (nói chuyện, đi tới điểm…) rồi dời bước cũ xuống sau. Bước `goto` xong ngay khi người chơi đứng trong bán kính đích (giao diện không khóa), kể cả đã đứng sẵn: đừng đặt đích sát chỗ bước trước nếu muốn người chơi phải đi tới.
    - `artifact` — đúng **một** kỷ vật dẫn vào Ngày (`art_<mốc>_NN`), `appear_when` = điều kiện sáng lên (thường là xong Ngày trước).
    - `fragments`, `entries` — mảnh ký ức và các ô của trang Album (`frag.<ngày>.NN`, `alb.<ngày>.NN`); ít nhất một ô `required_for_restore: true`.
 2. **Thêm vào `DAYS`** trong `src/content/pack.ts`.

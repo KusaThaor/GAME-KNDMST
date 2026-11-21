@@ -3,12 +3,12 @@
 Lập 16/11/2026 (audit cuối của Fable). Nguồn sự thật: `src/content/types.ts` và `src/systems/questEngine.ts`; tài liệu lệch code thì **code đúng**.
 
 ## 1. Kết luận
-**Không cần khung quest mới.** Kiến trúc hiện tại đã là data-driven: thêm Main, Side, Daily, Ngày, chương, thoại, điều kiện và phần thưởng **chỉ bằng dữ liệu** trong `src/content/`, không sửa engine. Lưu/nạp tự động. Chỉ cần tránh các bẫy ở §6 và làm T-01.
+**Không cần khung quest mới.** Kiến trúc hiện tại đã là data-driven: thêm Main, Side, Daily, Ngày, chương, thoại, điều kiện và phần thưởng **chỉ bằng dữ liệu** trong `src/content/`, không sửa engine. Lưu/nạp tự động. Chỉ cần tránh các bẫy ở §6 (A-01, A-02 đã xử lý ở T-02).
 
 | Nhu cầu | Làm được bằng dữ liệu? | Ghi chú |
 |---|---|---|
 | Main quest | Có | chuỗi `main_chain` của Ngày, chạy lần lượt |
-| Side quest | Có | bẫy A-02 (bước đầu) |
+| Side quest | Có | validator chặn bước đầu sai (A-02, T-02) |
 | Daily quest | Có | khai một lần, dùng lại ở nhiều Ngày; mỗi Ngày làm 1 lần; bẫy A-05 |
 | Nhiều chương | Có | chương là nhãn gom Ngày (`chapters.ts`); thứ tự chơi theo `release.ts` (A-11) |
 | Thoại, tương tác | Có | `talk`, `interact`, `cutscene`, `choice` |
@@ -39,7 +39,7 @@ validateContent() ◄── npm test, lúc mở game               ▼
 |---|---|---|
 | `talk` (`with`) | bấm E cạnh NPC → hết thoại | `game.ts interact()` |
 | `interact` (`target`, `lines?`) | bấm E ở điểm `itr.*` (hoặc click vật ở Hub) | `interact()`, `hubClick()` |
-| `goto` (`target`) | đi vào bán kính điểm | `proximity()` (A-01) |
+| `goto` (`target`) | đi vào bán kính điểm | `proximity()` — xong khi đang đứng trong bán kính và giao diện không khóa (A-01, T-02) |
 | `collect` (`targets`, `count`) | bấm E đủ `count` điểm | engine; chưa hiện số đếm (A-07) |
 | `place` (`target`) | bấm E ở điểm | engine |
 | `cutscene` (`lines`) | tự hiện, hết thoại | `presentStep()` |
@@ -85,7 +85,7 @@ export const sideExample: Quest = {
   title: `${P} Side mẫu 03`, blocks_main: false,
   available_when: { flag: 'm1.placeholder_tone' },            // mở sau khi đã chọn sắc thái ở Main
   steps: [
-    // Bước đầu PHẢI là talk/interact/goto/collect/place (A-02)
+    // Bước đầu PHẢI là talk/interact/goto/collect/place (A-02; validator báo optional_quest_unstartable)
     { id: 'q_m1_side_03.s01', kind: 'talk', with: 'NPC_B', objective: `${P} Nghe NPC_B nhờ`, lines: [
       { speaker: 'NPC_B', text: `${P} NPC_B nhờ {player_name} một việc.` },
       { speaker: 'NPC_B', text: `${P} Câu riêng khi đã chọn kiểu hưởng ứng.`,
@@ -134,8 +134,8 @@ export const sideExample: Quest = {
 | Hiệu ứng vào ký ức | `registerTransitionFx()` trong `game.ts` | A-13 |
 
 ## 6. Bẫy khi viết (đọc trước khi viết quest)
-1. **Side/Daily: bước đầu phải là `talk | interact | goto | collect | place`** (A-02). Sau T-01 validator sẽ báo lỗi; trước đó không ai báo.
-2. **Đừng đặt đích `goto` sát chỗ người chơi vừa đứng nói chuyện** cho tới khi T-01 xong (A-01).
+1. **Side/Daily: bước đầu phải là `talk | interact | goto | collect | place`** (A-02, đã có luật). Engine chỉ khởi động Side/Daily khi người chơi làm đúng bước đầu trong thế giới; bước đầu là `cutscene`, `free`, `choice`, `photo`, `minigame`, `setFlag`, `phone_ui`, `compose_message` hay `album_restore` thì quest không bao giờ bắt đầu và cuối Ngày bị tính là bỏ lỡ. Validator báo **lỗi** `optional_quest_unstartable` (kèm ID quest và loại bước sai). **Cách sửa:** đổi bước đầu thành một hành động (nói chuyện với NPC, đi tới một điểm…) rồi dời bước cũ xuống làm bước sau. Chỉ xét bước đầu của Side/Daily; Main và quest Hub không bị luật này.
+2. **Bước `goto` hoàn thành ngay khi người chơi đang đứng trong bán kính đích và giao diện không khóa** (A-01, đã sửa): kể cả đã đứng sẵn ở đó trước khi bước bắt đầu, hoặc vào bán kính lúc đang mở thoại/Menu rồi đóng lại — không cần đi ra rồi quay vào. Hệ quả cho tác giả: nếu đích `goto` nằm sát chỗ nhân vật đang nói chuyện, bước sẽ xong ngay khi thoại kết thúc; muốn người chơi thật sự phải *đi tới* thì đặt đích xa khỏi chỗ đứng của bước trước. Hai bước `goto` liên tiếp tới cùng một đích sẽ xong liền nhau.
 3. **Không viết điều kiện `{ quest: <id Daily> }`** (A-05). Dùng `rewards.flags` của Daily rồi điều kiện theo flag.
 4. Main trong Ngày chạy theo thứ tự `main_chain`; `available_when` của Main bị bỏ qua.
 5. Dòng thoại có `when` theo flag bắt buộc có `fallback` (validator báo `callback_without_fallback`).

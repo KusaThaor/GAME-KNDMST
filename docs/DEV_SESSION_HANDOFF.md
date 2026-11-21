@@ -44,7 +44,12 @@
 - File đã đổi: `src/content/validate.ts` (hằng `STARTABLE_FIRST_STEPS` + luật trong khối kiểm quest, lỗi tiếng Việt kèm cách sửa).
 - Kết quả thật: `npx vitest run tests/unit/validate.test.ts` **21 đạt** (5 ca A-02 đều đạt) · `npm test` **271 đạt / 1 bỏ qua** (trước 266; +5 ca mới) · `npx tsc --noEmit` đạt · `npm run validate:world` 0 lỗi, 0 nhắc.
 - Gói nội dung hiện tại qua validator **0 lỗi**: `tests/unit/contentPack.test.ts` (môi trường test, production, mọi bảng vai D-01) đạt trong lần `npm test` trên.
-- Bước tiếp theo: cập nhật `README.md` (mục "Thêm một Ngày ký ức mới") và `docs/ai-handoff/02_QUEST_SYSTEM.md` §6.
+- Bước tiếp theo: cập nhật `README.md` (mục "Thêm một Ngày ký ức mới") và `docs/ai-handoff/02_QUEST_SYSTEM.md` §6. → xong, xem Checkpoint 5.
+
+### Checkpoint 5 — tài liệu + build
+- File đã đổi: `README.md` (mục "Thêm một Ngày ký ức mới": quy tắc bước đầu Side/Daily, lỗi `optional_quest_unstartable`, cách sửa, hành vi `goto`), `docs/ai-handoff/02_QUEST_SYSTEM.md` (§6 mục 1–2 viết lại theo hành vi đã triển khai; bảng ở đầu file bỏ chữ "bẫy" đã hết hiệu lực).
+- Build: `VERCEL_ENV=production vite build` (ra `/tmp`, ngoài repo) **thành công**; tìm `botStep|__game|gameTools` trong `assets/*.js` → **không thấy**.
+- Playwright toàn bộ (`npx playwright test --workers=1`): xem mục "Kết quả cuối" bên dưới.
 
 ---
 
