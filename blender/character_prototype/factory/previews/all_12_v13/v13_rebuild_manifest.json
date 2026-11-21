@@ -1,0 +1,114 @@
+{
+  "HAIR_003": {
+    "name": "Rounded Bob",
+    "glb": "character_hair_003_v13.glb",
+    "glb_size_kb": 477.6,
+    "renders": {
+      "front": "hair_003_front.png",
+      "three_quarter": "hair_003_three_quarter.png",
+      "side": "hair_003_side.png",
+      "back": "hair_003_back.png",
+      "elevated_rear": "hair_003_elevated_rear.png"
+    },
+    "quads": 840,
+    "color": "#221714"
+  },
+  "HAIR_005": {
+    "name": "Medium Straight",
+    "glb": "character_hair_005_v13.glb",
+    "glb_size_kb": 512.6,
+    "renders": {
+      "front": "hair_005_front.png",
+      "three_quarter": "hair_005_three_quarter.png",
+      "side": "hair_005_side.png",
+      "back": "hair_005_back.png",
+      "elevated_rear": "hair_005_elevated_rear.png"
+    },
+    "quads": 1000,
+    "color": "#1e1816"
+  },
+  "HAIR_006": {
+    "name": "Low Ponytail",
+    "glb": "character_hair_006_v13.glb",
+    "glb_size_kb": 539.7,
+    "renders": {
+      "front": "hair_006_front.png",
+      "three_quarter": "hair_006_three_quarter.png",
+      "side": "hair_006_side.png",
+      "back": "hair_006_back.png",
+      "elevated_rear": "hair_006_elevated_rear.png"
+    },
+    "quads": 1124,
+    "color": "#1b1717"
+  },
+  "HAIR_007": {
+    "name": "High Ponytail",
+    "glb": "character_hair_007_v13.glb",
+    "glb_size_kb": 552.9,
+    "renders": {
+      "front": "hair_007_front.png",
+      "three_quarter": "hair_007_three_quarter.png",
+      "side": "hair_007_side.png",
+      "back": "hair_007_back.png",
+      "elevated_rear": "hair_007_elevated_rear.png"
+    },
+    "quads": 1184,
+    "color": "#1a1818"
+  },
+  "HAIR_008": {
+    "name": "Twin Pigtails",
+    "glb": "character_hair_008_v13.glb",
+    "glb_size_kb": 640.1,
+    "renders": {
+      "front": "hair_008_front.png",
+      "three_quarter": "hair_008_three_quarter.png",
+      "side": "hair_008_side.png",
+      "back": "hair_008_back.png",
+      "elevated_rear": "hair_008_elevated_rear.png"
+    },
+    "quads": 1588,
+    "color": "#2b201c"
+  },
+  "HAIR_009": {
+    "name": "Braided Hair",
+    "glb": "character_hair_009_v13.glb",
+    "glb_size_kb": 861.3,
+    "renders": {
+      "front": "hair_009_front.png",
+      "three_quarter": "hair_009_three_quarter.png",
+      "side": "hair_009_side.png",
+      "back": "hair_009_back.png",
+      "elevated_rear": "hair_009_elevated_rear.png"
+    },
+    "quads": 2668,
+    "color": "#1c1615"
+  },
+  "HAIR_010": {
+    "name": "Shoulder-Length Hair",
+    "glb": "character_hair_010_v13.glb",
+    "glb_size_kb": 495.1,
+    "renders": {
+      "front": "hair_010_front.png",
+      "three_quarter": "hair_010_three_quarter.png",
+      "side": "hair_010_side.png",
+      "back": "hair_010_back.png",
+      "elevated_rear": "hair_010_elevated_rear.png"
+    },
+    "quads": 920,
+    "color": "#261b17"
+  },
+  "HAIR_011": {
+    "name": "Side-Swept Bangs",
+    "glb": "character_hair_011_v13.glb",
+    "glb_size_kb": 579.6,
+    "renders": {
+      "front": "hair_011_front.png",
+      "three_quarter": "hair_011_three_quarter.png",
+      "side": "hair_011_side.png",
+      "back": "hair_011_back.png",
+      "elevated_rear": "hair_011_elevated_rear.png"
+    },
+    "quads": 1320,
+    "color": "#1a1b20"
+  }
+}
