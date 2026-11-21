@@ -15,7 +15,7 @@ Cập nhật 21/11/2026 (tối). Hạn bản playtest: **04/12/2026**. Kỳ đo:
 ## 2. Nhánh (ảnh chụp 21/11/2026 tối)
 | Nhánh | Commit | Vai trò |
 |---|---|---|
-| `docs/sync-approved-gdd-v1` | `fc963f6` | **Baseline tài liệu**: GDD v1.0 + chốt Trang 6 + 3 quyết định 21/11 tối + audit |
+| `docs/sync-approved-gdd-v1` |  `1ebafb3` | **Baseline tài liệu**: GDD v1.0 + chốt Trang 6 + 3 quyết định 21/11 tối + audit + bàn giao sprint |
 | `feat/sprint-0412` | `09204f5` | **Baseline code**. Việc đầu tiên của phiên code: gộp nhánh tài liệu trên vào đây |
 | `feature/asset-workshop` | `51baf28` | Xưởng asset (nhân vật có xương, cây, bàn, bảng). Chưa gộp |
 | `dev` | `4f681cb` | Khung F0–F10, đã nằm trong nhánh code (theo nội dung file) |

@@ -4,7 +4,7 @@
 |---|---|
 | Lập | 21/11/2026 (tối), sau kiểm toán `docs/handoff/DEMO_AUDIT.md` |
 | Phạm vi | **Trọn Mốc 1 — Trang 1→4** (chủ dự án chốt 21/11 tối). Mốc 2 (Trang 5–9, Caro, Sudoku, Valentine) và Tầng B **lùi sau 15/12** |
-| Baseline | code `feat/sprint-0412` @ `09204f5` · tài liệu `docs/sync-approved-gdd-v1` @ `c3eaa8b` |
+| Baseline | code `feat/sprint-0412` @ `09204f5` · tài liệu `docs/sync-approved-gdd-v1` @ `1ebafb3` |
 | Thứ tự | Theo GDD `02` §6, cắt về phạm vi Mốc 1 |
 | Phân việc | **Claude Code** = runtime, dữ liệu, build/test, Git · **Gemini Pro** = số hóa kịch bản, lời thoại, ảnh concept 2D · **Blender/Patch MCP** = model, rig, GLB |
 

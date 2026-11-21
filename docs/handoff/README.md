@@ -5,7 +5,7 @@ File này mở đầu. Đọc hết trong 2 phút rồi sang `SPRINT_TASKS.md`.
 ## Baseline
 | | Nhánh | Commit |
 |---|---|---|
-| Tài liệu (nguồn chân lý) | `docs/sync-approved-gdd-v1` | `7c799bb` |
+| Tài liệu (nguồn chân lý) | `docs/sync-approved-gdd-v1` | `1ebafb3` |
 | Code | `feat/sprint-0412` | `09204f5` |
 | Asset | `feature/asset-workshop` | `51baf28` |
 
