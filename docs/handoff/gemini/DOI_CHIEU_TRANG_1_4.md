@@ -1,9 +1,9 @@
 # BẢNG ĐỐI CHIẾU SỐ HÓA KỊCH BẢN TRANG 1–4 (MỐC 1: LỚP 6–7)
 > **Dự án:** Hành Trình Thanh Xuân (KNĐMST)  
-> **Nhiệm vụ:** T-06 — Số hóa kịch bản Trang 1–4 thành dữ liệu game  
+> **Nhiệm vụ:** Bổ sung các bước chơi còn thiếu vào Trang 1–4 đã số hóa  
 > **Agent thực hiện:** Gemini Pro (Antigravity)  
-> **Tài liệu nguồn:** `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` (v1.4 APPROVED), `docs/gdd/01_NARRATIVE_AND_SCENES.md` (v1.0 APPROVED), `docs/PAGE_DATA_GUIDE.md`  
-> **Ngày hoàn thành:** 21/11/2026  
+> **Tài liệu nguồn:** `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` (v1.4 APPROVED), `docs/gdd/01_NARRATIVE_AND_SCENES.md` §4, `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §1 & §2.4  
+> **Ngày cập nhật:** 21/11/2026  
 
 ---
 
@@ -25,15 +25,26 @@
 - **File dữ liệu:** `src/content/days/d_g06_01.ts`
 - **Map:** `map_thcs` (variant `g06`) · Open zones: `zone.thcs.yard`, `zone.thcs.corridor`, `zone.thcs.classroom`
 - **Kỷ vật dẫn vào:** `art_m1_01` (Mẩu giấy gấp tư đầy hình vẽ ký hiệu và nét bút bi đỏ sửa lỗi của Châu Tổng)
-- **Quy tắc xưng hô:** Đức mới quen: "cậu - tớ", lỡ miệng lúc trực nhật: "mày - tao". Châu: "tui - {g:ông\|bà}".
+- **Quy tắc xưng hô:** Đức mới quen: "cậu - tớ", lỡ miệng lúc trực nhật: "mày - tao". Châu: "tui - {g:ông|bà}".
 
-| Bước kịch bản | Thao tác / Loại bước | ID bước | Nhân vật / Vị trí | Nội dung số hóa |
+### Bảng đối chiếu từng bước kịch bản:
+| Bước kịch bản (v1.4) | Loại bước | ID bước | Trạng thái trước đợt này | Xử lý trong đợt này |
 |---|---|---|---|---|
-| Cảnh 1: Sân trường đầu năm, gió bay vở | `talk` | `q_m1_main_01.s01` | `NPC_A` (Đức) tại sân trường | Đức nhặt hộ vở, làm quen, rủ cùng đi tìm phòng lớp 6A2. |
-| Cảnh 2: Vào lớp 6A2, giải mã mật lệnh | `talk` | `q_m1_main_01.s02` | `NPC_B` (Châu) + `NPC_A` (Đức) | Châu soi lỗi chính tả bằng bút bi đỏ trên mẩu giấy. Kết bạn bộ ba, ngồi ghế đá ăn mì tôm bóp, chụp ảnh kỷ niệm (`cam.d0601.bench`). |
-| Nhiệm vụ phụ: Trực nhật đầu năm | `talk` + `arrive` | `q_m1_side_01.s01` | `NPC_B` (Châu) -> `itr.thcs.flagpole` | Châu nhắc lịch trực nhật, ra quan sát cột cờ trường. |
-| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | `itr.thcs.duty_spot` | Kiểm tra góc chổi lau bảng lớp học. |
-| Album: Ảnh bộ ba ở ghế đá | `snapshot` | `alb.d.g06.01.01` | Ghế đá sân trường | Ảnh chụp tự sướng bộ ba (`required_for_restore: true`). |
+| Cảnh A Bước 1: Tìm lớp (gặp Đức nhặt vở, dẫn vào lớp) | `talk` | `q_m1_main_01.s01` | Hiện có (gộp chung với mật lệnh) | Giữ ID cũ `s01`, giữ phần đầu thoại tìm lớp |
+| Cảnh A Bước 2: Vào lớp & Đức chuyền mật lệnh, Châu gạch sửa | `talk` | `q_m1_main_01.s03` | Thiếu (nằm lẫn trong s01 cũ) | Tách thành bước mới `s03`, giữ nguyên văn thoại |
+| Cảnh A Bước 2 (tiếp): Minigame giải mật lệnh | `minigame` (`mg_decode`) | `q_m1_main_01.s04` | Thiếu | Thêm mới `s04`, game `'mg_decode'`, level `'min'` |
+| Cảnh A Bước 3: Đá cầu sân trường (Đức rủ và khoe tài đá cầu) | `talk` | `q_m1_main_01.s02` | Hiện có (gộp chung cả cảnh) | Giữ ID cũ `s02`, giữ phần đầu thoại đá cầu |
+| Cảnh A Bước 3 (tiếp): Minigame đá cầu | `minigame` (`mg_shuttlecock`) | `q_m1_main_01.s05` | Thiếu | Thêm mới `s05`, game `'mg_shuttlecock'`, level `'min'` |
+| Cảnh A Bước 4: Minigame lau bảng | `minigame` (`mg_wipe_board`) | `q_m1_main_01.s06` | Thiếu | Thêm mới `s06`, game `'mg_wipe_board'`, level `'min'` |
+| Cảnh A Bước 4 (tiếp): Thoại trực nhật lỡ miệng "mày-tao" | `talk` | `q_m1_main_01.s07` | Thiếu (nằm lẫn trong s02 cũ) | Tách thành bước mới `s07`, giữ nguyên văn thoại |
+| Cảnh B Bước 1: Tiệm tạp hóa, mua gói mì tôm cuối cùng | `talk` | `q_m1_main_01.s08` | Thiếu (nằm lẫn trong s02 cũ) | Tách thành bước mới `s08`, giữ nguyên văn thoại |
+| Cảnh B Bước 1 (tiếp): Minigame bóp mì gói | `minigame` (`mg_noodle_squeeze`) | `q_m1_main_01.s09` | Thiếu | Thêm mới `s09`, game `'mg_noodle_squeeze'`, level `'min'` |
+| Cảnh B Bước 2: Chuẩn bị chụp ảnh tự sướng | `talk` | `q_m1_main_01.s10` | Thiếu (nằm lẫn trong s02 cũ) | Tách thành bước mới `s10`, giữ nguyên văn thoại |
+| Cảnh B Bước 2 (tiếp): Chụp ảnh handheld tự sướng 3 lần | `photo` (`handheld`) | `q_m1_main_01.s11` | Thiếu | Thêm mới `s11`, mode `'handheld'`, camera `'cam.d0601.bench'`, stand_zone `{ marker: 'spot.thcs.yard_bench_1', radius: 1.1 }` |
+| Cảnh B Bước 2 (tiếp): Chọn ảnh giữ lại & Hứa chụp đủ bộ | `talk` | `q_m1_main_01.s12` | Thiếu (nằm lẫn trong s02 cũ) | Tách thành bước mới `s12`, giữ nguyên văn thoại |
+| Nhiệm vụ phụ: Trực nhật đầu năm | `talk` + `arrive` | `q_m1_side_01.s01-s02` | Hiện có | Giữ nguyên |
+| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | Hiện có | Giữ nguyên |
+| Album: Ảnh bộ ba ở ghế đá | `snapshot` | `alb.d.g06.01.01` | Trỏ vào s02 cũ | Cập nhật `at_step_id: 'q_m1_main_01.s11'` trỏ đúng bước chụp mới |
 
 ---
 
@@ -41,18 +52,21 @@
 - **File dữ liệu:** `src/content/days/d_g07_01.ts`
 - **Map:** `map_thcs` (variant `g07`) · Open zones: `zone.thcs.yard`, `zone.thcs.corridor`, `zone.thcs.classroom`
 - **Kỷ vật dẫn vào:** `art_m1_02` (Chiếc thuyền giấy phai màu, có chữ ký và điều ước của năm đứa)
-- **Quy tắc xưng hô:** Đức: "mày - tao" với nhóm cũ; Châu: "tui - {g:ông\|bà}"; Hạ: xưng tên "Hạ", gọi tên bạn; Quân: "cậu - tớ".
+- **Quy tắc xưng hô:** Đức: "mày - tao" với nhóm cũ; Châu: "tui - {g:ông|bà}"; Hạ: xưng tên "Hạ", gọi tên bạn; Quân: "cậu - tớ".
 
-| Bước kịch bản | Thao tác / Loại bước | ID bước | Nhân vật / Vị trí | Nội dung số hóa |
+### Bảng đối chiếu từng bước kịch bản:
+| Bước kịch bản (v1.4) | Loại bước | ID bước | Trạng thái trước đợt này | Xử lý trong đợt này |
 |---|---|---|---|---|
-| Cảnh 1: Trú mưa dưới hiên hành lang | `talk` | `q_m1_main_02.s01` | `NPC_A` (Đức), `NPC_B` (Châu) | Đức và Châu cãi nhau về bài tập hè dưới cơn mưa lớn. |
-| Cảnh 2: Thấy hai bạn lớp bên gấp thuyền giấy | `talk` | `q_m1_main_02.s02` | `NPC_C` (Hạ), `NPC_D` (Quân) | Làm quen Hạ & Quân, rủ chơi thi đua thuyền giấy theo dòng rãnh nước. Châu làm trọng tài. |
-| Cảnh 3: Viết điều ước lên cánh buồm | `choice` (`measured: true`) | `q_m1_main_02.s03` | Prompt từ Hạ (`NPC_C`) | Lựa chọn điều ước (`c_m1_02_wish`):<br>• `friendship` (`gentle`): "Mai mốt vẫn chơi chung vầy."<br>• `fun` (`playful`): "Lớp 7 vui hơn lớp 6."<br>• `secret` (`deep`): "Bí mật không nói ra." |
-| Cảnh 4: Thả thuyền xuống rãnh nước | `interact` | `q_m1_main_02.s04` | `itr.thcs.gutter` (rãnh nước mái hiên) | Đua thuyền: Thuyền Đức lật do sóng xoáy, thuyền Quân chạy xa nhất vì đáy rộng, thuyền Player trôi ra xa. |
-| Cảnh 5: Ký tên lên buồm chiếc thuyền vớt được | `cutscene` | `q_m1_main_02.s05` | Cả nhóm 5 người | Hạ giữ chiếc thuyền vớt được, cả nhóm ký tên lên buồm, chính thức kết bạn 5 người, hẹn ngày mai gặp lại. |
-| Nhiệm vụ phụ: Mẹo gấp thuyền của Quân | `talk` | `q_m1_side_03.s01` | `NPC_D` (Quân) | Quân chỉ cách gấp thuyền giấy đáy rộng từ giấy báo cũ để chạy xa không bị lật. |
-| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | `itr.thcs.duty_spot` | Thu dọn xô hứng nước mưa dột ở hiên. |
-| Album: Năm chiếc thuyền giấy | `snapshot` | `alb.d.g07.01.01` | `cam.d0701.boats` | Ảnh chụp 5 chiếc thuyền rãnh nước (`required_for_restore: true`). |
+| Bước 1 · Trú mưa dưới hiên hành lang | `talk` | `q_m1_main_02.s01` | Hiện có | Giữ nguyên `s01` |
+| Bước 2 · Hai người lạ gấp thuyền giấy | `talk` | `q_m1_main_02.s02` | Hiện có | Giữ nguyên `s02` |
+| Bước 3 · Gấp thuyền và viết lời ước | `choice` (`measured: true`) | `q_m1_main_02.s03` | Hiện có | Giữ nguyên `s03` (`c_m1_02_wish`) |
+| Bước 4 · Chụp ảnh năm chiếc thuyền lúc vừa thả | `photo` (`handheld`) | `q_m1_main_02.s06` | Thiếu (trước bị dời vào cutscene cuối) | Thêm mới `s06`, mode `'handheld'`, camera `'cam.d0701.boats'`, subjects `[]` (ảnh thuyền không có người) |
+| Bước 4 (tiếp) · Minigame đua thuyền | `minigame` (`mg_boat_race`) | `q_m1_main_02.s07` | Thiếu (trước thay bằng interact kể chuyện) | Thêm mới `s07`, game `'mg_boat_race'`, level `'min'` thay đoạn kể |
+| Bước 4 (tiếp) · Thoại kết quả sau đua thuyền (Đức lật, Quân nhất) | `talk` | `q_m1_main_02.s04` | Hiện có (trước là interact) | Giữ ID cũ `s04`, chuyển thành talk đứng sau trò, giữ nguyên 100% thoại kịch bản |
+| Bước 5 · Ký tên lên buồm chiếc thuyền vớt được | `cutscene` | `q_m1_main_02.s05` | Hiện có | Giữ nguyên `s05` |
+| Nhiệm vụ phụ: Mẹo gấp thuyền của Quân | `talk` + `goto` | `q_m1_side_03.s01-s02` | Hiện có | Giữ nguyên |
+| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | Hiện có | Giữ nguyên |
+| Album: Năm chiếc thuyền giấy | `snapshot` | `alb.d.g07.01.01` | Trỏ vào s05 cũ | Cập nhật `at_step_id: 'q_m1_main_02.s06'` trỏ đúng bước chụp mới lúc vừa thả |
 
 ---
 
@@ -62,16 +76,19 @@
 - **Kỷ vật dẫn vào:** `art_m1_03` (Biển tên "Căn cứ Bí mật" + Sổ bìa xanh ghi 5 điều luật)
 - **Quy tắc xưng hô:** Chuẩn theo hệ thống xưng hô 5 người thân thiết.
 
-| Bước kịch bản | Thao tác / Loại bước | ID bước | Nhân vật / Vị trí | Nội dung số hóa |
+### Bảng đối chiếu từng bước kịch bản:
+| Bước kịch bản (v1.4) | Loại bước | ID bước | Trạng thái trước đợt này | Xử lý trong đợt này |
 |---|---|---|---|---|
-| Cảnh 1: Ý tưởng tìm căn cứ riêng | `talk` | `q_m1_main_03.s01` | `NPC_A` (Đức) | Đức khởi xướng tìm chỗ riêng; Quân & Hạ đề xuất góc sân sau gần nhà kho. |
-| Cảnh 2: Khảo sát góc sân sau | `goto` | `q_m1_main_03.s02` | Đi qua bãi đất sang `itr.thcs.old_table` | Đến bàn gỗ cũ góc căn cứ. |
-| Cảnh 3: Chọn phong cách trang trí | `choice` (`measured: true`) | `q_m1_main_03.s03` | Châu (`NPC_B`) chủ trì | Chọn cách trang trí (`c_m1_03_decor`):<br>• `paper` (`playful`): "Gấp dây hạc giấy màu rực rỡ"<br>• `flowers` (`gentle`): "Cắm hoa dại và cành lá mộc mạc"<br>• `photos` (`deep`): "Dán những tấm ảnh chụp chung" |
-| Cảnh 4: Soạn 5 điều luật vào sổ bìa xanh | `interact` | `q_m1_main_03.s04` | `itr.thcs.old_table` (bàn gỗ cũ) | 5 điều luật do từng người đề xuất:<br>1. Châu: Không tự lấy đồ người khác.<br>2. Đức: Ăn hết đồ ăn phải tự mua thêm.<br>3. Quân: Ai tới trước dọn chỗ ngồi.<br>4. Hạ: Ai buồn thì đừng bỏ bạn một mình.<br>5. Player: Chụp ảnh thì phải đủ người. |
-| Cảnh 5: Treo biển tên Căn cứ | `cutscene` | `q_m1_main_03.s05` | Căn cứ bí mật | Cả nhóm treo biển tên, tuyên bố đây là "Căn cứ Bí mật" của nhóm 5 người. |
-| Nhiệm vụ phụ: Bắn bi mắt mèo | `talk` + `interact` | `q_m1_side_04.s01-s02` | `NPC_D` (Quân) -> `itr.thcs.marble_spot` | Chơi bắn bi mắt mèo cùng Quân trên bãi đất phẳng. |
-| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | `itr.thcs.duty_spot` | Kiểm tra vệ sinh khu vực sân. |
-| Album: Căn cứ mới lập | `snapshot` | `alb.d.g07.02.01` | `cam.d0702.base` | Ảnh cả nhóm bên bàn gỗ căn cứ (`required_for_restore: true`). |
+| Bước 1 · Ý tưởng tìm căn cứ riêng | `talk` | `q_m1_main_03.s01` | Hiện có | Giữ nguyên `s01` |
+| Bước 2 · Khảo sát 3 chỗ (mái che, gốc cây, thùng giấy cũ) | `goto` | `q_m1_main_03.s02` | Hiện có (`goto` `itr.thcs.old_table`) | Giữ `s02` trỏ `itr.thcs.old_table` do bản đồ chưa có 3 marker riêng; ghi câu hỏi bổ sung marker vào `QUESTIONS_LOG.md` theo quy tắc 4 |
+| Bước 3 · Dựng Căn cứ (dọn dẹp & kê bàn ghế) | `minigame` (`mg_build_base`) | `q_m1_main_03.s06` | Thiếu | Thêm mới `s06`, game `'mg_build_base'`, level `'min'` |
+| Bước 3 (tiếp) · Chọn kiểu trang trí | `choice` (`measured: true`) | `q_m1_main_03.s03` | Hiện có | Giữ nguyên `s03` (`c_m1_03_decor`) |
+| Bước 4 · Viết 5 điều luật vào sổ | `minigame` (`mg_base_rules`) | `q_m1_main_03.s07` | Thiếu | Thêm mới `s07`, game `'mg_base_rules'`, level `'min'` |
+| Bước 4 (tiếp) · Thoại 5 điều luật của 5 người | `talk` | `q_m1_main_03.s04` | Hiện có (trước là interact) | Giữ ID cũ `s04`, chuyển thành talk, giữ nguyên 100% thoại 5 điều luật |
+| Bước 5 · Treo biển tên Căn cứ | `cutscene` | `q_m1_main_03.s05` | Hiện có | Giữ nguyên `s05` |
+| Nhiệm vụ phụ: Bắn bi mắt mèo | `talk` + `interact` | `q_m1_side_04.s01-s02` | Hiện có | Giữ nguyên |
+| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | Hiện có | Giữ nguyên |
+| Album: Căn cứ mới lập | `snapshot` | `alb.d.g07.02.01` | Hiện có | Giữ `snapshot: { camera_id: 'cam.d0702.base', at_step_id: 'q_m1_main_03.s05' }` |
 
 ---
 
@@ -79,15 +96,19 @@
 - **File dữ liệu:** `src/content/days/d_g07_03.ts`
 - **Map:** `map_thcs` (variant `g07`) · Toàn bộ 6 khu vực mở
 - **Kỷ vật dẫn vào:** `art_m1_05` (Bức ảnh nhóm bị ố chụp ở gốc phượng)
-- **Điểm kết thúc demo:** Đạt `public_demo_completed` khi hoàn thành Trang 4 và trở về Hub 2026.
+- **Quy tắc xưng hô:** Chuẩn theo hệ thống xưng hô 5 người thân thiết.
 
-| Bước kịch bản | Thao tác / Loại bước | ID bước | Nhân vật / Vị trí | Nội dung số hóa |
+### Bảng đối chiếu từng bước kịch bản:
+| Bước kịch bản (v1.4) | Loại bước | ID bước | Trạng thái trước đợt này | Xử lý trong đợt này |
 |---|---|---|---|---|
-| Cảnh 1: Tụ họp cuối năm lớp 7 | `talk` | `q_m1_main_05.s01` | `NPC_A` (Đức) cùng cả nhóm | Cả nhóm chuẩn bị chia tay hè, quyết định chụp một tấm ảnh đủ mặt 5 người. |
-| Cảnh 2: Lời hẹn năm lớp 8 | `choice` (`measured: true`) | `q_m1_main_05.s02` | Cả nhóm | Chọn lời hẹn (`c_m1_05_tone`):<br>• `playful` (Rộn ràng): "Năm sau đứa nào tới trễ phạt bao trà sữa!"<br>• `gentle` (Ấm áp): "Nghỉ hè nhớ giữ liên lạc nha mọi người."<br>• `deep` (Sâu lắng): "Hy vọng năm sau… tụi mình vẫn ngồi ở đây cùng nhau." |
-| Cảnh 3: Đặt máy ảnh lên chân máy | `interact` | `q_m1_main_05.s03` | `itr.thcs.tripod_spot` (gốc phượng) | Cân chỉnh máy ảnh ở vị trí gốc phượng. |
-| Cảnh 4: Chụp ảnh hẹn giờ 10 giây | `photo` | `q_m1_main_05.s04` | Sân trường gốc phượng | `mode: 'timer'`, countdown 10 giây, yêu cầu 5 nhân vật trong khung hình (`cam.d0703.group`). |
-| Cảnh 5: Mưa rào và cầu vồng | `cutscene` | `q_m1_main_05.s05` | Căn cứ bí mật | Mưa rào bất chợt đổ xuống, cả nhóm ôm máy ảnh chạy ù vào Căn cứ trú mưa, nhìn cầu vồng sau mưa. |
-| Nhiệm vụ phụ: Chào các góc quen | `goto` | `q_m1_side_02.s01` | 5 điểm quen thuộc | Ghé thăm 5 vị trí: rãnh nước, bảng đen, xe quà vặt cổng, bãi bi, bàn gỗ căn cứ. |
-| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | `itr.thcs.duty_spot` | Trực nhật lần cuối trước khi nghỉ hè. |
-| Album: Bức ảnh đủ năm đứa | `snapshot` | `alb.d.g07.03.01` | `cam.d0703.group` | Ảnh chụp hẹn giờ 5 người (`required_for_restore: true`). |
+| Bước 1 · Ý tưởng chụp ảnh đủ năm đứa cuối năm lớp 7 | `talk` | `q_m1_main_05.s01` | Hiện có | Giữ nguyên `s01` |
+| Bước 2 · Chuẩn bị & Chọn dáng chụp | `choice` (`measured: true`) | `q_m1_main_05.s02` | Hiện có | Giữ nguyên `s02` (`c_m1_05_tone`) |
+| Bước 2 (tiếp) · Minigame xếp đội hình trước khi chụp | `minigame` (`mg_lineup`) | `q_m1_main_05.s06` | Thiếu | Thêm mới `s06`, game `'mg_lineup'`, level `'min'` trước khi chụp |
+| Bước 3 · Đặt máy ảnh lên ghế đá gốc phượng | `interact` | `q_m1_main_05.s03` | Hiện có | Giữ nguyên `s03` (`itr.thcs.tripod_spot`) |
+| Bước 3 (tiếp) · Chụp ảnh hẹn giờ 10 giây (lần 1 - trước mưa) | `photo` (`timer`) | `q_m1_main_05.s04` | Hiện có | Giữ nguyên `s04`, mode `'timer'`, camera `'cam.d0703.group'`, subjects đủ 5 người |
+| Bước 4 & 5 · Trú mưa rào ở Căn cứ và ngắm cầu vồng | `cutscene` | `q_m1_main_05.s05` | Hiện có (gộp chung cả cảnh dán ảnh) | Giữ ID cũ `s05`, giữ đoạn thoại trú mưa và ngắm cầu vồng |
+| Bước 6 · Dán ảnh kỷ niệm đủ năm đứa ở Căn cứ | `cutscene` | `q_m1_main_05.s07` | Thiếu (nằm lẫn trong s05 cũ) | Tách thành bước mới `s07`, giữ nguyên văn thoại |
+| Bước hẹn giờ lần 2 (cầu vồng sau mưa) | `photo` (`timer`) | — | Chưa có camera / ô Album | Hiện bản đồ chỉ có 1 camera tại sân trường và Album chỉ có 1 ô `main_photo`. Đặt câu hỏi trong `QUESTIONS_LOG.md` theo chỉ dẫn của chủ dự án |
+| Nhiệm vụ phụ: Đi dạo một vòng các khu trường cũ | `goto` (5 bước) | `q_m1_side_02.s01-s05` | Hiện có | Giữ nguyên |
+| Nhiệm vụ ngày: Chỗ trực nhật | `interact` | `q_m1_daily_01.s01` | Hiện có | Giữ nguyên |
+| Album: Bức ảnh đủ năm đứa | `snapshot` | `alb.d.g07.03.01` | Hiện có | Giữ `snapshot: { camera_id: 'cam.d0703.group', at_step_id: 'q_m1_main_05.s04' }` |

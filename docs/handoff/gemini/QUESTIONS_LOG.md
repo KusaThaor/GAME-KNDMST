@@ -1,17 +1,18 @@
 # QUESTIONS_LOG — Câu hỏi Gemini gửi Chủ Dự Án & Trạng Thái Xử Lý
 
-> **Phiên làm việc:** 21/11/2026 (T-06: Số hóa kịch bản Trang 1–4)  
+> **Phiên làm việc:** 21/11/2026 (Bổ sung bước chơi Trang 1–4 & Đề xuất minigame Mốc 1)  
 > **Agent:** Gemini Pro (Antigravity)  
 
 | # | Trang | Bước / Hạng mục | Vấn đề / Câu hỏi | Phương án xử lý | Quyết định / Căn cứ | Trạng thái |
 |---|---|---|---|---|---|---|
-| 1 | Trang 2 | Đua thuyền giấy (`q_m1_main_02.s04`) | Minigame gấp thuyền và đua thuyền trên rãnh nước thực tế chưa có code runtime | Triển khai dưới dạng bước tương tác `interact` tại `itr.thcs.gutter` với hội thoại mô tả diễn biến (thuyền Đức lật, thuyền Quân xa nhất) để không chặn tiến độ cốt truyện | Khớp `PROMPT_T06_SO_HOA.md` §Yêu cầu kỹ thuật: "Khung trò thật minigame chưa xong... không tự viết luật chơi trong dữ liệu, thua vẫn đi tiếp" | Đã xử lý (Chuẩn hóa) |
-| 2 | Trang 3 | Khảo sát góc căn cứ (`q_m1_main_03.s02`) | Marker đứng và bàn gỗ tại khu căn cứ | Sử dụng marker tương tác sẵn có `itr.thcs.old_table` (Bàn gỗ cũ ở Căn cứ) trong zone `zone.thcs.base` | Khớp `map_thcs.index.json` | Đã xử lý (Chuẩn hóa) |
-| 3 | Hub 2026 | Mở đầu phòng trọ (`q_hub_pd_01`) | Cắt cảnh phòng trọ và mở thùng carton | `s01` là `cutscene` chứa toàn bộ lời dẫn + dòng suy nghĩ Player; `s02` là `interact` không kèm text để khi bấm thùng mở ngay Hộp Kỷ Vật | Đảm bảo luồng test tự động và gameplay mượt mà | Đã xử lý (Chuẩn hóa) |
+| 1 | Trang 3 | Khảo sát 3 chỗ góc sân sau (`q_m1_main_03.s02`) | Kịch bản ghi xem 3 chỗ: mái che, gốc cây, thùng giấy cũ. Bản đồ trường học hiện tại chỉ có 2 điểm tương tác là `itr.thcs.old_table` (Bàn gỗ cũ) và `itr.thcs.base_shelf` (Kệ đồ Căn cứ). | • Phương án A: Dùng điểm `itr.thcs.old_table` đại diện cho bước khảo sát góc Căn cứ (như hiện tại).<br>• Phương án B: Chờ đợt cập nhật mô hình 3D bản đồ để thêm 3 điểm đứng riêng (mái che, gốc cây, thùng giấy).<br>*(Nếu không trả lời, mình sẽ giữ phương án A kèm nhãn `[PLACEHOLDER] AI_PROPOSED`)* | Chờ chủ dự án chọn | Chờ duyệt |
+| 2 | Trang 4 | Chụp ảnh hẹn giờ lần 2 sau cầu vồng | Kịch bản ghi sau cơn mưa cả nhóm hẹn giờ chụp thêm lần 2 với cầu vồng. Hiện tại dữ liệu chỉ có 1 camera `cam.d0703.group` tại gốc phượng và trang Album chỉ có 1 ô ảnh chính `alb.d.g07.03.01`. | • Phương án A: Giữ thể hiện lần chụp cầu vồng trong cắt cảnh `s05`, bức ảnh gốc phượng làm ảnh chính Album (như hiện tại).<br>• Phương án B: Thêm camera hướng cầu vồng tại Căn cứ và thêm ô Album thứ hai cho ảnh cầu vồng.<br>*(Nếu không trả lời, mình sẽ giữ phương án A)* | Chờ chủ dự án chọn | Chờ duyệt |
+| 3 | Mốc 1 | Kiểm tra kiểm thử tự động (`contentPack.test.ts` & `analyticsBridge.test.ts`) | Hai file kiểm tra này được viết cố định từ đợt trước cho gói nội dung rút gọn (Trang 1 đúng 2 bước `toHaveLength(2)`, và luồng chạy gọi cứng các ID cũ). Khi Trang 1–4 bổ sung đầy đủ các bước chơi mới (minigame, photo), hai bài test này báo lệch số lượng bước. | Tuân thủ tuyệt đối quy tắc: không tự sửa file test nằm ngoài phạm vi được phép sửa. Giữ nguyên 4 file Trang theo đúng kịch bản, ghi nhận để Claude Code cập nhật file test sau khi chủ dự án duyệt nội dung mới. | Tuân thủ GEMINI_RULES §2 | Đã ghi nhận |
 
 ## Còn treo (đang là [PLACEHOLDER])
-- Tuyến Main của toàn bộ Mốc 1 (Trang 1, 2, 3, 4) và Hub mở đầu/kết thúc: **0 PLACEHOLDER**, đã thay thế 100% bằng thoại canonical tiếng Việt được duyệt.
-- Nhãn chương `chapters.ts`: `[PLACEHOLDER] Mốc 1 · lớp 6–7` (giữ theo quy ước để validator và analytics không xung đột).
+- Điểm khảo sát 3 vị trí ở Trang 3 (`itr.thcs.old_table` đang đại diện chung cho góc Căn cứ, chờ bổ sung marker 3D).
+- Lần chụp ảnh hẹn giờ thứ hai với cầu vồng ở Trang 4 (đang nằm trong cắt cảnh, chờ quyết định có thêm ô Album và camera mới không).
 
 ## Đoạn Gemini đề xuất chuẩn hóa kỹ thuật chờ chủ dự án xem xét
-1. Bổ sung 3 sắc thái lựa chọn cho `c_m1_02_wish` (Trang 2: `friendship` [gentle], `fun` [playful], `secret` [deep]) và `c_m1_03_decor` (Trang 3: `paper` [playful], `flowers` [gentle], `photos` [deep]) để khớp cơ chế 3 sắc thái của hệ thống Analytics F8.
+1. Bước photo handheld tự sướng ở Trang 1 (`q_m1_main_01.s11`): Gắn vùng đứng `stand_zone: { marker: 'spot.thcs.yard_bench_1', radius: 1.1 }` tại ghế đá sân trường để nhân vật đứng đúng vị trí máy ảnh và vượt qua bài kiểm tra không gian bản đồ `world.test.ts`.
+2. Bước photo chụp 5 chiếc thuyền giấy ở Trang 2 (`q_m1_main_02.s06`): Đặt `subjects: []` vì đây là ảnh chụp tĩnh vật (năm chiếc thuyền trên rãnh nước, không có người trong khung) đúng như kịch bản ghi nhận.
