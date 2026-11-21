@@ -53,6 +53,8 @@ Quyết định trực tiếp mới nhất của chủ dự án > bộ GDD `clau
 
 **20/11:** Bỏ cấu trúc "6 chương". Phòng 2026 tươi sáng từ đầu. Căn cứ trong trường; không dựng căn-tin (dùng xe quà vặt Z03). Hội trại ở sân trường tháng 3/2018. Nhân vật là model 3D có xương, cao 1,3–1,5 m. Minigame chơi thật (có thắng/thua, thua không chặn truyện): caro ở Trang 5, Sudoku ở Trang 7, lật chai, Khu Vui Chơi ở Căn cứ (Ô ăn quan, Nhảy lò cò, Bắn bi ve). Tỉ số caro theo loạt ván từ 3–3. Lưu tiến trình trên máy; Firebase chỉ cho số liệu ẩn danh và form.
 
+**21/11:** Hòm thư Valentine (nghĩa mới: tình bạn — cảm ơn, trêu nhẹ, rủ làm việc chung) vào luồng **Main** của Trang 6 (CONFIRMED, chủ dự án). Câu "Không có hòm thư" của 19/11 hết hiệu lực; mạch confession của Hạ giữ ở Cảnh B (đề xuất, chờ chốt). Chi tiết và 6 câu CẦN CHỐT: `claude/REVISION_REVIEW_FIX_C_21-11.md`. GDD `00`–`03` ở repo (nhánh `docs/valentine-mailbox-main-flow`) là v1.1-draft, chờ duyệt.
+
 **Giữ từ 13–14/11:** góc thứ ba trong ký ức, phòng 2026 góc cố định; web ưu tiên máy tính; stack ở trên; Vercel; Firestore Spark; tên Player chỉ lưu trên máy; ghi hoàn thành trước form. Đo 05–15/12 (môn ghi 06–15/12, giữ bộ lọc ngày 05 riêng); nộp pre-launch 05/12, post-validation 16/12, pitching 19/12.
 
 ## Nguồn và bảo toàn
