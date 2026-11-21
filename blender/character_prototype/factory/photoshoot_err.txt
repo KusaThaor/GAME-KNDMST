@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_scarf_photoshoot.py", line 152, in <module>
+    render_photos()
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_scarf_photoshoot.py", line 95, in render_photos
+    clear_lights_and_cameras(scene)
+  File "C:\Users\Admin\Desktop\GAME\GAME-KNDMST\blender\character_prototype\factory\render_scarf_photoshoot.py", line 32, in clear_lights_and_cameras
+    for o in list(scene.objects):
+                  ^^^^^^^^^^^^^
+ReferenceError: StructRNA of type Scene has been removed
