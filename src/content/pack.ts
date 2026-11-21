@@ -9,11 +9,12 @@ import * as d0703 from './days/d_g07_03';
 import * as d0801 from './days/d_g08_01';
 import * as d0901 from './days/d_g09_01';
 import * as d0902 from './days/d_g09_02';
+import * as d0903 from './days/d_g09_03';
 import { HUB, HUB_QUESTS, PDES } from './hub';
 import { RELEASES } from './release';
 import type { ContentConfig, ContentPack } from './types';
 
-const DAYS = [d0601, d0701, d0702, d0703, d0801, d0901, d0902];
+const DAYS = [d0601, d0701, d0702, d0703, d0801, d0901, d0902, d0903];
 const uniqueById = <T extends { id: string }>(list: T[]) => [...new Map(list.map((x) => [x.id, x])).values()];
 
 export const CONTENT: ContentPack = {

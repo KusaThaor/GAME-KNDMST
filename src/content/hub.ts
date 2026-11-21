@@ -111,6 +111,54 @@ export const HUB_QUESTS: Quest[] = [
       },
     ],
   },
+  {
+    ...meta,
+    id: 'q_hub_pd_05',
+    title: 'Lật trang cuối sổ luật Căn cứ',
+    available_when: { day: 'd.g09.03' },
+    steps: [
+      {
+        id: 'q_hub_pd_05.s01',
+        kind: 'interact',
+        target: 'itr.hub.shelf',
+        objective: 'Lấy cuốn sổ luật Căn cứ trên kệ sách',
+      },
+      {
+        id: 'q_hub_pd_05.s02',
+        kind: 'cutscene',
+        lines: [
+          { speaker: 'narrator', text: 'Trên kệ, cuốn sổ luật Căn cứ hơi nhô ra. Trang cuối: Điều 6, năm chữ ký.' },
+          { speaker: 'player', text: 'Được dời, không được hủy…' },
+        ],
+      },
+    ],
+  },
+  {
+    ...meta,
+    id: 'q_hub_pd_06',
+    title: 'Soạn tin nhắn gửi nhóm bạn cũ Mốc 2',
+    available_when: { quest: 'q_hub_pd_05' },
+    steps: [
+      {
+        id: 'q_hub_pd_06.s01',
+        kind: 'phone_ui',
+        screen: 'group_chat',
+        thread_id: 'thread.old_group',
+        objective: 'Mở điện thoại, vào nhóm chat Căn cứ Bí mật',
+      },
+      {
+        id: 'q_hub_pd_06.s02',
+        kind: 'compose_message',
+        thread_id: 'thread.old_group',
+        objective: 'Soạn và gửi một tin nhắn cho nhóm bạn',
+        openers: [
+          { id: 'caro', tone: 'playful', text: 'Ê. Ván caro hồi lớp 8 vẫn đang 4–3 đó nha. Ai gỡ?' },
+          { id: 'rules', tone: 'gentle', text: 'Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?' },
+          { id: 'rule6', tone: 'deep', text: 'Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha.' },
+        ],
+      },
+    ],
+  },
 ];
 
 export const PDES: PresentDayEvent[] = [
@@ -130,4 +178,7 @@ export const PDES: PresentDayEvent[] = [
   { id: 'pde_16', type: 'SHELF', trigger: { day: 'd.g09.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_03' }], once: true },
   { id: 'pde_17', type: 'RESTORE', trigger: { day: 'd.g09.02' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.02' }], once: true },
   { id: 'pde_18', type: 'SHELF', trigger: { day: 'd.g09.02' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_04' }], once: true },
+  { id: 'pde_19', type: 'RESTORE', trigger: { day: 'd.g09.03' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g09.03' }], once: true },
+  { id: 'pde_20', type: 'SHELF', trigger: { day: 'd.g09.03' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_05' }], once: true },
+  { id: 'pde_21', type: 'CONTACT', trigger: { day: 'd.g09.03' }, effects: [{ kind: 'unlock_quest', quest_id: 'q_hub_pd_05' }], once: true },
 ];
