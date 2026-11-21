@@ -142,6 +142,8 @@ Mọi trò nhỏ trong kịch bản quy về 6 kiểu. Từ 20/11 (CONFIRMED), n
 
 *(Luồng: PROPOSED 19/11. Thứ tự "ghi hoàn thành trước form": CONFIRMED 13/11.)*
 
+> **CONFIRMED 21/11 (tối) — Phạm vi bản đo 05–15/12: trọn Mốc 1.** Bản đưa cho người chơi thử gồm **Trang 1 → Trang 4** và kết thúc bằng điểm kết nhắn tin đặt **ngay sau Trang 4 "Đủ năm đứa"**; ý nghĩa tin nhắn cuối chuyển thành "nhớ hồi tụi mình mới đủ năm đứa". **Mốc 2 (Trang 5–9), gồm Trang 6 Valentine, giữ nguyên thiết kế trong bộ GDD nhưng lùi sau 15/12.** Ba việc phải sửa theo quyết định này: `src/content/release.ts` (điểm dừng), lời ba tin nhắn kết ở `01` KẾT DEMO và kịch bản, và bảng §4 dưới đây. Phần "Phạm vi bắt buộc" bên dưới vẫn là phạm vi của **bản đầy đủ 9 Trang**, không phải của bản đo 04/12.
+
 **Phạm vi bắt buộc (Tầng A):** chuỗi Main của 9 Trang (Trang 6 gồm **hòm thư Valentine với 3 minigame đầy đủ**, `02` §2.5); Hội trại Phần 1 và Phần 4; điểm kết nhắn tin. **Tầng B (nếu kịp):** lật chai; Khu Vui Chơi Căn cứ (Bắn bi ve, Ô ăn quan, Nhảy lò cò); một số Side Mốc 1. **Tầng C (sau public):** Side, Daily còn lại, Hội trại Phần 2–3. *(Phạm vi M1 + M2: CONFIRMED 19/11. Danh sách nâng/gộp/lùi từng Side: còn mở — nhóm chốt.)*
 
 ---
@@ -268,7 +270,7 @@ Mã màu cụ thể (hex) **chưa có**; cần Visual Bible được duyệt. Hi
 - Đồng phục: áo sơ mi trắng có bảng tên, quần tây xanh đậm, giày bata; lớp 6–7 đeo khăn quàng đỏ; lớp 9 không đeo trong cảnh thường; Hội trại mặc áo thun lớp. *(ỦY QUYỀN Claude 13/11, sửa được)*
 - Nhận diện 4 bạn bằng dáng, tóc, đạo cụ (bảng ở `01` §2). Không đổi nhận diện khi chưa được duyệt.
 
-> **CONFIRMED 20/11 — Nhân vật:** dựng **model 3D có xương, tỉ lệ semi-chibi**, chiều cao chuẩn hóa khoảng **1,3–1,5 m** cho học sinh THCS. Lỗi 0,70 m ở nhánh `feature/asset-workshop` phải sửa. Phương án "nhân vật dựng bằng code" (Q5): SUPERSEDED. Quy chuẩn ở `03` §1.3.
+> **CONFIRMED 20/11, cập nhật 21/11 — Nhân vật:** dựng **model 3D có xương, tỉ lệ semi-chibi**. Chiều cao chuẩn hóa: **1,30–1,40 m** (lớp 6–7) · **1,55–1,65 m** (lớp 8–9) — **CONFIRMED 21/11 (tối)**, lấy theo số đo thật của nhân vật đang chạy trong game; dải cũ "khoảng 1,3–1,5 m" SUPERSEDED. **Hướng asset CONFIRMED 21/11 (tối):** dùng base mesh + bộ xương chung đã có ở `feature/asset-workshop`, phụ kiện gắn bằng code. Model đang cao 0,63–0,77 m phải chuẩn hóa. Phương án "nhân vật dựng bằng code" (Q5) vẫn SUPERSEDED về đích đến, nhưng **được giữ làm phương án dự phòng chạy được** cho bản đo. Quy chuẩn ở `03` §1.3.
 
 ### 7.4 Giao diện (UI)
 | Thành phần | Quy chuẩn |
@@ -307,13 +309,16 @@ Mốc 3; hội ngộ và ending; Player trưởng thành xuất hiện trên mà
 | 5 | Căn-tin | **CONFIRMED 20/11:** không dựng; dùng Z03 |
 | 6 | Nơi và tháng Hội trại | **CONFIRMED 20/11:** sân trường Z02 biến thể đêm, tháng 3/2018 |
 | 7 | Tông phòng 2026 | **CONFIRMED 20/11:** tươi sáng, ấm từ đầu |
-| 8 | Nhân vật | **CONFIRMED 20/11:** model 3D có xương, 1,3–1,5 m |
+| 8 | Nhân vật | **CONFIRMED 20/11 + 21/11:** model 3D có xương; cao 1,30–1,40 m (lớp 6–7) và 1,55–1,65 m (lớp 8–9); hướng asset = base mesh + xương chung, phụ kiện gắn bằng code |
 | 9 | Danh sách Side nâng/gộp/lùi | **Còn mở:** nhóm chốt |
 | 10 | Nhân lực | **Còn mở:** chốt D-10 |
+| 13 | Phạm vi bản đo 05–15/12 | **CONFIRMED 21/11 (tối):** mục tiêu là **trọn Mốc 1 — Trang 1→4**, kết demo đặt sau Trang 4 "Đủ năm đứa". Mốc 2 (Trang 5–9) giữ nguyên thiết kế nhưng **lùi sau 15/12**. Xem §4 |
+| 14 | Hướng asset nhân vật | **CONFIRMED 21/11 (tối):** base mesh + bộ xương chung, phụ kiện gắn bằng code (không sửa tay từng `.glb`) |
 | 11 | Hòm thư Valentine (Trang 6) | **CONFIRMED 21/11 (chủ dự án):** vào luồng Main, nghĩa mới theo bản sửa của nhóm; câu "Không có hòm thư" của chỉ đạo 19/11 hết hiệu lực. Nghĩa cũ "thả thính" vẫn SUPERSEDED |
 | 12 | Trang 6 sau thay đổi | **CONFIRMED 21/11 (chiều):** confession thứ Năm → làm hòm thư + Đức xin lỗi bằng thư thứ Sáu · giữ 4 cảnh · **3 minigame đầy đủ** buổi chiều (mặc định Ném bóng, Săn góc ảnh, Trang trí Căn cứ — đổi được) · lời thư do Claude chỉnh · ảnh chính là ảnh nhóm bên hòm thư · bảng nội quy giữ 3 điều. Chi tiết: `docs/gdd/REVISION_REVIEW_FIX_C_21-11.md` |
 
 ## 12. Changelog
+- **v1.3-draft — 21/11/2026 (tối):** Ghi ba quyết định của chủ dự án sau kiểm toán Chặng 2 (`docs/handoff/DEMO_AUDIT.md`): (1) phạm vi bản đo 05–15/12 = **trọn Mốc 1, Trang 1→4**, kết demo sau Trang 4, Mốc 2 lùi sau 15/12 (§4, §11 mục 13); (2) **hướng asset** = base mesh + xương chung, phụ kiện gắn bằng code (§7.3, §11 mục 14); (3) **chiều cao lớp 8–9 = 1,55–1,65 m** theo số đo thật trong game (§7.3, §11 mục 8, `03` §1.3). Chưa đóng dấu APPROVED cả file.
 - **v1.2-draft — 21/11/2026 (chiều):** Ghi các quyết định chủ dự án trả lời 6 câu rà soát (§11 mục 12). Sửa dòng Trang 6 ở §2.2, phạm vi §4 (bỏ "bản rút gọn / Tầng B" cho hòm thư; 3 minigame là Main), tuyến đi §5.3 theo thứ tự ngày mới. Chưa đóng dấu APPROVED cả file.
 - **v1.1-draft — 21/11/2026:** Chủ dự án chỉ đạo đưa **Hòm thư Valentine vào luồng Main** (Trang 6) với nghĩa mới theo bản sửa của nhóm. Đổi dòng Trang 6 ở §2.2 (tên "Valentine — Hòm thư của năm đứa", mã giữ), §4 (phạm vi Tầng A/B), §5.1–5.3 (màn hình 2D, vùng dùng, tuyến đi), §6 (điều khiển), §11 (quyết định 11–12). Chi tiết ở `01` Trang 6, `02` §2.5, `03` §Hòm thư Valentine. Các mục khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Ghi thêm: Sudoku ở Trang 7, caro ở Trang 5, lần trêu thứ ba ở ghế đá, năm học 2014–2015 trong ô hướng dẫn Project. Hai bản nháp trước đổi tên thành v1.0-draft và v1.1-draft.

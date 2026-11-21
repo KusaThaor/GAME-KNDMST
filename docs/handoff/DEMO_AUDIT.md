@@ -2,7 +2,7 @@
 
 | Trường | Giá trị |
 |---|---|
-| Lập ngày | 21/11/2026 (UTC+7), phiên Chặng 2 |
+| Lập ngày | 21/11/2026 (UTC+7), phiên Chặng 2 · cập nhật cùng ngày (tối): chủ dự án đã chốt 3 điểm ở §3.4 và §6.5 |
 | Chuẩn đối chiếu | `docs/gdd/` trên nhánh `docs/sync-approved-gdd-v1` @ `1e625f1` (GDD v1.0 APPROVED 20/11 + v1.2-draft Trang 6 CHỐT 21/11) |
 | Code đã kiểm | `origin/feat/sprint-0412` @ `09204f5` (21/11) |
 | Asset đã kiểm | `origin/feature/asset-workshop` @ `51baf28` (16/11) |
@@ -188,7 +188,7 @@ Dữ liệu thật để quyết: nhánh asset **đã có một bộ xương dù
 | Rủi ro | Phải kiểm lại trọng số skin sau khi scale; 5 người nhìn dễ giống nhau nếu phụ kiện ít | Hoạt ảnh phải đồng bộ 5 lần; sửa về sau tốn công gấp 5; dễ lệch chuẩn giữa các model |
 | Giữ được gì | Nhân vật dựng bằng code vẫn chạy làm phương án dự phòng trong cả hai đường | như bên trái |
 
-**Không tự chọn.** Chủ dự án chốt rồi mới lên task 3D (theo đúng yêu cầu Chặng 3).
+> **CHỐT 21/11 (tối) — chủ dự án chọn Đường A:** base mesh + bộ xương chung, phụ kiện gắn bằng code. Task 3D của Chặng 3 lên theo đường này. Nhân vật dựng bằng code giữ làm phương án dự phòng cho bản đo.
 
 ---
 
@@ -257,7 +257,7 @@ Dữ liệu thật để quyết: nhánh asset **đã có một bộ xương dù
 | # | GDD nói | Code đang làm | Sửa ở |
 |---|---|---|---|
 | L-01 | `02` §2.4.5 + kịch bản (dòng 290, 834): hẹn giờ **10 giây** | 8 giây | `src/config/photo.ts` → `timer_seconds: 10`. Lưu ý: ca e2e ảnh hẹn giờ sẽ phải chờ lâu hơn |
-| L-02 | `03` §1.3: lớp 8–9 cao **1,40–1,50 m** | nhân vật code lớp 9 cao 1,579–1,727 m | Xem CẦN CHỐT (2) bên dưới — đụng tới hình ảnh nên không tự sửa |
+| L-02 | `03` §1.3 (bản 21/11 tối): lớp 8–9 cao **1,55–1,65 m** | nhân vật code lớp 9 cao 1,579–1,727 m → **đã khớp** | `src/actors/player/rigAdapter.ts` (`AVATAR_HEIGHT_RANGE_M[9]`) + test, để `checkAvatarHeight` không báo sai |
 | L-03 | `02` §4.2: bảng trường `minigames.*`, `hub.unlocked`, `story.valentine.*` | `SaveState` chưa có | `src/core/save.ts` (kèm bước chuyển đổi v2→v3) |
 | L-04 | `02` §5.1: event `valentine_letter_sent` | chưa khai | `shared/events.ts` |
 | L-05 | `02` §5.1: `hub_opened` khi mở Bảng trò chơi ở Căn cứ; `free_photo_taken`; `feedback_submitted` | có người nghe, không ai phát | `src/game/game.ts`, màn form phản hồi |
@@ -280,16 +280,21 @@ Theo thang cắt của GDD `02` §6 (cắt từ dưới lên) và tình hình th
 5. Hội trại: chỉ làm Phần 1 và Phần 4 như GDD `00` §4 đã giới hạn.
 6. Model 3D: chấp nhận **nhân vật dựng bằng code** cho bản 04/12 nếu hướng asset chốt muộn; `rigAdapter` cho phép đổi sang GLB sau mà không sửa gameplay.
 
-### 6.5 **CẦN CHỐT** — hai điểm làm đổi cốt truyện / điểm kết, không tự chọn
+### 6.5 Hai điểm đổi cốt truyện / điểm kết — **ĐÃ CHỐT 21/11 (tối)**
 
-**CẦN CHỐT (1) — Bản đo 05–15/12 dừng ở đâu?**
-GDD `00` §4 nói demo kết thúc bằng việc gửi tin nhắn sau Trang 9. Code hiện dừng ở hết Trang 4 (`release.ts`: `end_day_id = 'd.g07.03'`). Với 7/9 Trang chưa có nội dung và còn 13 ngày, có hai cách hiểu, **đổi hẳn ý nghĩa đoạn kết**:
+**(1) Bản đo 05–15/12 dừng ở đâu — CHỐT: trọn Mốc 1 (phương án b).**
+Bản đo gồm **Trang 1 → Trang 4**, kết demo đặt ngay sau Trang 4 "Đủ năm đứa"; Mốc 2 (Trang 5–9, gồm Trang 6 Valentine) giữ nguyên thiết kế nhưng lùi sau 15/12. Đã ghi vào `docs/gdd/00_MASTER_GDD.md` §4 và §11 mục 13.
+**Ba việc kéo theo cho Chặng 3:** `src/content/release.ts` (`end_day_id` giữ `d.g07.03`, `memory_day_ids` đủ 4 Trang, và **bản `production` phải được khai** — hiện đang trống); lời ba tin nhắn kết đổi nghĩa thành "nhớ hồi tụi mình mới đủ năm đứa"; nhãn nhóm Trang trong `chapters.ts` gộp về một Mốc 1.
+
+*Các phương án đã cân nhắc (giữ để tra cứu):*
 - **(a) Giữ 9 Trang:** người chơi đi hết Mốc 1 + Mốc 2, tin nhắn cuối mang nghĩa "sau tất cả những năm đó". Rủi ro: nội dung Trang 5–9 (gồm Trang 6 Valentine rất dài) phải xong trước 04/12.
 - **(b) Dừng ở Trang 4 "Đủ năm đứa":** demo là trọn Mốc 1, tin nhắn cuối mang nghĩa "nhớ hồi tụi mình mới đủ năm đứa". Mốc 2 lùi sau 15/12. Cần sửa 3 thứ: `release.ts`, lời 3 tin nhắn kết, và câu chốt của GDD `00` §4.
 - (c) Trung gian: 9 Trang nhưng Trang 5–9 rút ngắn còn chuỗi Main tối thiểu, bỏ Side.
 
-**CẦN CHỐT (2) — Chiều cao nhân vật lớp 8–9.**
-GDD `03` §1.3 ghi 1,40–1,50 m. Nhân vật code lớp 9 đang 1,58–1,73 m; model GLB nhánh asset 0,63–0,77 m. Phải chốt một con số rồi mới làm model, vì nó quyết định cả tỉ lệ bàn ghế, cửa, hòm thư:
+**(2) Chiều cao nhân vật lớp 8–9 — CHỐT: đúng với code (phương án b).**
+GDD đổi sang **1,55–1,65 m** cho lớp 8–9 (giữ 1,30–1,40 m cho lớp 6–7). Đã ghi vào `03` §1.3, `00` §7.3 và §11 mục 8. **Việc kéo theo cho Chặng 3:** đổi `AVATAR_HEIGHT_RANGE_M[9]` trong `src/actors/player/rigAdapter.ts`, sửa `tests/unit/rigAdapter.test.ts`, và scale model GLB về dải mới khi làm asset. Không cần sửa `BASE[9]` trong `build.ts`.
+
+*Các phương án đã cân nhắc (giữ để tra cứu):*
 - **(a) Giữ GDD 1,40–1,50 m:** phải thu nhỏ nhân vật code lớp 9 (sửa `BASE[9]` trong `src/actors/character/build.ts`) và scale model GLB lên đúng dải. Nhất quán với tỉ lệ semi-chibi 3–3,5 đầu.
 - **(b) Nâng GDD lên 1,55–1,65 m cho lớp 8–9:** đúng hơn với học sinh 14–15 tuổi thật và đúng với code đang chạy; chỉ cần scale model GLB. *Đoạn thay thế nếu chọn (b), ở `03` §1.3 hàng "Chiều cao":*
   > | Chiều cao | Lớp 6–7: **1,30–1,40 m** · lớp 8–9: **1,55–1,65 m** (sửa 21/11 theo số đo thật của nhân vật đang chạy trong game). Quân cao nhất nhóm (chạm mức trên); Hạ và Đức ở mức dưới |
@@ -298,4 +303,4 @@ GDD `03` §1.3 ghi 1,40–1,50 m. Nhân vật code lớp 9 đang 1,58–1,73 m; 
 ---
 
 ## 7. Việc kế tiếp
-Chặng 3: lập `docs/handoff/SPRINT_TASKS.md` (backlog P0/P1/P2 tới 04/12, mỗi task một prompt độc lập) và `docs/handoff/README.md`. Task 3D chỉ lên sau khi chủ dự án chốt mục 3.4; task Trang 5–9 phụ thuộc CẦN CHỐT (1).
+Chặng 3: lập `docs/handoff/SPRINT_TASKS.md` (backlog P0/P1/P2 tới 04/12, mỗi task một prompt độc lập) và `docs/handoff/README.md`. Ba quyết định ngày 21/11 (tối) đã mở đường: phạm vi = trọn Mốc 1 (Trang 1–4), hướng asset = base mesh + xương chung, chiều cao lớp 8–9 = 1,55–1,65 m. Task Trang 5–9 xếp vào phần sau 15/12.

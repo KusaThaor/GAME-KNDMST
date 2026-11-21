@@ -58,10 +58,10 @@ Căn cứ hiện có: đo ngày 13/11 trên trình duyệt giả lập (chưa ph
 ### 1.3 Nhân vật *(CONFIRMED 20/11: dựng model 3D semi-chibi, chiều cao chuẩn hóa ~1,3–1,5 m)*
 | Hạng mục | Quy chuẩn |
 |---|---|
-| Chiều cao | Lớp 6–7: **1,30–1,40 m** · lớp 8–9: **1,40–1,50 m**. Quân cao nhất nhóm (chạm mức trên); Hạ và Đức ở mức dưới *(chia theo người: PROPOSED)* |
+| Chiều cao | Lớp 6–7: **1,30–1,40 m** · lớp 8–9: **1,55–1,65 m** — **CONFIRMED 21/11 (tối):** chủ dự án chốt lấy theo số đo thật của nhân vật đang chạy trong game (lớp 9 đo được 1,579–1,727 m, xem `docs/handoff/DEMO_AUDIT.md` §3.2); dải cũ **1,40–1,50 m SUPERSEDED**. Quân cao nhất nhóm (chạm mức trên); Hạ và Đức ở mức dưới *(chia theo người: PROPOSED)* |
 | Tỉ lệ | Semi-chibi: đầu to, khoảng 3–3,5 đầu cho cả thân |
-| Kiểm tra bắt buộc | Đứng cạnh `PRP_DESK_2SEAT` (mặt bàn ≈ 0,7 m): mặt bàn phải ngang khoảng hông nhân vật. Lỗi 0,70 m ở nhánh asset ngày 20/11 phải sửa |
-| Bộ xương | **Một bộ xương dùng chung** cho mọi nhân vật học sinh, để dùng chung hoạt ảnh |
+| Kiểm tra bắt buộc | Đứng cạnh `PRP_DESK_2SEAT` (mặt bàn ≈ 0,7 m): mặt bàn phải ngang khoảng hông nhân vật. Model nhánh `feature/asset-workshop` đo lại ngày 21/11 cao **0,63–0,77 m** — phải chuẩn hóa về dải trên. Lưu ý gốc tọa độ: `prp_desk_2seat.glb` hiện có `min.y = −0,663` (gốc ở mặt bàn), sai quy chuẩn §1.1 |
+| Bộ xương | **Một bộ xương dùng chung** cho mọi nhân vật học sinh, để dùng chung hoạt ảnh. **CONFIRMED 21/11 (tối) — hướng asset:** dùng **base mesh + bộ xương chung đã có** ở `feature/asset-workshop` (20 xương, 16 hoạt ảnh), phụ kiện và biến thể gắn thêm bằng code/preset; **không** sửa tay từng `.glb` riêng cho 5 nhân vật |
 | Biến thể tuổi | `AGE_G6_7` và `AGE_G8_9` = đổi tỉ lệ xương + tóc + phụ kiện, không dựng lại từ đầu |
 | Trang phục | Áo sơ mi trắng có bảng tên, quần tây xanh đậm, giày bata; khăn quàng đỏ (lớp 6–7, phụ kiện gắn rời); áo thun lớp (Hội trại) |
 | Nhận diện | Không đổi các dấu hiệu ở `01` §2.1 khi chưa được duyệt |
@@ -90,7 +90,7 @@ Căn cứ hiện có: đo ngày 13/11 trên trình duyệt giả lập (chưa ph
 ### 2.1 Nhân vật
 | Mã | Tên | Dùng ở | Cách làm | Tầng | Trạng thái |
 |---|---|---|---|---|---|
-| `CHR_PLAYER_M` | Player nam (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] — nhánh asset có nhân vật có xương nhưng chỉ cao 0,70 m |
+| `CHR_PLAYER_M` | Player nam (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] — nhánh asset có nhân vật có xương (20 xương, 16 hoạt ảnh, 3.314–3.772 tam giác) nhưng chỉ cao 0,63–0,77 m; chuẩn hóa theo §1.3 |
 | `CHR_PLAYER_F` | Player nữ (2 bộ tuổi) | Mọi Trang | Blender | A | [Cần chỉnh sửa] |
 | `CHR_DUC` | Đức "Tí Nổ" — gầy, tóc dựng, bút bi | Mọi Trang | Blender | A | [Cần chỉnh sửa] |
 | `CHR_QUAN` | Quân "Bắp" — to cao, tóc húi cua | Trang 2–9 | Blender | A | [Cần chỉnh sửa] |
@@ -342,6 +342,7 @@ Mỗi asset chỉ đánh dấu xong khi đã xem trong game (đúng gốc `min.y
 | 6 | Hình hòm thư Valentine và bảng nội quy | **Chặn việc dựng hình cuối.** Chưa có concept; cần ChatGPT/Gemini phác 1 hình hòm thư + 1–2 kiểu bảng nội quy trước khi dựng (quy trình: concept → duyệt → dựng) |
 
 ## 7. Changelog
+- **v1.3-draft — 21/11/2026 (tối):** Chủ dự án chốt sau kiểm toán Chặng 2: **hướng asset = base mesh + xương chung, phụ kiện gắn bằng code**; **chiều cao lớp 8–9 đổi thành 1,55–1,65 m** (lấy theo số đo thật trong game). Cập nhật §1.3 (chiều cao, kiểm tra bắt buộc, bộ xương) và dòng `CHR_PLAYER_M`. Bằng chứng số đo: `docs/handoff/DEMO_AUDIT.md`.
 - **v1.2-draft — 21/11/2026 (chiều):** Chốt của chủ dự án: hòm thư làm ở Cảnh B (thứ Sáu), Đức xin lỗi bằng thư, **3 minigame đầy đủ**. `UI_MAILBOX_CRAFT` chuyển sang Cảnh B; thêm `UI_APOLOGY_LETTER`; `PRP_VALENTINE_LETTER` thêm thư xin lỗi; `UI_VALENTINE_MINI` gom về 3 minigame và lên Tầng A; `PRP_VALENTINE_SNACKS`, `PRP_SHOP_LIST_ITEMS` bỏ "bản đầy đủ: B"; `PRP_DECOR_SET` ghi rõ 4 nhóm cho Minigame 3. Điểm còn mở #6 (concept hòm thư + bảng) vẫn chờ.
 - **v1.1-draft — 21/11/2026:** Thêm asset **Hòm thư Valentine** (Trang 6, chỉ đạo chủ dự án 21/11): 7 dòng đạo cụ (`PRP_VALENTINE_MAILBOX`, `PRP_MAILBOX_RULES_BOARD`, `PRP_CRAFT_SUPPLIES`, `PRP_VALENTINE_LETTER`, `PRP_VALENTINE_SNACKS`, `PRP_SHOP_LIST_ITEMS`, `PRP_DECOR_SET`), 4 dòng UI (`UI_MAILBOX_CRAFT`, `UI_LETTER_PICKER`, `UI_LETTER_READ`, `UI_VALENTINE_MINI`), 3 SFX, điểm còn mở #6; mở rộng `UI_MINI_K` và `PRP_BASKETBALL_OLD` sang Trang 6. Giữ `PRP_LEAF_DRAWING`, `UI_CONFESSION`, `PRP_PHONE_OLD_2017`, `PRP_BROOM`. Các mục khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Cập nhật: chữ trên nắp hộp phấn lấy theo tỉ số caro; giao diện Sudoku ở Trang 7 có đồng hồ 6 phút; màn hướng dẫn luật bắt buộc cho mọi minigame.
