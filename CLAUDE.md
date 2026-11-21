@@ -34,14 +34,14 @@ Cập nhật 21/11/2026 (tối). Hạn bản playtest: **04/12/2026**. Kỳ đo:
 - Commit nhỏ, thường xuyên. Không dán khóa bí mật vào repo hay chat.
 - Trả lời chủ dự án bằng tiếng Việt, ngắn, tách phần báo cáo và phần cần duyệt.
 
-## 5. Lệnh kiểm (đã chạy thật 21/11, đều đạt trừ e2e)
+## 5. Lệnh kiểm (đã chạy thật 21/11, đều đạt)
 ```bash
 npm install
 npx tsc --noEmit                      # đạt
 npm test                              # 266 đạt / 1 bỏ qua
 npm run validate:world                # map_thcs: 6 khu, 0 lỗi
 VERCEL_ENV=production npm run build    # đạt, bản production sạch công cụ test
-npm run test:e2e                      # CHƯA chạy được trên máy ảo (không tải được trình duyệt Playwright) — phải chạy trên máy thật
+npx playwright test --workers=1       # e2e đã chạy được trên máy thật (chạy tuần tự; song song dễ timeout trên máy yếu). Máy ảo không tải được trình duyệt Playwright
 npm run dev                           # rồi mở /?play=1
 ```
 
