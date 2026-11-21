@@ -1,0 +1,53 @@
+{
+  "HAIR_001": {
+    "name": "Classic Bowl Cut",
+    "glb": "character_hair_001_v12.glb",
+    "glb_size_kb": 460.1,
+    "renders": {
+      "front": "hair_001_front.png",
+      "three_quarter": "hair_001_three_quarter.png",
+      "side": "hair_001_side.png",
+      "back": "hair_001_back.png",
+      "elevated_rear": "hair_001_elevated_rear.png",
+      "fringe_closeup": "hair_001_fringe_closeup.png",
+      "nape_closeup": "hair_001_nape_closeup.png"
+    },
+    "quads": 760,
+    "color": "#2b201c"
+  },
+  "HAIR_004": {
+    "name": "Side-Parted Short",
+    "glb": "character_hair_004_v12.glb",
+    "glb_size_kb": 602.1,
+    "renders": {
+      "front": "hair_004_front.png",
+      "three_quarter": "hair_004_three_quarter.png",
+      "side": "hair_004_side.png",
+      "back": "hair_004_back.png",
+      "elevated_rear": "hair_004_elevated_rear.png",
+      "fringe_closeup": "hair_004_fringe_closeup.png",
+      "nape_closeup": "hair_004_nape_closeup.png",
+      "part_closeup": "hair_004_part_closeup.png"
+    },
+    "quads": 1424,
+    "color": "#241c19"
+  },
+  "HAIR_008": {
+    "name": "Twin Pigtails",
+    "glb": "character_hair_008_v12.glb",
+    "glb_size_kb": 685.3,
+    "renders": {
+      "front": "hair_008_front.png",
+      "three_quarter": "hair_008_three_quarter.png",
+      "side": "hair_008_side.png",
+      "back": "hair_008_back.png",
+      "elevated_rear": "hair_008_elevated_rear.png",
+      "fringe_closeup": "hair_008_fringe_closeup.png",
+      "nape_closeup": "hair_008_nape_closeup.png",
+      "root_closeup": "hair_008_root_closeup.png",
+      "tail_closeup": "hair_008_tail_closeup.png"
+    },
+    "quads": 1796,
+    "color": "#2b201c"
+  }
+}
