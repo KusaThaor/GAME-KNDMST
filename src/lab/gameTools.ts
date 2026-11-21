@@ -82,8 +82,34 @@ export function jumpTo(save: SaveState, idx: ContentIndex, dayId: string, stepId
   return null;
 }
 
+/** Dựng file lưu "đang ở phòng 2026, đã qua phần mở đầu": tên Bạn Thử, đã nhập tên và chọn giới, lời dẫn đã xong. */
+export function jumpToHub(save: SaveState, idx: ContentIndex, gender: 'male' | 'female' = 'male'): string | null {
+  Object.assign(save, newSave(save.attempt_id), { player_name: 'Bạn Thử', appearance: { gender, preset: 'default' }, profile_done: true });
+  const bus = new EventBus();
+  const engine = new QuestEngine({ idx, save, bus });
+  const album = new AlbumModel({ idx, save, bus, config: ALBUM_CONFIG });
+  const hub = new HubModel({ idx, save, bus, engine, album, config: HUB_CONFIG });
+  const introId = idx.pack.hub.intro_quest_id;
+  engine.enterHub();
+  for (let i = 0; i < 20 && engine.questState(introId) === 'active'; i++) {
+    const r = engine.activeSteps().find((x) => x.quest.id === introId);
+    if (!r || !autoStep(engine, r)) break;
+  }
+  hub.refresh(); hub.runPdes();
+  return engine.questState(introId) === 'completed' ? null : `Không qua được phần mở đầu của phòng 2026`;
+}
+
 export function runOptionsFromUrl(params: URLSearchParams): RunOptions {
   const day = params.get('day'), cast = params.get('cast');
+  // ?hub=1: bỏ qua phần mở đầu (tên, lời dẫn, bước mở hộp) và vào thẳng phòng 2026. Chỉ bản test.
+  if (params.get('hub') === '1' && !day) return {
+    castName: cast ?? undefined,
+    artStyle: params.get('style') ?? undefined,
+    prepareSave: (save, idx) => {
+      const err = jumpToHub(save, idx, params.get('gender') === 'female' ? 'female' : 'male');
+      if (err) console.error(`[công cụ test] ${err}`);
+    },
+  };
   return {
     castName: cast ?? undefined,
     artStyle: params.get('style') ?? undefined,
