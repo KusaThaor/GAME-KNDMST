@@ -65,7 +65,14 @@ export const quests: Quest[] = [
         id: 'q_m1_main_03.s02',
         kind: 'goto',
         target: 'itr.thcs.old_table',
-        objective: 'Đi qua bãi đất sang góc sân sau gần nhà kho',
+        objective: 'Đi qua bãi đất sang góc sân sau gần nhà kho để khảo sát',
+      },
+      {
+        id: 'q_m1_main_03.s06',
+        kind: 'minigame',
+        game: 'mg_build_base',
+        level: 'min',
+        objective: 'Kê bàn ghế và dọn dẹp Căn cứ Bí mật',
       },
       {
         id: 'q_m1_main_03.s03',
@@ -85,9 +92,16 @@ export const quests: Quest[] = [
         ],
       },
       {
+        id: 'q_m1_main_03.s07',
+        kind: 'minigame',
+        game: 'mg_base_rules',
+        level: 'min',
+        objective: 'Viết 5 điều luật vào cuốn sổ bìa xanh',
+      },
+      {
         id: 'q_m1_main_03.s04',
-        kind: 'interact',
-        target: 'itr.thcs.old_table',
+        kind: 'talk',
+        with: 'NPC_B',
         objective: 'Soạn 5 điều luật Căn cứ vào cuốn sổ bìa xanh',
         lines: [
           { speaker: 'NPC_B', text: 'Phải có luật. Điều 1: không tự lấy đồ của người khác.' },
