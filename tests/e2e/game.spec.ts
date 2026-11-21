@@ -6,6 +6,11 @@
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { validateBatch, FORBIDDEN_PROP_KEYS, type CollectBatch } from '../../shared/events';
+import { RELEASES } from '../../src/content/release';
+
+/** Các Ngày của bản thử, đúng thứ tự chơi (nguồn: src/content/release.ts). */
+const DAYS = RELEASES.test.memory_day_ids;
+const allDays = (state: string, except: Record<string, string> = {}) => Object.fromEntries(DAYS.map((d) => [d, except[d] ?? state]));
 
 const SHOTS = 'shots/game';
 mkdirSync(SHOTS, { recursive: true });
@@ -76,7 +81,7 @@ async function drive(page: Page, opts: BotOpts, until: (label: string, s: GameSt
 test.use({ actionTimeout: 20_000 });
 
 test.describe('phần khung game', () => {
-  test('bot chơi hết bản thử: mở đầu → 2 Ngày → Album → điện thoại → màn kết; event đúng và không lọt tên', async ({ page }) => {
+  test('bot chơi hết bản thử: mở đầu → các Ngày của bản thử → Album → điện thoại → màn kết; event đúng và không lọt tên', async ({ page }) => {
     test.setTimeout(480_000);
     const NAME = 'Bảo Ngọc';
     const errors = collectErrors(page);
@@ -111,14 +116,14 @@ test.describe('phần khung game', () => {
 
     // ---- tiến trình ----
     const s = await state(page);
-    expect(s.days).toEqual({ 'd.g06.01': 'completed', 'd.g07.03': 'completed' });
-    expect(s.artifacts).toEqual({ art_m1_01: 'on_shelf', art_m1_05: 'on_shelf' });
-    expect(s.pages['page.d.g06.01']).not.toBe('faded');
-    expect(['restored', 'enriched', 'complete']).toContain(s.pages['page.d.g06.01']);
-    expect(['restored', 'enriched', 'complete']).toContain(s.pages['page.d.g07.03']);
+    expect(s.days).toEqual(allDays('completed'));
+    expect(Object.keys(s.artifacts)).toHaveLength(DAYS.length);          // mỗi Ngày đúng một kỷ vật dẫn vào
+    expect(new Set(Object.values(s.artifacts))).toEqual(new Set(['on_shelf']));
+    for (const d of DAYS) {
+      expect(['restored', 'enriched', 'complete'], `trang ${d}`).toContain(s.pages[`page.${d}`]);
+      expect(s.quests[`q_m1_daily_01@${d}`], `daily ${d}`).toBe('completed');   // Daily: 1 lần mỗi Ngày, khóa theo Ngày
+    }
     expect(s.quests['q_m1_side_01']).toBe('completed');                 // Side làm xong mà không chặn Main
-    expect(s.quests['q_m1_daily_01@d.g06.01']).toBe('completed');       // Daily: 1 lần mỗi Ngày, khóa theo Ngày
-    expect(s.quests['q_m1_daily_01@d.g07.03']).toBe('completed');
     expect(s.quests['q_hub_pd_03']).toBe('completed');
     expect(s.phone['thread.old_group']).toBe(1);                         // đã gửi 1 tin
     expect(s.public_demo_done).toBe(true);
@@ -130,20 +135,20 @@ test.describe('phần khung game', () => {
     // ---- hội thoại: tên có dấu + biến thể nam/nữ (F5) ----
     const all = lines.join('\n');
     expect(all).toContain(NAME);
-    expect(all).toContain('biến thể nữ');
-    expect(all).not.toContain('biến thể nam');
+    expect(all).toContain('Mới quen một bữa mà bà mày tao rồi hả?');   // d_g06_01: {g:ông|bà}, Player nữ
+    expect(all).not.toContain('Mới quen một bữa mà ông mày tao rồi hả?');
     expect(all).not.toMatch(/\{player_name\}|\{g:/);
-    expect(all).toContain('dòng dự phòng');                             // dòng có điều kiện: flag không khớp → dòng dự phòng
+    // dòng có điều kiện (when + fallback): nội dung thật Trang 1–4 chưa dùng; cơ chế kiểm ở tests/unit/dialogue.test.ts
 
     // ---- Album trong phòng (F6) ----
     await expect(page.locator('[data-testid="feedback"]')).toHaveCount(0);   // bot đã bấm "Bỏ qua" ở form
     await page.evaluate(() => window.__game!.hubClick('itr.hub.album'));
     await expect(page.locator('[data-testid="panel-album"]')).toBeVisible();
-    await expect(page.locator('[data-testid="album-progress"]')).toHaveText('2/2 trang');
-    await expect(page.locator('[data-page="page.d.g06.01"] [data-testid="album-photo"]')).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator('[data-page="page.d.g07.03"] [data-testid="album-photo"]')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('[data-testid="album-progress"]')).toHaveText(`${DAYS.length}/${DAYS.length} trang`);
+    for (const d of DAYS) await expect(page.locator(`[data-page="page.${d}"] [data-testid="album-photo"]`).first(), `ảnh trang ${d}`).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('.g-cover img')).toBeVisible();
-    await expect(page.locator('[data-page="page.d.g06.01"]')).toContainText(NAME);   // ghi chú có tên Player (chỉ hiển thị cục bộ)
+    // ghi chú hiện trong Album (nội dung thật Trang 1–4 không có ghi chú mang tên Player; tên Player đã kiểm ở hội thoại phía trên)
+    await expect(page.locator('[data-page="page.d.g06.01"]')).toContainText('bắt đầu từ một mẩu giấy mật lệnh');
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${SHOTS}/90-album.png` });
     await page.locator('[data-act="flip-page.d.g07.03"]').click();
@@ -172,13 +177,13 @@ test.describe('phần khung game', () => {
       expect(String(e.props?.memory_day_id)).toMatch(/^d\.g0[67]\.\d\d$/);
       expect(String(e.props?.chapter_label)).toContain('Mốc');
     }
-    expect(events.filter((e) => e.name === 'page_completed').map((e) => e.props?.page_id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(events.filter((e) => e.name === 'page_completed').map((e) => e.props?.page_id)).toEqual(DAYS);
     expect(events.find((e) => e.name === 'appearance_selected')?.props).toEqual({ gender: 'female' });
     const wire = JSON.stringify(batches);
     expect(wire).not.toContain(NAME);
     expect(wire).not.toContain('Bảo'); expect(wire).not.toContain('Ngọc');
-    expect(wire).not.toContain('Cách mở lời');                            // nội dung tin nhắn
-    expect(wire).not.toContain('Ghi chú chính');                          // nội dung ghi chú
+    for (const t of ['Nhớ hồi tụi mình mới đủ năm đứa', 'cuốn sổ luật Căn cứ', 'được dời, không được hủy']) expect(wire).not.toContain(t);   // nội dung tin nhắn (3 câu mở lời, hub.ts)
+    expect(wire).not.toContain('bắt đầu từ một mẩu giấy mật lệnh');       // nội dung ghi chú (frag.d.g06.01.02)
     expect(wire).not.toContain('chapter_id');
     for (const e of events) for (const k of Object.keys(e.props ?? {})) expect(FORBIDDEN_PROP_KEYS.has(k.toLowerCase()), `khóa cấm ${k}`).toBe(false);
     expect(new Set(events.map((e) => e.attempt_id))).toEqual(new Set([s.attempt_id]));
@@ -199,7 +204,7 @@ test.describe('phần khung game', () => {
         stored.push(...(doc.events as { name: string }[]).map((e) => e.name));
         const text = JSON.stringify(doc);
         expect(text).not.toContain(NAME);
-        expect(text).not.toContain('Cách mở lời');
+        expect(text).not.toContain('Nhớ hồi tụi mình mới đủ năm đứa');
         expect(text).not.toMatch(/player_name|"email"|"ip"/);
       }
       expect(stored).toEqual(names);                                       // Firestore có đủ đúng những event trình duyệt đã gửi
@@ -233,7 +238,7 @@ test.describe('phần khung game', () => {
     s = await state(page);
     expect(s).toMatchObject({ mode: 'day', day: 'd.g06.01', step: 'q_m1_main_01.s02', attempt_id: before.attempt_id });
     expect(s.quests).toEqual(before.quests);
-    expect(s.ui.objective).toContain('Ra ghế đá');
+    expect(s.ui.objective).toContain('Xuống sân đá cầu');                 // mục tiêu của q_m1_main_01.s02
 
     // chơi tiếp được tới hết Ngày và về phòng
     await drive(page, { optional: false }, (_l, x) => x.mode === 'hub' && x.days['d.g06.01'] === 'completed' && x.artifacts['art_m1_01'] === 'on_shelf');
@@ -249,7 +254,7 @@ test.describe('phần khung game', () => {
     await drive(page, {}, (_l, s) => s.mode === 'day');
     const s = await state(page);
     expect(s).toMatchObject({ day: 'd.g07.03', step: 'q_m1_main_05.s03', gender: 'female' });
-    expect(s.days).toEqual({ 'd.g06.01': 'completed', 'd.g07.03': 'in_progress' });
+    expect(s.days).toEqual(allDays('completed', { 'd.g07.03': 'in_progress' }));   // các Ngày trước coi như đã xong
     expect(s.artifacts['art_m1_01']).toBe('on_shelf');
     expect(s.cast).toEqual({ NPC_A: 'chr_ha', NPC_B: 'chr_quan', NPC_C: 'chr_duc', NPC_D: 'chr_chau' });
     await page.evaluate(() => window.__game!.teleportTo('NPC_A'));
@@ -311,7 +316,7 @@ test.describe('phần khung game', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="panel-menu"]')).toHaveCount(0);
     await page.keyboard.press('KeyJ');
-    await expect(page.locator('[data-testid="panel-journal"]')).toContainText('Side giả 01');
+    await expect(page.locator('[data-testid="panel-journal"]')).toContainText('Xem bảng phân công trực nhật');   // Side q_m1_side_01
     await page.keyboard.press('KeyJ');
 
     // menu "Chơi lại Ngày từ đầu": làm xong bước 1 rồi quay lại bước 1
@@ -377,7 +382,7 @@ test.describe('phần khung game', () => {
     expect(hubRows[3].heapMB - hubRows[1].heapMB).toBeLessThan(6);
     // chơi lại không đổi câu chuyện
     const s = await state(page);
-    expect(s.days).toEqual({ 'd.g06.01': 'completed', 'd.g07.03': 'completed' });
+    expect(s.days).toEqual(allDays('completed'));
     expect(errors).toEqual([]);
   });
 });
