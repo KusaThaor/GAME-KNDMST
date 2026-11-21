@@ -122,7 +122,7 @@ Mỗi mục có **đề xuất mặc định** đang nằm trong tài liệu. Ch
 |---|---|---|---|
 | **1** | Giữ mạch confession của Hạ (Cảnh B) cùng với hòm thư, hay bỏ confession? | **Giữ.** Hòm thư cho cảnh xin lỗi một lối thoát nhẹ nhàng (nội quy số hai) | Bỏ confession → Trang 6 chỉ còn hòm thư; Hạ mất tờ vẽ chiếc lá và kỷ vật dẫn vào phải đổi |
 | **2** | Trang 6 có 4 cảnh (GDD ghi 1–3) — chấp nhận? | **Giữ 4**, Cảnh C ngắn | Nhập tiết Toán vào phần sáng của Cảnh D → 3 cảnh |
-| **3** | Nhánh buổi chiều làm mức nào? | **Rút gọn (Tầng A)**, 1–2 phút mỗi nhánh; bản đầy đủ làm nếu còn thời gian | Làm đủ minigame ngay → thêm khoảng 5 minigame, kịp hạn 04/12 sẽ khó |
+| **3** | Nhánh buổi chiều làm mức nào? | **Rút gọn (Tầng A)**, 1–2 phút mỗi nhánh; bản đầy đủ làm nếu còn thời gian | Làm đủ minigame ngay → thêm 8 minigame nhỏ (4 cho nhánh riêng + 4 cho nhánh chung), kịp hạn 04/12 sẽ khó |
 | **4** | Lời thư và phản ứng: duyệt đổi xưng hô, đổi "chiều nay", và lời mẫu mình viết? | **Duyệt**; người giữ giọng nhân vật chỉnh lại sau | Nhóm viết lại toàn bộ lời phản ứng |
 | **5** | Ảnh chính Trang 6? | **Ảnh nhóm bên hòm thư** | Giữ Đức cầm chổi làm ảnh chính |
 | **6** | Bảng nội quy: ghi đủ ba điều, người chơi chỉ chọn kiểu bảng? | **Đủ ba điều** (bản sửa chỉ nói "chọn bảng nội quy", không nêu phương án khác) | Cho người chơi chọn điều nào hiện trên bảng |
