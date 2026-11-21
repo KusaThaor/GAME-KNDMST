@@ -12,7 +12,7 @@ mkdirSync(SHOTS, { recursive: true });
 
 type Cam = { mode: string; look: string; state: string; freeLook: boolean; pointerLocked: boolean; yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean };
 type St = {
-  mode: string | null; step: string | null; zone: string | null; device: string; listeners: number;
+  mode: string | null; step: string | null; active: string[]; zone: string | null; device: string; listeners: number;
   player: { x: number; y: number; z: number } | null; camera: Cam | null;
   ui: { panel: string | null; dialogue: string | null; prompt: string | null };
 };

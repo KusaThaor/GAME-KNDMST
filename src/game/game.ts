@@ -108,7 +108,6 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   let currentDay: MemoryDay | null = null;
   let epoch = 0;
   const presented = new Set<string>();
-  const inside = new Set<string>();
   const tickers = new Set<(dt: number) => void>();
   const waiters = new Map<string, (v: unknown) => void>();
   const photoUrls = new Map<string, string>();
@@ -125,7 +124,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const cancelAll = () => {
     epoch++;
     for (const [slot, w] of [...waiters]) { waiters.delete(slot); w(CANCEL); }
-    tickers.clear(); presented.clear(); inside.clear();
+    tickers.clear(); presented.clear();
     ui.set({ dialogue: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
     dayScene?.setStandZone(null); dayScene?.setPlayerMotion(null); dayScene?.lockCamera(null);
   };
@@ -463,8 +462,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (!dayScene || engine.context?.kind !== 'day') return;
     const p = dayScene.playerPosition;
     for (const t of dayScene.targets) {
-      const near = t.position.distanceTo(p) <= t.radius;
-      if (near && !inside.has(t.id)) { inside.add(t.id); if (!locked() && engine.trigger('arrive', t.id)) void enqueue(drain); } else if (!near) inside.delete(t.id);
+      // Không nhớ "đã vào vòng": mỗi khung hình, đang đứng trong bán kính + giao diện không khóa + có bước goto chờ thì hoàn thành.
+      // (peek trước để khỏi đổi trạng thái khi không có việc; bước đã xong thì không còn khớp nên không bị hoàn thành hai lần.)
+      if (locked() || t.position.distanceTo(p) > t.radius) continue;
+      if (engine.peek('arrive', t.id) && engine.trigger('arrive', t.id)) void enqueue(drain);
     }
     const tgt = locked() ? null : nearestUseful();
     const portal = tgt || locked() ? null : dayScene.portalPrompt();

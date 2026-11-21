@@ -7,7 +7,7 @@
 
 | Lỗi | Trạng thái |
 |---|---|
-| A-01 (`proximity()`, bước `goto`) | DANG LAM |
+| A-01 (`proximity()`, bước `goto`) | XONG phần sửa + test xanh (e2e toàn bộ chưa chạy lại — xem Checkpoint 2) |
 | A-02 (luật `optional_quest_unstartable`) | CHUA LAM |
 
 ### Checkpoint 0 — baseline (đầu phiên)
@@ -24,7 +24,14 @@
 - Lệnh: `npx playwright test tests/e2e/world.spec.ts -g "A-01" --workers=1` → **ĐỎ (1 failed, 39,6 giây)**.
 - Lỗi thực tế: sau khi đóng Menu, chờ 15 giây mà `active` vẫn chỉ là `["q_m1_main_05.s01"]`; không bao giờ có `q_m1_side_02.s02` (`expect(received).toContain("q_m1_side_02.s02")`). Các điều kiện đầu ca (quest `available`, Menu mở được, dịch chuyển được) đều qua → đỏ đúng nguyên nhân A-01: `arrive` chỉ phát ở khung hình đầu vào bán kính, lúc đó giao diện khóa nên bị bỏ lỡ.
 - Còn lại: sửa `proximity()` (A-01), A-02, tài liệu, build, push.
-- Bước tiếp theo: sửa `proximity()` trong `src/game/game.ts`, chạy lại ca A-01 tới xanh.
+- Bước tiếp theo: sửa `proximity()` trong `src/game/game.ts`, chạy lại ca A-01 tới xanh. → xong, xem Checkpoint 2.
+
+### Checkpoint 2 — A-01 test XANH (sau khi sửa)
+- File đã đổi: `src/game/game.ts` (chỉ `proximity()` + bỏ tập `inside` và `inside.clear()` ở `cancelAll`), `tests/e2e/world.spec.ts` (thêm `active` vào kiểu `St`, không đổi ý nghĩa ca).
+- Sửa: mỗi khung hình, với đích đang trong bán kính và `!locked()`, hỏi `engine.peek('arrive', id)` rồi `engine.trigger('arrive', id)`; không còn nhớ "đã vào vòng". Bước đã xong không còn khớp → không hoàn thành hai lần.
+- Kết quả thật: ca "A-01" **XANH** (1 passed, 57 giây; kiểm cả "đúng 1 event `quest_step_completed` cho `q_m1_side_02.s01` khi đứng yên") · `npx tsc --noEmit` đạt · `npm test` 266 đạt / 1 bỏ qua (không giảm) · `game.spec.ts` ca "bot chơi hết bản thử" và ca "?day=&step=" xanh (2 passed, 4,5 phút).
+- Chưa chạy: toàn bộ Playwright (~32 phút) — chạy một lần cuối phiên.
+- Bước tiếp theo: viết unit test đỏ A-02 trong `tests/unit/validate.test.ts`.
 
 ---
 
