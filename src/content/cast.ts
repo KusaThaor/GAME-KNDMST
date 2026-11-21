@@ -1,7 +1,7 @@
 /**
- * Bảng ánh xạ vai → nhân vật (D-01: CHƯA CHỐT 2 bạn nào gặp Player ở lớp 6).
+ * Bảng ánh xạ vai → nhân vật (D-01 đã CONFIRMED 19/11: Đức + Châu gặp Player ở lớp 6 = phương án A).
  * Nội dung chỉ dùng vai: NPC_A, NPC_B = hai bạn gặp ở lớp 6; NPC_C, NPC_D = hai bạn vào nhóm ở lớp 7.
- * Khi nhóm chốt: sửa ACTIVE_CAST (hoặc thêm bảng mới) — không sửa engine, không sửa nội dung.
+ * Bảng B/C và `?cast=` giữ lại làm công cụ thử; không sửa engine, không sửa nội dung.
  * Ở môi trường test có thể thử bằng `?cast=B`.
  */
 import type { CastTable } from './types';
@@ -12,5 +12,5 @@ export const CAST_TABLES: Record<string, CastTable> = {
   C: { NPC_A: 'chr_duc', NPC_B: 'chr_quan', NPC_C: 'chr_chau', NPC_D: 'chr_ha' },   // phương án C: Đức + Quân
 };
 
-/** TẠM dùng phương án đang được khuyến nghị trong sổ quyết định — chưa phải quyết định của nhóm. */
+/** Phương án A = quyết định đã chốt D-01 (19/11). */
 export const ACTIVE_CAST = 'A';
