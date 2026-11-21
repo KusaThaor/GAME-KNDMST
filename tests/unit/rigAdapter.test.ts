@@ -13,14 +13,15 @@ describe('CharacterRigAdapter', () => {
     expect(() => a.update(0.016)).not.toThrow();
   });
 
-  it('khoảng chiều cao chuẩn theo GDD 03 §1.3 (1,30–1,40 m lớp 6; 1,40–1,50 m lớp 9)', () => {
+  it('khoảng chiều cao chuẩn theo GDD 03 §1.3 (1,30–1,40 m lớp 6; 1,55–1,65 m lớp 9)', () => {
     expect(AVATAR_HEIGHT_RANGE_M[6]).toEqual([1.3, 1.4]);
-    expect(AVATAR_HEIGHT_RANGE_M[9]).toEqual([1.4, 1.5]);
+    expect(AVATAR_HEIGHT_RANGE_M[9]).toEqual([1.55, 1.65]);
   });
 
   it('checkAvatarHeight báo đúng/sai (dùng để kiểm model GLB sau này)', () => {
     expect(checkAvatarHeight({ height: 1.35 }, 6).ok).toBe(true);
-    expect(checkAvatarHeight({ height: 1.45 }, 9).ok).toBe(true);
+    expect(checkAvatarHeight({ height: 1.6 }, 9).ok).toBe(true);
+    expect(checkAvatarHeight({ height: 1.45 }, 9).ok).toBe(false);
     expect(checkAvatarHeight({ height: 0.7 }, 6)).toMatchObject({ ok: false, min: 1.3, max: 1.4 });
     expect(checkAvatarHeight({ height: 1.35 }, 9).ok).toBe(false);
   });

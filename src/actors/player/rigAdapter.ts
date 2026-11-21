@@ -5,7 +5,7 @@
  *
  * Hợp đồng cho adapter GLB (GDD 03 §1.1, §1.3; dùng `checkAvatarHeight` để kiểm):
  *  - Gốc `root` ở chân nhân vật, `min.y = 0`, đơn vị mét, Y lên, mặt nhìn +z khi rotation.y = 0.
- *  - `height` = chiều cao thật (m). Lớp 6–7: 1,30–1,40 m · lớp 8–9: 1,40–1,50 m (GDD v1.0 CONFIRMED 20/11).
+ *  - `height` = chiều cao thật (m). Lớp 6–7: 1,30–1,40 m · lớp 8–9: 1,55–1,65 m (GDD 03 §1.3 bản 21/11 tối; dải cũ 1,40–1,50 m đã SUPERSEDED).
  *  - Hỗ trợ đủ `Motion` của `character/animate.ts` (idle, walk, run, talk, pose_peace, pose_wave, pose_tada, cheer).
  *  - Ngân sách: nhân vật chính ≤ 6.000 tam giác / 1,5 MB; học sinh phụ ≤ 2.500 tam giác / 600 KB.
  */
@@ -39,7 +39,7 @@ export const DEFAULT_RIG_ADAPTER: CharacterRigAdapter = codeRigAdapter;
 /** Khoảng chiều cao chuẩn (m) theo lớp — GDD 03 §1.3. `Grade` hiện chỉ có 6 và 9 (đầu/cuối Mốc). */
 export const AVATAR_HEIGHT_RANGE_M: Record<Grade, readonly [number, number]> = {
   6: [1.3, 1.4],
-  9: [1.4, 1.5],
+  9: [1.55, 1.65],
 };
 
 export interface HeightCheck { ok: boolean; height: number; min: number; max: number }
