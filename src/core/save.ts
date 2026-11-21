@@ -1,14 +1,15 @@
 /**
- * Lưu tiến trình v2: JSON ở localStorage, ảnh ở IndexedDB (photoStoreIdb.ts).
+ * Lưu tiến trình v3: JSON ở localStorage, ảnh ở IndexedDB (photoStoreIdb.ts).
  * - Mọi tham chiếu là ID ổn định (không dùng chỉ số mảng hay tên hiển thị).
- * - Gặp bản v1 (chưa phát hành) → xóa và tạo mới.
+ * - Gặp bản v1 (chưa phát hành) hoặc version lạ → xóa và tạo mới.
+ * - Gặp bản v2 → chuyển đổi sang v3 (giữ tiến trình, không xóa, không đụng ảnh).
  * - Tên Player chỉ nằm ở đây (cục bộ), không bao giờ đi vào analytics.
  */
 import type { ContentIndex } from '../content/indexContent';
 import type { FlagValue, Gender, Tone } from '../content/types';
 import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../config/camera';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 export const SAVE_KEY = 'htx.save';
 export const PLAYER_NAME_MAX = 12;
 
@@ -16,6 +17,11 @@ export type DayState = 'locked' | 'available' | 'in_progress' | 'completed';
 export type QuestState = 'locked' | 'available' | 'active' | 'completed' | 'missed';
 export type ArtifactState = 'hidden' | 'dim' | 'glowing' | 'visited' | 'on_shelf';
 export type EntryStatus = 'locked' | 'available' | 'owned';
+
+/** Thắng/thua/hòa theo khóa `{game_id}.{opponent_id}` (GDD 02 §4.2). Chỉ số, không có chữ tự do. */
+export interface MinigameRecord { wins: number; losses: number; draws: number; last_played: string | null }
+/** Kết quả LẦN ĐẦU của trò cốt truyện, dùng cho thoại. */
+export interface MinigameStoryRecord { result: 'win' | 'lose' | 'draw' | 'complete' | 'quit'; stars: number | null }
 
 export interface QuestRecord { state: QuestState; step_id: string | null; progress: string[] }
 export interface AlbumRecord { status: EntryStatus; variants: string[]; selected: number }
@@ -54,6 +60,10 @@ export interface SaveState {
   pde_done: string[];
   phone: Record<string, PhoneMessage[]>;
   public_demo_done: boolean;
+  minigames: Record<string, MinigameRecord>;
+  minigames_story: Record<string, MinigameStoryRecord>;
+  /** Đã mở Khu Vui Chơi chưa. */
+  hub: { unlocked: boolean };
   /** Kiểu điều khiển camera (chỉ lưu cục bộ, không vào analytics). Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn. */
   /** free_look: tùy chọn "Nhìn tự do" (khóa con trỏ, rê touchpad để nhìn); thiếu = tắt. */
   settings: { camera_mode: CameraModeId; free_look?: boolean };
@@ -64,7 +74,7 @@ export function newSave(attemptId: string): SaveState {
     v: SAVE_VERSION, attempt_id: attemptId, player_name: '', appearance: { gender: 'male', preset: 'default' }, profile_done: false,
     current: { memory_day_id: null, quest_id: null, step_id: null, replay: null },
     days: {}, quests: {}, flags: {}, artifacts: {}, album: {}, relationships: {}, pde_done: [], phone: {},
-    public_demo_done: false, settings: { camera_mode: DEFAULT_CAMERA_MODE },
+    public_demo_done: false, minigames: {}, minigames_story: {}, hub: { unlocked: false }, settings: { camera_mode: DEFAULT_CAMERA_MODE },
   };
 }
 
@@ -100,7 +110,7 @@ export class MemoryPhotoStore implements PhotoStore {
   async clear() { this.m.clear(); }
 }
 
-export type LoadStatus = 'new' | 'loaded' | 'reset_old_version' | 'reset_corrupt';
+export type LoadStatus = 'new' | 'loaded' | 'migrated' | 'reset_old_version' | 'reset_corrupt';
 
 export class SaveStore {
   constructor(private kv: KeyValueStore, private uuid: () => string = () => crypto.randomUUID()) {}
@@ -113,11 +123,18 @@ export class SaveStore {
     try { parsed = JSON.parse(raw); } catch { this.drop(); return { save: newSave(this.uuid()), status: 'reset_corrupt' }; }
     const p = parsed as Partial<SaveState> | null;
     if (!p || typeof p !== 'object') { this.drop(); return { save: newSave(this.uuid()), status: 'reset_corrupt' }; }
-    // Bản prototype chưa phát hành: v1 → xóa, không chuyển đổi. Từ v2 trở đi mỗi lần tăng `v` phải có bước chuyển đổi ở đây.
-    if (p.v !== SAVE_VERSION) { this.drop(); return { save: newSave(this.uuid()), status: 'reset_old_version' }; }
-    // điền các trường còn thiếu (file lưu v2 cũ hơn bản code) để không văng lỗi
-    const save = { ...newSave(typeof p.attempt_id === 'string' ? p.attempt_id : this.uuid()), ...p } as SaveState;
+    // v1 (prototype chưa phát hành) và version lạ: xóa, không chuyển đổi. Từ v2 trở đi mỗi lần tăng `v` phải có bước chuyển đổi ở đây.
+    const ver: unknown = p.v;
+    if (ver !== SAVE_VERSION && ver !== 2) { this.drop(); return { save: newSave(this.uuid()), status: 'reset_old_version' }; }
+    // điền các trường còn thiếu (file lưu cũ hơn bản code) để không văng lỗi
+    const save = { ...newSave(typeof p.attempt_id === 'string' ? p.attempt_id : this.uuid()), ...p, v: SAVE_VERSION } as SaveState;
     save.current = { ...newSave('').current, ...(p.current ?? {}) };
+    if (ver === 2) {
+      // v2 → v3: chỉ thêm trường mới (đã có mặc định ở trên). Không drop(), không đụng ảnh.
+      // Ghi v3 đè lên v2; nếu ghi lỗi thì bản v2 gốc còn nguyên trong máy và lần tải sau chuyển đổi lại.
+      this.persist(save);
+      return { save, status: 'migrated' };
+    }
     return { save, status: 'loaded' };
   }
 

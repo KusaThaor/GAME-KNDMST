@@ -6,12 +6,12 @@ import { makeConfig, makePack } from './fixtures/pack';
 
 const store = (kv = new MemoryKv()) => ({ kv, s: new SaveStore(kv, () => '11111111-1111-4111-8111-111111111111') });
 
-describe('SaveStore v2', () => {
-  it('chưa có gì → tạo file lưu mới v2, chưa ghi xuống máy', () => {
+describe('SaveStore v3', () => {
+  it('chưa có gì → tạo file lưu mới v3, chưa ghi xuống máy', () => {
     const { kv, s } = store();
     const r = s.load();
     expect(r.status).toBe('new');
-    expect(r.save.v).toBe(2);
+    expect(r.save.v).toBe(3);
     expect(r.save.attempt_id).toBe('11111111-1111-4111-8111-111111111111');
     expect(kv.getItem(SAVE_KEY)).toBeNull();
   });
@@ -34,7 +34,7 @@ describe('SaveStore v2', () => {
     kv.setItem(SAVE_KEY, JSON.stringify({ v: 1, chapter: 3, name: 'cũ' }));
     const r = s.load();
     expect(r.status).toBe('reset_old_version');
-    expect(r.save.v).toBe(2);
+    expect(r.save.v).toBe(3);
     expect(r.save.player_name).toBe('');
     expect(kv.getItem(SAVE_KEY)).toBeNull();
   });
