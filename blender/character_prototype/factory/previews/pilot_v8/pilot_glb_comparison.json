@@ -1,0 +1,835 @@
+{
+  "HAIR_001": {
+    "name": "Classic Bowl Cut",
+    "v2": {
+      "meshes": [
+        {
+          "name": "Hair_HAIR_001",
+          "tris": 1488
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 144
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 84
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 84
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 444
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_001",
+          "tris": 112
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_001_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 154
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 154
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Acc_Hair_Clip",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 168
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 80
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 80
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Acc_Hair_Clip",
+      "hairTris": 1732,
+      "hairVerts": 956,
+      "totalTris": 4202,
+      "matInfo": [
+        {
+          "name": "M_Acc_Clip_hair_hair_001",
+          "roughness": 0.30000001192092896,
+          "metalness": 0,
+          "color": "#f4b513"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "351.6"
+    },
+    "v8": {
+      "meshes": [
+        {
+          "name": "Hair_HAIR_001_v8",
+          "tris": 3776
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 180
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 154
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 154
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 556
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_001",
+          "tris": 224
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_001_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 252
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 252
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Hair_Cap",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Bangs",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_L",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_R",
+          "tris": 192
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Hair_Sideburn_R",
+      "hairTris": 4852,
+      "hairVerts": 2619,
+      "totalTris": 7622,
+      "matInfo": [
+        {
+          "name": "M_Hair_v8_hair_001",
+          "roughness": 0.7200000286102295,
+          "metalness": 0,
+          "color": "#2b201c"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "427.9"
+    }
+  },
+  "HAIR_004": {
+    "name": "Side-Parted Short",
+    "v2": {
+      "meshes": [
+        {
+          "name": "Hair_HAIR_004",
+          "tris": 1280
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 144
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 84
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 84
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 444
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_004",
+          "tris": 112
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_004_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 154
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 154
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Acc_Hair_Clip",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 168
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 80
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 80
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Acc_Hair_Clip",
+      "hairTris": 1524,
+      "hairVerts": 848,
+      "totalTris": 3994,
+      "matInfo": [
+        {
+          "name": "M_Acc_Clip_hair_hair_004",
+          "roughness": 0.30000001192092896,
+          "metalness": 0,
+          "color": "#f4b513"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "345.8"
+    },
+    "v8": {
+      "meshes": [
+        {
+          "name": "Hair_HAIR_004_v8",
+          "tris": 3952
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 180
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 154
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 154
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 556
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_004",
+          "tris": 224
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_004_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 252
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 252
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Hair_Cap",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Bangs",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_L",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_R",
+          "tris": 192
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Hair_Sideburn_R",
+      "hairTris": 5028,
+      "hairVerts": 2773,
+      "totalTris": 7798,
+      "matInfo": [
+        {
+          "name": "M_Hair_v8_hair_004",
+          "roughness": 0.7200000286102295,
+          "metalness": 0,
+          "color": "#241c19"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "435.6"
+    }
+  },
+  "HAIR_008": {
+    "name": "Twin Pigtails",
+    "v2": {
+      "meshes": [
+        {
+          "name": "Hair_Mesh_hair_hair_008",
+          "tris": 1784
+        },
+        {
+          "name": "Hair_Mesh_hair_hair_008_1",
+          "tris": 324
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 144
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 84
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 84
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 444
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_008",
+          "tris": 112
+        },
+        {
+          "name": "Footwear_Mesh_hair_hair_008_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 154
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 154
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Acc_Hair_Clip",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 168
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 80
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 80
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Acc_Hair_Clip",
+      "hairTris": 2352,
+      "hairVerts": 1286,
+      "totalTris": 4822,
+      "matInfo": [
+        {
+          "name": "M_Acc_Clip_hair_hair_008",
+          "roughness": 0.30000001192092896,
+          "metalness": 0,
+          "color": "#f4b513"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "370.6"
+    },
+    "v8": {
+      "meshes": [
+        {
+          "name": "Mesh",
+          "tris": 7632
+        },
+        {
+          "name": "Mesh_1",
+          "tris": 2304
+        },
+        {
+          "name": "Top_Torso_Mesh",
+          "tris": 180
+        },
+        {
+          "name": "Top_Sleeve_L",
+          "tris": 154
+        },
+        {
+          "name": "Top_Sleeve_R",
+          "tris": 154
+        },
+        {
+          "name": "Top_Collar",
+          "tris": 48
+        },
+        {
+          "name": "Bottom_Mesh",
+          "tris": 556
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_008",
+          "tris": 224
+        },
+        {
+          "name": "Footwear_Mesh_v8_hair_008_1",
+          "tris": 84
+        },
+        {
+          "name": "Socks_Mesh",
+          "tris": 112
+        },
+        {
+          "name": "Body_Arm_Skin_L",
+          "tris": 252
+        },
+        {
+          "name": "Body_Arm_Skin_R",
+          "tris": 252
+        },
+        {
+          "name": "Acc_Glasses",
+          "tris": 50
+        },
+        {
+          "name": "Body_Head",
+          "tris": 340
+        },
+        {
+          "name": "Ear_L",
+          "tris": 48
+        },
+        {
+          "name": "Ear_R",
+          "tris": 48
+        },
+        {
+          "name": "Hair_Cap",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Bangs",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_L",
+          "tris": 192
+        },
+        {
+          "name": "Hair_Sideburn_R",
+          "tris": 192
+        },
+        {
+          "name": "Nose",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_L",
+          "tris": 48
+        },
+        {
+          "name": "Eyebrow_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_L",
+          "tris": 48
+        },
+        {
+          "name": "Eye_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL1_R",
+          "tris": 48
+        },
+        {
+          "name": "Eye_HL2_R",
+          "tris": 48
+        },
+        {
+          "name": "Mouth",
+          "tris": 48
+        },
+        {
+          "name": "Blush_L",
+          "tris": 48
+        },
+        {
+          "name": "Blush_R",
+          "tris": 48
+        }
+      ],
+      "hairMeshName": "Hair_Sideburn_R",
+      "hairTris": 1076,
+      "hairVerts": 698,
+      "totalTris": 13782,
+      "matInfo": [
+        {
+          "name": "M_Hair_v8_hair_008",
+          "roughness": 0.7200000286102295,
+          "metalness": 0,
+          "color": "#2b201c"
+        }
+      ],
+      "anims": 16,
+      "sizeKB": "600.2"
+    }
+  }
+}
