@@ -2,9 +2,9 @@
 
 | Trường | Giá trị |
 |---|---|
-| Phiên bản | **v1.0 APPROVED** |
-| Ngày cập nhật | 20/11/2026 (UTC+7) |
-| Trạng thái | **APPROVED** — chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
+| Phiên bản | **v1.1-draft** (nền v1.0 APPROVED 20/11) |
+| Ngày cập nhật | 21/11/2026 (UTC+7) |
+| Trạng thái | **v1.0 APPROVED 20/11; v1.1-draft đổi Trang 6 theo chỉ đạo 21/11 (Hòm thư Valentine vào Main) — phần đổi chờ chủ dự án duyệt lại** (các mục khác vẫn APPROVED). Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
 | Phạm vi file | Tầm nhìn, vòng chơi cốt lõi, cấu trúc Mốc/Trang, art direction, bản đồ và luồng di chuyển |
 | File đi kèm | `01_NARRATIVE_AND_SCENES.md` · `02_GAMEPLAY_AND_MECHANICS.md` · `03_ASSETS_AND_AUDIO.md` |
 | Nguồn tổng hợp | Project Knowledge: `GDD_MASTER_v1_DRAFT` v1.1, `GDD.md` v0.3, `MEMORY_ALBUM_SYSTEM_v1`, `NARRATIVE_TIMELINE_BIBLE_v1`, `OPEN_DECISIONS_REGISTER_v1`, `06_VISUAL_BIBLE_STATUS` v0.3. Lịch sử chat: review kịch bản 19/11 (`REVIEW_KICH_BAN_M1_M2_v2`), kịch bản `KICH_BAN_DEMO_M1_M2_v1.md` v1.4 (19–20/11), quyết định chủ dự án 19/11 |
@@ -75,7 +75,7 @@ Năm 2026, `{player_name}` 23 tuổi, sống một mình, lục ra một thùng 
 | 4 | `d.g07.03` | Đủ năm đứa | Cuối lớp 7 | Ảnh nhóm bị ố |
 | — | — | *Chuyển Mốc ở phòng 2026* | "Mấy năm sau…" | Hộp phấn (mở Trang 5) |
 | 5 | `d.g08.01` | Lên lớp 8 (có ván caro) | Khai giảng lớp 8 · 9/2016 | **KV-01:** hộp phấn còn một mẩu, nắp ghi tỉ số caro |
-| 6 | `d.g08.02` | Confession | Sau Tết lớp 8 · 2/2017 | Tờ giấy vẽ chiếc lá, góc ghi "Chưa dám đưa" |
+| 6 | `d.g08.02` | **Valentine — Hòm thư của năm đứa** *(trước: Confession; **CONFIRMED 21/11**: hòm thư Valentine nghĩa mới ở Main; tên hiển thị PROPOSED)* | Sau Tết lớp 8 · 2/2017 (đi học lại 6/2 → Valentine thứ Ba 14/2) | Tờ giấy vẽ chiếc lá, góc ghi "Chưa dám đưa" |
 | 7 | `d.g09.01` | Tờ báo tường cuối cùng (có Sudoku) | Học kỳ I lớp 9 · 9–11/2017 | Bản báo tường thu nhỏ A5 |
 | 8 | `d.g09.02` | Rã băng | Học kỳ II lớp 9 · 27/1/2018 + Hội trại | Tờ lịch 1/2018 khoanh ngày 27 |
 | 9 | `d.g09.03` | Vẫn đủ năm đứa | Cuối lớp 9 · 5/2018 | Sổ lưu bút bìa kraft |
@@ -142,7 +142,7 @@ Mọi trò nhỏ trong kịch bản quy về 6 kiểu. Từ 20/11 (CONFIRMED), n
 
 *(Luồng: PROPOSED 19/11. Thứ tự "ghi hoàn thành trước form": CONFIRMED 13/11.)*
 
-**Phạm vi bắt buộc (Tầng A):** chuỗi Main của 9 Trang; Hội trại Phần 1 và Phần 4; điểm kết nhắn tin. **Tầng B (nếu kịp):** lật chai; Khu Vui Chơi Căn cứ (Bắn bi ve, Ô ăn quan, Nhảy lò cò); một số Side Mốc 1. **Tầng C (sau public):** Side, Daily còn lại, Hội trại Phần 2–3. *(Phạm vi M1 + M2: CONFIRMED 19/11. Danh sách nâng/gộp/lùi từng Side: còn mở — nhóm chốt.)*
+**Phạm vi bắt buộc (Tầng A):** chuỗi Main của 9 Trang (Trang 6 gồm **hòm thư Valentine bản rút gọn**, `02` §2.5); Hội trại Phần 1 và Phần 4; điểm kết nhắn tin. **Tầng B (nếu kịp):** lật chai; nhánh buổi chiều Valentine bản đầy đủ (`02` §2.5.3); Khu Vui Chơi Căn cứ (Bắn bi ve, Ô ăn quan, Nhảy lò cò); một số Side Mốc 1. **Tầng C (sau public):** Side, Daily còn lại, Hội trại Phần 2–3. *(Phạm vi M1 + M2: CONFIRMED 19/11. Danh sách nâng/gộp/lùi từng Side: còn mở — nhóm chốt.)*
 
 ---
 
@@ -153,7 +153,7 @@ Mọi trò nhỏ trong kịch bản quy về 6 kiểu. Từ 20/11 (CONFIRMED), n
 |---|---|---|---|
 | `hub_room` | Phòng 2026 | Mở đầu, giữa các Trang, chuyển Mốc, kết demo | CONFIRMED (góc cố định) |
 | `map_thcs` | Trường THCS + cổng + ngõ quà vặt + Căn cứ; một bản đồ dùng chung lớp 6–9 | Trang 1–9 | CONFIRMED 14/11 (dùng chung); đang dựng |
-| Màn hình 2D | Trang confession, điện thoại, nhóm chat | Trang 6, kết demo | PROPOSED |
+| Màn hình 2D | Trang confession, điện thoại, nhóm chat; **giao diện làm hòm thư và chọn thư Valentine** | Trang 6, kết demo | PROPOSED |
 | `map_town`, `map_thpt_p` | Khu phố, trường cấp 3 | Mốc 3 | Ngoài bản public |
 
 Biến thể theo năm học = **bộ trang trí + bộ ánh sáng/thời tiết**, không dựng lại bản đồ. *(PROPOSED)*
@@ -163,8 +163,8 @@ Biến thể theo năm học = **bộ trang trí + bộ ánh sáng/thời tiết
 |---|---|---|
 | **Z01 Lớp học** | Bàn ghế đôi, bảng đen, bục giảng, góc báo tường, bảng đếm ngược (lớp 9) | 1, 5, 6, 7 |
 | **Z02 Sân trường** | Cột cờ, ghế đá, cây phượng, cây bàng, vòng đá cầu, cột bóng rổ góc sân | 1, 4, 5, 6 (ghế đá), 8 (đất trại), 9 |
-| **Z02b Hành lang + mái hiên** | Bảng phân lớp, lối vào lớp, mái hiên trú mưa, rãnh nước thả thuyền | 1, 2, 6 |
-| **Z03 Cổng + ngõ quà vặt** | Cổng sắt, xe quà vặt (chỗ lật chai, thay cho căn-tin), tiệm tạp hóa (bậc thềm, tivi, ghế nhựa) | 1, 5, 8, 9 |
+| **Z02b Hành lang + mái hiên** | Bảng phân lớp, lối vào lớp, mái hiên trú mưa, rãnh nước thả thuyền | 1, 2, 6 *(Trang 6: trêu lần 1; nhánh "Một vòng sân trường" của Hạ)* |
+| **Z03 Cổng + ngõ quà vặt** | Cổng sắt, xe quà vặt (chỗ lật chai, thay cho căn-tin), tiệm tạp hóa (bậc thềm, tivi, ghế nhựa) | 1, 5, **6** *(nhánh Kèo ăn vặt, Danh sách mua sắm)*, 8, 9 |
 | **Z04 Bãi đất trống** | Đất, cỏ, vũng nước | Ít dùng ở bản public |
 | **Z05 Căn cứ bí mật** | Trong trường, góc sân sau gần nhà kho. Mái che, gốc cây, thùng giấy, bàn kê, biển tên; **Khu Vui Chơi Tuổi Thơ** (Ô ăn quan, Nhảy lò cò, Bắn bi ve) mở sau Trang 3 | 3, 4, 6, 7, 9 |
 
@@ -213,7 +213,7 @@ Các địa điểm khác từng xuất hiện trong bản nháp (thư viện, n
 | 3 | Z02 → góc sân sau → Z05 |
 | 4 | Z02 gốc phượng → mưa → Z05 → gốc phượng |
 | 5 | Z02 (khai giảng; Đức ở xe quà vặt Z03; Quân ở cột rổ; Hạ ở gốc phượng) → Z01 (trực nhật, caro) → cổng |
-| 6 | Z05 → hành lang → Z01 → ghế đá Z02 (lần trêu thứ ba) → Z02 (quét sân) |
+| 6 | Cảnh A: Z05 (đọc confession, **làm hòm thư**) → Cảnh B: hành lang Z02b → Z01 → ghế đá Z02 (lần trêu thứ ba) → Z05 (kế hoạch, giữ giùm, xin lỗi) → Z02 (quét sân) → Cảnh C: Z01 (tiết Toán) → cột rổ Z02 → Cảnh D (14/2): Z05 (viết thư) → buổi chiều theo thư: Z03 xe quà vặt / Z03 tạp hóa / cột rổ Z02 / Z02-Z02b / Z05 (nhánh chung) → Z05 (mở hòm thư, ảnh nhóm) |
 | 7 | Z01 → Z05 → Z01 |
 | 8 | Z03 tạp hóa (xem bóng đá) → Z02 đất trại (đêm) → cổng |
 | 9 | Z02 (bế giảng) → Z05 → gốc phượng → cutscene ba cổng trường |
@@ -233,7 +233,7 @@ Các địa điểm khác từng xuất hiện trong bản nháp (thư viện, n
 | Sổ tay | J hoặc Tab: mục tiêu, Side, Album |
 | Thoát kẹt | Esc → "Về chỗ an toàn" |
 | Phòng 2026 | Góc cố định; rê chuột làm sáng vật; click/E để chọn; không đi lại |
-| Màn hình 2D (điện thoại, confession) | Click để mở, Esc để đóng |
+| Màn hình 2D (điện thoại, confession, **chọn thư Valentine**) | Click để mở, Esc để đóng |
 
 Máy ảnh là **của Player** (CONFIRMED 19/11). Không thiết kế cho cảm ứng/màn hình dọc ở bản public.
 
@@ -310,8 +310,11 @@ Mốc 3; hội ngộ và ending; Player trưởng thành xuất hiện trên mà
 | 8 | Nhân vật | **CONFIRMED 20/11:** model 3D có xương, 1,3–1,5 m |
 | 9 | Danh sách Side nâng/gộp/lùi | **Còn mở:** nhóm chốt |
 | 10 | Nhân lực | **Còn mở:** chốt D-10 |
+| 11 | Hòm thư Valentine (Trang 6) | **CONFIRMED 21/11 (chủ dự án):** vào luồng Main, nghĩa mới theo bản sửa của nhóm; câu "Không có hòm thư" của chỉ đạo 19/11 hết hiệu lực. Nghĩa cũ "thả thính" vẫn SUPERSEDED |
+| 12 | Trang 6 sau thay đổi | **PROPOSED 21/11, CẦN CHỐT:** #1 giữ mạch confession của Hạ cùng hòm thư · #2 4 cảnh thay vì 1–3 · #3 Tầng A/B cho nhánh chiều · #4 lời thư, phản ứng · #5 ảnh chính · #6 bảng nội quy. Chi tiết: `docs/gdd/REVISION_REVIEW_FIX_C_21-11.md` |
 
 ## 12. Changelog
+- **v1.1-draft — 21/11/2026:** Chủ dự án chỉ đạo đưa **Hòm thư Valentine vào luồng Main** (Trang 6) với nghĩa mới theo bản sửa của nhóm. Đổi dòng Trang 6 ở §2.2 (tên "Valentine — Hòm thư của năm đứa", mã giữ), §4 (phạm vi Tầng A/B), §5.1–5.3 (màn hình 2D, vùng dùng, tuyến đi), §6 (điều khiển), §11 (quyết định 11–12). Chi tiết ở `01` Trang 6, `02` §2.5, `03` §Hòm thư Valentine. Các mục khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Ghi thêm: Sudoku ở Trang 7, caro ở Trang 5, lần trêu thứ ba ở ghế đá, năm học 2014–2015 trong ô hướng dẫn Project. Hai bản nháp trước đổi tên thành v1.0-draft và v1.1-draft.
 - **v1.1-draft — 20/11/2026 (tối):** Ghi các quyết định chủ dự án 20/11: cấu trúc 9 Trang; phòng 2026 tươi sáng từ đầu; Căn cứ trong trường; không dựng căn-tin, dùng Z03; Hội trại ở sân trường tháng 3/2018; nhân vật là model 3D có xương 1,3–1,5 m; minigame chơi thật có thắng/thua nhưng không chặn truyện; Căn cứ thành Khu Vui Chơi Tuổi Thơ. Còn mở 3 điểm.
 - **v1.0-draft — 20/11/2026:** Bản đầu, tổng hợp từ 8 tài liệu GDD v1 DRAFT, `GDD.md` v0.3 và các quyết định 19/11 (phạm vi Mốc 1 + Mốc 2, đơn vị "Trang", máy ảnh của Player, KV-01 hộp phấn, chia 3 trường, Điều 6, D-01, D-05). Không thêm tính năng mới. Ghi 10 điểm [CẦN CHỐT LẠI].

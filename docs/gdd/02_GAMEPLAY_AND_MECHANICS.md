@@ -2,9 +2,9 @@
 
 | Trường | Giá trị |
 |---|---|
-| Phiên bản | **v1.0 APPROVED** |
-| Ngày cập nhật | 20/11/2026 (UTC+7) |
-| Trạng thái | **APPROVED** — chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
+| Phiên bản | **v1.1-draft** (nền v1.0 APPROVED 20/11) |
+| Ngày cập nhật | 21/11/2026 (UTC+7) |
+| Trạng thái | **v1.0 APPROVED 20/11; v1.1-draft thêm §2.5 (Hòm thư Valentine, chỉ đạo 21/11) — phần thêm chờ chủ dự án duyệt lại** (các mục khác vẫn APPROVED). Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
 | File liên quan | `00_MASTER_GDD.md` (vòng chơi, bản đồ) · `01_NARRATIVE_AND_SCENES.md` (kịch bản 9 Trang) · `03_ASSETS_AND_AUDIO.md` (asset, âm thanh) |
 | Nguồn | Quyết định chủ dự án 20/11 (minigame chơi thật; Khu Vui Chơi ở Căn cứ; lưu trữ), `GDD.md` v0.3 §3, §5, §7, §11, §13, review kịch bản 19/11 (6 kiểu tương tác K1–K6), `07_ANALYTICS_REQUIREMENTS` |
 
@@ -18,6 +18,7 @@
 | 5 | Căn cứ bí mật (Z05) thành **Khu Vui Chơi Tuổi Thơ**: chọn 1 trong 4 bạn làm đối thủ = chọn độ khó; Ô ăn quan, Nhảy lò cò, Bắn bi ve | CONFIRMED 20/11 |
 | 6 | Lưu tiến trình, ảnh, bảng thắng/thua **trên máy người chơi** (localStorage + IndexedDB); Firebase **chỉ** cho số liệu ẩn danh và form phản hồi | CONFIRMED 20/11 (khớp quyết định 13/11) |
 | 7 | Luật mặc định của Caro, Sudoku, Ô ăn quan, Lò cò, Bi ve giữ như file này; mọi quy tắc được giải thích bằng màn hướng dẫn ngay trong game | CONFIRMED 20/11 |
+| 8 | **Hòm thư Valentine** là sự kiện **Main** của Trang 6, nghĩa mới theo bản sửa của nhóm; luật ở §2.5 | **CONFIRMED 21/11** (chỉ đạo chủ dự án); luật chi tiết PROPOSED |
 
 **Thay đổi so với nguyên tắc cũ:** nguyên tắc "không có thua" (13/11) đổi thành **"minigame có thắng/thua, nhưng thua không bao giờ chặn câu chuyện"**. Phần "không có thua" cũ: SUPERSEDED.
 
@@ -232,6 +233,72 @@ Mọi trò dưới đây là các kiểu K1–K6 (`00` §3.3), nay có luật th
 | Cổ vũ theo trống | 8 | K5 | 16 nhịp trống; bấm Space đúng nhịp, cửa sổ như đá cầu | ≥ 60% nhịp Được trở lên = "cả tiệm hò theo" | < 60%: vẫn đi tiếp, đổi một câu thoại |
 | Ký áo, lưu bút | 9 | K3/K1 | Chọn chỗ ký, chọn câu đáp | Đủ 4 bạn | Không có |
 | Ấn dấu tay vào ô A5 | 9 | K3 | Kéo 5 dấu tay màu vào ô | Đủ 5 | Không có |
+| Làm hòm thư Valentine | 6 | K3 | 5 bước: màu nền · dán 3 mặt · trang trí · khe + ngăn chung + nắp · bảng nội quy (`§2.5.1`) | Đủ 5 bước | Không có |
+| Viết thư Valentine | 6 | K1/K3 | Chọn người nhận → chọn nội dung → bỏ vào khe (`§2.5.2`) | Bỏ thư vào hòm | Không có |
+| Nhánh buổi chiều Valentine | 6 | K3/K5/K2 | Theo thư đã gửi; Tầng A rút gọn, Tầng B đầy đủ (`§2.5.3`) | Xem `§2.5.3` | Không có |
+
+### 2.5 Hòm thư Valentine (Trang 6 · Main) *(CONFIRMED 21/11: Main, nghĩa mới; luật chi tiết PROPOSED)*
+Hòm thư tình bạn của năm đứa ở Căn cứ (Z05). Lời thoại nằm ở kịch bản `scripts/KICH_BAN_DEMO_M1_M2_v1.md` (Trang 6, Cảnh A và D); `01` Trang 6 tóm theo bước. Mục này chỉ ghi **luật chơi**, tách **Tầng A** (bắt buộc, nằm trên đường chơi) và **Tầng B** (nâng cấp nếu còn thời gian) theo thang của `00` §4.
+
+**Nguyên tắc chung:** không có trạng thái thất bại; không có lựa chọn "sai"; mọi nhánh hợp lệ đều có đường đi tiếp; lời thư, phản ứng và câu chốt đều **chọn từ danh sách cố định** (không nhập chữ tự do — không có dữ liệu cá nhân trong lưu và số liệu đo).
+
+#### 2.5.1 Làm hòm thư (Trang 6 Cảnh A · K3 · Main · Tầng A)
+| Bước | Người chơi làm | Điều kiện xong | Ghi chú |
+|---|---|---|---|
+| 1 · Màu nền | Chọn 1 trong vài màu giấy | Đã chọn | Màu lưu vào `boxStyle` |
+| 2 · Dán giấy | Kéo giấy phủ **3 mặt** hộp | Đủ 3 mặt | Dán lệch thì bóc ra dán lại |
+| 3 · Trang trí | Kéo trái tim, ngôi sao, họa tiết tự vẽ lên hộp | Đặt ≥ 1 món | Họa tiết lưu vào `boxStyle` |
+| 4 · Khe + ngăn chung + nắp | Gắn khe bỏ thư, **ngăn chung** của Hạ, kiểm tra nắp (Quân gia cố đáy) | Đủ 3 món | Quân/Hạ nhắc nếu quên |
+| 5 · Bảng nội quy | Chọn kiểu bảng; **gắn đủ 3 điều**: không tự ý lấy thư · không đọc thư riêng trước đám đông · thư gửi cả nhóm thì đọc chung | Đã gắn bảng | **[CẦN CHỐT #6]** — bản sửa của nhóm chỉ nói "chọn bảng nội quy", không có phương án khác nhau về nội dung |
+- Thiếu vật liệu thì Đức/Châu nhắc món còn thiếu (cùng cơ chế gợi ý ở Dựng Căn cứ). **Xong** khi 5 bước đã làm → hòm thư đặt vào Căn cứ → cảnh kết thúc. Hòm thư **ở lại Căn cứ** tới hết Trang 9.
+
+#### 2.5.2 Viết thư và quy tắc nhánh (Trang 6 Cảnh D bước 1 · Main · Tầng A)
+- **Người nhận:** Đức / Châu / Quân / Hạ / **cả nhóm**.
+- **Gửi riêng một bạn:** chọn 1 trong 3 loại — **cảm ơn · trêu chọc · rủ làm việc chung**. Mỗi bạn có 3 lời thư viết sẵn (xưng hô theo `01` §2.3).
+- **Gửi cả nhóm:** chọn 1 trong 4 câu viết sẵn, hoặc **vẽ một bức tranh nhỏ về cả nhóm** (kéo thả hình có sẵn: năm nhân vật, trái tim, ngôi sao).
+- **Quy tắc mở nhánh buổi chiều:**
+
+| Player gửi | Nhánh buổi chiều |
+|---|---|
+| Thư **"rủ làm việc chung" gửi riêng** cho Đức / Châu / Quân / Hạ | Nhánh **riêng** với bạn đó (§2.5.3) |
+| Thư "cảm ơn" hoặc "trêu chọc" gửi riêng; **mọi** thư gửi cả nhóm | Nhánh **chung** "Một buổi Valentine của năm đứa" (§2.5.3) |
+
+- Chỉ đi **một** nhánh trong một lần chơi. Chơi lại Trang thì chọn lại (theo menu "Chơi lại một Trang", `§4.3`).
+- Phản ứng của bạn nhận khi mở thư riêng (giờ ra chơi) và câu chốt buổi tối thay đổi theo **loại thư** (3 loại × 4 bạn; riêng thư cả nhóm có một câu chốt chung). Lời mẫu ở kịch bản.
+
+#### 2.5.3 Nhánh buổi chiều (Trang 6 Cảnh D bước 3 · Main)
+Mỗi nhánh **luôn có bản Tầng A** (khoảng 1–2 phút, không có thua) để cảnh không bao giờ bị chặn. Tầng B là minigame đầy đủ theo bản sửa của nhóm, làm nếu còn thời gian — nếu chưa làm xong thì giữ Tầng A, không đổi gì ở câu chuyện. **[CẦN CHỐT #3 — mặc định Tầng A]**
+
+| Nhánh | Nơi | Tầng A (rút gọn) | Tầng B (đầy đủ) | Thắng / hoàn thành | Thua |
+|---|---|---|---|---|---|
+| **Kèo ăn vặt** (Đức) | xe quà vặt Z03 | Chọn 1 món cho mình + 1 món để chia trong 3 món có giá ghi sẵn; Đức phản ứng theo lựa chọn | **"Chọn món trong ngân sách"** — giỏ hàng, tổng tiền ≤ ngân sách của Đức, ít nhất 1 món cho mình và 1 món chia | Chọn xong (A); tổng ≤ ngân sách và đủ 2 loại món (B) | Không có; vượt ngân sách thì Đức nhắc "bỏ bớt một món" và giỏ hàng giữ nguyên để chỉnh |
+| **Danh sách mua sắm** (Châu) | tiệm tạp hóa Z03 | Nhặt 3 món Châu đọc (băng keo, ghim giấy, 1 món cho Căn cứ) trên kệ | Tìm đúng món trong danh sách có giá và ngân sách; món hết hàng thì chọn món thay thế Châu chấp nhận | Đủ 3 món (A); đủ danh sách trong ngân sách (B) | Không có; chọn sai thì Châu nói "món này không có trong sổ" và bỏ lại kệ |
+| **Thử thách ném rổ** (Quân) | cột rổ Z02 | Ném 3 lần (kéo thả như đá cầu, `§2.4.1`); kết quả nào cũng đi tiếp | **"Ném bóng tính điểm"** — 3 vòng gần → xa, vạch lực xanh-vàng-đỏ, đạt ngưỡng điểm | 3 lần ném (A); đạt ngưỡng điểm cả 3 vòng (B) | Không có; chưa đạt ngưỡng thì chơi lại vòng, không thua hẳn |
+| **Một vòng sân trường** (Hạ) | gốc phượng, hành lang, bầu trời (Z02, Z02b) | Chụp **1** ảnh theo gợi ý bố cục của Hạ (`§2.4.5`) | **"Săn góc ảnh"** — 3 địa điểm, 3 ảnh theo gợi ý; chụp lại không giới hạn; Hạ chọn ảnh yêu thích vào Album | Giữ 1 ảnh (A); giữ đủ 3 ảnh (B) | Không có |
+| **"Một buổi Valentine của năm đứa"** (nhánh chung) | Căn cứ Z05 | **(1) Trang trí Căn cứ** (4 nhóm vật phẩm: đồ treo, đồ đặt bàn, ảnh/kỷ niệm, vật trang trí trung tâm; K3) + **(2) "Đoán xem ai là người…"** (5 câu, chọn 1 trong 5 người; **không có đúng sai**). Đồ ăn: Đức mang tới, không chơi | Bốn trò: **Lập kế hoạch** (kéo 3 thẻ việc vào 3 ô thời gian) · **Chuẩn bị đồ ăn** (giỏ hàng, ngân sách chung 5 người) · **Trang trí Căn cứ** · **"Đoán xem ai là người…"** | Làm xong các việc trong bước (A); xong cả 4 trò (B) | Không có |
+
+- **Ảnh phụ:** nhánh riêng cho **ảnh "Player × bạn"** (cầm tay, tự động đủ 3 dấu vì chỉ hai người); nhánh chung không có ảnh phụ riêng (ảnh nhóm chụp ở bước 5).
+- **Không có căn-tin:** trò "Chuẩn bị đồ ăn" (Tầng B) mua ở **xe quà vặt Z03**; bản sửa của nhóm ghi "quầy căn tin" — đã đổi theo CONFIRMED 20/11 (`00` §5).
+- **Ngân sách và giá** (Kèo ăn vặt, Chọn món, Chuẩn bị đồ ăn): bản sửa của nhóm **không ghi con số** → người làm nội dung đặt giá trị khởi điểm khi dựng (PROPOSED), chỉnh khi chơi thử.
+- **Khu Vui Chơi:** Hạ không nhận chơi chỉ trong Cảnh B (tới khi Đức xin lỗi xong); Cảnh D không còn khóa (`§3.1`).
+- Dữ liệu minigame lưu theo `§4.2`; số liệu đo theo `§5.1`.
+
+#### 2.5.4 Mở hòm thư và ảnh nhóm (Trang 6 Cảnh D bước 4–5 · Main · Tầng A)
+| Bước | Người chơi làm | Điều kiện xong |
+|---|---|---|
+| 4 · Mở hòm thư | Nghe Đức đọc to **bốn tờ của ngăn chung** (mỗi bạn một tờ) và, nếu Player gửi cả nhóm, tờ của Player (kèm bức tranh nếu có). Bạn nhận nhắc lại thư riêng của Player **không đọc to nội dung**. Nếu đi nhánh riêng: nút **"Cho mọi người xem / Giữ riêng"** cho ảnh "Player × bạn" | Hết lượt thoại |
+| 5 · Ảnh nhóm | Chụp **hẹn giờ** (`§2.4.5`), hòm thư nằm trong khung (vật nền, không bắt buộc cho điều kiện "Đủ người") | Bấm "Giữ ảnh này" (không chặn truyện dù thiếu dấu) |
+- **Hết Trang 6** khi giữ ảnh nhóm Valentine.
+
+#### 2.5.5 Kiểm "mọi đường đều đi tiếp" *(để dev và người kiểm thử đối chiếu)*
+| Điểm rẽ | Mọi lựa chọn hợp lệ | Đi tiếp đến |
+|---|---|---|
+| Cảnh A bước 3 | Thiếu vật liệu / dán lệch | Gợi ý của Đức/Châu; không khóa |
+| Cảnh D bước 1 | 4 bạn × 3 loại + cả nhóm (4 câu + tranh) = **17 lựa chọn** | Bước 2 |
+| Cảnh D bước 3 | 4 nhánh riêng + 1 nhánh chung | Bước 4 |
+| Cảnh D bước 3 (minigame Tầng B) | Thắng hoặc chưa đạt | Làm lại vòng hoặc về Tầng A; không thua hẳn |
+| Cảnh D bước 4 | Bất kỳ loại thư nào | Bước 5 (ảnh nhóm) |
+| Cảnh D bước 5 | Ảnh đủ hoặc thiếu dấu | Hết Trang 6 |
 
 ---
 
@@ -244,7 +311,7 @@ Mọi trò dưới đây là các kiểu K1–K6 (`00` §3.3), nay có luật th
 | Cách vào | Đi tới Căn cứ → tương tác **"Bảng trò chơi"** (một tấm bìa carton dựng cạnh biển tên) |
 | Màn chọn | Chọn trò → chọn **đối thủ** trong 4 bạn → bắt đầu |
 | Đối thủ có mặt | Chỉ chọn được bạn **đang có mặt trong cảnh** của Trang đó; bạn vắng hiện mờ "Hôm nay [tên] không ở đây" *(PROPOSED)* |
-| Khóa tạm | Mỗi Trang có thể khai báo các bước khóa Khu Vui Chơi (ví dụ Trang 7 cảnh C lúc Châu ngồi một mình; Trang 9 lúc dọn Căn cứ) và các bạn không nhận chơi (ví dụ Hạ ở Trang 6 sau khi bị trêu) *(PROPOSED)* |
+| Khóa tạm | Mỗi Trang có thể khai báo các bước khóa Khu Vui Chơi (ví dụ Trang 7 cảnh C lúc Châu ngồi một mình; Trang 9 lúc dọn Căn cứ) và các bạn không nhận chơi (ví dụ Hạ ở Trang 6 Cảnh B, từ lúc bị trêu tới khi Đức xin lỗi xong; sang Cảnh D không còn khóa) *(PROPOSED)* |
 | Ảnh hưởng truyện | Không. Thắng/thua ở đây chỉ vào **bảng tỉ số** |
 | Bảng tỉ số | Ghi trong trang **"Bảng tỉ số"** của sổ luật Căn cứ: mỗi trò × mỗi bạn: thắng – thua – hòa. Ở phòng 2026, lật sổ luật xem lại được *(PROPOSED)* |
 
@@ -360,6 +427,12 @@ Chọn đối thủ = chọn độ khó. Mỗi bạn giỏi trò khác nhau, đ�
 | `minigames.bottle.best` | Điểm cao nhất; đã đứng nắp chưa; mã ảnh khoảnh khắc |
 | `minigames.boat.result`, `.footbag.result`, … | Kết quả lần đầu của các trò cốt truyện (dùng cho thoại) |
 | `hub.unlocked` | Đã mở Khu Vui Chơi chưa |
+| `story.valentine.recipient` | `duc` / `chau` / `quan` / `ha` / `group` — người nhận thư Valentine của Player *(PROPOSED)* |
+| `story.valentine.kind` | `thanks` / `tease` / `invite` (gửi riêng) hoặc `group_text` / `group_drawing` (gửi cả nhóm) *(PROPOSED)* |
+| `story.valentine.groupMsg` | Mã của **câu viết sẵn** đã chọn khi gửi cả nhóm (không lưu chữ tự do) *(PROPOSED)* |
+| `story.valentine.boxStyle` | Màu nền + họa tiết hòm thư, dùng lại ở Căn cứ Trang 7, 9 và ảnh nhóm *(PROPOSED)* |
+| `minigames.valentine.branch.result` | Nhánh buổi chiều đã đi và đã xong ở Tầng A hay B; dùng cho thoại, không chặn truyện *(PROPOSED)* |
+*(Nhánh buổi chiều **suy ra** từ `recipient` + `kind` theo bảng ở `§2.5.2`, không lưu riêng. Chỉ thêm các trường trên vì thoại và hình hòm thư ở các Trang sau cần chúng.)*
 
 ### 4.3 Lưu khi nào
 - Tự động ở đầu mỗi cảnh, đầu mỗi bước Main, khi có kết quả minigame, khi về phòng 2026.
@@ -379,6 +452,7 @@ Chọn đối thủ = chọn độ khó. Mỗi bạn giỏi trò khác nhau, đ�
 | `minigame_started` | Bắt đầu một ván | `game_id`, `context` (`story` / `hub` / `side`), `page_id`, `opponent_id`, `difficulty` |
 | `minigame_finished` | Có kết quả | như trên + `result` (`win`/`lose`/`draw`/`complete`/`quit`), `duration_s`, `stars`, `hints_used` (Sudoku), `score` (lật chai) |
 | `hub_opened` | Mở Bảng trò chơi ở Căn cứ | `page_id` |
+| `valentine_letter_sent` | Player bỏ thư Valentine vào hòm (Trang 6) *(PROPOSED, tùy chọn)* | `recipient_id` (`duc`/`chau`/`quan`/`ha`/`group`), `kind` (`thanks`/`tease`/`invite`/`group_text`/`group_drawing`) — **chỉ mã chọn sẵn, không nội dung tự do** |
 | `end_message_sent` | Gửi tin ở kết demo | `tone` (`playful`/`gentle`/`deep`) — **không** gửi nội dung |
 | `public_demo_completed` | Sau khi gửi tin, **trước** khi mở form | — |
 
@@ -392,16 +466,17 @@ Hạn chuẩn bị bản đo là **04/12** (còn khoảng 14 ngày tính từ 20
 | Ưu tiên | Hạng mục | Lý do |
 |---|---|---|
 | 1 | Khung minigame chung (§1), lưu (§4), event đo (§5) | Mọi trò dùng chung |
-| 2 | Các trò K trong 9 Trang (§2.4) + chụp ảnh | Nằm trên đường chơi bắt buộc |
+| 2 | Các trò K trong 9 Trang (§2.4) + chụp ảnh + **Hòm thư Valentine Tầng A (§2.5)** | Nằm trên đường chơi bắt buộc |
 | 3 | Caro (§2.1) | Trong Main Trang 5 |
 | 4 | Sudoku (§2.2) | Trong Main Trang 7 |
 | 5 | Lật chai (§2.3) | Side tùy chọn |
+| 5a | Hòm thư Valentine — nhánh buổi chiều **Tầng B** (§2.5.3) | Nâng từ bản rút gọn lên minigame đầy đủ; không nằm trên đường bắt buộc |
 | 6 | Khu Vui Chơi: **Bắn bi ve** | Vật lý đơn giản, dễ làm nhất trong 3 trò |
 | 7 | Khu Vui Chơi: **Ô ăn quan** | Luật và AI tốn công nhất |
 | 8 | Khu Vui Chơi: **Nhảy lò cò** | Cần thêm hoạt ảnh nhảy, cúi, ném |
 | 9 | Trò mở rộng (§3.6), "Sổ đố của Châu" | Tầng C |
 
-Thang cắt nếu thiếu thời gian (cắt từ dưới lên): bỏ 9 → lò cò sau 15/12 → ô ăn quan sau 15/12 → lật chai giữ bản không có đường dự đoán. Các trò K và chụp ảnh **không** cắt.
+Thang cắt nếu thiếu thời gian (cắt từ dưới lên): bỏ 9 → lò cò sau 15/12 → ô ăn quan sau 15/12 → nhánh Tầng B của hòm thư lùi về Tầng A (5a) → lật chai giữ bản không có đường dự đoán. Các trò K và chụp ảnh **không** cắt.
 
 ---
 
@@ -415,7 +490,12 @@ Thang cắt nếu thiếu thời gian (cắt từ dưới lên): bỏ 9 → lò 
 | 5 | Luật Ô ăn quan, Caro, Sudoku, Lò cò, Bi ve | **CONFIRMED 20/11:** giữ luật mặc định của file này, có màn hướng dẫn trong game |
 | 6 | Bàn Ô ăn quan | **CONFIRMED 20/11 (duyệt cả file):** vẽ phấn trên nền |
 | 7 | Bạn vắng mặt / khóa Khu Vui Chơi theo Trang | **CONFIRMED 20/11 (duyệt cả file):** như §3.1; người phụ trách từng Trang khai báo |
+| 8 | Hòm thư Valentine ở Main (Trang 6) | **CONFIRMED 21/11:** Main, nghĩa mới; luật §2.5 PROPOSED |
+| 9 | Nhánh buổi chiều: Tầng A hay B | **PROPOSED 21/11:** Tầng A bắt buộc, Tầng B nếu còn thời gian — **CẦN CHỐT #3** |
+| 10 | Bảng nội quy hòm thư: gắn đủ 3 điều | **PROPOSED 21/11** — **CẦN CHỐT #6** |
+| 11 | Ngân sách/giá trong Kèo ăn vặt, Chọn món, Chuẩn bị đồ ăn | **Còn mở:** bản sửa không ghi số; người làm nội dung đặt giá trị khởi điểm |
 
 ## 8. Changelog
+- **v1.1-draft — 21/11/2026:** Thêm **§2.5 Hòm thư Valentine** (Main Trang 6, nghĩa mới theo bản sửa của nhóm): làm hòm thư, viết thư, nhánh buổi chiều Tầng A/B, mở hòm thư, ảnh nhóm, bảng kiểm "mọi đường đều đi tiếp". Thêm 3 hàng vào §2.4.6, trường lưu `story.valentine.*` (§4.2), event `valentine_letter_sent` (§5.1, tùy chọn), dòng 5a ở §6, quyết định 8–11 ở §7. Chỉnh một câu ở §3.1 (khóa Hạ chỉ trong Cảnh B). Các mục khác không đổi.
 - **v1.0 APPROVED — 20/11/2026 (23:30):** Chủ dự án duyệt toàn bộ file. Chốt: bảng tỉ số loạt ván caro (§2.1); Sudoku ở Trang 7; Quân luôn nhất ở đua thuyền; giữ bộ luật mặc định, giải thích bằng hướng dẫn trong game.
 - **v1.0-draft — 20/11/2026:** Bản đầu theo quyết định chủ dự án 20/11: minigame chơi thật (Caro, Sudoku, Lật chai, các trò K1–K6 có luật), Khu Vui Chơi Tuổi Thơ ở Căn cứ (Ô ăn quan, Nhảy lò cò, Bắn bi ve, chọn đối thủ = chọn độ khó), lưu trên máy + Firebase chỉ cho số liệu ẩn danh. Đổi nguyên tắc "không có thua" thành "có thua nhưng không chặn truyện". Mọi thông số là giá trị khởi điểm, chưa chơi thử.
