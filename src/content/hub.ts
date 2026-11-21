@@ -88,6 +88,29 @@ export const HUB_QUESTS: Quest[] = [
       },
     ],
   },
+  {
+    ...meta,
+    id: 'q_hub_pd_04',
+    title: 'Chuyển sang Mốc 2',
+    available_when: { quest: 'q_hub_pd_03' },
+    steps: [
+      {
+        id: 'q_hub_pd_04.s01',
+        kind: 'cutscene',
+        lines: [
+          { speaker: 'narrator', text: 'Album lật sang trang trắng. "Mấy năm sau…"' },
+          { speaker: 'narrator', text: 'Dưới đáy thùng có một hộp phấn giấy đã móp.' },
+          { speaker: 'player', text: 'Chưa xong… Rồi có ai đánh tiếp đâu.' },
+        ],
+      },
+      {
+        id: 'q_hub_pd_04.s02',
+        kind: 'interact',
+        target: 'itr.hub.memory_box',
+        objective: 'Mở hộp phấn giấy dưới đáy thùng',
+      },
+    ],
+  },
 ];
 
 export const PDES: PresentDayEvent[] = [
@@ -101,4 +124,6 @@ export const PDES: PresentDayEvent[] = [
   { id: 'pde_04', type: 'RESTORE', trigger: { day: 'd.g07.03' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g07.03' }], once: true },
   { id: 'pde_05', type: 'SHELF', trigger: { day: 'd.g07.03' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m1_05' }], once: true },
   { id: 'pde_06', type: 'CONTACT', trigger: { day: 'd.g07.03' }, effects: [{ kind: 'unlock_quest', quest_id: 'q_hub_pd_02' }], once: true },
+  { id: 'pde_11', type: 'RESTORE', trigger: { day: 'd.g08.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g08.01' }], once: true },
+  { id: 'pde_12', type: 'SHELF', trigger: { day: 'd.g08.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m2_01' }], once: true },
 ];
