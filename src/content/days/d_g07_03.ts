@@ -80,6 +80,13 @@ export const quests: Quest[] = [
         ],
       },
       {
+        id: 'q_m1_main_05.s06',
+        kind: 'minigame',
+        game: 'mg_lineup',
+        level: 'min',
+        objective: 'Xếp đội hình chụp ảnh đủ năm đứa dưới gốc phượng',
+      },
+      {
         id: 'q_m1_main_05.s03',
         kind: 'interact',
         target: 'itr.thcs.tripod_spot',
@@ -98,7 +105,7 @@ export const quests: Quest[] = [
       {
         id: 'q_m1_main_05.s05',
         kind: 'cutscene',
-        objective: 'Trú mưa rào ở Căn cứ và chụp ảnh cầu vồng',
+        objective: 'Trú mưa rào ở Căn cứ và ngắm cầu vồng',
         lines: [
           { speaker: 'NPC_A', text: 'Máy ảnh của {player_name} đâu? Đừng để ướt!' },
           { speaker: 'NPC_D', text: 'Tớ ôm rồi. Yên tâm.' },
@@ -107,6 +114,13 @@ export const quests: Quest[] = [
           { speaker: 'NPC_B', text: 'Hiện tượng tự nhiên thôi.' },
           { speaker: 'player', text: 'Chụp thêm một tấm với cầu vồng nha!' },
           { speaker: 'NPC_C', text: 'Lần này khỏi tạo dáng. Đứng cạnh nhau là được.' },
+        ],
+      },
+      {
+        id: 'q_m1_main_05.s07',
+        kind: 'cutscene',
+        objective: 'Dán ảnh kỷ niệm đủ năm đứa ở Căn cứ',
+        lines: [
           { speaker: 'NPC_A', text: 'Nhìn nè! Từ ba đứa thành năm đứa rồi!' },
           { speaker: 'NPC_B', text: 'Ừ. Cũng không ngờ chơi với nhau lâu vậy.' },
           { speaker: 'player', text: 'Mai mốt chụp nữa nha. Đừng để thiếu ai.' },
