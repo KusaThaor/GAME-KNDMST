@@ -135,7 +135,7 @@ export const sideExample: Quest = {
 
 ## 6. Bẫy khi viết (đọc trước khi viết quest)
 1. **Side/Daily: bước đầu phải là `talk | interact | goto | collect | place`** (A-02). Sau T-01 validator sẽ báo lỗi; trước đó không ai báo.
-2. **Đừng đặt đích `goto` sát chỗ người chơi vừa đứng nói chuyện** cho tới khi T-01 xong (A-01).
+2. **`goto` kiểm vị trí hiện tại.** Nếu người chơi đã đứng trong bán kính khi bước bắt đầu hoặc khi đóng Menu, bước tự hoàn thành (A-01).
 3. **Không viết điều kiện `{ quest: <id Daily> }`** (A-05). Dùng `rewards.flags` của Daily rồi điều kiện theo flag.
 4. Main trong Ngày chạy theo thứ tự `main_chain`; `available_when` của Main bị bỏ qua.
 5. Dòng thoại có `when` theo flag bắt buộc có `fallback` (validator báo `callback_without_fallback`).
