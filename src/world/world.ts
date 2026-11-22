@@ -9,8 +9,13 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { mergeStatic } from '../render/merge';
 import { applyStyle, ART_STYLES, DEFAULT_ART_STYLE, type ArtStyle } from '../render/style';
 import { CollisionWorld, DEFAULT_BODY, regionContains, type BodyOpts } from './collision';
+import { applyExtras, hideZoneVisuals } from './extras';
 import { parseZone, type ZoneParse } from './parse';
-import type { ColliderShape, Marker, MarkerKind, Portal, WorldIndex, WorldManifest, WorldProblem, ZoneRegion } from './types';
+import type { ColliderShape, Marker, MarkerKind, Portal, WorldExtras, WorldIndex, WorldManifest, WorldProblem, ZoneRegion } from './types';
+
+const extrasModules = import.meta.glob<WorldExtras>('./maps/*.extras.ts', { eager: true, import: 'EXTRAS' });
+/** World Extras theo `map_id` (dữ liệu ở src/world/maps/<map_id>.extras.ts, cơ chế ở extras.ts). */
+export const WORLD_EXTRAS: Record<string, WorldExtras> = Object.fromEntries(Object.values(extrasModules).filter(Boolean).map((e) => [e.map_id, e]));
 
 export interface WorldLoadOptions {
   /** Khu mở trong Ngày này ('all' = mở hết). Khu không mở bị chặn bằng vật có `htx_gate_zone` trong Blender. */
@@ -21,6 +26,8 @@ export interface WorldLoadOptions {
   fetchAsset?: (url: string) => Promise<ArrayBuffer>;
   /** Gộp mesh tĩnh theo vật liệu để giảm lượt vẽ. Mặc định true. */
   merge?: boolean;
+  /** Marker/vật cản/sàn thêm bằng code (N-04). Không truyền = dùng `WORLD_EXTRAS[map_id]`; `null` = chỉ GLB thô. */
+  extras?: WorldExtras | null;
 }
 
 export class WorldLoadError extends Error {
@@ -137,6 +144,16 @@ export class World {
     if (!this.markers.has(`spawn:${this.manifest.default_spawn}`)) this.problems.push({ level: 'error', code: 'missing_default_spawn', ref: this.manifest.default_spawn, message: `Không thấy điểm xuất hiện mặc định "${this.manifest.default_spawn}" trong các khu đã nạp` });
   }
 
+  /** Thêm marker lúc nạp (World Extras). false = trùng loại + ID với marker đã có (không ghi đè). */
+  addMarker(m: Marker): boolean {
+    const k = `${m.kind}:${m.id}`;
+    if (this.markers.has(k)) return false;
+    this.markers.set(k, m);
+    return true;
+  }
+  /** Thêm sàn lúc nạp (World Extras). Mesh đã ở toạ độ thế giới. */
+  addFloor(f: THREE.Mesh): void { this.floors.push(f); this.floorGroup.add(f); }
+
   /** Thêm vật cản lúc chạy (vd. nhân vật đứng yên). Không sửa dữ liệu của bản đồ. */
   addColliders(extra: ColliderShape[]): void {
     if (extra.length) this.collision = new CollisionWorld([...this.collision.shapes, ...extra]);
@@ -230,15 +247,18 @@ export async function loadWorld(manifest: WorldManifest, opts: WorldLoadOptions 
     }
   }));
 
+  const extras = opts.extras === undefined ? WORLD_EXTRAS[manifest.map_id] ?? null : opts.extras;
+  const hidden = new Set<string>();
   const colliders: ZoneParse['colliders'] = [];
   for (const item of loaded) {
     if (!item) continue;
+    if (extras) for (const n of hideZoneVisuals(item.zone, extras)) hidden.add(n);
     applyStyle(item.zone.visuals, style);
     world.addZone(item.zone, { merge: opts.merge ?? true });
     colliders.push(...item.zone.colliders);
   }
   if (!world.loadedZones.length) throw new WorldLoadError(`Không nạp được khu nào của bản đồ ${manifest.map_id}`, world.problems);
-  world.finish(colliders);
+  world.finish(extras ? applyExtras(world, extras, colliders, hidden) : colliders);
   return world;
 }
 

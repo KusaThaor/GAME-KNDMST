@@ -28,7 +28,7 @@ import { clouds, skyDome } from '../../world/sky';
 import { ZoneTracker, type TravelEvent } from '../../world/travel';
 import type { ColliderShape, WorldManifest, WorldProblem } from '../../world/types';
 import { DECOR_SETS, DEFAULT_DECOR, DEFAULT_LIGHTING, LIGHTING_PRESETS } from '../../world/variants';
-import { loadWorld, World, WorldLoadError } from '../../world/world';
+import { loadWorld, World, WORLD_EXTRAS, WorldLoadError } from '../../world/world';
 import { disposeScene } from '../view';
 
 export interface DayTarget { id: string; label: string; position: THREE.Vector3; kind: 'npc' | 'object' | 'marker'; radius: number; zone: string | null }
@@ -105,7 +105,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     world = World.placeholder(emptyManifest(day.map_id, day.spawn_point ?? 'spawn.none'), [{ level: 'error', code: 'map_without_world', ref: day.map_id, message: `Bản đồ ${day.map_id} chưa có manifest (src/world/maps/${day.map_id}.world.json)` }]);
   } else {
     try {
-      world = await loadWorld(manifest, { openZones: day.open_zones ?? 'all', decorSet: variant?.decor_set ?? null, style: opts.style ?? ART_STYLES[DEFAULT_ART_STYLE], fetchAsset: opts.fetchAsset });
+      world = await loadWorld(manifest, { openZones: day.open_zones ?? 'all', decorSet: variant?.decor_set ?? null, style: opts.style ?? ART_STYLES[DEFAULT_ART_STYLE], fetchAsset: opts.fetchAsset, extras: WORLD_EXTRAS[day.map_id] ?? null });
     } catch (e) {
       world = World.placeholder(manifest, e instanceof WorldLoadError ? e.problems : [{ level: 'error', code: 'asset_load_failed', ref: day.map_id, message: String((e as Error)?.message ?? e) }]);
     }

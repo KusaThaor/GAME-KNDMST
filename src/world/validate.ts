@@ -2,17 +2,63 @@
  * Kiểm tra cấu hình thế giới (không cần trình duyệt, không cần đọc GLB — dùng bảng tóm tắt index).
  *  - validateWorld: manifest + index của MỘT bản đồ có khớp nhau và đúng quy ước không.
  *  - validateWorldContent: nội dung (Ngày ký ức, quest) có tham chiếu đúng ID có thật trong bản đồ không.
+ * Cả hai đọc CẢ World Extras (src/world/maps/<map>.extras.ts): marker thêm bằng code được coi như marker trong GLB.
  * Chạy trong `npm test`, `npm run validate:world` và lúc mở game.
  */
 import type { ContentPack } from '../content/types';
-import type { WorldIndex, WorldManifest, WorldProblem } from './types';
+import type { MarkerKind, WorldExtras, WorldIndex, WorldManifest, WorldProblem } from './types';
+import { WORLD_EXTRAS } from './world';
 
 const ZONE_ID = /^zone\.[a-z0-9_]+\.[a-z0-9_]+$/;
 const ASSET = /^[a-z0-9_\-/]+\.glb$/;
 const MARKER_PREFIX: Record<string, string> = { spawn: 'spawn.', interact: 'itr.', spot: 'spot.', camera: 'cam.', target: 'cam.', zone: 'zone.', portal: 'portal.', trigger: 'trg.' };
 
-export function validateWorld(manifest: WorldManifest, index: WorldIndex | undefined, cameraPresets: readonly string[]): WorldProblem[] {
+/** Index (sinh từ GLB) + marker và vật chắn của World Extras — bản ghép để kiểm, KHÔNG ghi ra file index.json. */
+export function indexWithExtras(index: WorldIndex, extras: WorldExtras | null | undefined): WorldIndex {
+  if (!extras) return index;
+  const zones: WorldIndex['zones'] = {};
+  for (const [id, zi] of Object.entries(index.zones)) zones[id] = { ...zi, markers: [...zi.markers], gates: [...zi.gates] };
+  for (const m of extras.markers) zones[m.zone]?.markers.push({ id: m.id, kind: m.kind, position: m.position, facing: m.facing });
+  for (const c of extras.colliders) if (c.gate_zone && zones[c.zone] && !zones[c.zone].gates.includes(c.gate_zone)) zones[c.zone].gates.push(c.gate_zone);
+  return { ...index, zones };
+}
+
+const EXTRA_MARKER_KINDS: MarkerKind[] = ['spawn', 'interact', 'spot', 'camera', 'target'];
+
+/** Luật riêng của World Extras (phần còn lại — trùng ID, tiền tố, máy ảnh thiếu đích — kiểm chung với GLB qua `indexWithExtras`). */
+export function validateExtras(manifest: WorldManifest, extras: WorldExtras): WorldProblem[] {
   const out: WorldProblem[] = [];
+  const err = (code: string, message: string, ref?: string, zone?: string) => out.push({ level: 'error', code, ref, zone, message });
+  const zones = new Set(manifest.zones.map((z) => z.id));
+  const where = `Extras ${extras.map_id}`;
+  if (extras.map_id !== manifest.map_id) err('extras_mismatch', `${where} gắn với bản đồ ${manifest.map_id}`, extras.map_id);
+  const zoneOk = (zone: string, ref: string, what: string) => { if (!zones.has(zone)) err('extras_bad_zone', `${where}: ${what} "${ref}" khai khu "${zone}" không có trong manifest`, ref, zone); };
+  for (const m of extras.markers) {
+    zoneOk(m.zone, m.id, 'marker');
+    if (!EXTRA_MARKER_KINDS.includes(m.kind)) err('extras_bad_kind', `${where}: marker "${m.id}" loại ${m.kind} không thêm bằng code được (chỉ ${EXTRA_MARKER_KINDS.join(', ')})`, m.id, m.zone);
+    if (!m.position.every(Number.isFinite)) err('extras_bad_position', `${where}: marker "${m.id}" có toạ độ không hợp lệ`, m.id, m.zone);
+  }
+  const ids = new Set<string>();
+  for (const c of extras.colliders) {
+    zoneOk(c.zone, c.id, 'vật cản');
+    if (ids.has(c.id)) err('duplicate_id', `${where}: vật cản "${c.id}" khai hai lần`, c.id, c.zone);
+    ids.add(c.id);
+    // gate_zone lạ được bắt ở kiểm chung (`gate_bad_zone`, vì indexWithExtras ghép nó vào `gates`); ở đây chỉ còn open_zone
+    if (c.open_zone && !zones.has(c.open_zone)) err('gate_bad_zone', `${where}: vật cản "${c.id}" chỉ có khi mở khu "${c.open_zone}" — khu này không có trong manifest`, c.open_zone, c.zone);
+    if (!(c.hx > 0 && c.hz > 0 && c.y1 > c.y0)) err('extras_bad_shape', `${where}: vật cản "${c.id}" có kích thước không hợp lệ`, c.id, c.zone);
+  }
+  for (const f of extras.floors ?? []) {
+    zoneOk(f.zone, f.id, 'sàn');
+    if (!(f.x1 > f.x0 && f.z1 > f.z0)) err('extras_bad_shape', `${where}: sàn "${f.id}" cần x0 < x1 và z0 < z1`, f.id, f.zone);
+  }
+  for (const h of extras.hideVisuals ?? []) zoneOk(h.zone, h.node, 'node ẩn');
+  for (const name of extras.disableColliders) if (!name.trim()) err('extras_bad_ref', `${where}: disableColliders có tên rỗng`);
+  return out;
+}
+
+export function validateWorld(manifest: WorldManifest, rawIndex: WorldIndex | undefined, cameraPresets: readonly string[], extras: WorldExtras | null = WORLD_EXTRAS[manifest.map_id] ?? null): WorldProblem[] {
+  const out: WorldProblem[] = extras ? validateExtras(manifest, extras) : [];
+  const index = rawIndex && indexWithExtras(rawIndex, extras);
   const err = (code: string, message: string, ref?: string, zone?: string) => out.push({ level: 'error', code, ref, zone, message });
   const warn = (code: string, message: string, ref?: string, zone?: string) => out.push({ level: 'warn', code, ref, zone, message });
 
@@ -95,7 +141,8 @@ export function markerIds(index: WorldIndex): Record<string, Map<string, string>
   return by;
 }
 
-export function validateWorldContent(pack: ContentPack, manifests: Record<string, WorldManifest>, indexes: Record<string, WorldIndex>): WorldProblem[] {
+export function validateWorldContent(pack: ContentPack, manifests: Record<string, WorldManifest>, rawIndexes: Record<string, WorldIndex>, extrasByMap: Record<string, WorldExtras> = WORLD_EXTRAS): WorldProblem[] {
+  const indexes: Record<string, WorldIndex> = Object.fromEntries(Object.entries(rawIndexes).map(([id, i]) => [id, indexWithExtras(i, extrasByMap[id])]));
   const out: WorldProblem[] = [];
   const err = (code: string, message: string, ref?: string) => out.push({ level: 'error', code, ref, message });
   const warn = (code: string, message: string, ref?: string) => out.push({ level: 'warn', code, ref, message });
