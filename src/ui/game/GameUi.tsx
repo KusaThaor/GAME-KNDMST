@@ -2,6 +2,7 @@
  * Giao diện game (Preact): HUD, thoại, lựa chọn, ảnh, Hộp Kỷ Vật, Album, điện thoại, menu.
  * Chỉ đọc UiState và gọi UiActions. Mọi nút có `data-act` để bot kiểm thử bấm được.
  */
+import { FeedbackForm } from './FeedbackForm';
 import { render } from 'preact';
 import { CAMERA_MODES } from '../../config/camera';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -251,9 +252,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       )}
       {s.feedback && (
         <Pop class="g-card" testid="feedback">
-          <h2>Cảm ơn bạn đã chơi thử</h2>
-          <p>[PLACEHOLDER] Form phản hồi sẽ gắn ở đây. Hoàn thành đã được ghi nhận trước khi form hiện.</p>
-          <button class="primary" data-act="feedback-skip" onClick={a.feedbackSkip}>Bỏ qua</button>
+          <FeedbackForm skip={a.feedbackSkip} submitted={a.feedbackSubmitted} />
         </Pop>
       )}
       {s.consentAsk && (

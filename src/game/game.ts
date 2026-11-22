@@ -658,6 +658,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (!ui.get().wipeArmed) { ui.set({ wipeArmed: true }); return; }
       void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; });
     },
+    feedbackSubmitted() {
+      if (!ui.get().feedback) return;
+      ui.set({ feedback: false });
+      // Biên nhận analytics độc lập với khóa document chứa ý kiến.
+      bus.emit('feedback_submitted', { feedback_id: crypto.randomUUID() });
+    },
     feedbackSkip() { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
     toggleCameraMode,
     toggleFreeLook,
