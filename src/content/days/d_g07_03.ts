@@ -41,7 +41,9 @@ export const day: MemoryDay = {
   ],
   cameras: [
     { id: 'cam.d0703.group', marker: 'cam.thcs.yard_group', fov: 38 },
-    { id: 'cam.q_m1_main_05.s05', marker: 'cam.thcs.rainbow', fov: 55 },
+    // Ưu tiên marker N-04; giữ khung toàn sân khi chỉ có GLB gốc.
+    { id: 'cam.q_m1_main_05.s05', marker: 'cam.thcs.rainbow', fov: 55,
+      position: [4, 1.3, 10.5], look_at: [4, 3.5, -10] },
   ],
   album_page_id: 'page.d.g07.03',
   completion: 'main_chain',
