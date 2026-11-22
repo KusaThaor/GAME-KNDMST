@@ -1,8 +1,9 @@
-# NEXT_SPRINT_TASK_BOARD — Bảng giao việc song song tới 04/12/2026
+# NEXT_SPRINT_TASK_BOARD — BẢNG VIỆC DUY NHẤT tới 04/12/2026 (bản gộp)
 
 | Trường | Giá trị |
 |---|---|
-| Ngày lập | 22/11/2026 (UTC+7) |
+| Ngày lập | 22/11/2026 (UTC+7) · gộp lần 2 cùng ngày, sau khi chủ dự án đồng ý các điểm cần xác nhận |
+| Thay thế | `docs/handoff/SPRINT_TASKS.md` (T-01…T-15, 21/11) — chỉ còn là lịch sử; việc còn hiệu lực đã chuyển vào bảng này (Mục 0.3) |
 | Nhánh gốc | `feat/sprint-0412` |
 | Phạm vi | **Mốc 1 đầy đủ (Trang 1–4) + Mốc 2 chỉ tuyến Main (Trang 5–9) + kết demo bản 9 Trang** — quyết định Game Director 22/11 (`docs/GDD_FULL_REVIEW.md` mục VII) |
 | Đọc kèm | `docs/GDD_FULL_REVIEW.md` (mục VII), `docs/BACKGROUND_AUDIT.md` |
@@ -12,66 +13,92 @@
 
 ---
 
-## Mục 0 — Cần Game Director kiểm tra và chốt trước khi gộp
+## Mục 0 — Đã chốt, đối chiếu hai bảng việc, phát hiện khi gộp
 
-### 0.1 (A3) Những chỗ Antigravity tự gán trạng thái "đã duyệt"
+### 0.1 Các điểm chủ dự án đã đồng ý (22/11, "okie luôn")
+Chủ dự án đồng ý toàn bộ điểm cần xác nhận ở bản trước. Chỗ nào bản trước còn hai phương án, mình lấy phương án **bám GDD / kịch bản gốc** (`CLAUDE.md`: "code lệch GDD thì GDD thắng"). Hiểu sai thì chỉ cần nói một câu — cột "Đụng tới" cho biết phải sửa ở task nào.
 
-Nhãn trong code: `owner: 'NARRATIVE_APPROVED'` = đã duyệt cốt truyện; `ownership_label: 'HUMAN_CANON'` = chữ của người, chép nguyên văn; `HUMAN_DRAFT` = người viết nháp. **Validator cho phép mọi thứ có `HUMAN_CANON`/`HUMAN_DRAFT` vào bản production.**
-
-| # | Vị trí | Nhãn AG gán | Thực tế |
+| Mã | Điểm | Đã chốt | Đụng tới |
 |---|---|---|---|
-| A3-1 | `src/content/days/d_g06_01.ts`, `d_g07_01.ts`, `d_g07_02.ts`, `d_g07_03.ts` — hằng `meta` dùng cho 4 quest Main (`q_m1_main_01/02/03/05`) | `NARRATIVE_APPROVED` + `HUMAN_CANON` + `v1.4` | Thoại đã bị gộp/viết lại so với kịch bản (B1, B3, B5, B6). Game Director đã cho giữ thoại theo code (B3) → **cần anh/chị xác nhận nhãn HUMAN_CANON cho bản đã chỉnh** |
-| A3-2 | Cùng 4 file — hằng `sideMeta` cho Side/Daily: `q_m1_side_01` "Xem bảng phân công trực nhật", `q_m1_side_02` "Đi dạo một vòng các khu trường cũ", `q_m1_side_03` "Mẹo gấp giấy của Quân", `q_m1_side_04` "Bắn bi mắt mèo cùng Quân", `q_m1_daily_01` "Kiểm tra đồ trực nhật" (4 bản khác nhau) | `NARRATIVE_APPROVED` + `HUMAN_DRAFT` | **Do AI tự nghĩ**, không có trong kịch bản. Theo C1 → đổi sang `AI_PROPOSED` + `[PLACEHOLDER]` (task N-01) |
-| A3-3 | `src/content/hub.ts` — hằng `meta` cho `q_hub_pd_01/02/03` | `NARRATIVE_APPROVED` + `HUMAN_CANON` | Gồm 4 dòng chat cũ tự viết (B8) và 3 tin kết viết lại (B9) — xem 0.2 |
-| A3-4 | Ghi chú Album (fragment `note`/`sticker`): `frag.d.g06.01.02` "Ngày đầu lớp 6, bắt đầu từ một mẩu giấy mật lệnh vẽ linh tinh.", `frag.d.g07.01.02` "Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xuôi dòng rãnh nước.", `frag.d.g07.02.02` "Góc sân sau trở thành Căn cứ Bí mật của năm đứa.", sticker "Danh sách trực nhật của Châu", "Dấu trực nhật đầu năm", "Mẹo gấp thuyền của Quân", "Viên bi mắt mèo", "Dấu trực nhật cuối năm", "Ký ức khắp sân trường" | Không có nhãn riêng, nằm trong file `HUMAN_CANON` | Chữ AI tự viết, hiện lên Album |
-| A3-5 | Lời lựa chọn Trang 4 `c_m1_05_tone`: "Tạo dáng nhí nhố làm mặt hề" / "Đứng tự nhiên, khoác vai cười tươi" / "Nghiêm trang chỉnh tề như ảnh thẻ" | `HUMAN_CANON` | Kịch bản chỉ ghi "nghiêm túc / tự nhiên / hài"; câu chữ do AI viết |
-| A3-6 | Lời lựa chọn Trang 3 `c_m1_03_decor`: "Gấp dây hạc giấy màu rực rỡ" / "Cắm hoa dại và cành lá mộc mạc" / "Dán những tấm ảnh chụp chung" | `HUMAN_CANON` | Kịch bản: "giấy màu / hoa / ảnh". B5 đã chốt trả về chữ kịch bản (N-01) |
-| A3-7 | Tên + mô tả kỷ vật (`art_m1_01/02/03/05` `.name`, `.description`), câu nhắc PDE `pde_03` | `HUMAN_CANON` | Chữ AI viết, hiện trong game |
-| A3-8 | Tài liệu: `docs/handoff/gemini/DOI_CHIEU_TRANG_1_4.md` ghi nguồn "v1.4 APPROVED"; `QUESTIONS_LOG.md` ghi "0 PLACEHOLDER, đã thay 100% bằng thoại canonical được duyệt" và gắn "Đã xử lý (Chuẩn hóa)" cho 3 điểm tự quyết; `HANDOFF_TO_CLAUDE.md` ghi "hoàn tất 100%" | — | Kịch bản file gốc ghi **v1.6-draft, chưa duyệt toàn file**; phần thao tác chơi (minigame) **0%** |
+| A3 | Chữ AG tự ghi "đã duyệt" | Phương án (a): **chấp nhận chữ hiện tại là bản chính thức** (A3-1, 4, 5, 7). `HUMAN_CANON` từ nay nghĩa là "chủ dự án đã duyệt". Các dòng còn lại: bảng 0.1b | N-01, N-08, N-20 |
+| B8 | Nhóm chat cũ | Theo kịch bản: **không có dòng chat nào**, chỉ hiện "tin cuối đã từ rất lâu" (nhãn để trong `src/config/hub.ts`, không tự đặt ngày). Bốn dòng AG viết bị bỏ. Màn kết: "Đã gửi." → "(còn tiếp)"; câu cảm ơn của AG bỏ khỏi truyện | N-08, N-09 |
+| B9 | Ba tin nhắn kết | Nguyên văn kịch bản 9 Trang (0.2) | N-08 |
+| B9b | Tỉ số "4–3" | **Động**: lấy từ `caro.series` = `{quan, duc}`, bắt đầu 3–3 (GDD `02` §2.1; `01` dòng 339 viết sẵn `{quan}–{duc}`) | N-03, N-08, N-13, N-16 |
+| D5 | Timeskip | Đặt **sau Trang 9, trước Kết demo Bước 1**. Lời nháp ở 0.2 được duyệt → nhãn `HUMAN_CANON`, bỏ tiền tố `[PLACEHOLDER]` (validator production bắt quest `event` phải `HUMAN_CANON`) | N-08 |
+| A2 | Năm học | Giữ 2014–2016 (lớp 6–7), 2016–2018 (lớp 8–9). "2012 / 2014" chỉ là cách gọi Mốc, không đổi năm trong game | — |
+| X-1 | Sửa `CLAUDE.md`, GDD `00` | Đồng ý → **N-00 đã làm xong** trong lần gộp này | N-00 ✅ |
+| X-2 | D3 thay hướng base mesh | Đồng ý; không gộp `feature/asset-workshop` cho nhân vật; hết việc Blender | N-12, N-20 |
+| X-3 | Căn cứ vào trong sân sau (BG-1) | Đồng ý | N-04 |
+| X-4 | Thang cắt | Đồng ý (cuối Mục 1) + thêm điểm kiểm ở Mục 1.1 | — |
 
-**Cần anh/chị chọn cho A3-1, A3-4, A3-5, A3-7:** (a) chấp nhận chữ hiện tại là canon, hay (b) đổi nhãn `AI_PROPOSED` để người viết duyệt lại. Nếu (b): validator sẽ chặn chúng khỏi bản production cho tới khi duyệt.
+### 0.1b A3 — kết luận từng dòng
+| # | Vị trí | Kết luận |
+|---|---|---|
+| A3-1 | Thoại Main 4 Trang (`meta` của `q_m1_main_01/02/03/05`) | Giữ `HUMAN_CANON` (chấp nhận bản đã chỉnh theo B1, B3, B5, B6) |
+| A3-2 | 5 quest Side/Daily do AI nghĩ (`q_m1_side_01…04`, `q_m1_daily_01`) | → `AI_PROPOSED` + `[PLACEHOLDER]`, đổi mã `q_m1_ai_*`, **tắt ở production** (G-3). Trang 3 gỡ `side_04` (C2) |
+| A3-3 | `hub.ts` — `q_hub_pd_01/02/03` | Theo B8/B9/D5 (0.2); nhãn `HUMAN_CANON` |
+| A3-4 | Ghi chú và hình dán Album | Giữ |
+| A3-5 | Lời ba lựa chọn kiểu ảnh Trang 4 | Giữ |
+| A3-6 | Lời ba lựa chọn trang trí Trang 3 | Trả về chữ kịch bản: "Giấy màu" / "Hoa" / "Ảnh" (B5) |
+| A3-7 | Tên và mô tả kỷ vật, câu nhắc `pde_03` | Giữ |
+| A3-8 | Tài liệu AG ghi "v1.4 APPROVED", "0 PLACEHOLDER", "hoàn tất 100%" | Sửa cho đúng (C6): kịch bản là **v1.6-draft**, phần minigame **0%**. `DOI_CHIEU_TRANG_1_4.md` → N-01; `QUESTIONS_LOG.md`, `HANDOFF_TO_CLAUDE.md` → N-20 |
 
-### 0.2 (B8, B9) Nguyên văn để duyệt lại
+### 0.2 Văn bản đã chốt cho N-08 (dùng đúng chữ này, nhãn `HUMAN_CANON`, không `[PLACEHOLDER]`)
 
-**B8 — Lịch sử nhóm chat cũ (Kết demo, bước mở điện thoại)**
+**B9 — ba tin nhắn kết (nguyên văn kịch bản 9 Trang, §KẾT DEMO Bước 2)**
+- Rộn ràng (`playful`): "Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?"
+- Ấm áp (`gentle`): "Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?"
+- Sâu lắng (`deep`): "Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha."
+- Độc thoại trước khi mở điện thoại (Bước 1): **{player_name}**: "Được dời, không được hủy…"
 
-| Nguồn | Nội dung |
-|---|---|
-| Kịch bản `KICH_BAN_DEMO_M1_M2_v1.md` §KẾT DEMO, Bước 2 | *(Người chơi: mở điện thoại, tìm nhóm chat cũ. Tin cuối cùng trong nhóm đã từ rất lâu.)* — không có dòng chat nào được viết sẵn |
-| Code `src/content/hub.ts` dòng 22–25 (AG tự viết) | **Đức:** "Đứa nào rảnh thì cuối tuần ra Căn cứ nghen!"<br>**Châu:** "Lo học bài đi ông tướng. Tuần sau kiểm tra đó."<br>**Quân:** "Tớ mới bơm lại quả bóng rổ nè."<br>**Hạ:** "Hạ vừa ép xong một lá phượng đẹp lắm." |
-| Code `hub.ts` dòng 29–30 (màn kết, AG tự viết) | **narrator:** "Tin nhắn đã gửi."<br>**narrator:** "Cảm ơn bạn đã trải nghiệm Bản Demo "Hành Trình Thanh Xuân"!" |
-| Kịch bản §KẾT DEMO, Kết | Màn hình hiện *"Đã gửi."* … rồi *"(còn tiếp)"*. Ghi nhận hoàn thành demo → mở form phản hồi |
+`{quan}` / `{duc}` = số ván của phe Quân / phe Đức trong `caro.series` (bắt đầu 3–3; kết quả lần đầu của ván truyện đẩy một phe lên 4, hòa giữ 3–3). Chưa có kết quả → 3–3.
 
-Phương án: (1) giữ 4 dòng AG; (2) bỏ hết, chỉ hiện mốc thời gian tin cuối (ví dụ "06/2018") đúng ý kịch bản; (3) nhóm viết lại. Màn kết: dùng đúng "Đã gửi." → "(còn tiếp)" hay thêm câu cảm ơn?
+**B8 — nhóm chat cũ (Bước 2, mở điện thoại):** không dòng chat nào; một dòng trạng thái "tin cuối cùng đã từ rất lâu" (`old_chat_last_label` trong `src/config/hub.ts`). Kết: "Đã gửi." → "(còn tiếp)" → ghi hoàn thành → form phản hồi.
 
-**B9 — Ba tin nhắn kết demo**
-
-| Nguồn | Rộn ràng (`playful`) | Ấm áp (`gentle`) | Sâu lắng (`deep`) |
-|---|---|---|---|
-| **Kịch bản 9 Trang** (§KẾT DEMO, Bước 2) | "Ê. Ván caro hồi lớp 8 vẫn đang 4–3 đó nha. Ai gỡ?" | "Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?" | "Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha." |
-| **Code hiện tại** (`hub.ts` dòng 84–86, AG viết cho bản Mốc 1) | "Ê. Nhớ hồi tụi mình mới đủ năm đứa không? Lâu quá rồi ha." | "Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?" | "Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha." |
-
-Kèm theo: độc thoại trước khi mở điện thoại (kịch bản, Bước 1): **[PLAYER_NAME]** (độc thoại): "Được dời, không được hủy…" — **chưa có trong code**.
-
-Đề xuất của Claude: vì A1 + D5 đưa kết về bản 9 Trang, **dùng nguyên văn kịch bản 9 Trang** (Điều 6 đã ra đời ở Trang 9 nên tin `deep` hợp mạch). Tỉ số "4–3" theo GDD `01` §10 mục 3 là **tỉ số động** lấy từ loạt ván caro (`minigames.caro.series`) — cần anh/chị chốt: in số động hay giữ cứng "4–3".
-
-### 0.3 (D5) Bản nháp đoạn timeskip — `AI_PROPOSED`, chờ duyệt
-Vị trí đề xuất: sau cutscene "Cuối hè" (Trang 9), trước Kết demo Bước 1. Khoảng cách 2018 → 2026 = 8 năm (GDD `01` §3).
-> *Thẻ chữ:* "[PLACEHOLDER] Tám năm sau."
+**D5 — timeskip (sau cutscene "Cuối hè" của Trang 9, trước Kết demo Bước 1):**
+> *Thẻ chữ:* "Tám năm sau."
 > *(Phòng 2026, đèn bàn. Album đã đủ trang.)*
-> **{player_name}** (độc thoại): "[PLACEHOLDER] Hồi đó tụi mình hứa mỗi tháng gặp nhau một lần…"
-> **{player_name}** (độc thoại): "[PLACEHOLDER] Lần cuối cả năm đứa ngồi chung với nhau là khi nào nhỉ?"
+> **{player_name}** (độc thoại): "Hồi đó tụi mình hứa mỗi tháng gặp nhau một lần…"
+> **{player_name}** (độc thoại): "Lần cuối cả năm đứa ngồi chung với nhau là khi nào nhỉ?"
 > → nối thẳng Kết demo Bước 1 (lấy sổ luật xuống, lật tới Điều 6).
 
-Cần anh/chị: duyệt / sửa lời; xác nhận vị trí (sau Trang 9) — hay ý anh/chị là timeskip ở chỗ chuyển Mốc giữa Trang 4 và 5?
+Ghi chú: "hứa mỗi tháng gặp nhau" khớp Điều 6 ("Gặp nhau ít nhất mỗi tháng. Được dời, không được hủy.", kịch bản dòng 822). Quest `q_hub_pd_timeskip`: `type: 'event'`, `HUMAN_CANON`.
 
-### 0.4 Các điểm cần xác nhận thêm
-| # | Việc | Vì sao |
+### 0.3 Đối chiếu bảng việc cũ (`SPRINT_TASKS.md`, 21/11) → bảng này
+Tình trạng lấy từ phiên kiểm 22/11 00:15 (`feat/sprint-0412` @ `d5531b2`, đã chạy tsc / vitest / validate:world / e2e / build production). Từ đó tới nay **chỉ có tài liệu đổi** (kiểm bằng `git diff d5531b2..HEAD -- src api shared tests` = rỗng), nên tình trạng còn nguyên.
+
+| Task cũ | Việc | Tình trạng | Nay là | Ghi chú gộp |
+|---|---|---|---|---|
+| T-01 | Gộp nhánh tài liệu + 5 sửa nhỏ | ✅ xong | — | Còn sót: chú thích "8 giây" ở e2e → N-19 |
+| T-02 | Sửa A-01, thêm luật A-02 | ❌ chưa | **N-02** (A-01) + **N-10** (A-02) | Test đỏ trước khi sửa; cập nhật README + `02_QUEST_SYSTEM.md` §6; ca e2e A-01 (đã gộp vào thẻ N-02) |
+| T-03 | Khung minigame chung | ❌ chưa | **N-02** + **N-11a** | Hợp đồng gộp T-03 + N-02 (G-5); trò lau bảng chứng minh khung nằm ở N-11a |
+| T-04 | Mở rộng `SaveState`, v2→v3 | ❌ chưa | **N-03** | Tên trường bám GDD `02` §4.2 (G-4); thêm phần Mốc 2 Main vì A1 |
+| T-05 | Khung dữ liệu Trang 2, 3 | ✅ xong | **N-01** sửa lại | Đã có `d_g07_01`, `d_g07_02`; N-01 đưa về đúng kịch bản |
+| T-06 | Số hóa Trang 1–4 | ✅ xong (chủ dự án chấp nhận 22/11) | A3 đã chốt (a) + **N-01** | Nhãn chấp nhận; B1–D2 sửa ở N-01 |
+| T-07 | 8 trò K Trang 1–4 | ❌ 0/8 | **N-11a** (4) + **N-11b** (4) | Bản N-11 cũ chỉ có 7 trò — thiếu **Xếp đội hình** (G-1), đã thêm `mg_lineup` |
+| T-08 | Kết demo + form phản hồi | ⚠ dở | **N-08** (kết) + **N-09** (form) + **N-22** (production) | Ba tin kết đã mang nghĩa cũ "mới đủ năm đứa" → N-08 đổi sang bản 9 Trang |
+| T-09 | Phát event còn thiếu | ❌ chưa | **N-18** | Bỏ `hub_opened` (Khu Vui Chơi bị cắt); giữ `landing_view`, `cta_click` (G-9) |
+| T-10 | Nhân vật GLB base mesh | ⛔ thay thế | D3 → **N-12** (procedural) | Nhân vật giữ bản dựng bằng code; không gộp `feature/asset-workshop` |
+| T-11 | Cây phượng/bàng + ghi công | ⛔ thay thế | D3 → **N-20** | Cây GLB mới không làm; chỉ còn `ASSET_CREDITS.md` |
+| T-12 | Phòng 2026 + 4 kỷ vật bằng Blender | ⛔ thay thế | D3 → **N-08** (PX-50) | Kỷ vật: tái dùng hàm `makeXxx` của N-06 (PX-11/20/30/31), P2 |
+| T-13 | Gốc bàn đôi + bẫy cache `loadProp` | ⚠ một nửa | **N-23** | Đo lại bàn bằng `Box3` trước (G-8); bẫy cache vẫn còn |
+| T-14 | Dựng bản đo | ⚠ dở | **N-19** (e2e, FPS) + **N-22** (production, PR → `dev`) | 0 Pull Request, chưa đo FPS, production còn trống |
+| T-15 | Mốc 2, sau 15/12 | → mở rộng | **N-13, N-15, N-16, N-17** (Main, A1); phần còn lại → Mục 4 | Side/Daily, Khu Vui Chơi, Tầng B vẫn sau 15/12 |
+
+### 0.4 Phát hiện khi đối chiếu — đã sửa trong các thẻ bên dưới
+| # | Phát hiện | Cách xử lý |
 |---|---|---|
-| X-1 | Cho phép sửa `CLAUDE.md` §3 và GDD `00` §1.2, §4, §11 theo quyết định 22/11 (task N-00) | `CLAUDE.md` đang bảo mọi agent "đừng làm trái" quyết định 21/11 (chỉ Mốc 1) → agent khác sẽ từ chối làm Mốc 2 nếu chưa sửa |
-| X-2 | D3 thay hướng asset nhân vật 21/11 (base mesh GLB ở `feature/asset-workshop`) → giữ nhân vật dựng bằng code | `CLAUDE.md` §3 mục 2 còn ghi hướng cũ |
-| X-3 | Cách sửa "Căn cứ ngoài tường rào" (BG-1 trong `BACKGROUND_AUDIT.md`): coi bãi đất + Căn cứ là sân sau, mở lối từ sân, chặn lối từ ngõ | Đổi đường đi của Trang 3, 4, 6, 7, 9 |
-| X-4 | Thứ tự cắt nếu trễ (Mục 1, cuối bảng) | Cần thống nhất trước để không tranh cãi ngày 02/12 |
+| G-1 | Trang 4 có minigame **Xếp đội hình** (K3, GDD `01` Trang 4 bước 1; `02` dòng 230) nhưng N-01 và N-11 bản trước không có | Thêm `mg_lineup` vào N-11b; N-01 chèn bước vào `d_g07_03.ts` |
+| G-2 | Luật A-02 gốc (bước đầu Side/Daily **không thuộc** `talk/interact/goto/collect/place` thì quest lặng lẽ không khởi động) bị bỏ sót ở N-10 | N-10 giữ cả luật gốc lẫn luật marker |
+| G-3 | Validator production (`validate.ts` dòng 267–275) chặn **mọi** quest `AI_PROPOSED` nằm trong `main_chain`, `side_quests`, `daily_pool` của Ngày phát hành, và chặn quest Main/Event không phải đúng `HUMAN_CANON`. Đổi Side/Daily sang `AI_PROPOSED` (C1) sẽ làm production **không build được**; câu nối `[PLACEHOLDER]` ở Mốc 2 cũng vậy | `filterPackForRelease` (N-15f) tắt `side_quests`/`daily_pool` ở production; N-10 cho validator bỏ qua chúng; N-15 **không thêm câu nối**; timeskip = `HUMAN_CANON` |
+| G-4 | N-03 bản trước đặt `minigames_caro_series {player, opponent}`, `hub_unlocked` — lệch GDD `02` §4.2 (`caro.series {quan, duc}`, `hub.unlocked`) | Đổi theo GDD (thẻ N-03, N-13, N-16) |
+| G-5 | Hợp đồng minigame hai bản khác nhau: đường dẫn (`src/minigames/` vs `src/game/minigames/`), `rules` (≤ 3 dòng vs chuỗi), kết quả `quit` vs `skipped`, Esc (dừng đồng hồ vs hỏi Bỏ qua) | Giữ đường dẫn N-02; `rules.lines ≤ 3`; dùng `MinigameResult` có sẵn trong `eventBus.ts` (`quit`); **Esc mở menu và dừng đồng hồ**, "Bỏ ván" = thua (GDD `02` §1.1); thêm `pause()/resume()` |
+| G-6 | Mã trò lạ: T-03 muốn **lỗi**, N-10 muốn **cảnh báo** | Cảnh báo ở test (trò thật gộp dần), **lỗi** ở production |
+| G-7 | Quest Daily `q_m1_daily_01` khai trùng ID ở cả 4 Trang; `pack.ts` gộp theo ID nên chỉ giữ bản Trang 4 | N-01 khai **một** lần (`q_m1_ai_daily_01` ở `d_g06_01.ts`), bỏ bản trùng |
+| G-8 | Chiều cao bàn đôi: `DEMO_AUDIT` ghi `min.y = −0,663`, phiên kiểm 22/11 đo bằng `Box3` ra **0,0**; BG-5 trong `BACKGROUND_AUDIT.md` dựa số cũ | N-23 đo lại rồi mới bù (không sửa GLB, D3) |
+| G-9 | N-18 vẫn liệt kê `hub_opened` dù Khu Vui Chơi bị cắt (A1); `landing_view`, `cta_click` của T-09 bị rơi | Sửa N-18 |
+| G-10 | Mất khối "bản đo": PR → `dev`, kiểm production sạch công cụ test, nhật ký production (T-14) | Thêm **N-22** |
+| G-11 | `docs/gdd/03_ASSETS_AND_AUDIO.md` vẫn mô tả đường Blender → GLB, trái D3 | N-20 ghi D3 và gắn SUPERSEDED |
 
 ---
 
@@ -82,33 +109,45 @@ Agent đề xuất: **AG** = Antigravity / Gemini 3.8 · **Codex** · **Sonnet**
 
 | Mã | Tên task · nhóm | Ưu tiên | Agent đề xuất | File sở hữu (chỉ task này được sửa) | Phụ thuộc | DoD (tiêu chí xong) |
 |---|---|---|---|---|---|---|
-| **N-00** | Ghi quyết định 22/11 vào tài liệu gốc · [Docs] | P0 | Sonnet | `CLAUDE.md`, `docs/gdd/00_MASTER_GDD.md`, `docs/handoff/README.md` | Duyệt X-1, X-2 | 3 file ghi A1, D3, D5; dòng cũ gắn SUPERSEDED; không đổi file khác |
-| **N-01** | Sửa dữ liệu Mốc 1 theo B/C/D đã chốt · [Script] | P0 | AG hoặc Sonnet | `src/content/days/d_g06_01.ts`, `d_g07_01.ts`, `d_g07_02.ts`, `d_g07_03.ts`, `tests/unit/contentPack.test.ts`, `docs/handoff/gemini/DOI_CHIEU_TRANG_1_4.md` | Marker của N-04 (dùng ID ở thẻ N-04) | tsc + vitest + validate xanh; B1, B2, B5, B6, B7, C1, C2, C4, C5, D1, D2 xong; C6 tài liệu khớp code |
-| **N-02** | Khung minigame chung + sổ đăng ký trò + sửa lỗi A-01 · [Scene] | P0 | Opus hoặc Codex | `src/game/game.ts`, `src/game/minigames/{types,registry,host}.ts` (mới), `src/ui/game/MinigameFrame.tsx` (mới), `src/ui/game/GameUi.tsx` (vùng minigame), `src/ui/game/store.ts`, `tests/unit/minigameHost.test.ts` (mới) | — | Trò mẫu `mg_demo` chạy: luật → chơi → thắng/thua → Chơi lại / Bỏ qua; event `minigame_started/finished` đúng kết quả; A-01 có test |
-| **N-03** | Lưu bản v3 + bước chuyển đổi v2→v3 · [Scene] | P0 | Codex | `src/core/save.ts`, `tests/unit/save.test.ts` | — | Bản lưu v2 nâng lên v3 **không mất** tiến trình/ảnh; có `minigames`, `story`, `hub.unlocked` |
+| **N-00** | ✅ **XONG 22/11** — Ghi quyết định 22/11 vào tài liệu gốc · [Docs] | P0 | Claude (đã làm) | `CLAUDE.md`, `docs/gdd/00_MASTER_GDD.md`, `docs/handoff/README.md` | — | Đã ghi A1, D3, D5; dòng cũ gắn SUPERSEDED. Phần D3 còn lại trong `03_ASSETS_AND_AUDIO.md` → N-20 |
+| **N-01** | Sửa dữ liệu Mốc 1 theo B/C/D đã chốt · [Script] | P0 | AG hoặc Sonnet | `src/content/days/d_g06_01.ts`, `d_g07_01.ts`, `d_g07_02.ts`, `d_g07_03.ts`, `tests/unit/contentPack.test.ts`, `docs/handoff/gemini/DOI_CHIEU_TRANG_1_4.md` | Marker của N-04 (dùng ID ở thẻ N-04) | tsc + vitest + validate xanh; B1, B2, B5, B6, B7, C1, C2, C4, C5, D1, D2 xong; C6 tài liệu khớp code; Trang 4 có bước Xếp đội hình `mg_lineup` (G-1); Daily khai **một** lần (G-7); mọi Side/Daily gắn `AI_PROPOSED` |
+| **N-02** | Khung minigame chung + sổ đăng ký trò + sửa lỗi A-01 · [Scene] | P0 | Opus hoặc Codex | `src/game/game.ts`, `src/game/minigames/{types,registry,host}.ts` (mới), `src/ui/game/MinigameFrame.tsx` (mới), `src/ui/game/GameUi.tsx` (vùng minigame), `src/ui/game/store.ts`, `tests/unit/minigameHost.test.ts` (mới) | — | Trò mẫu `mg_demo` chạy: luật (bỏ qua được từ lần 2) → chơi → kết quả → Chơi lại / Đi tiếp; Esc dừng đồng hồ; Bỏ ván = thua vẫn đi tiếp; event `minigame_started/finished` đúng kết quả thật; A-01 có test **đỏ trước, xanh sau** |
+| **N-03** | Lưu bản v3 + bước chuyển đổi v2→v3 · [Scene] | P0 | Codex | `src/core/save.ts`, `tests/unit/save.test.ts` | — | Bản lưu v2 nâng lên v3 **không mất** tiến trình/ảnh; có `minigames`, `minigames_story`, `caro.series {quan,duc}`, `sudoku`, `story.valentine`, `hub.unlocked`, `settings` mới theo GDD `02` §4.2; `LoadStatus` có `'migrated'` |
 | **N-04** | World Extras + sửa Căn cứ trong trường + marker/camera mới + điểm gắn đồ trang trí · [Scene] | P0 | Opus | `src/world/extras.ts` (mới), `src/world/maps/map_thcs.extras.ts` (mới), `src/world/world.ts`, `src/world/types.ts`, `src/world/validate.ts`, `src/game/scenes/dayScene.ts`, `src/world/dressing/index.ts` (mới), `src/world/atmosphere.ts` (mới, stub), `tests/unit/world/extras.test.ts` (mới) | — | `validate:world` 0 lỗi kể cả marker code; đi được sân → sân sau → Căn cứ không qua cổng; ảnh thuyền và biển tên đúng chỗ; stub `dressing`/`atmosphere` đẩy lên **trong ngày đầu** |
 | **N-05** | Ánh sáng, thời tiết, biến thể năm học · [Scene] | P0 | Codex hoặc AG | `src/world/variants.ts`, `src/world/atmosphere.ts` (điền), `src/render/fx.ts`, `src/world/sky.ts`, `src/content/base.ts`, `src/content/types.ts` (chỉ thêm trường tùy chọn), `tests/unit/fx.test.ts` | Stub của N-04 | 7 preset mới; mưa + cầu vồng đổi được giữa Trang; g07_end/g08/g09/g09_end; nhân vật lớp 8–9 cao đúng dải |
 | **N-06** | Đạo cụ procedural Mốc 1 (PX-10…41) + bộ trang trí Căn cứ theo flag · [Props] | P0 | AG | `src/world/props/m1/*.ts` (mới), `src/world/dressing/sets/m1_*.ts` (mới), `tests/unit/props_m1.test.ts` (mới) | Stub `dressing` của N-04 | Mọi hàm `min.y ≈ 0`, đúng ngân sách tam giác; Căn cứ đổi theo `m1.base_decor` |
 | **N-07** | Vành nền phố + mặt đất mở rộng (PX-02, PX-03) · [Props] | P0 | AG hoặc Codex | `src/world/backdrop/*.ts` (mới), `src/world/dressing/sets/backdrop.ts` (mới), `tests/unit/backdrop.test.ts` (mới) | Stub `dressing` của N-04 | ≤ 25.000 tam giác, ≤ 12 lượt vẽ thêm; không va chạm; không thấy khoảng trống ngoài tường từ mọi khu |
-| **N-08** | Phòng 2026: ấm từ đầu, đồ trong phòng, chuyển Mốc, timeskip, kết demo 9 Trang · [Script] | P0 | Sonnet | `src/content/hub.ts`, `src/config/hub.ts`, `src/game/scenes/hubScene.ts`, `tests/unit/hub.test.ts` | Duyệt 0.2, 0.3 | BG-4, B10 xong; hộp phấn + "Mấy năm sau…"; timeskip `[PLACEHOLDER]`; 3 tin kết theo bản đã duyệt |
-| **N-09** | Form phản hồi thật + endpoint Firestore · [Web] | P0 | Codex | `src/ui/game/FeedbackForm.tsx` (mới), `api/feedback.ts` (mới), `api/_lib/firestore.ts`, `firestore.rules`, `src/ui/game/GameUi.tsx` (**chỉ** khối `s.feedback`), `tests/unit/feedback.test.ts` (mới) | Gộp sau N-02 (cùng sửa `GameUi.tsx`) | Gửi được 5 câu hỏi; ghi hoàn thành **trước** form; không gửi tên/email/IP; event `feedback_submitted` phát thật |
-| **N-10** | Validator: chặn quest phụ không khởi động được (A-02) + kiểm bản production · [Script] | P0 | Codex | `src/content/validate.ts`, `tests/unit/validate.test.ts` | — | Luật `optional_quest_unstartable`; production báo lỗi rõ nếu còn `AI_PROPOSED` |
+| **N-08** | Phòng 2026: ấm từ đầu, đồ trong phòng, chuyển Mốc, timeskip, kết demo 9 Trang · [Script] | P0 | Sonnet | `src/content/hub.ts`, `src/config/hub.ts`, `src/game/scenes/hubScene.ts`, `tests/unit/hub.test.ts` | — (0.2 đã duyệt) | BG-4, B10 xong; hộp phấn + "Mấy năm sau…"; timeskip và 3 tin kết đúng chữ ở Mục 0.2 (nhãn `HUMAN_CANON`); không còn dòng chat AG; tỉ số caro động |
+| **N-09** | Form phản hồi thật + endpoint Firestore · [Web] | P0 | Codex | `src/ui/game/FeedbackForm.tsx` (mới), `api/feedback.ts` (mới), `api/_lib/firestore.ts`, `firestore.rules`, `src/ui/game/GameUi.tsx` (**chỉ** khối `s.feedback`), `tests/unit/feedback.test.ts` (mới) | Gộp sau N-02 (cùng sửa `GameUi.tsx`) | Gửi được 5 câu hỏi; ghi hoàn thành **trước** form; không gửi tên/email/IP; phát đủ `feedback_shown/submitted/skipped`; test với Firestore Emulator |
+| **N-10** | Validator: chặn quest phụ không khởi động được (A-02) + kiểm bản production · [Script] | P0 | Codex | `src/content/validate.ts`, `tests/unit/validate.test.ts` | — | Luật `optional_quest_unstartable` (A-02 gốc + marker); `minigame_unknown_id` = cảnh báo ở test, **lỗi** ở production; production báo từng quest `AI_PROPOSED` bị chặn |
 | **N-11a** | 4 trò Trang 1: mật lệnh K4, đá cầu K5, lau bảng K6, bóp mì K6 · [Scene] | P0 | Codex hoặc Opus | `src/game/minigames/games/{mg_cipher,mg_footbag,mg_wipe_board,mg_noodle}.ts` (mới), `tests/unit/mg_trang1.test.ts` (mới) | N-02 | 4 trò có luật, thắng/thua, Chơi lại, Bỏ qua; không chặn truyện |
-| **N-11b** | 3 trò Trang 2–3: thả thuyền K5, dựng Căn cứ K3, viết luật K4 · [Scene] | P1 | Codex | `src/game/minigames/games/{mg_boat,mg_base_build,mg_rules}.ts` (mới), `tests/unit/mg_trang23.test.ts` | N-02 | Như N-11a; ghi `minigames.boat.result` |
+| **N-11b** | 4 trò Trang 2–4: thả thuyền K5, dựng Căn cứ K3, viết luật K4, **xếp đội hình K3** · [Scene] | P1 | Codex | `src/game/minigames/games/{mg_boat,mg_base_build,mg_rules,mg_lineup}.ts` (mới), `tests/unit/mg_trang24.test.ts` | N-02 | Như N-11a; ghi `minigames_story.boat` |
 | **N-12** | Người lớn + học sinh nền procedural (PX-70) · [Props] | P1 | Codex | `src/actors/character/presets.ts`, `src/actors/character/build.ts`, `tests/unit/rigAdapter.test.ts` | — | Cô Diệp, bác bảo vệ, chú tạp hóa, Tú, 4 học sinh nền; người lớn 1,55–1,70 m |
 | **N-13** | Đạo cụ procedural Mốc 2 (PX-51…67) + bộ trang trí đêm Hội trại · [Props] | P1 | AG | `src/world/props/m2/*.ts` (mới), `src/world/dressing/sets/m2_*.ts` (mới), `tests/unit/props_m2.test.ts` | N-04, N-05 | Như N-06; đêm Hội trại có lửa + đèn dây |
 | **N-14** | Ảnh tự sướng 3 lần chọn 1 (Trang 1) + ảnh cầu vồng lên bìa Album · [Scene] | P1 | Opus | `src/game/game.ts` (hàm `runPhoto`), `src/systems/album.ts`, `src/ui/game/GameUi.tsx` (vùng ảnh) | Gộp sau N-02, N-09 | Giữ được 1/3 ảnh vào `album.selected`; bìa Album hiện ảnh cầu vồng |
 | **N-15a…e** | Số hóa **Main** Trang 5, 6, 7, 8, 9 (mỗi Trang một task) · [Script] | P1 | AG hoặc Sonnet | a: `src/content/days/d_g08_01.ts` · b: `d_g08_02.ts` · c: `d_g09_01.ts` · d: `d_g09_02.ts` · e: `d_g09_03.ts` (đều mới) | N-04 (marker), N-11 (mã trò) | Chép nguyên văn kịch bản; chỉ Main; Side = 0; bước trò dùng mã ở thẻ N-15 |
-| **N-15f** | Tích hợp Mốc 2 vào gói nội dung · [Script] | P1 | Sonnet | `src/content/pack.ts`, `src/content/release.ts`, `src/content/chapters.ts`, `tests/unit/analyticsBridge.test.ts` | N-15a…e | Bản test chạy Trang 1→9; `end_day_id = 'd.g09.03'` |
+| **N-15f** | Tích hợp Mốc 2 vào gói nội dung · [Script] | P1 | Sonnet | `src/content/pack.ts`, `src/content/release.ts`, `src/content/chapters.ts`, `tests/unit/analyticsBridge.test.ts` | N-15a…e | Bản test chạy Trang 1→9; `end_day_id = 'd.g09.03'`; `pack.ts` có `filterPackForRelease` tắt Side/Daily ở production (G-3) |
 | **N-16** | Trò Mốc 2 bản tối thiểu: Caro (1 mức AI), Sudoku (3 đề), Ném bóng, Săn góc ảnh, Trang trí Căn cứ · [Scene] | P1 | Codex / Opus | `src/game/minigames/games/{mg_caro,mg_sudoku,mg_throw,mg_photo_hunt,mg_decorate}.ts` (mới) + test | N-02, N-03 | Có nút Bỏ qua; ghi `minigames.caro.series` |
 | **N-17** | Màn 2D Mốc 2: trang confession, làm hòm thư, viết/đọc thư · [Web] | P1 | Sonnet | `src/ui/game/screens/*.tsx` (mới) | N-02 | Mở/đóng bằng Esc; không chặn Main khi lỗi |
-| **N-18** | Phát các event còn thiếu (`hub_opened`, `free_photo_taken`, …) · [Web] | P2 | Codex | `src/analytics/*`, `shared/events.ts` | N-02, N-14 | Mọi event có người nghe đều có người phát |
-| **N-19** | Cập nhật e2e + đo FPS trên laptop thật · [Web] | P2 | Người + Sonnet | `tests/e2e/*.spec.ts` | Hầu hết task P0 | `npx playwright test --workers=1` đạt trên máy thật; FPS ghi vào handoff |
-| **N-20** | `docs/ASSET_CREDITS.md` + cập nhật `DEMO_AUDIT.md` · [Docs] | P2 | Sonnet | `docs/ASSET_CREDITS.md` (mới), `docs/handoff/DEMO_AUDIT.md` | — | Ghi nguồn 7 GLB + "procedural, tự làm" |
+| **N-18** | Phát các event còn thiếu (`free_photo_taken`, `feedback_submitted`, `landing_view`, `cta_click`; **bỏ `hub_opened`**) · [Web] | P2 | Codex | `src/analytics/*`, `src/main.ts`, `shared/events.ts` | N-02, N-14 | Mọi event có người nghe đều có người phát; đếm đủ loại event sau một lượt chơi với Emulator |
+| **N-19** | Cập nhật e2e 9 Trang + đo FPS trên laptop thật · [Web] | **P0 (cổng cuối)** | Người + Sonnet | `tests/e2e/*.spec.ts` | Hầu hết task P0, P1 | `npx playwright test --workers=1` đạt trên máy thật; FPS ghi vào handoff |
+| **N-20** | `docs/ASSET_CREDITS.md`, cập nhật `DEMO_AUDIT.md`, D3 trong GDD `03`, sửa câu "100%" của AG · [Docs] | P2 | Sonnet | `docs/ASSET_CREDITS.md` (mới), `docs/handoff/DEMO_AUDIT.md`, `docs/gdd/03_ASSETS_AND_AUDIO.md`, `docs/handoff/gemini/{QUESTIONS_LOG,HANDOFF_TO_CLAUDE}.md` | — | Ghi nguồn 7 GLB + "procedural, tự làm"; GDD `03` ghi D3, đường Blender → GLB gắn SUPERSEDED; A3-8 xong |
 | **N-21** | Thẻ minh họa 2D "ba cổng trường" (PX-80) + ảnh in dán tường Căn cứ (PX-42) · [Props] | P2 | AG | `src/ui/game/screens/ThreeGates.tsx` (mới), `src/world/props/m1/printedPhotos.ts` (mới) | N-17, N-06 | — |
+| **N-22** | **Dựng bản đo**: khai `production`, PR → `dev`, nhật ký production · [Web] | **P0 (cổng cuối)** | Sonnet + chủ dự án | `src/content/release.ts` (chỉ khối `production`), `docs/DEV_SESSION_HANDOFF.md` (nhật ký) | N-01, N-08, N-09, N-10, N-15f, N-19 | `production`: 9 Trang, `end_day_id: 'd.g09.03'`; validator production 0 lỗi; build production sạch công cụ test; PR `feat/sprint-0412` → `dev` mở; **chủ dự án duyệt** rồi mới gộp `main` |
+| **N-23** | Vá bẫy cache `loadProp` + đo lại bàn đôi · [Scene] | P2 | Sonnet | `src/render/assets.ts`, `src/world/world.ts` (chỉ `dispose`) | Gộp sau N-04 | Vào hai Ngày liền không mất props GLB; kết luận đo bàn ghi vào PR (G-8) |
 
-**Thứ tự gộp gợi ý:** N-04 (stub) → N-03, N-10 → N-02 → N-01, N-05, N-06, N-07, N-08 → N-09 → N-11a → (P1) …
-**Thang cắt nếu trễ (cắt từ dưới lên, chờ X-4):** N-21 → N-20 → N-17 (thay bằng thẻ thoại) → N-16 (chỉ giữ Caro) → N-13 (giữ hòm thư + lửa trại) → N-11b. **Không cắt:** N-01…N-10, N-11a, N-15a…f.
+**Thứ tự gộp gợi ý:** N-04 (stub) → N-03, N-10 → N-02 → N-01, N-05, N-06, N-07, N-08 → N-09 → N-11a → (P1) N-11b, N-12, N-14, N-15a…e → N-15f, N-16, N-17, N-13 → N-19 → N-22.
+**Thang cắt nếu trễ (cắt từ dưới lên — đã duyệt X-4):** N-21 → N-20 → N-17 (thay bằng thẻ thoại) → N-16 (chỉ giữ Caro) → N-13 (giữ hòm thư + lửa trại) → N-11b (rơi về thẻ khung giả). **Không cắt:** N-01…N-10, N-11a, N-15a…f, N-19, N-22.
+
+### 1.1 Lịch và điểm kiểm (đề xuất, 12 ngày tới hạn 04/12)
+| Ngày | Phải xong | Điểm kiểm |
+|---|---|---|
+| 22–23/11 | N-00 ✅; **N-04 bản khung đẩy lên**; N-03, N-10; N-01 chạy | Bản khung `dressing`/`atmosphere` đã ở `feat/sprint-0412` |
+| 24–26/11 | N-02 gộp; N-04 đầy đủ; N-05, N-06, N-07, N-08 chạy | **26/11:** chơi tay trọn 4 Trang Mốc 1 (trò còn thẻ khung) |
+| 27–30/11 | N-09, N-11a (+ N-11b); N-15a…e bắt đầu (cần marker N-04 và mã trò) | **30/11:** 4 trò Trang 1 chơi thật |
+| 01–02/12 | N-15f, N-14, N-16, N-17, N-13 | **02/12: điểm cắt** — chủ dự án quyết cắt theo thang X-4 |
+| 03/12 | N-19 (e2e + FPS laptop thật); N-22 khai `production`, mở PR → `dev` | Preview Vercel chơi thử từ đầu tới kết |
+| 04/12 | Chủ dự án duyệt → gộp `main`; ghi nhật ký production | **Hạn bản playtest** |
 
 ---
 
@@ -119,7 +158,7 @@ Agent đề xuất: **AG** = Antigravity / Gemini 3.8 · **Codex** · **Sonnet**
    `git fetch origin && git worktree add ../gk-<mã> -b task/<mã>-<tên> origin/feat/sprint-0412`.
    Không `push --force`, không gộp vào `main`, không đổi nhánh trong thư mục người khác đang dùng. Mở PR vào `feat/sprint-0412`.
 2. **Chỉ sửa file trong cột "File sở hữu"** của task. Cần đổi file khác → ghi vào PR.
-3. **Nội dung:** không tự viết cốt truyện/thoại thật. Chữ chưa duyệt ghi `[PLACEHOLDER]` và quest gắn `ownership_label: 'AI_PROPOSED'`. Thoại lấy **nguyên văn** từ `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md`; đổi `[PLAYER_NAME]` → `{player_name}`, `[ÔNG_BÀ]` → `{g:ông|bà}` (chỉ khi Châu gọi **Player**).
+3. **Nội dung:** không tự viết cốt truyện/thoại thật. Chữ chưa duyệt ghi `[PLACEHOLDER]` và quest gắn `ownership_label: 'AI_PROPOSED'` (**lưu ý G-3:** validator production chặn mọi quest `AI_PROPOSED` trong Ngày phát hành và mọi quest Main/Event không phải `HUMAN_CANON`; Side/Daily bị tắt ở production bởi `filterPackForRelease`; **không thêm câu nối** vào quest Main). Thoại lấy **nguyên văn** từ `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md`; đổi `[PLAYER_NAME]` → `{player_name}`, `[ÔNG_BÀ]` → `{g:ông|bà}` (chỉ khi Châu gọi **Player**).
 4. **3D (quyết định D3):** mọi asset mới dựng bằng **Procedural Three.js**; chỉ dùng lại GLB đã có ở `public/assets/`. Gốc **`min.y = 0`**, mét, Y lên, mặt trước +z. Vật liệu `toon()` từ `src/render/materials.ts`, màu từ `PAL` (`src/world/school/props.ts`). Texture canvas đặt `colorSpace = THREE.SRGBColorSpace`. Vật lặp ≥ 5 cái dùng **`InstancedMesh`**; đồ tĩnh gọi `mergeStatic()` (`src/render/merge.ts`). Đất/trời/hạt tắt viền: `material.userData.outlineParameters = { visible: false }`. Nhân vật đi qua `CharacterRigAdapter` (`src/actors/player/rigAdapter.ts`), cao lớp 6–7 1,30–1,40 m, lớp 8–9 1,55–1,65 m.
 5. **Năm học canon:** Mốc 1 = lớp 6–7 (2014–2016), Mốc 2 = lớp 8–9 (2016–2018), 2026 = phòng Hub.
 6. **Kiểm trước khi mở PR (bắt buộc, dán kết quả thật vào PR):**
@@ -134,17 +173,8 @@ Agent đề xuất: **AG** = Antigravity / Gemini 3.8 · **Codex** · **Sonnet**
 
 ---
 
-### N-00 · Ghi quyết định 22/11 vào tài liệu gốc
-- **Mục tiêu:** để mọi agent đọc `CLAUDE.md` thấy đúng phạm vi mới (A1), hướng asset mới (D3), timeskip (D5). Chỉ làm sau khi Game Director đồng ý X-1, X-2.
-- **Đọc:** `docs/GDD_FULL_REVIEW.md` mục VII; `CLAUDE.md`; `docs/gdd/00_MASTER_GDD.md` §1.2, §4, §11; `docs/handoff/README.md`.
-- **Việc:** `CLAUDE.md` §3 thay bằng 3 quyết định 22/11 (giữ 21/11 dưới dạng SUPERSEDED); §2 cập nhật commit nhánh; `00` §1.2 dòng "Bản public" → "Mốc 1 đầy đủ + Mốc 2 Main (CONFIRMED 22/11)"; §4 khối "CONFIRMED 21/11 (tối)" → SUPERSEDED + khối 22/11; §11 thêm mục 15 (A1), 16 (D3), 17 (D5); `README.md` trỏ tới `NEXT_SPRINT_TASK_BOARD.md`.
-- **DoD:** chỉ 3 file đổi; không xóa lịch sử quyết định.
-- **Prompt:**
-```
-Bạn là agent tài liệu cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 (quy chuẩn chung) và thẻ N-00, rồi đọc docs/GDD_FULL_REVIEW.md mục VII.
-Tạo worktree nhánh task/N-00-quyet-dinh-2211 từ origin/feat/sprint-0412.
-Sửa đúng 3 file: CLAUDE.md (§2, §3), docs/gdd/00_MASTER_GDD.md (§1.2, §4, §11), docs/handoff/README.md để ghi quyết định Game Director 22/11: A1 (Mốc 1 đầy đủ + Mốc 2 chỉ Main, kết demo sau Trang 9), D3 (asset mới dựng bằng Procedural Three.js, chỉ dùng lại GLB có sẵn ở public/assets/, nhân vật giữ bản dựng bằng code), D5 (thêm timeskip ngắn trước kết demo bản 9 Trang). Quyết định cũ 21/11 giữ lại, gắn SUPERSEDED. Không sửa file nào khác. Viết tiếng Việt, ngắn. Commit, push nhánh, mở PR vào feat/sprint-0412.
-```
+### N-00 · Ghi quyết định 22/11 vào tài liệu gốc — ✅ ĐÃ XONG (22/11)
+Làm cùng lần gộp bảng việc này (chủ dự án đã đồng ý X-1, X-2). Đã sửa: `CLAUDE.md` (§1–§3, §5, §6), `docs/gdd/00_MASTER_GDD.md` (§1.2, §4, §7.3, §11 mục 8, 13–17, §12 changelog), `docs/handoff/README.md` (viết lại); `docs/handoff/SPRINT_TASKS.md` gắn SUPERSEDED. Lịch sử quyết định 21/11 được giữ, gắn SUPERSEDED. Phần D3 trong `docs/gdd/03_ASSETS_AND_AUDIO.md` còn lại → N-20.
 
 ### N-01 · Sửa dữ liệu Mốc 1 theo quyết định B/C/D
 - **Mục tiêu & quy chuẩn:** đưa 4 Trang Mốc 1 về đúng kịch bản theo các mục đã chốt: **B1** (Trang 1 tách 2 cảnh, 6 bước), **B2** (lỗi xưng hô), **B3** (giữ thoại code — câu "Tớ ước… thuyền tớ đừng lật" đã không có, không cần làm), **B5** (Trang 3), **B6** (Trang 4 thêm ảnh cầu vồng + thẻ "Mấy hôm sau"), **B7** (nhãn ghế đá), **C1** (Side/Daily AI → `AI_PROPOSED`), **C2** (bỏ bắn bi khỏi Trang 3), **C4**, **C5**, **D1**, **D2**. C6: sửa tài liệu AG cho khớp code.
@@ -155,8 +185,10 @@ Sửa đúng 3 file: CLAUDE.md (§2, §3), docs/gdd/00_MASTER_GDD.md (§1.2, §4
   - `d_g07_02.ts` (**B5, C2, D2**): thêm bước `collect` 3 điểm `itr.thcs.base_survey_roof`, `itr.thcs.base_survey_stump`, `itr.thcs.base_survey_boxes`; lời lựa chọn `c_m1_03_decor` trả về **"Giấy màu" / "Hoa" / "Ảnh"** (giữ `id` và `tone`); bước dựng `minigame 'mg_base_build'`; bước luật `minigame 'mg_rules'`; ảnh chính = biển tên: camera `cam.d0702.base` đổi marker → `cam.thcs.base_sign`, `at_step_id` là bước treo biển. Gỡ `q_m1_side_04` khỏi `side_quests` (giữ định nghĩa, đổi nhãn như C1).
   - `d_g07_03.ts` (**B6, B7, C4, C5, D1**): `art_m1_05.appear_when` → `{ day: 'd.g07.02' }`; flag `m1.placeholder_tone` → `m1.group_photo_style`; tách cutscene `s05` thành `s05 cutscene` (mưa, chạy về Căn cứ) → `s06 photo mode:'timer' camera_id:'cam.d0703.rainbow'` (ảnh cầu vồng, `album_entry_id: 'alb.d.g07.03.cover'`) → `s07 cutscene` thẻ chữ "Mấy hôm sau" + thoại dán ảnh. Hết Trang khi giữ ảnh cầu vồng. Không đổi thoại.
   - **C1** cả 4 file: hằng `sideMeta` → `{ owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' }`; mọi `title`, `objective`, `text` của Side/Daily thêm tiền tố `[PLACEHOLDER] `; đổi mã `q_m1_side_0N` → `q_m1_ai_side_0N`, `q_m1_daily_01` → `q_m1_ai_daily_01` (cập nhật `pde_03` sẽ do N-08 làm — ghi vào PR).
+  - **G-7 (Daily khai trùng):** `q_m1_ai_daily_01` chỉ khai **một** lần ở `d_g06_01.ts` (`daily_pool` của Trang 1); bỏ bản trùng ở `d_g07_01/02/03.ts` — hiện `pack.ts` gộp theo ID nên chỉ giữ bản Trang 4.
+  - **G-1 (Xếp đội hình):** `d_g07_03.ts` chèn `minigame` `game: 'mg_lineup'` ngay **trước** bước `photo` hẹn giờ thứ nhất (GDD `01` Trang 4: Xếp đội hình → Hẹn giờ → Mưa → Cầu vồng → Mấy hôm sau); đánh lại số bước, cập nhật test.
   - `tests/unit/contentPack.test.ts`: cập nhật số bước, mã mới. `DOI_CHIEU_TRANG_1_4.md` §5: thay mô tả "lời hẹn năm lớp 8" bằng "kiểu ảnh đủ năm đứa", ghi các mã mới.
-  - **Mã trò dùng chung (không đổi tên):** `mg_cipher`, `mg_footbag`, `mg_wipe_board`, `mg_noodle`, `mg_boat`, `mg_base_build`, `mg_rules`.
+  - **Mã trò dùng chung (không đổi tên):** `mg_cipher`, `mg_footbag`, `mg_wipe_board`, `mg_noodle`, `mg_boat`, `mg_base_build`, `mg_rules`, `mg_lineup`.
   - **Marker mới (do N-04 tạo):** `itr.thcs.class_list`, `itr.thcs.grocery_steps`, `cam.thcs.grocery`, `cam.thcs.gutter`, `cam.thcs.base_sign`, `cam.thcs.rainbow`, `itr.thcs.base_survey_roof/stump/boxes`, `spot.thcs.eave_1…5`. Nếu N-04 chưa gộp: làm trước, gộp sau N-04.
 - **DoD:** 4 lệnh ở 2.0 xanh; `validate` không còn lỗi nhãn; chạy `/?play=1` đi hết Trang 1→4 (trò hiện thẻ khung tạm nếu N-02 chưa xong).
 - **Prompt:**
@@ -165,7 +197,7 @@ Bạn là agent nội dung (TypeScript) cho repo KusaThaor/GAME-KNDMST. Đọc d
 Tạo worktree nhánh task/N-01-sua-moc1 từ origin/feat/sprint-0412.
 Chỉ sửa: src/content/days/d_g06_01.ts, d_g07_01.ts, d_g07_02.ts, d_g07_03.ts, tests/unit/contentPack.test.ts, docs/handoff/gemini/DOI_CHIEU_TRANG_1_4.md.
 Thoại: KHÔNG viết câu mới. Chỉ chia lại thoại có sẵn trong code vào đúng bước; riêng lời lựa chọn Trang 3 đổi về "Giấy màu"/"Hoa"/"Ảnh", câu của Châu ở Trang 1 sửa "{g:ông|bà}" thành "ông". Side/Daily đổi nhãn AI_PROPOSED + [PLACEHOLDER] và đổi mã như thẻ ghi.
-Dùng đúng mã trò (mg_cipher, mg_footbag, mg_wipe_board, mg_noodle, mg_boat, mg_base_build, mg_rules) và mã marker trong thẻ.
+Dùng đúng mã trò (mg_cipher, mg_footbag, mg_wipe_board, mg_noodle, mg_boat, mg_base_build, mg_rules, mg_lineup) và mã marker trong thẻ.
 Chạy: npx tsc --noEmit; npm test; npm run validate:world; VERCEL_ENV=production npm run build. Dán kết quả thật vào PR. Nếu validate báo thiếu marker vì N-04 chưa gộp, ghi rõ trong PR, không tự sửa file world.
 Commit nhỏ, push, mở PR vào feat/sprint-0412.
 ```
@@ -174,27 +206,37 @@ Commit nhỏ, push, mở PR vào feat/sprint-0412.
 - **Mục tiêu & quy chuẩn:** thay thẻ giả 1 nút (`src/game/game.ts` khoảng dòng 178–186, `GameUi.tsx` khoảng 212–215) bằng khung thật theo GDD `02` §1.1: màn luật → chơi → kết quả (thắng/thua/hòa hoặc sao) → **Chơi lại** / **Đi tiếp**; luôn có **Bỏ qua** (thua/bỏ không chặn truyện). Trò là module độc lập, đăng ký tự động để nhiều người thêm trò song song không đụng nhau.
 - **Đọc:** mục 2.0; `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §1, §2.4; `src/game/game.ts` (dòng 150–200, 440–480, 560–580); `src/ui/game/GameUi.tsx`; `src/ui/game/store.ts`; `shared/events.ts` (`minigame_started`, `minigame_finished`); `docs/handoff/DEMO_AUDIT.md` B-05 (A-01).
 - **Việc:**
-  - `src/game/minigames/types.ts`: `interface MinigameModule { id: string; title: string; rulesText: string; kind: 'K1'|'K2'|'K3'|'K4'|'K5'|'K6'|'special'; mount(el: HTMLElement, ctx: MinigameCtx): MinigameInstance }`; `MinigameCtx { onFinish(r: MinigameResult): void; seed: number; opponentId: string|null; difficulty: string|null; save: { get(key): unknown; set(key, v): void } }`; `MinigameResult { result: 'win'|'lose'|'draw'|'complete'|'skipped'; score?: number; stars?: number; hints_used?: number }`.
+  - `src/game/minigames/types.ts` (**hợp đồng gộp T-03 + N-02, G-5**): `interface MinigameModule { id: string; title: string; kind: 'K1'|'K2'|'K3'|'K4'|'K5'|'K6'|'special'; rules: { lines: string[] /* tối đa 3 */; image?: string }; mount(el: HTMLElement, ctx: MinigameCtx): MinigameInstance }`; `interface MinigameInstance { dispose(): void; pause(): void; resume(): void }` (Esc gọi `pause()` để **đồng hồ dừng**); `MinigameCtx { onFinish(r: MinigameResult): void; seed: number; opponentId: string|null; difficulty: string|null; save: { get(key): unknown; set(key, v): void } }`; `MinigameResult { result: 'win'|'lose'|'draw'|'complete'|'quit'; score?: number; stars?: number; hints_used?: number }` — **dùng lại** kiểu `MinigameResult` đã có ở `src/core/eventBus.ts` (`quit` = Bỏ ván / Bỏ qua); **không** tạo giá trị `skipped`.
   - `registry.ts`: `const mods = import.meta.glob('./games/*.ts', { eager: true })` → `getMinigame(id)`; id lạ → trả `mg_fallback` (thẻ "Xong" như cũ) để không vỡ truyện.
-  - `host.ts` + `src/ui/game/MinigameFrame.tsx`: khung 2D phủ màn (Preact), nút Luật / Chơi lại / Bỏ qua; phím Esc = hỏi Bỏ qua.
-  - `game.ts`: nhánh `s.kind === 'minigame'` gọi host; phát `minigame_finished` với **kết quả thật**; lưu `minigames.<id>.first_result` (qua API của N-03; nếu N-03 chưa gộp thì lưu vào `save.flags['mg.<id>.result']` và ghi PR).
+  - `host.ts` + `src/ui/game/MinigameFrame.tsx`: khung 2D phủ màn (Preact), nền sáng, góc bo, chữ to (GDD `00` §7.4); nút "?" (Luật) / Chơi lại / Bỏ qua.
+  - **Vòng đời bắt buộc (GDD `02` §1.1):** màn luật (bỏ qua được từ lần 2) → chơi → kết quả (Thắng / Thua / Hòa / Hoàn thành) → **Chơi lại** hoặc **Đi tiếp**. **Esc mở menu và dừng đồng hồ**; "Bỏ ván" nằm trong menu, tính là **thua** và vẫn đi tiếp. Mọi kết quả đều `engine.complete(step.id)` — thua không bao giờ chặn truyện. Kết quả **lần đầu** mới dùng cho thoại; chơi lại chỉ cập nhật bảng thành tích. `duration_s` không tính lúc dừng.
+  - `game.ts`: nhánh `s.kind === 'minigame'` gọi host; phát `minigame_finished` với **kết quả thật**; ghi kết quả lần đầu vào `minigames_story[game_id]` và bảng `minigames` qua `recordMg()` của N-03 (nếu N-03 chưa gộp: tạm `save.flags['mg.<id>.result']`, ghi PR).
   - **A-01:** bước `goto` phải xong khi người chơi **đã đứng sẵn** trong bán kính hoặc vào bán kính lúc giao diện khóa — kiểm lại khi bước bắt đầu và khi mở khóa (khu vực `proximity()`).
   - Trò mẫu `src/game/minigames/games/mg_demo.ts` (bấm 3 lần là thắng) để test.
-- **DoD:** unit test host (win/lose/skip/replay), test A-01; 4 lệnh 2.0 xanh; e2e cũ không vỡ (chạy trên máy thật nếu có).
+- **DoD:** unit test host (win/lose/quit/replay; lần chơi hai không ghi lại `minigames_story`), test A-01; 4 lệnh 2.0 xanh; e2e cũ không vỡ (chạy trên máy thật nếu có). A-01: test **đỏ trước khi sửa** (ghi kết quả đỏ vào PR); ca e2e: vào `d.g07.03` → Esc mở Menu → `__game.teleportTo('itr.thcs.gutter')` → đóng Menu → quest phụ sang bước kế mà không cần di chuyển; một bước `goto` không hoàn thành hai lần. Cập nhật `README.md` mục "Thêm một Ngày ký ức mới" và `docs/ai-handoff/02_QUEST_SYSTEM.md` §6 (ngoại lệ duy nhất ngoài cột "File sở hữu", cùng một ca trong `tests/e2e/game.spec.ts`).
 - **Prompt:**
 ```
 Bạn là agent engine (TypeScript, Preact, Three.js) cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-02.
 Tạo worktree nhánh task/N-02-khung-minigame từ origin/feat/sprint-0412.
-Chỉ sửa/tạo: src/game/game.ts, src/game/minigames/{types,registry,host}.ts, src/game/minigames/games/mg_demo.ts, src/ui/game/MinigameFrame.tsx, src/ui/game/GameUi.tsx (chỉ vùng minigame), src/ui/game/store.ts, tests/unit/minigameHost.test.ts.
-Làm đúng interface trong thẻ (MinigameModule, MinigameCtx, MinigameResult), registry dùng import.meta.glob('./games/*.ts', {eager:true}), id lạ rơi về mg_fallback. Thua hoặc Bỏ qua KHÔNG chặn câu chuyện. Phát minigame_started/minigame_finished với kết quả thật. Sửa lỗi A-01 (bước goto khi đã đứng sẵn trong bán kính) và viết test.
+Chỉ sửa/tạo: src/game/game.ts, src/game/minigames/{types,registry,host}.ts, src/game/minigames/games/mg_demo.ts, src/ui/game/MinigameFrame.tsx, src/ui/game/GameUi.tsx (chỉ vùng minigame), src/ui/game/store.ts, tests/unit/minigameHost.test.ts, và (ngoại lệ) một ca A-01 trong tests/e2e/game.spec.ts + README.md mục "Thêm một Ngày ký ức mới" + docs/ai-handoff/02_QUEST_SYSTEM.md §6.
+Làm đúng hợp đồng trong thẻ (MinigameModule có rules.lines ≤ 3, MinigameInstance có pause/resume, MinigameCtx, MinigameResult dùng lại kiểu ở eventBus — không thêm 'skipped'), vòng đời theo GDD 02 §1.1 (Esc dừng đồng hồ, Bỏ ván = thua vẫn đi tiếp), registry dùng import.meta.glob('./games/*.ts', {eager:true}), id lạ rơi về mg_fallback. Thua hoặc Bỏ qua KHÔNG chặn câu chuyện. Phát minigame_started/minigame_finished với kết quả thật. Sửa lỗi A-01 (bước goto khi đã đứng sẵn trong bán kính) và viết test.
 Chạy 4 lệnh kiểm ở mục 2.0, dán kết quả thật. Commit nhỏ, push, mở PR.
 ```
 
 ### N-03 · Lưu bản v3 + chuyển đổi v2→v3
 - **Mục tiêu:** thêm trường GDD `02` §4.2 mà **không xóa** tiến trình người chơi (hiện tăng `SAVE_VERSION` là xóa sạch — B-07).
 - **Đọc:** mục 2.0; `src/core/save.ts`; `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §4.
-- **Việc:** `SAVE_VERSION = 3`; thêm `minigames: Record<string, { wins: number; losses: number; draws: number; first_result?: string; best?: number; last_at?: number }>` + `minigames_caro_series: { player: number; opponent: number }` (bắt đầu 3–3), `story: { valentine?: { recipient?: string; kind?: string; groupMsg?: string; boxStyle?: string } }`, `hub_unlocked: boolean`. Hàm `migrate(p: unknown): SaveState` nâng v2 → v3 (giữ mọi trường cũ, thêm mặc định); chỉ `drop()` khi không đọc được. Xuất `getMg(id)`, `recordMg(id, result)`.
-- **DoD:** test: bản v2 mẫu → v3 giữ `days`, `album`, `flags`, `player_name`; bản rác → bản mới; 4 lệnh xanh.
+- **Việc (tên trường bám GDD `02` §4.2 — bản gộp T-04 + N-03, G-4):** `SAVE_VERSION = 3`; thêm
+  - `minigames: Record<string, { wins: number; losses: number; draws: number; last_played: string | null }>` — khóa `{game_id}.{opponent_id}` (không đối thủ: `{game_id}.-`);
+  - `minigames_story: Record<string, { result: 'win'|'lose'|'draw'|'complete'|'quit'; stars: number | null }>` — kết quả **lần đầu** của trò cốt truyện (`boat`, `footbag`, …), dùng cho thoại;
+  - `caro: { series: { quan: number; duc: number }; story_result: { result: 'win'|'lose'|'draw'; opponent: string } | null }` — `series` bắt đầu **3–3**, chỉ đổi theo kết quả **lần đầu** (GDD `02` §2.1);
+  - `sudoku: { best: Record<string, { time_s: number; stars: number }>; story_result: 'win'|'lose'|null }`;
+  - `story: { valentine: { recipient?: string; kind?: string; groupMsg?: string; boxStyle?: string; branch_result?: string } }` — chỉ **mã** chọn sẵn, không chữ tự do;
+  - `hub: { unlocked: boolean }`; `settings` thêm `volume`, `text_speed`, `difficulty`, `caro_rule`, `sudoku_mistake_mode` (GDD `02` §4.1).
+  - Chưa thêm `minigames.bottle.*` (Tầng B, sau 15/12) nhưng cấu trúc phải mở rộng được mà không đổi schema.
+  - `migrate(p: unknown): SaveState`: gặp `v: 2` → **chuyển đổi** (giữ `days`, `quests`, `flags`, `artifacts`, `album`, `relationships`, `phone`, `public_demo_done`, `player_name`; điền mặc định cho trường mới), không xóa; `v: 1` hoặc hỏng → xóa như cũ (`reset_old_version`); `LoadStatus` thêm `'migrated'`. **Ảnh trong IndexedDB không bị đụng.** Xuất `getMg(id, opp?)`, `recordMg(id, result, opp?)` (chỉ lần đầu mới ghi `minigames_story`).
+  - Riêng tư giữ nguyên: không thêm trường nào chứa tên người chơi, chữ tự do hay nội dung tin nhắn.
+- **DoD:** test đơn vị: JSON `v: 2` thật (dựng fixture từ một lượt chơi) → `status === 'migrated'`, giữ `days`, `album`, `flags`, `player_name`, trường mới có mặc định, `caro.series = 3–3`; `v: 1` → `reset_old_version`; bản rác → bản mới; `recordMg` lần hai không ghi đè `minigames_story`. 4 lệnh xanh. **Chơi lại thật:** chơi tới giữa Trang 1 bằng bản cũ, đổi sang bản mới, tải lại trang → còn đúng chỗ, Album không mất. Dán JSON trước/sau (đã bỏ tên người chơi) vào PR.
 - **Prompt:**
 ```
 Bạn là agent engine cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-03.
@@ -280,15 +322,15 @@ Dựng vành phố thị trấn miền Nam (nhà ống, cây, cột điện, dâ
 ```
 
 ### N-08 · Phòng 2026 + chuyển Mốc + timeskip + kết demo bản 9 Trang
-- **Mục tiêu & quy chuẩn:** **BG-4** (phòng ấm từ đầu), **B10** (mở thùng trước, độc thoại sau), đồ trong phòng PX-50, **chuyển Mốc** (ảnh lên bìa → thẻ "Mấy năm sau…" → hộp phấn sáng, mở Trang 5), **D5** timeskip `[PLACEHOLDER]`, **kết demo bản 9 Trang** theo bản B8/B9 đã duyệt ở Mục 0.2. Đổi mã `pde_03` theo C1.
-- **Đọc:** mục 2.0; Mục 0.2, 0.3 file này; kịch bản §MỞ ĐẦU, §Chuyển sang Mốc 2, §KẾT DEMO (dòng 47–62, 324–328, 859–874); `src/content/hub.ts`, `src/config/hub.ts`, `src/game/scenes/hubScene.ts`, `src/systems/hub.ts` (chỉ đọc).
-- **Việc:** `config/hub.ts`: mọi `lighting_by_days_done` dùng một preset ấm; `hubScene.ts`: thêm đèn bàn, khung kính, khung ảnh tường, thảm, rèm, cửa sổ đêm (procedural, theo 2.0); `hub.ts`: đảo `q_hub_pd_01` (interact thùng trước, cutscene sau); thêm kỷ vật `art_m2_01` hộp phấn (`appear_when: { day: 'd.g07.03' }`, `target_memory_day_id: 'd.g08.01'`, shape mới `'box'` nếu cần thì ghi PR) và PDE thẻ "Mấy năm sau…"; chuỗi kết: `pde_06` đổi trigger sang `{ day: 'd.g09.03' }`; thêm quest `q_hub_pd_timeskip` (cutscene `[PLACEHOLDER]`, `AI_PROPOSED`) trước `q_hub_pd_02`; thêm bước sổ luật (độc thoại "Được dời, không được hủy…"); 3 tin kết theo bản duyệt. Nếu Mục 0.2/0.3 chưa duyệt: giữ chữ cũ, gắn `[PLACEHOLDER]` + `AI_PROPOSED`.
+- **Mục tiêu & quy chuẩn:** **BG-4** (phòng ấm từ đầu), **B10** (mở thùng trước, độc thoại sau), đồ trong phòng PX-50, **chuyển Mốc** (ảnh lên bìa → thẻ "Mấy năm sau…" → hộp phấn sáng, mở Trang 5), **D5** timeskip (đã duyệt), **kết demo bản 9 Trang** theo bản B8/B9 đã duyệt ở Mục 0.2. Đổi mã `pde_03` theo C1.
+- **Đọc:** mục 2.0; Mục 0.2 file này; kịch bản §MỞ ĐẦU, §Chuyển sang Mốc 2, §KẾT DEMO (dòng 47–62, 324–328, 859–874); `src/content/hub.ts`, `src/config/hub.ts`, `src/game/scenes/hubScene.ts`, `src/systems/hub.ts` (chỉ đọc).
+- **Việc:** `config/hub.ts`: mọi `lighting_by_days_done` dùng một preset ấm; `hubScene.ts`: thêm đèn bàn, khung kính, khung ảnh tường, thảm, rèm, cửa sổ đêm (procedural, theo 2.0); `hub.ts`: đảo `q_hub_pd_01` (interact thùng trước, cutscene sau); thêm kỷ vật `art_m2_01` hộp phấn (`appear_when: { day: 'd.g07.03' }`, `target_memory_day_id: 'd.g08.01'`, shape mới `'box'` nếu cần thì ghi PR) và PDE thẻ "Mấy năm sau…"; chuỗi kết: `pde_06` đổi trigger sang `{ day: 'd.g09.03' }`; thêm quest `q_hub_pd_timeskip` (`type: 'event'`, cutscene đúng chữ Mục 0.2, nhãn **`HUMAN_CANON`** — validator production bắt quest `event` phải `HUMAN_CANON`) trước `q_hub_pd_02`; thêm bước sổ luật (độc thoại "Được dời, không được hủy…"); nhóm chat cũ **không có dòng chat** (chỉ nhãn "tin cuối đã từ rất lâu" lấy từ `src/config/hub.ts`); 3 tin kết đúng Mục 0.2, `{quan}–{duc}` lấy từ `caro.series` (mặc định 3–3); màn kết "Đã gửi." → "(còn tiếp)" (bỏ câu cảm ơn của AG).
 - **DoD:** test hub (thứ tự mở đầu, kỷ vật hộp phấn sáng sau Trang 4, kết chỉ mở sau Trang 9); 4 lệnh xanh.
 - **Prompt:**
 ```
-Bạn là agent nội dung + cảnh phòng 2026 cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0, Mục 0.2, 0.3 và thẻ N-08.
+Bạn là agent nội dung + cảnh phòng 2026 cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0, Mục 0.2 và thẻ N-08.
 Worktree nhánh task/N-08-hub-ket-demo từ origin/feat/sprint-0412. Chỉ sửa: src/content/hub.ts, src/config/hub.ts, src/game/scenes/hubScene.ts, tests/unit/hub.test.ts.
-Làm đúng danh sách việc. Thoại lấy nguyên văn kịch bản docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md; phần chưa được Game Director duyệt (timeskip, dòng chat cũ, tin kết nếu chưa chốt) phải ghi [PLACEHOLDER] và ownership_label AI_PROPOSED. Không viết thoại mới ngoài bản nháp đã ghi ở Mục 0.3.
+Làm đúng danh sách việc. Thoại lấy nguyên văn kịch bản docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md. Timeskip, ba tin kết và nhóm chat cũ đã được chủ dự án duyệt ở Mục 0.2 — dùng đúng chữ đó, nhãn HUMAN_CANON, không [PLACEHOLDER]; không viết thêm thoại nào khác; tỉ số caro lấy động từ caro.series.
 Đồ trong phòng dựng procedural (min.y = 0, toon, sRGB). Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 ```
 
@@ -296,7 +338,7 @@ Làm đúng danh sách việc. Thoại lấy nguyên văn kịch bản docs/gdd/
 - **Mục tiêu:** bằng chứng kinh doanh cho môn học (B-04). Giữ thứ tự **ghi hoàn thành trước form**; không gửi tên/email/IP.
 - **Đọc:** mục 2.0; GDD `02` §5; `api/collect.ts`, `api/_lib/firestore.ts`, `firestore.rules`; `src/ui/game/GameUi.tsx` khối `s.feedback` (khoảng dòng 252); `src/analytics/tracker.ts`; `shared/events.ts`.
 - **Việc:** `FeedbackForm.tsx`: 5 câu `[PLACEHOLDER]` tới khi nhóm gửi câu thật (thang 1–5 "Bạn thấy hoài niệm thế nào?", "Muốn chơi tiếp phần sau không?", chọn Trang thích nhất, có/không "giới thiệu cho bạn", 1 ô ý kiến ≤ 300 ký tự — **lọc số điện thoại/email trước khi gửi**); `api/feedback.ts` (POST, kiểm `attempt_id`, giới hạn kích thước, ghi `COLLECTIONS.feedback`); quy tắc Firestore chỉ cho server ghi; phát `feedback_submitted`; tách dữ liệu `test` và `production` theo `release_stage`.
-- **DoD:** test API (hợp lệ, quá dài, có email bị lọc); 4 lệnh xanh; thử thật trên Vercel Preview ghi được 1 bản (ghi rõ đã/chưa thử).
+- **DoD:** test API (hợp lệ, quá dài, có email bị lọc); 4 lệnh xanh; thử thật trên Vercel Preview ghi được 1 bản (ghi rõ đã/chưa thử). Thêm (từ T-08): tối đa 5 câu, câu nào cũng chọn sẵn; ô ý kiến ghi "không bắt buộc" và không gửi kèm ID lần ra người chơi; phát đủ `feedback_shown` / `feedback_submitted` / `feedback_skipped`; dùng lại cách chống ghi trùng của `api/collect.ts` (`doc(id).create()`); hết hạn mức → trả 429 để client gửi lại. Thử với Emulator: `firebase emulators:start --only firestore --project demo-htx` rồi `FIRESTORE_EMULATOR_HOST=127.0.0.1:8085 GCLOUD_PROJECT=demo-htx npm run test:e2e` — chơi hết demo → thấy `public_demo_completed` **trước**, rồi đúng **một** document `feedback` không chứa tên/email/IP/nội dung tin nhắn (ảnh chụp document đã che ID đính vào PR).
 - **Prompt:**
 ```
 Bạn là agent web (Preact + Vercel API + Firestore) cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-09.
@@ -307,24 +349,25 @@ Câu hỏi để [PLACEHOLDER]. Không gửi tên, email, IP; lọc email/số �
 
 ### N-10 · Validator A-02 + kiểm bản production
 - **Đọc:** mục 2.0; `src/content/validate.ts` (khoảng dòng 130–170, 260–290); `docs/handoff/DEMO_AUDIT.md` B-06.
-- **Việc:** luật `optional_quest_unstartable` (Side/Daily có bước đầu `goto`/`interact` trỏ marker không tồn tại hoặc ngoài `open_zones` của Trang); luật `minigame_unknown_id` ở mức **cảnh báo** (đối chiếu danh sách mã trò ở thẻ N-01, N-16); thông báo production liệt kê từng quest `AI_PROPOSED` bị chặn.
-- **DoD:** test cho 3 luật; 4 lệnh xanh.
+- **Việc:** (1) `optional_quest_unstartable` = **lỗi** khi quest `side`/`daily` có bước đầu **không thuộc** `talk | interact | goto | collect | place` (engine chỉ khởi động Side/Daily qua `trigger()` ở bước đầu — lỗi A-02 gốc, G-2) **hoặc** bước đầu trỏ marker không tồn tại / ngoài `open_zones` của Trang; (2) `minigame_unknown_id`: **cảnh báo** ở bản test (đối chiếu danh sách mã trò ở thẻ N-01, N-15, N-16 — trò thật gộp dần), **lỗi** ở bản production (G-6); (3) thông báo production liệt kê từng quest `AI_PROPOSED` bị chặn; (4) khi `filterPackForRelease` (N-15f) đã tắt Side/Daily cho production thì validator không đòi chúng `HUMAN_CANON` (G-3). Gói nội dung hiện tại phải **0 lỗi** sau khi thêm luật.
+- **DoD:** test cho các luật trên — Side mở đầu bằng `cutscene` → có lỗi mới; gói hiện tại → 0 lỗi; 4 lệnh xanh.
 - **Prompt:**
 ```
 Bạn là agent kiểm dữ liệu cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-10. Worktree nhánh task/N-10-validator. Chỉ sửa src/content/validate.ts và tests/unit/validate.test.ts. Thêm 3 luật như thẻ, viết test. Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 ```
 
-### N-11a · Bốn trò Trang 1 (P0) · N-11b · Ba trò Trang 2–3 (P1)
+### N-11a · Bốn trò Trang 1 (P0) · N-11b · Bốn trò Trang 2–4 (P1)
 - **Mục tiêu:** trò chơi thật theo GDD `02` §2.4 (luật, thắng/thua, Chơi lại), qua khung N-02. Thua không chặn truyện.
 - **Đọc:** mục 2.0; `docs/gdd/02_GAMEPLAY_AND_MECHANICS.md` §1, §2.4.1 (đá cầu), §2.4.2 (thuyền), §2.4.3 (bóp mì), §2.4.4 (lau bảng), §2.4.6 (mật lệnh, dựng Căn cứ, viết luật); `src/game/minigames/types.ts` (N-02).
-- **Việc (mỗi trò một file trong `src/game/minigames/games/`, `export default` một `MinigameModule`):** N-11a: `mg_cipher` (K4 nối ký hiệu ↔ chữ, Châu gợi ý chỗ sai), `mg_footbag` (K5 canh nhịp chuyền cầu), `mg_wipe_board` (K6 giữ chuột lau, dùng texture `chalkSmudge` nếu N-06 đã có, không thì vẽ canvas riêng), `mg_noodle` (K6 giữ tới khi đầy). N-11b: `mg_boat` (K5 nạp lực + thả đúng nhịp; Quân luôn nhất, thắng khi về đích không lật — GDD `01` §10 mục 12; lưu `minigames.boat.result`), `mg_base_build` (K3 kéo–đặt thùng/bàn), `mg_rules` (K4 ghi 5 điều theo lượt, chữ **nguyên văn** kịch bản). Giao diện 2D trong khung, chữ to, nền giấy.
-- **DoD:** test logic từng trò (thắng/thua/bỏ); chơi được bằng chuột + bàn phím; 4 lệnh xanh.
+- **Việc (mỗi trò một file trong `src/game/minigames/games/`, `export default` một `MinigameModule`):** N-11a: `mg_cipher` (K4 nối ký hiệu ↔ chữ, Châu gợi ý chỗ sai), `mg_footbag` (K5 canh nhịp chuyền cầu), `mg_wipe_board` (K6 giữ chuột lau, cọ 8% chiều rộng vùng bảng, xong khi phủ ≥ 90%, 3 sao ≤ 10 giây / 2 sao ≤ 16 giây / còn lại 1 sao, không có thua; dùng texture `chalkSmudge` nếu N-06 đã có, không thì vẽ canvas riêng), `mg_noodle` (K6 giữ tới khi đầy). N-11b: `mg_boat` (K5 nạp lực + thả đúng nhịp; Quân luôn nhất, thắng khi về đích không lật — GDD `01` §10 mục 12; lưu `minigames.boat.result`), `mg_base_build` (K3 kéo–đặt thùng/bàn), `mg_rules` (K4 ghi 5 điều theo lượt, chữ **nguyên văn** kịch bản), `mg_lineup` (K3 kéo 5 người vào 5 chỗ đứng trong khung ảnh, Trang 4 — đủ người, không che nhau, không có thua; G-1). Giao diện 2D trong khung, chữ to, nền giấy.
+- **Số liệu (GDD `02` §2.4, để trong file cấu hình của từng trò, không rải trong logic):** đá cầu — cửa sổ nhịp ±80 ms / ±160 ms, thắng khi 10 lượt liên tiếp, thua khi hụt 3 lần; thuyền — 3 kiểu gấp, vùng xanh 25% thanh lực, rãnh 12 m chạy 25–35 giây, **Quân luôn nhất và thuyền Đức luôn lật ngay khi thả**; bóp mì — 3 sao ≤ 6 giây; mật lệnh — nối 6 ký hiệu, nối sai thì Châu gợi ý, không có thua. **Thứ tự làm** (dừng ở đâu cũng có thứ dùng được): mật lệnh → đá cầu → bóp mì → dựng Căn cứ → viết luật → xếp đội hình → thuyền (tốn công nhất).
+- **DoD:** mỗi trò có ít nhất 1 test đơn vị cho điều kiện thắng/xong; chơi được bằng chuột + bàn phím; chơi lại qua `?play=1&day=<id>&step=<bước>`: thua vẫn đi tiếp · Bỏ ván vẫn đi tiếp · Chơi lại được · Esc dừng đồng hồ; 4 lệnh xanh.
 - **Prompt (đổi danh sách trò theo N-11a / N-11b):**
 ```
 Bạn là agent làm minigame (TypeScript + Preact/Canvas 2D) cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-11, GDD docs/gdd/02_GAMEPLAY_AND_MECHANICS.md §1 và §2.4.
 Worktree nhánh task/N-11a-tro-trang1 (hoặc N-11b) từ origin/feat/sprint-0412 SAU khi N-02 đã gộp.
 Chỉ tạo file mới trong src/game/minigames/games/ (mỗi trò một file, export default MinigameModule) và tests/unit/mg_*.test.ts. Không sửa registry hay game.ts.
-Làm các trò: <mg_cipher, mg_footbag, mg_wipe_board, mg_noodle> (hoặc <mg_boat, mg_base_build, mg_rules>). Mỗi trò có luật hiển thị, thắng/thua, Chơi lại, Bỏ qua; thua không chặn truyện. Chữ trong trò lấy nguyên văn kịch bản, không tự viết thoại.
+Làm các trò: <mg_cipher, mg_footbag, mg_wipe_board, mg_noodle> (hoặc <mg_boat, mg_base_build, mg_rules, mg_lineup>). Mỗi trò có luật hiển thị, thắng/thua, Chơi lại, Bỏ qua; thua không chặn truyện. Chữ trong trò lấy nguyên văn kịch bản, không tự viết thoại.
 Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 ```
 
@@ -339,7 +382,7 @@ Bạn là agent nhân vật procedural (Three.js) cho repo KusaThaor/GAME-KNDMST
 
 ### N-13 · Đạo cụ procedural Mốc 2 + đêm Hội trại
 - **Đọc:** như N-06 + kịch bản Trang 5–9 (dòng 329–857) để biết vật cần có.
-- **Việc:** `src/world/props/m2/`: `chalkBox.ts` (PX-51, nắp ghi tỉ số đọc `minigames_caro_series`), `banners.ts` (PX-60), `caroSheet.ts` (PX-61), `basketHoop.ts` (PX-62, chỉ làm nếu GLB sân chưa có cột rổ — kiểm trước), `mailbox.ts` (PX-63, 3 kiểu theo `story.valentine.boxStyle`, bảng 3 điều chữ nguyên văn), `countdown.ts` (PX-64, số 270/197), `grocery2018.ts` (PX-65 tivi + tờ lịch), `campNight.ts` (PX-66: lửa dùng `addCampfire` của N-05, đèn dây InstancedMesh, 3 lều, cờ giấy, cổng trại 3 kiểu `'rocket'|'leaf'|'plain'`), `yearbook.ts` (PX-67). Bộ gắn `dressing/sets/m2_*.ts` theo `dayId`.
+- **Việc:** `src/world/props/m2/`: `chalkBox.ts` (PX-51, nắp ghi tỉ số đọc `caro.series` (`{quan, duc}`)), `banners.ts` (PX-60), `caroSheet.ts` (PX-61), `basketHoop.ts` (PX-62, chỉ làm nếu GLB sân chưa có cột rổ — kiểm trước), `mailbox.ts` (PX-63, 3 kiểu theo `story.valentine.boxStyle`, bảng 3 điều chữ nguyên văn), `countdown.ts` (PX-64, số 270/197), `grocery2018.ts` (PX-65 tivi + tờ lịch), `campNight.ts` (PX-66: lửa dùng `addCampfire` của N-05, đèn dây InstancedMesh, 3 lều, cờ giấy, cổng trại 3 kiểu `'rocket'|'leaf'|'plain'`), `yearbook.ts` (PX-67). Bộ gắn `dressing/sets/m2_*.ts` theo `dayId`.
 - **DoD:** như N-06.
 - **Prompt:**
 ```
@@ -358,28 +401,38 @@ Bạn là agent engine cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_T
 ```
 
 ### N-15a…e · Số hóa Main Trang 5–9 · N-15f · Tích hợp Mốc 2
-- **Mục tiêu & quy chuẩn:** A1 — **chỉ tuyến Main**. Side, Daily, Khu Vui Chơi, lật chai, Hội trại Phần 2–3, 4 nhánh rút gọn Valentine: **không làm** (Trang 6 Cảnh D bước 3: chỉ 3 nhánh minigame chính; nếu thư Player trỏ tới nhánh rút gọn → dẫn về nhánh "Trang trí Căn cứ"). Thoại **nguyên văn** kịch bản; `meta = HUMAN_CANON` chỉ cho câu chép nguyên văn; câu nối do agent thêm → `[PLACEHOLDER]` trong quest `AI_PROPOSED` riêng.
+- **Mục tiêu & quy chuẩn:** A1 — **chỉ tuyến Main**. Side, Daily, Khu Vui Chơi, lật chai, Hội trại Phần 2–3, 4 nhánh rút gọn Valentine: **không làm** (Trang 6 Cảnh D bước 3: chỉ 3 nhánh minigame chính; nếu thư Player trỏ tới nhánh rút gọn → dẫn về nhánh "Trang trí Căn cứ"). Thoại **nguyên văn** kịch bản, `meta = HUMAN_CANON`. **Không thêm câu nối** (validator production chặn quest Main/Event không phải `HUMAN_CANON` và mọi `AI_PROPOSED` — G-3): chỗ thiếu thoại thì ghi vào PR để chủ dự án duyệt rồi mới thêm.
 - **Đọc:** mục 2.0; `docs/PAGE_DATA_GUIDE.md`; một file mẫu đã đúng (`src/content/days/d_g07_01.ts`); kịch bản: Trang 5 dòng 331–395 · Trang 6 dòng 396–635 + `docs/gdd/IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md` · Trang 7 dòng 636–701 · Trang 8 dòng 702–778 · Trang 9 dòng 779–858; Phụ lục A, B, E.
 - **Quy ước mã:** Trang 5 `d.g08.01` quest `q_m2_main_05`, kỷ vật `art_m2_01` (do N-08 khai) · Trang 6 `d.g08.02` `q_m2_main_06`, `art_m2_02` · Trang 7 `d.g09.01` `q_m2_main_07`, `art_m2_03` · Trang 8 `d.g09.02` `q_m2_main_08`, `art_m2_04` · Trang 9 `d.g09.03` `q_m2_main_09`, `art_m2_05`. `map_variant`: g08 / g09 / `g09_night` (Hội trại) / `g09_end`. Flag lưu: `m2.duty_partner` (T5), `story.valentine.*` (T6), `m2.newspaper_truth` (T7), `m2.camp_gate` (T8), `m2.final_photo` (T9). Mã trò: `mg_caro`, `mg_sudoku`, `mg_throw`, `mg_photo_hunt`, `mg_decorate`, `mg_mailbox_build`.
-- **N-15f:** `pack.ts` thêm 5 Trang; `release.ts` bản `test`: 9 Trang, `end_day_id: 'd.g09.03'`; `chapters.ts` thêm `ch_m2`; cập nhật `analyticsBridge.test.ts` `playAll` 9 Trang.
+- **N-15f:** `pack.ts` thêm 5 Trang; `release.ts` bản `test`: 9 Trang, `end_day_id: 'd.g09.03'`; `chapters.ts` thêm `ch_m2`; cập nhật `analyticsBridge.test.ts` `playAll` 9 Trang; `pack.ts` thêm `filterPackForRelease(pack, env)`: bản `production` bỏ `side_quests` và `daily_pool` của mọi Ngày (A1, G-3), bản `test` giữ nguyên.
 - **DoD:** mỗi Trang chạy được từ đầu tới ảnh chính; 4 lệnh xanh.
 - **Prompt (thay `<X>`):**
 ```
 Bạn là agent số hóa kịch bản cho repo KusaThaor/GAME-KNDMST. Đọc docs/NEXT_SPRINT_TASK_BOARD.md mục 2.0 và thẻ N-15, docs/PAGE_DATA_GUIDE.md, file mẫu src/content/days/d_g07_01.ts.
 Worktree nhánh task/N-15<x>-trang<X> từ origin/feat/sprint-0412. Chỉ tạo src/content/days/<file của Trang X> (không sửa pack.ts/release.ts — việc của N-15f).
-Chỉ làm tuyến MAIN của Trang <X> theo docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md dòng <...>. Chép thoại NGUYÊN VĂN, đổi [PLAYER_NAME] → {player_name}, [ÔNG_BÀ] → {g:ông|bà}. Không viết thoại mới; câu nối bắt buộc thì ghi [PLACEHOLDER] trong quest AI_PROPOSED riêng. Dùng đúng mã quest/kỷ vật/flag/trò trong thẻ. Không làm Side/Daily.
+Chỉ làm tuyến MAIN của Trang <X> theo docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md dòng <...>. Chép thoại NGUYÊN VĂN, đổi [PLAYER_NAME] → {player_name}, [ÔNG_BÀ] → {g:ông|bà}. Không viết thoại mới và không thêm câu nối; chỗ thiếu thì ghi vào PR. Dùng đúng mã quest/kỷ vật/flag/trò trong thẻ. Không làm Side/Daily.
 Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 ```
 
 ### N-16 · Trò Mốc 2 bản tối thiểu
 - **Đọc:** mục 2.0; GDD `02` §2.1 (Caro), §2.2 (Sudoku), §2.5.3a–c; `src/game/minigames/types.ts`; `src/core/save.ts` (N-03).
-- **Việc:** `mg_caro` (12×12, 5 ô thắng, **1 mức AI** "Đức dễ", cập nhật `minigames_caro_series`), `mg_sudoku` (9×9 mức Vừa, 3 đề cứng, đồng hồ 6 phút, sao), `mg_throw` (K5 ném bóng tính điểm), `mg_photo_hunt` (K2 săn 3 góc ảnh — dùng khung ảnh có sẵn), `mg_decorate` (K3 trang trí Căn cứ), `mg_mailbox_build` (K3 chọn nền + họa tiết → `story.valentine.boxStyle`). Có Bỏ qua.
+- **Việc:** `mg_caro` (12×12, 5 ô thắng, **1 mức AI** "Đức dễ", cập nhật `caro.series` = `{quan, duc}`, bắt đầu 3–3, chỉ ghi kết quả **lần đầu**), `mg_sudoku` (9×9 mức Vừa, 3 đề cứng, đồng hồ 6 phút, sao), `mg_throw` (K5 ném bóng tính điểm), `mg_photo_hunt` (K2 săn 3 góc ảnh — dùng khung ảnh có sẵn), `mg_decorate` (K3 trang trí Căn cứ), `mg_mailbox_build` (K3 chọn nền + họa tiết → `story.valentine.boxStyle`). Có Bỏ qua.
 - **DoD + Prompt:** như N-11 (đổi danh sách trò).
 
 ### N-17 · Màn 2D Mốc 2
 - **Đọc:** mục 2.0; GDD `00` §5.1 (màn hình 2D), `02` §2.5.1–2.5.4; `IMPLEMENTATION_HANDOFF_TRANG6_VALENTINE.md`.
 - **Việc:** `src/ui/game/screens/ConfessionPage.tsx` (trang confession hư cấu, tên trang tự nghĩ), `LetterWrite.tsx` (chọn người nhận × loại thư), `LetterRead.tsx`; mở/đóng Esc; mở bằng bước `minigame` với mã `mg_screen_confession`, `mg_screen_letter_write`, `mg_screen_letter_read` (không cần sửa engine).
 - **DoD + Prompt:** như N-11; chữ nguyên văn kịch bản.
+
+### N-18 … N-23 · Ghi gọn (mở prompt đầy đủ khi tới lượt; chuyển từ T-09, T-13, T-14)
+| Mã | Ghi chú cho người làm |
+|---|---|
+| **N-18** | `free_photo_taken`, `feedback_submitted` có người nghe ở `src/analytics/bridge.ts` nhưng không ai phát; `landing_view`, `cta_click` chưa có nơi phát (gắn ở `src/main.ts` trang chủ); **bỏ `hub_opened`** (Khu Vui Chơi bị cắt, A1). Nghiệm thu: chơi một lượt với Firestore Emulator rồi đếm đủ loại event |
+| **N-19** | Bot `playAll` 9 Trang; chạy `npx playwright test --workers=1` (~32 phút, chạy nền, trên máy thật). Sửa chú thích "hẹn giờ 8 giây" ở `tests/e2e/world.spec.ts` (~dòng 418, 902; thời gian chờ thật 120–150 giây nên không ảnh hưởng). Ca "nút gửi event thử" đang bỏ qua vì không bật Emulator — kiểm lý do. **Đo FPS trên laptop thật** (Chrome headless vẽ bằng CPU, không dùng làm số đo). Ghi kết quả vào `docs/DEV_SESSION_HANDOFF.md` |
+| **N-20** | `docs/ASSET_CREDITS.md` (repo chưa có file này): 7 GLB có sẵn (6 khu + bàn đôi) ghi nguồn, còn lại "procedural, tự làm"; `DEMO_AUDIT.md` thêm mục "đã xử lý"; `03_ASSETS_AND_AUDIO.md` §1.3/§2 ghi D3 và gắn SUPERSEDED đường Blender → GLB; sửa các câu "100%", "0 PLACEHOLDER", "v1.4 APPROVED" trong `QUESTIONS_LOG.md`, `HANDOFF_TO_CLAUDE.md` (A3-8) |
+| **N-21** | Thẻ minh họa 2D "ba cổng trường" (PX-80) + ảnh in dán tường Căn cứ (PX-42) — chi tiết ở `docs/BACKGROUND_AUDIT.md` mục (d) |
+| **N-22** | Kiểm bản `test` và `production` tách đúng; bản production **không** lẫn công cụ test (Tweakpane, `__game`, `inputdebug`, `camtest`, `bot=release`) — `VERCEL_ENV=production npm run build` rồi tìm các từ khóa này trong bản build; validator production 0 lỗi (cần N-15f đã tắt Side/Daily); mở PR `feat/sprint-0412` → `dev`; **xin chủ dự án duyệt** mới gộp `main`; trong kỳ đo 05–15/12 mỗi lần đưa lên production ghi nhật ký (ngày giờ, commit, lý do) |
+| **N-23** | `loadProp()` (`src/render/assets.ts:38`) giữ cache theo URL và trả `clone(true)` dùng chung geometry, trong khi `World.dispose()` (`src/world/world.ts`, ~dòng 199) lại `dispose()` geometry → props GLB sẽ **mất ở lần vào Ngày thứ hai** (chưa nổ vì `loadProp` chỉ dùng ở `src/lab/yardScene.ts`). Đo lại `prp_desk_2seat.glb` bằng `Box3` trước (G-8): nếu `min.y ≈ 0` thì xóa BG-5 khỏi `BACKGROUND_AUDIT.md`; nếu lệch thì bù trong code khi nạp (không sửa GLB, D3) |
 
 ---
 
@@ -390,14 +443,14 @@ Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 | `src/game/game.ts` | N-02 | N-14 |
 | `src/ui/game/GameUi.tsx` | N-02 (vùng minigame) → N-09 (khối feedback) | N-14 (vùng ảnh) |
 | `src/game/scenes/dayScene.ts` | N-04 | — (không ai sửa thêm) |
-| `src/world/{world,types,validate,extras}.ts`, `maps/map_thcs.extras.ts` | N-04 | N-04 (thêm marker Mốc 2 theo yêu cầu N-15) |
+| `src/world/{world,types,validate,extras}.ts`, `maps/map_thcs.extras.ts` | N-04 | N-04 (thêm marker Mốc 2 theo yêu cầu N-15); N-23 (chỉ `dispose` trong `world.ts`, sau N-04) |
 | `src/world/{variants,sky,atmosphere}.ts`, `src/render/fx.ts`, `src/content/base.ts`, `src/content/types.ts` | N-05 | N-05 |
 | `src/world/props/m1/**`, `dressing/sets/m1_*` | N-06 | — |
 | `src/world/props/m2/**`, `dressing/sets/m2_*` | — | N-13 |
 | `src/world/backdrop/**`, `dressing/sets/backdrop.ts` | N-07 | — |
 | `src/content/days/d_g06_01…d_g07_03.ts` | N-01 | — |
 | `src/content/days/d_g08_*.ts`, `d_g09_*.ts` | — | N-15a…e (mỗi file một task) |
-| `src/content/{pack,release,chapters}.ts` | — | N-15f |
+| `src/content/{pack,release,chapters}.ts` | — | N-15f, rồi N-22 (chỉ khối `production` của `release.ts`) |
 | `src/content/hub.ts`, `src/config/hub.ts`, `hubScene.ts` | N-08 | N-08 |
 | `src/core/save.ts` | N-03 | — |
 | `src/content/validate.ts` | N-10 | — |
@@ -405,4 +458,15 @@ Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 | `src/game/minigames/games/*.ts` | N-11a (4 file) | N-11b, N-16, N-17 (mỗi trò một file) |
 | `src/actors/character/**` | — | N-12 |
 | `api/**`, `firestore.rules`, `FeedbackForm.tsx` | N-09 | — |
-| `CLAUDE.md`, `docs/gdd/00_MASTER_GDD.md`, `docs/handoff/README.md` | N-00 | — |
+| `CLAUDE.md`, `docs/gdd/00_MASTER_GDD.md`, `docs/handoff/README.md` | N-00 ✅ (đã xong 22/11) | — |
+| `tests/e2e/*.spec.ts` | N-02 (một ca A-01 trong `game.spec.ts`) | N-19 |
+| `src/analytics/*`, `src/main.ts`, `shared/events.ts` | — | N-18 |
+| `src/render/assets.ts` | — | N-23 |
+| `docs/ASSET_CREDITS.md`, `docs/handoff/DEMO_AUDIT.md`, `docs/gdd/03_ASSETS_AND_AUDIO.md`, `docs/handoff/gemini/*` | — | N-20 (riêng `DOI_CHIEU_TRANG_1_4.md`: N-01) |
+| `docs/DEV_SESSION_HANDOFF.md` | mỗi task ghi bằng chứng của mình | N-22 (nhật ký production) |
+
+---
+
+## Mục 4 — Sau 15/12 (không làm trong sprint này)
+- Side/Daily thật cho Mốc 1 và 2 (nhóm chốt danh sách — GDD `00` §11 mục 9) · Khu Vui Chơi Căn cứ · Tầng B (lật chai, bi ve, ô ăn quan, lò cò) · 4 nhánh Valentine rút gọn · Hội trại Phần 2–3 · Mốc 3 (lớp 10–12) · `minigames.bottle.*` trong bản lưu.
+- Nhân vật GLB có xương: chỉ xét lại nếu chủ dự án đổi D3.

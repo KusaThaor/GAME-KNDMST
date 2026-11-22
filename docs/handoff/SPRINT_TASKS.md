@@ -1,5 +1,7 @@
 # SPRINT_TASKS — backlog tới 04/12/2026
 
+> **[SUPERSEDED 22/11/2026 — chỉ còn là lịch sử]** Mọi việc còn hiệu lực đã gộp vào [`../NEXT_SPRINT_TASK_BOARD.md`](../NEXT_SPRINT_TASK_BOARD.md); Mục 0.3 của file đó có bảng đối chiếu T-xx → N-xx. **Không giao việc từ file này nữa.** Các thẻ T-xx bên dưới giữ nguyên để tra lại.
+
 | Trường | Giá trị |
 |---|---|
 | Lập | 21/11/2026 (tối), sau kiểm toán `docs/handoff/DEMO_AUDIT.md` |
