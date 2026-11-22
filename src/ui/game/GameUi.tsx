@@ -2,6 +2,7 @@
  * Giao diện game (Preact): HUD, thoại, lựa chọn, ảnh, Hộp Kỷ Vật, Album, điện thoại, menu.
  * Chỉ đọc UiState và gọi UiActions. Mọi nút có `data-act` để bot kiểm thử bấm được.
  */
+import { FeedbackForm } from './FeedbackForm';
 import { render } from 'preact';
 import { CAMERA_MODES } from '../../config/camera';
 import { useEffect, useRef, useState } from 'preact/hooks';
@@ -9,6 +10,7 @@ import { PLAYER_NAME_MAX } from '../../core/save';
 import type { Gender } from '../../content/types';
 import { fadeIn } from '../motion';
 import type { UiActions, UiState, UiStore } from './store';
+import { MinigameFrame } from './MinigameFrame';
 import { TouchInteract, TouchStick } from './TouchControls';
 
 const SLOT_LABEL: Record<string, string> = {
@@ -209,12 +211,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
           <div class="g-row"><button data-act="photo-retry" onClick={a.photoRetry}>Chụp lại</button><button class="primary" data-act="photo-keep" onClick={a.photoKeep}>Giữ ảnh này</button></div>
         </Pop>
       )}
-      {s.minigame && (
-        <Pop class="g-card" testid="minigame">
-          <h2>[PLACEHOLDER] Minigame "{s.minigame.game}" (mức min)</h2>
-          <button class="primary" data-act="minigame-done" onClick={a.minigameDone}>Xong</button>
-        </Pop>
-      )}
+      {s.minigame && <MinigameFrame host={s.minigame} />}
       {s.free && !blocking && (
         <div class="g-free" data-testid="free"><span>{s.free.text}</span><button class="primary" data-act="free-continue" onClick={a.freeContinue}>Đi tiếp</button></div>
       )}
@@ -251,9 +248,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       )}
       {s.feedback && (
         <Pop class="g-card" testid="feedback">
-          <h2>Cảm ơn bạn đã chơi thử</h2>
-          <p>[PLACEHOLDER] Form phản hồi sẽ gắn ở đây. Hoàn thành đã được ghi nhận trước khi form hiện.</p>
-          <button class="primary" data-act="feedback-skip" onClick={a.feedbackSkip}>Bỏ qua</button>
+          <FeedbackForm skip={a.feedbackSkip} submitted={a.feedbackSubmitted} />
         </Pop>
       )}
       {s.consentAsk && (

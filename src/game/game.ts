@@ -28,6 +28,8 @@ import { ART_STYLES } from '../render/style';
 import { mountGameUi } from '../ui/game/GameUi';
 import { createUiStore, type AlbumView, type BoxView, type PhoneView, type UiActions, type UiState, type UiStore } from '../ui/game/store';
 import { formatProblems } from '../world/validate';
+import { MinigameHost, recordRound } from './minigames/host';
+import { getMinigame } from './minigames/registry';
 import { createInput, type GameInput } from './input';
 import { buildDayScene, type DayControl, type DayScene } from './scenes/dayScene';
 import { buildHubScene, type HubScene } from './scenes/hubScene';
@@ -108,7 +110,6 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   let currentDay: MemoryDay | null = null;
   let epoch = 0;
   const presented = new Set<string>();
-  const inside = new Set<string>();
   const tickers = new Set<(dt: number) => void>();
   const waiters = new Map<string, (v: unknown) => void>();
   const photoUrls = new Map<string, string>();
@@ -124,8 +125,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const signal = (slot: string, value: unknown = true) => { const w = waiters.get(slot); if (w) { waiters.delete(slot); w(value); } };
   const cancelAll = () => {
     epoch++;
+    ui.get().minigame?.dispose();
     for (const [slot, w] of [...waiters]) { waiters.delete(slot); w(CANCEL); }
-    tickers.clear(); presented.clear(); inside.clear();
+    tickers.clear(); presented.clear();
     ui.set({ dialogue: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
     dayScene?.setStandZone(null); dayScene?.setPlayerMotion(null); dayScene?.lockCamera(null);
   };
@@ -178,14 +180,38 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     } else if (s.kind === 'photo') {
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
-      // Skeleton đo lường (GDD 02 §5.1): khung minigame thật chưa có, thẻ giả chỉ báo "complete".
       const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: null, difficulty: null };
-      const t0 = Date.now();
-      bus.emit('minigame_started', mg);
-      ui.set({ minigame: { game: s.game } });
-      if ((await wait('minigame')) === CANCEL || !alive()) return;
+      const prefix = `mg.${s.game}.`;
+      const host = new MinigameHost(getMinigame(s.game), save.flags[prefix + 'result'] !== undefined, {
+        opponentId: mg.opponent_id, difficulty: mg.difficulty,
+        save: {
+          get(key) {
+            const raw = save.flags[prefix + 'data.' + key];
+            return typeof raw === 'string' ? JSON.parse(raw) : undefined;
+          },
+          set(key, value) {
+            const name = prefix + 'data.' + key;
+            const json = JSON.stringify(value);
+            if (json === undefined) delete save.flags[name];
+            else save.flags[name] = json;
+            bus.emit('save_requested', { reason: 'minigame_data' });
+          },
+        },
+      }, {
+        changed: () => ui.set({ minigame: host }),
+        started: () => bus.emit('minigame_started', mg),
+        finished(round, duration_s) {
+          recordRound(save.flags, s.game, round);
+          bus.emit('minigame_finished', { ...mg, duration_s, result: round.result,
+            stars: round.stars ?? null, hints_used: round.hints_used ?? null, score: round.score ?? null });
+          bus.emit('save_requested', { reason: 'minigame_result' });
+        },
+        next: () => signal('minigame'),
+      });
+      const done = wait('minigame');
+      ui.set({ minigame: host });
+      if ((await done) === CANCEL || !alive()) return;
       ui.set({ minigame: null });
-      bus.emit('minigame_finished', { ...mg, result: 'complete', duration_s: Math.round((Date.now() - t0) / 1000), stars: null, hints_used: null, score: null });
       engine.complete(s.id);
     } else if (s.kind === 'free') {
       ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });
@@ -467,8 +493,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (!dayScene || engine.context?.kind !== 'day') return;
     const p = dayScene.playerPosition;
     for (const t of dayScene.targets) {
+      if (locked()) break;
       const near = t.position.distanceTo(p) <= t.radius;
-      if (near && !inside.has(t.id)) { inside.add(t.id); if (!locked() && engine.trigger('arrive', t.id)) void enqueue(drain); } else if (!near) inside.delete(t.id);
+      if (near && engine.peek('arrive', t.id) && engine.trigger('arrive', t.id)) void enqueue(drain);
     }
     const tgt = locked() ? null : nearestUseful();
     const portal = tgt || locked() ? null : dayScene.portalPrompt();
@@ -573,7 +600,6 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     photoPose() { const p = ui.get().photo; if (p?.phase === 'countdown' && !photoPosed) { photoPosed = true; dayScene?.setPlayerMotion('pose_peace'); ui.set({ photo: { ...p, posed: true } }); } },
     photoKeep() { signal('photo_decide', 'keep'); },
     photoRetry() { signal('photo_decide', 'retry'); },
-    minigameDone() { signal('minigame'); },
     freeContinue() { signal('free'); },
     interact,
     hubClick(id) {
@@ -587,6 +613,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     openPanel(p) {
       const s = ui.get();
+      if (s.minigame) {
+        if (p === 'menu') s.minigame.toggleOverlay('menu');
+        return;
+      }
       if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
       if (s.mode === 'day' && p !== 'menu' && p !== 'journal') return;
       if (s.mode === 'hub' && p === 'journal') return;
@@ -661,6 +691,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     menuWipe() {
       if (!ui.get().wipeArmed) { ui.set({ wipeArmed: true }); return; }
       void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; });
+    },
+    feedbackSubmitted() {
+      if (!ui.get().feedback) return;
+      ui.set({ feedback: false });
+      // Biên nhận analytics độc lập với khóa document chứa ý kiến.
+      bus.emit('feedback_submitted', { feedback_id: crypto.randomUUID() });
     },
     feedbackSkip() { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
     toggleCameraMode,
