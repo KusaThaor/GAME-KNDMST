@@ -1,3 +1,4 @@
+import type { MinigameHost } from '../../game/minigames/host';
 /** Trạng thái giao diện của game. UI (Preact) chỉ ĐỌC trạng thái này và gọi `UiActions`; không tự đổi tiến trình. */
 import type { Gender } from '../../content/types';
 import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../../config/camera';
@@ -53,7 +54,7 @@ export interface UiState {
   endPrompt: { open: number } | null;
   dayEnd: { title: string; replay: boolean } | null;
   photo: PhotoView | null;
-  minigame: { game: string } | null;
+  minigame: MinigameHost | null;
   free: { text: string } | null;
   notice: { title: string; text: string; effect: string } | null;
   panel: 'box' | 'album' | 'phone' | 'menu' | 'journal' | null;
@@ -82,7 +83,6 @@ export interface UiActions {
   continueDayEnd(): void;
   endDayNow(): void;
   photoStart(): void; photoPose(): void; photoKeep(): void; photoRetry(): void;
-  minigameDone(): void;
   freeContinue(): void;
   hubClick(id: string): void;
   openPanel(p: NonNullable<UiState['panel']>): void;
@@ -94,6 +94,7 @@ export interface UiActions {
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   feedbackSkip(): void;
+  feedbackSubmitted(): void;
   toggleCameraMode(): void;
   /** Bật/tắt "Nhìn tự do" (phím L hoặc nút trong Menu). */
   toggleFreeLook(): void;
