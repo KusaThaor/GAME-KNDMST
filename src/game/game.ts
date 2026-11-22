@@ -28,6 +28,8 @@ import { ART_STYLES } from '../render/style';
 import { mountGameUi } from '../ui/game/GameUi';
 import { createUiStore, type AlbumView, type BoxView, type PhoneView, type UiActions, type UiState, type UiStore } from '../ui/game/store';
 import { formatProblems } from '../world/validate';
+import { MinigameHost, recordRound } from './minigames/host';
+import { getMinigame } from './minigames/registry';
 import { createInput, type GameInput } from './input';
 import { buildDayScene, type DayControl, type DayScene } from './scenes/dayScene';
 import { buildHubScene, type HubScene } from './scenes/hubScene';
@@ -123,6 +125,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const signal = (slot: string, value: unknown = true) => { const w = waiters.get(slot); if (w) { waiters.delete(slot); w(value); } };
   const cancelAll = () => {
     epoch++;
+    ui.get().minigame?.dispose();
     for (const [slot, w] of [...waiters]) { waiters.delete(slot); w(CANCEL); }
     tickers.clear(); presented.clear();
     ui.set({ dialogue: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
@@ -175,14 +178,38 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     } else if (s.kind === 'photo') {
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
-      // Skeleton đo lường (GDD 02 §5.1): khung minigame thật chưa có, thẻ giả chỉ báo "complete".
       const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: null, difficulty: null };
-      const t0 = Date.now();
-      bus.emit('minigame_started', mg);
-      ui.set({ minigame: { game: s.game } });
-      if ((await wait('minigame')) === CANCEL || !alive()) return;
+      const prefix = `mg.${s.game}.`;
+      const host = new MinigameHost(getMinigame(s.game), save.flags[prefix + 'result'] !== undefined, {
+        opponentId: mg.opponent_id, difficulty: mg.difficulty,
+        save: {
+          get(key) {
+            const raw = save.flags[prefix + 'data.' + key];
+            return typeof raw === 'string' ? JSON.parse(raw) : undefined;
+          },
+          set(key, value) {
+            const name = prefix + 'data.' + key;
+            const json = JSON.stringify(value);
+            if (json === undefined) delete save.flags[name];
+            else save.flags[name] = json;
+            bus.emit('save_requested', { reason: 'minigame_data' });
+          },
+        },
+      }, {
+        changed: () => ui.set({ minigame: host }),
+        started: () => bus.emit('minigame_started', mg),
+        finished(round, duration_s) {
+          recordRound(save.flags, s.game, round);
+          bus.emit('minigame_finished', { ...mg, duration_s, result: round.result,
+            stars: round.stars ?? null, hints_used: round.hints_used ?? null, score: round.score ?? null });
+          bus.emit('save_requested', { reason: 'minigame_result' });
+        },
+        next: () => signal('minigame'),
+      });
+      const done = wait('minigame');
+      ui.set({ minigame: host });
+      if ((await done) === CANCEL || !alive()) return;
       ui.set({ minigame: null });
-      bus.emit('minigame_finished', { ...mg, result: 'complete', duration_s: Math.round((Date.now() - t0) / 1000), stars: null, hints_used: null, score: null });
       engine.complete(s.id);
     } else if (s.kind === 'free') {
       ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });
@@ -569,7 +596,6 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     photoPose() { const p = ui.get().photo; if (p?.phase === 'countdown' && !photoPosed) { photoPosed = true; dayScene?.setPlayerMotion('pose_peace'); ui.set({ photo: { ...p, posed: true } }); } },
     photoKeep() { signal('photo_decide', 'keep'); },
     photoRetry() { signal('photo_decide', 'retry'); },
-    minigameDone() { signal('minigame'); },
     freeContinue() { signal('free'); },
     interact,
     hubClick(id) {
@@ -583,6 +609,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     openPanel(p) {
       const s = ui.get();
+      if (s.minigame) {
+        if (p === 'menu') s.minigame.toggleOverlay('menu');
+        return;
+      }
       if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
       if (s.mode === 'day' && p !== 'menu' && p !== 'journal') return;
       if (s.mode === 'hub' && p === 'journal') return;

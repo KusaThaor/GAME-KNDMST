@@ -145,3 +145,5 @@ export const sideExample: Quest = {
 9. Các trường `hint`, `time_phases`, `transition_fx`, `rewards.fragment_ids`, `item` hiện **không có tác dụng** (A-07).
 10. NPC đứng yên suốt Ngày; mỗi vai một chỗ đứng (A-06).
 11. ID đã phát hành public thì không đổi (bản lưu tham chiếu theo ID; `reconcileSave` chỉ xử lý bước bị xóa).
+
+Với bước `minigame`, đặt `game` bằng ID module trong `src/game/minigames/games/`. Thua và bỏ qua đều cho phép đi tiếp. Kết quả ván đầu dùng cho thoại, chơi lại chỉ cập nhật thành tích.
