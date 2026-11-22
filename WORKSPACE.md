@@ -1,5 +1,30 @@
 # WORKSPACE — Hành Trình Thanh Xuân
 
+## Handoff Checkpoint (2026-11-22)
+
+**Nhận việc ở đâu:** mở `docs/NEXT_SPRINT_TASK_BOARD.md` → Mục 1 chọn mã task → Mục 2 copy prompt của task đó dán cho AI agent (Codex, Antigravity/Gemini 3.8, Claude). Mỗi task chỉ sửa file trong cột "File sở hữu"; làm trong `git worktree` riêng, nhánh `task/<mã>-<tên>`, mở PR vào `feat/sprint-0412`.
+
+**Quyết định Game Director 22/11 (chi tiết: `docs/GDD_FULL_REVIEW.md` mục VII):**
+| Mã | Quyết định |
+|---|---|
+| A1 | Bản demo = **Mốc 1 đầy đủ (Trang 1–4) + Mốc 2 chỉ tuyến Main (Trang 5–9)**, kết demo sau Trang 9. Thay quyết định 21/11 tối (chỉ Mốc 1) |
+| A2 | Giữ năm học canon: lớp 6–7 = 2014–2016, lớp 8–9 = 2016–2018, 2026 = phòng Hub |
+| A3 | Rà lại các chỗ Antigravity tự gán "đã duyệt" — **chờ Game Director** (task board Mục 0.1) |
+| B1–B7, B10 | Sửa dữ liệu Mốc 1 theo đề xuất (task N-01, N-08); B3 giữ thoại code |
+| B8, B9 | Dòng chat cũ + 3 tin kết — **chờ duyệt** (task board Mục 0.2) |
+| C1, C3–C10 | Side/Daily AI → `AI_PROPOSED`; giữ tông lựa chọn Trang 2, 3; sửa kỷ vật Trang 4, tên flag, tài liệu AG |
+| D1, D2 | Bìa Album = ảnh cầu vồng; ảnh chính Trang 3 = biển tên |
+| **D3** | **Bỏ Blender cho asset mới; dựng bằng Procedural Three.js.** Chỉ dùng lại GLB có sẵn ở `public/assets/` (repo không có `public/models/`). Nhân vật giữ bản dựng bằng code |
+| D5 | Thêm timeskip ngắn (Trang 9 → 2026) rồi vào kết demo bản 9 Trang — lời **chờ duyệt** (task board Mục 0.3) |
+
+> ⚠ `CLAUDE.md` §3 vẫn ghi quyết định 21/11 (chỉ Mốc 1, base mesh GLB). Task **N-00** sẽ cập nhật sau khi Game Director đồng ý; trong lúc chờ, **checkpoint này và `docs/NEXT_SPRINT_TASK_BOARD.md` là chuẩn**.
+
+**Tình trạng `feat/sprint-0412` (22/11):** đã gộp số hóa Trang 1–4 của Antigravity (`a864843`…`4290469`) + tài liệu rà soát 22/11. Khung chơi chạy xuyên suốt; thoại Mốc 1 có; **minigame thật = 0**, Mốc 2 = 0, bản `production` chưa khai Trang nào. Lệnh kiểm `tsc`/`vitest`/`validate:world`/build: AG báo đạt 21/11 — **phiên 22/11 chưa chạy lại** (chỉ sửa tài liệu).
+
+**Tài liệu mới 22/11:** `docs/GDD_FULL_REVIEW.md` (duyệt GDD + mâu thuẫn), `docs/BACKGROUND_AUDIT.md` (bối cảnh 3D, tọa độ, asset procedural còn thiếu), `docs/NEXT_SPRINT_TASK_BOARD.md` (task + prompt).
+
+---
+
 Cập nhật 21/11/2026. Hạn bản playtest: 04/12/2026.
 
 ## Nguồn chân lý (Single Source of Truth)

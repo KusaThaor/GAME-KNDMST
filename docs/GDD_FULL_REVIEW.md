@@ -264,3 +264,28 @@ Phải thêm vào V.1:
 5. **Tông của 2 lựa chọn Trang 2, 3** (C3): có tính vào số liệu đo không?
 6. **Ảnh bìa Album và ảnh chính Trang 3, 4** (D1, D2).
 7. **Lỗi thứ tự kỷ vật Trang 4** (C4) và **lỗi xưng hô Châu–Đức** (B2): sửa ngay (không cần quyết, chỉ cần đồng ý).
+
+---
+
+## VII. Quyết định của Game Director ngày 22/11/2026 (sáng) — áp dụng làm chuẩn
+
+> Mục này **thay** phần khuyến nghị ở các mục IV–VI khi có chỗ khác nhau. Bảng giao việc: `docs/NEXT_SPRINT_TASK_BOARD.md`. Kiểm toán bối cảnh: `docs/BACKGROUND_AUDIT.md`.
+
+| Mã | Quyết định | Cách hiểu khi làm |
+|---|---|---|
+| **A1** | Làm **trọn Mốc 1**; **Mốc 2 chỉ làm tuyến Main**, cắt/stub nhánh phụ | Thay quyết định 21/11 tối (chỉ Mốc 1). Bản đo = Trang 1→9, kết demo sau Trang 9. Mốc 1: Main + 8 trò K. Mốc 2: mọi bước Main của Trang 5–9; minigame thuộc Main làm **bản tối thiểu có nút Bỏ qua**; Side, Daily, Khu Vui Chơi, lật chai, 4 nhánh rút gọn Valentine, Hội trại Phần 2–3: **cắt/stub** |
+| **A2** | Giữ đề xuất | Năm học canon: Mốc 1 = lớp 6–7 (2014–2016), Mốc 2 = lớp 8–9 (2016–2018), 2026 = phòng Hub. Nhãn "2012 / 2014" trong tin nhắn chỉ đạo được hiểu là tên gọi Mốc, **không đổi năm trong game** |
+| **A3** | Liệt kê chỗ AG tự gán "đã duyệt" | Xem `NEXT_SPRINT_TASK_BOARD.md` Mục 0.1 |
+| B1, B2, B4, B5, B6, B7, B10 | Làm theo đề xuất mục IV-B | — |
+| **B3** | Giữ thoại như trong code; chỉ xóa câu "Tớ ước… thuyền tớ đừng lật!" | Kiểm 22/11: câu này **không có trong code** (AG đã bỏ) → B3 coi như xong, không sửa thêm |
+| B8, B9 | Chờ duyệt lại | Nguyên văn ở `NEXT_SPRINT_TASK_BOARD.md` Mục 0.2. Ghi chú: vì A1 + D5 đưa kết demo về **bản 9 Trang**, Điều 6 đã có ở Trang 9 → B9 không còn sai mạch nếu giữ đúng lời kịch bản 9 Trang |
+| **C1** | Theo phương án AI | Side/Daily AI tự nghĩ: đổi nhãn `AI_PROPOSED` + `[PLACEHOLDER]`, đổi mã để không trùng số Side của GDD, **không khai trong bản production** |
+| **C3** | Duyệt | Giữ sắc thái cho `c_m1_02_wish` (friendship=gentle, fun=playful, secret=deep) và `c_m1_03_decor` (paper=playful, flowers=gentle, photos=deep); tiếp tục tính vào `tone_counts` |
+| C4–C10 | Theo đề xuất | — |
+| D1, D2 | Theo đề xuất | Bìa Album = ảnh cầu vồng Trang 4; ảnh chính Trang 4 = ảnh hẹn giờ đủ năm đứa; ảnh chính Trang 3 = biển tên |
+| **D3** | **Bỏ Blender cho asset mới, dựng toàn bộ bằng Procedural Three.js** | Chỉ dùng lại GLB đã có trong repo. **Thực tế repo không có thư mục `public/models/`**; GLB có sẵn nằm ở `public/assets/world/map_thcs/` (6 khu) và `public/assets/props/prp_desk_2seat.glb`. Không có `CREDITS.md`. Nhân vật giữ bản dựng bằng code (`src/actors/character/build.ts`); base mesh GLB ở `feature/asset-workshop` **không gộp** cho bản này |
+| **D5** | Thêm một đoạn thoại timeskip ngắn rồi dẫn thẳng vào kết theo kịch bản 9 Trang | Đặt sau cutscene "Cuối hè" (Trang 9), trước Kết demo ở phòng 2026. Lời thoại là nội dung mới → `[PLACEHOLDER]` + `AI_PROPOSED` cho tới khi được duyệt (bản nháp ở `NEXT_SPRINT_TASK_BOARD.md` Mục 0.3) |
+
+**Sửa hai chỗ sai trong file này (phát hiện khi kiểm toán bối cảnh 22/11):**
+- Mục III.1: khu cổng `zone_gate.glb` **đã có** khối dựng thô tiệm tạp hóa và xe quà vặt (marker `itr.thcs.grocery`, `itr.thcs.snack_cart`). Thiếu là chi tiết (bậc thềm, tivi, ghế nhựa…), không phải thiếu cả khu.
+- Căn cứ trong bản đồ hiện tại nằm **ngoài tường rào trường** (tường rào x −34…26; Căn cứ x 38…52), chỉ đi được qua cổng → ngõ → bãi đất. Lệch quyết định CONFIRMED 20/11 "Căn cứ trong trường". Cách sửa bằng code: `BACKGROUND_AUDIT.md` mục (b).
