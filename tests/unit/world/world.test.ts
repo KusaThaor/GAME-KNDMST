@@ -106,10 +106,10 @@ describe('đi lại trong bản đồ (điều khiển + va chạm thật)', () 
     const route: [number, number][] = [
       [-1.4, -15], [-1.4, -20.5], [-1.0, -20.6], [-1.0, -24.5],       // sân → hành lang → cửa lớp → trong lớp
       [-1.0, -20.6], [-1.4, -15], [-4, -10], [-4, 2], [0, 14], [0, 22], // quay ra sân → vòng qua cột cờ → qua cổng → ngõ quà vặt
-      [33, 22], [33, 14], [45.5, -18], [45.5, -25],                    // dọc ngõ → bãi đất → căn cứ
+      [0, 14], [18, -12], [30, -12], [45.5, -18], [45.5, -25],         // về sân → lối mới ở tường đông (BG-1, N-04) → sân sau (bãi đất) → căn cứ
     ];
     for (const p of route) expect(walk(c, p, { run: true, onStep }), `tới ${p}`).toBe(true);
-    expect(visited).toEqual(['yard', 'corridor', 'classroom', 'corridor', 'yard', 'gate', 'field', 'base'].map(Z));
+    expect(visited).toEqual(['yard', 'corridor', 'classroom', 'corridor', 'yard', 'gate', 'yard', 'field', 'base'].map(Z));
     const allowed = new Set(THCS.zones.flatMap((z) => z.connections.map((to) => `${z.id}>${to}`)));
     for (const x of crossings) expect(allowed.has(x), `đi ${x} nhưng manifest không khai kết nối này`).toBe(true);
     // mọi kết nối trong manifest đều đã đi qua ít nhất một chiều
