@@ -13,7 +13,11 @@ export const day: MemoryDay = {
   title: 'Trang 4: Đủ năm đứa',
   school_year_id: 'g07',
   map_id: 'map_thcs',
-  map_variant: 'g07',
+  map_variant: 'g07_end',
+  weather_by_step: {
+    'q_m1_main_05.s04': 'rain_shower',
+    'q_m1_main_05.s05': 'after_rain_rainbow',
+  },
   open_zones: ['zone.thcs.classroom', 'zone.thcs.corridor', 'zone.thcs.yard', 'zone.thcs.gate', 'zone.thcs.field', 'zone.thcs.base'],
   spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_05',
@@ -35,7 +39,10 @@ export const day: MemoryDay = {
     { id: 'itr.thcs.marble_spot', label: 'Chỗ chơi bi bãi đất', zone_id: 'zone.thcs.field', kind: 'marker' },
     { id: 'itr.thcs.old_table', label: 'Bàn gỗ cũ ở Căn cứ', zone_id: 'zone.thcs.base', kind: 'marker' },
   ],
-  cameras: [{ id: 'cam.d0703.group', marker: 'cam.thcs.yard_group', fov: 38 }],
+  cameras: [
+    { id: 'cam.d0703.group', marker: 'cam.thcs.yard_group', fov: 38 },
+    { id: 'cam.q_m1_main_05.s05', marker: 'cam.thcs.rainbow', fov: 55 },
+  ],
   album_page_id: 'page.d.g07.03',
   completion: 'main_chain',
 };
