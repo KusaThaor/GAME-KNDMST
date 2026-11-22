@@ -135,6 +135,7 @@ export interface CameraPoint { id: string; marker?: string; position?: [number, 
 export interface StandZone { marker?: string; center?: [number, number]; radius: number }
 
 export interface MemoryDay {
+  weather_by_step?: Record<string, string>;
   id: string;                         // d.gNN.KK
   title: string;
   school_year_id: string;
