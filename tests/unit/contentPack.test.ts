@@ -36,12 +36,31 @@ describe('gói nội dung trong repo', () => {
     expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
-    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(2);
-    expect(d1.side_quests).toHaveLength(1);
-    expect(d1.daily_pool).toHaveLength(1);
-    const photo = idx.quests.get('q_m1_main_05')!.steps.find((s) => s.kind === 'photo');
-    expect(photo).toMatchObject({ mode: 'timer' });
-    expect(photo && photo.kind === 'photo' && photo.subjects).toHaveLength(5);
+    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(7);
+    expect(d1.side_quests).toEqual(['q_m1_ai_side_01']);
+    expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
+
+    const d2 = idx.days.get('d.g07.01')!;
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(5);
+    expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
+    expect(d2.daily_pool).toHaveLength(0);
+
+    const d3 = idx.days.get('d.g07.02')!;
+    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(6);
+    expect(d3.side_quests).toHaveLength(0);
+    expect(d3.daily_pool).toHaveLength(0);
+
+    const d4 = idx.days.get('d.g07.03')!;
+    expect(idx.quests.get(d4.main_chain[0])!.steps).toHaveLength(8);
+    expect(d4.side_quests).toEqual(['q_m1_ai_side_02']);
+    expect(d4.daily_pool).toHaveLength(0);
+
+    const photos = idx.quests.get('q_m1_main_05')!.steps.filter((s) => s.kind === 'photo');
+    expect(photos).toHaveLength(2);
+    expect(photos[0]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.01' });
+    expect(photos[0] && photos[0].kind === 'photo' && photos[0].subjects).toHaveLength(5);
+    expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
+    expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
   });
   it('nội dung kịch bản Mốc 1 chuẩn hóa vai diễn và quyền sở hữu', () => {
     for (const q of CONTENT.quests) {

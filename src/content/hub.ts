@@ -93,7 +93,7 @@ export const HUB_QUESTS: Quest[] = [
 export const PDES: PresentDayEvent[] = [
   { id: 'pde_01', type: 'RESTORE', trigger: { day: 'd.g06.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g06.01' }], once: true },
   { id: 'pde_02', type: 'SHELF', trigger: { day: 'd.g06.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m1_01' }], once: true },
-  { id: 'pde_03', type: 'FRAGMENT', trigger: { quest: 'q_m1_side_01' }, effects: [{ kind: 'add_fragment', album_entry_id: 'alb.d.g06.01.04', recall: [{ speaker: 'narrator', text: 'Mẩu giấy phân công trực nhật của Châu Tổng.' }] }], once: true },
+  { id: 'pde_03', type: 'FRAGMENT', trigger: { quest: 'q_m1_ai_side_01' }, effects: [{ kind: 'add_fragment', album_entry_id: 'alb.d.g06.01.04', recall: [{ speaker: 'narrator', text: 'Mẩu giấy phân công trực nhật của Châu Tổng.' }] }], once: true },
   { id: 'pde_07', type: 'RESTORE', trigger: { day: 'd.g07.01' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g07.01' }], once: true },
   { id: 'pde_08', type: 'SHELF', trigger: { day: 'd.g07.01' }, effects: [{ kind: 'shelf_artifact', artifact_id: 'art_m1_02' }], once: true },
   { id: 'pde_09', type: 'RESTORE', trigger: { day: 'd.g07.02' }, effects: [{ kind: 'restore_page', page_id: 'page.d.g07.02' }], once: true },

@@ -1,12 +1,13 @@
 /**
- * TRANG 2 (d.g07.01) — THUYỀN GIẤY DƯỚI MÁI HIÊN (Lớp 7, Mùa mưa 2015)
+ * TRANG 2 (d.g07.01) — THUYỀN GIẤY DƯỚI MÁI HIÊN (Lớp 7, Đầu năm học 2015)
  * Kịch bản nguồn: KICH_BAN_DEMO_M1_M2_v1.md v1.4 & 01_NARRATIVE_AND_SCENES.md
- * Xưng hô: Đức xưng "mày - tao" với Player, Châu; nhưng xưng "cậu - tớ" với Quân, Hạ vì mới gặp.
+ * Xưng hô: Đức xưng "mày - tao" với Player & Châu; Châu xưng "tui - ông/bà"; Quân xưng "cậu - tớ"; Hạ xưng tên ("Hạ").
+ * Chuẩn hóa N-01 (C1, C3, G-7).
  */
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_DRAFT', status: 'SPEC_READY', version: 'v1.4' } as const;
+const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g07.01',
@@ -15,23 +16,24 @@ export const day: MemoryDay = {
   map_id: 'map_thcs',
   map_variant: 'g07',
   open_zones: ['zone.thcs.corridor', 'zone.thcs.yard', 'zone.thcs.classroom'],
-  spawn_point: 'spawn.thcs.corridor',
+  spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_02',
   main_chain: ['q_m1_main_02'],
-  side_quests: ['q_m1_side_03'],
-  daily_pool: ['q_m1_daily_01'],
+  side_quests: ['q_m1_ai_side_03'],
+  daily_pool: [],
   npc_placements: [
-    { actor: 'NPC_A', marker: 'spot.thcs.corridor_door', motion: 'idle' },
-    { actor: 'NPC_B', marker: 'spot.thcs.yard_bench_1', motion: 'idle' },
-    { actor: 'NPC_C', marker: 'spot.thcs.yard_bench_2', motion: 'idle' },
-    { actor: 'NPC_D', marker: 'spot.thcs.class_front', motion: 'idle' },
+    { actor: 'NPC_A', marker: 'spot.thcs.yard_bench_1', motion: 'idle' },
+    { actor: 'NPC_B', marker: 'spot.thcs.yard_bench_2', motion: 'idle' },
+    { actor: 'NPC_C', marker: 'spot.thcs.yard_group_3', motion: 'idle' },
+    { actor: 'NPC_D', marker: 'spot.thcs.yard_group_4', motion: 'idle' },
   ],
   interactables: [
     { id: 'itr.thcs.gutter', label: 'Rãnh nước mái hiên', zone_id: 'zone.thcs.corridor', kind: 'marker' },
-    { id: 'itr.thcs.stone_bench', label: 'Ghế đá hành lang', zone_id: 'zone.thcs.yard', kind: 'object' },
+    { id: 'itr.thcs.stone_bench', label: 'Ghế đá sân trường', zone_id: 'zone.thcs.yard', kind: 'object' },
     { id: 'itr.thcs.duty_spot', label: 'Chỗ trực nhật', zone_id: 'zone.thcs.yard', kind: 'object' },
+    { id: 'itr.thcs.snack_cart', label: 'Xe quà vặt cổng trường', zone_id: 'zone.thcs.gate', kind: 'marker' },
   ],
-  cameras: [{ id: 'cam.d0701.boats', marker: 'cam.thcs.yard_bench', fov: 42 }],
+  cameras: [{ id: 'cam.d0701.boats', marker: 'cam.thcs.gutter', fov: 40 }],
   album_page_id: 'page.d.g07.01',
   completion: 'main_chain',
 };
@@ -92,74 +94,58 @@ export const quests: Quest[] = [
       },
       {
         id: 'q_m1_main_02.s04',
-        kind: 'interact',
-        target: 'itr.thcs.gutter',
+        kind: 'minigame',
+        game: 'mg_boat',
+        level: 'min',
         objective: 'Thả thuyền xuống rãnh nước trước hiên',
         lines: [
           { speaker: 'NPC_A', text: 'Sao lật rồi? Ai thấy không? Có người tác động dòng nước!' },
           { speaker: 'NPC_B', text: 'Ông thả lệch. Tui thấy rõ.' },
-          { speaker: 'NPC_D', text: 'Thuyền tớ… hình như xa nhất.' },
-          { speaker: 'NPC_A', text: 'Hư cấu! Thuyền cậu gắn động cơ hả? Ván sau tớ phục thù!' },
-          { speaker: 'NPC_B', text: 'Thua thì nhận đi.' },
+          { speaker: 'NPC_C', text: 'Thuyền của Quân về đích trước rồi kìa.' },
+          { speaker: 'NPC_D', text: 'Tại mũi thuyền Quân gấp nhọn hơn. Nước rẽ hai bên.' },
+          { speaker: 'NPC_A', text: 'Biết vậy nãy tớ nhờ Quân gấp giùm.' },
+          { speaker: 'player', text: 'Thuyền của mình… trôi tới gần miệng cống rồi kìa!' },
+          { speaker: 'NPC_C', text: 'Để Hạ vớt lên cho. Cánh buồm còn nguyên chữ ký nè.' },
         ],
       },
       {
         id: 'q_m1_main_02.s05',
         kind: 'cutscene',
-        objective: 'Ký tên lên chiếc thuyền vớt được',
+        objective: 'Ký tên kỷ niệm lên buồm thuyền',
         lines: [
-          { speaker: 'NPC_C', text: 'Thuyền của {player_name} trôi mất rồi. Ghi lại điều ước lên buồm này đi.' },
-          { speaker: 'NPC_A', text: 'À mà chưa giới thiệu! Tớ là Đức, đây là {player_name}, còn đây là Châu Tổng.' },
-          { speaker: 'NPC_B', text: 'Giới thiệu người ta thì bớt bình luận giùm.' },
-          { speaker: 'NPC_C', text: 'Hạ nè. Lớp bên.' },
-          { speaker: 'NPC_D', text: 'Quân. Cũng lớp bên.' },
-          { speaker: 'player', text: 'Mai ra chơi mình chơi tiếp nha?' },
-          { speaker: 'NPC_C', text: 'Ừ, mai Hạ mang thêm giấy.' },
-          { speaker: 'NPC_D', text: 'Tớ mang giấy báo cũ. Gấp cứng hơn.' },
-          { speaker: 'NPC_B', text: 'Nhớ đúng giờ nha. Đừng để người khác chờ.' },
+          { speaker: 'NPC_A', text: 'Để tao ký trước! Chữ tao đẹp nhất!' },
+          { speaker: 'NPC_B', text: 'Đẹp đâu không thấy, chiếm hết nửa cánh buồm.' },
+          { speaker: 'NPC_C', text: 'Hạ ký góc này nha.' },
+          { speaker: 'NPC_D', text: 'Quân ký ở đây.' },
+          { speaker: 'player', text: 'Còn góc này… để mình ký tên.' },
+          { speaker: 'NPC_A', text: 'Xong! Thuyền năm đứa!' },
         ],
       },
     ],
   },
   {
     ...sideMeta,
-    id: 'q_m1_side_03',
+    id: 'q_m1_ai_side_03',
     type: 'side',
     scope: 'm1',
     memory_day_id: 'd.g07.01',
-    title: 'Mẹo gấp giấy của Quân',
+    title: '[PLACEHOLDER] Mẹo gấp thuyền của Quân',
     blocks_main: false,
     steps: [
       {
-        id: 'q_m1_side_03.s01',
+        id: 'q_m1_ai_side_03.s01',
         kind: 'talk',
         with: 'NPC_D',
-        objective: 'Nghe Quân chia sẻ mẹo gấp giấy',
+        objective: '[PLACEHOLDER] Hỏi Quân cách vuốt nếp thuyền cho nhọn',
         lines: [
-          { speaker: 'NPC_D', text: 'Gấp mép giấy miết thật chặt thì thuyền sẽ nổi lâu hơn dưới mưa.' },
+          { speaker: 'NPC_D', text: '[PLACEHOLDER] Miết nếp hai bên cho thật sát, lúc thả thuyền mới rẽ nước được.' },
         ],
       },
       {
-        id: 'q_m1_side_03.s02',
-        kind: 'goto',
-        target: 'itr.thcs.stone_bench',
-        objective: 'Ngồi nghỉ chân ở ghế đá hành lang',
-      },
-    ],
-  },
-  {
-    ...sideMeta,
-    id: 'q_m1_daily_01',
-    type: 'daily',
-    scope: 'm1',
-    title: 'Kiểm tra đồ trực nhật',
-    blocks_main: false,
-    steps: [
-      {
-        id: 'q_m1_daily_01.s01',
+        id: 'q_m1_ai_side_03.s02',
         kind: 'interact',
-        target: 'itr.thcs.duty_spot',
-        objective: 'Thu dọn xô chậu hứng nước mưa',
+        target: 'itr.thcs.gutter',
+        objective: '[PLACEHOLDER] Thử thả chiếc thuyền giấy miết kỹ xuống rãnh nước',
       },
     ],
   },
@@ -184,12 +170,12 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g07.01.01', memory_day_id: 'd.g07.01', kind: 'photo', source_quest_id: 'q_m1_main_02', media_spec: 'B' },
   { id: 'frag.d.g07.01.02', memory_day_id: 'd.g07.01', kind: 'note', source_quest_id: 'q_m1_main_02', text: 'Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xuôi dòng rãnh nước.' },
   { id: 'frag.d.g07.01.03', memory_day_id: 'd.g07.01', kind: 'artifact' },
-  { id: 'frag.d.g07.01.04', memory_day_id: 'd.g07.01', kind: 'sticker', source_quest_id: 'q_m1_side_03', text: 'Mẹo gấp thuyền của Quân' },
+  { id: 'frag.d.g07.01.04', memory_day_id: 'd.g07.01', kind: 'sticker', source_quest_id: 'q_m1_ai_side_03', text: 'Mẹo gấp thuyền của Quân' },
 ];
 
 export const entries: AlbumEntry[] = [
   { id: 'alb.d.g07.01.01', page_id: 'page.d.g07.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0701.boats', at_step_id: 'q_m1_main_02.s05' } },
   { id: 'alb.d.g07.01.02', page_id: 'page.d.g07.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g07.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.01.03', page_id: 'page.d.g07.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.01.03', source: 'sticker_art', required_for_restore: true },
-  { id: 'alb.d.g07.01.04', page_id: 'page.d.g07.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g07.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_side_03', replayable: true },
+  { id: 'alb.d.g07.01.04', page_id: 'page.d.g07.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g07.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_03', replayable: true },
 ];
