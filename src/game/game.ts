@@ -160,11 +160,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     const ep = epoch, s = ref.step;
     const alive = () => ep === epoch;
     if (s.kind === 'cutscene') {
-      // Camera cam.<ID bước> là góc quay dành cho riêng đoạn thoại này.
-      const shot = currentDay?.cameras.find(point => point.id === `cam.${s.id}`);
-      if (shot) dayScene?.lockCamera(shot);
+      const weatherShot = dayScene?.lockWeatherCamera(s.id);
       if (!(await playLines(s.lines))) return; // cancelAll đã nhả camera
-      if (shot) dayScene?.lockCamera(null);
+      if (weatherShot) dayScene?.lockCamera(null);
       if (ref.quest.id === introId && !save.profile_done) {
         ui.set({ profile: true });
         if ((await wait('profile')) === CANCEL || !alive()) return;
