@@ -21,11 +21,19 @@ export const TOWN_SIGNS: readonly TownSignDef[] = [
   { title: 'TIỆM MAY THANH LAN', subtitle: 'Áo Dài • Đồng Phục Học Sinh', bg: '#fefae0', fg: '#6b2d5c', subFg: '#3d405b' },
 ];
 
-let cachedAtlasTexture: THREE.CanvasTexture | null = null;
+let cachedAtlasTexture: THREE.Texture | null = null;
 
 /** Tạo Texture Atlas 1024x512 chứa 8 bảng hiệu (2 hàng x 4 cột). */
-export function getTownSignAtlasTexture(): THREE.CanvasTexture {
+export function getTownSignAtlasTexture(): THREE.Texture {
   if (cachedAtlasTexture) return cachedAtlasTexture;
+
+  if (typeof document === 'undefined') {
+    const t = new THREE.DataTexture(new Uint8Array([200, 200, 200, 255]), 1, 1);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.needsUpdate = true;
+    cachedAtlasTexture = t;
+    return cachedAtlasTexture;
+  }
 
   const atlasW = 1024;
   const atlasH = 512;
