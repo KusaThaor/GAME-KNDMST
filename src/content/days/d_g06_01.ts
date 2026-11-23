@@ -15,7 +15,7 @@ export const day: MemoryDay = {
   school_year_id: 'g06',
   map_id: 'map_thcs',
   map_variant: 'g06',
-  open_zones: ['zone.thcs.yard', 'zone.thcs.corridor', 'zone.thcs.classroom'],
+  open_zones: ['zone.thcs.yard', 'zone.thcs.corridor', 'zone.thcs.classroom', 'zone.thcs.gate'],
   spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_01',
   main_chain: ['q_m1_main_01'],
@@ -27,7 +27,7 @@ export const day: MemoryDay = {
   ],
   interactables: [
     { id: 'itr.thcs.class_list', label: 'Bảng phân lớp', zone_id: 'zone.thcs.corridor', kind: 'marker' },
-    { id: 'itr.thcs.grocery_steps', label: 'Bậc thềm tiệm tạp hóa', zone_id: 'zone.thcs.yard', kind: 'marker' },
+    { id: 'itr.thcs.grocery_steps', label: 'Bậc thềm tiệm tạp hóa', zone_id: 'zone.thcs.gate', kind: 'marker' },
     { id: 'itr.thcs.stone_bench', label: 'Ghế đá sân trường', zone_id: 'zone.thcs.yard', kind: 'object' },
     { id: 'itr.thcs.flagpole', label: 'Cột cờ', zone_id: 'zone.thcs.yard', kind: 'marker' },
     { id: 'itr.thcs.duty_spot', label: 'Chỗ trực nhật', zone_id: 'zone.thcs.yard', kind: 'object' },
