@@ -55,6 +55,22 @@ const CANCEL = Symbol('cancel');
 const PRESENT = new Set<Step['kind']>(['cutscene', 'choice', 'photo', 'minigame', 'free', 'album_restore']);
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/**
+ * Ảnh cầm tay chụp nhiều lần rồi chọn 1 (N-14 · kịch bản Trang 1 cảnh B Bước 2: "Có ba lần chụp… chọn một tấm để giữ").
+ * Bước ảnh khai `shots` thì dùng `shots`; chưa khai thì lấy mặc định theo máy ảnh ở đây (tới khi dữ liệu Trang có `shots: 3` — N-01).
+ * `first_line`: câu sau lần chụp đầu (nguyên văn kịch bản; NPC_B = Châu theo cast A).
+ */
+const MULTI_SHOT: Record<string, { shots: number; first_line?: DialogueLine }> = {
+  'cam.d0601.grocery': { shots: 3, first_line: { speaker: 'NPC_B', text: 'Khoan! Đức, tóc ông dựng kìa!' } },
+};
+/** Máy quay ngược nên khung lệch: [ngửa lên, xoay ngang] (độ) cho từng lần — lần 1 chỉ thấy trán, lần 2 lệch nhẹ, lần 3 đúng khung. */
+const SELFIE_AIM: [number, number][] = [[14, 9], [5, -4], [0, 0]];
+function photoShots(s: Extract<Step, { kind: 'photo' }>): number {
+  if (s.mode !== 'handheld') return 1;
+  const n = Math.floor(s.shots ?? MULTI_SHOT[s.camera_id]?.shots ?? 1);
+  return Number.isFinite(n) && n > 1 ? n : 1;
+}
+
 export interface RunOptions {
   /** Công cụ test sửa file lưu trước khi engine nạp (nhảy tới bước). */
   prepareSave?: (save: SaveState, idx: ContentIndex) => void;
@@ -117,6 +133,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   let phoneThread: string | null = null, phoneDraft: string | null = null;
   let promptId: string | null = null;
   let photoPosed = false;
+  let photoPicked = 0;
 
   // ---------- hàng đợi trình diễn: mọi thoại/ảnh/thông báo chạy lần lượt ----------
   let chain: Promise<void> = Promise.resolve();
@@ -242,56 +259,92 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (!cam) { engine.complete(s.id); return; }        // bản đồ thiếu marker máy ảnh: không chặn quest
     const spot = scene.standSpot(s.stand_zone);
     const base = { mode: s.mode, url: null, marks: [], score: 0, display: PHOTO_CONFIG.quality_display, posed: false } as const;
+    const marksOf = (c: PhotoCriteria) => (Object.keys(CRITERIA_LABELS) as (keyof PhotoCriteria)[]).map((k) => ({ label: CRITERIA_LABELS[k], ok: c[k] }));
+    // Chụp nhiều lần (N-14): mỗi lần lệch khung theo SELFIE_AIM, xong cả loạt thì người chơi chọn 1 tấm.
+    const total = photoShots(s);
+    const firstLine = total > 1 ? MULTI_SHOT[s.camera_id]?.first_line : undefined;
+    const aimed = (n: number) => {
+      const [pitch, yaw] = SELFIE_AIM[n] ?? [0, 0];
+      if (total === 1 || (!pitch && !yaw)) return cam;
+      const c = cam.clone();
+      c.rotateY((yaw * Math.PI) / 180); c.rotateX((pitch * Math.PI) / 180); c.updateMatrixWorld(true);
+      return c;
+    };
     for (let retry = 0; ; retry++) {
-      photoPosed = false;
-      if (s.mode !== 'auto') {
-        scene.setStandZone(spot);
-        scene.lockCamera(point);                          // khung ngắm: nhìn qua máy ảnh đặt sẵn
-        ui.set({ photo: { ...base, marks: [], phase: 'ready', seconds: s.mode === 'timer' ? PHOTO_CONFIG.timer_seconds : 0 } });
-        const started = await wait('photo_start');
-        scene.lockCamera(null);                           // hẹn giờ: về góc thứ ba để chạy vào vòng sáng
-        if (started === CANCEL || !alive()) return;
-        if (s.mode === 'timer') {
-          let left = PHOTO_CONFIG.timer_seconds;
-          ui.set({ photo: { ...base, marks: [], phase: 'countdown', seconds: left } });
-          const done = wait('photo_shutter');
-          const tick = (dt: number) => {
-            const before = Math.ceil(left); left -= dt;
-            const cur = ui.get().photo;
-            if (cur && (Math.ceil(left) !== before || cur.posed !== photoPosed)) ui.set({ photo: { ...cur, seconds: left, posed: photoPosed } });
-            if (left <= 0) { tickers.delete(tick); signal('photo_shutter'); }
-          };
-          tickers.add(tick);
-          if ((await done) === CANCEL || !alive()) return;
+      const takes: { blob: Blob; criteria: PhotoCriteria }[] = [];
+      for (let n = 0; n < total; n++) {
+        photoPosed = false;
+        const shotNo = total > 1 ? { shot: { index: n + 1, total } } : {};
+        if (s.mode !== 'auto') {
+          scene.setStandZone(spot);
+          scene.lockCamera(point);                          // khung ngắm: nhìn qua máy ảnh đặt sẵn
+          ui.set({ photo: { ...base, ...shotNo, marks: [], phase: 'ready', seconds: s.mode === 'timer' ? PHOTO_CONFIG.timer_seconds : 0 } });
+          const started = await wait('photo_start');
+          scene.lockCamera(null);                           // hẹn giờ: về góc thứ ba để chạy vào vòng sáng
+          if (started === CANCEL || !alive()) return;
+          if (s.mode === 'timer') {
+            let left = PHOTO_CONFIG.timer_seconds;
+            ui.set({ photo: { ...base, marks: [], phase: 'countdown', seconds: left } });
+            const done = wait('photo_shutter');
+            const tick = (dt: number) => {
+              const before = Math.ceil(left); left -= dt;
+              const cur = ui.get().photo;
+              if (cur && (Math.ceil(left) !== before || cur.posed !== photoPosed)) ui.set({ photo: { ...cur, seconds: left, posed: photoPosed } });
+              if (left <= 0) { tickers.delete(tick); signal('photo_shutter'); }
+            };
+            tickers.add(tick);
+            if ((await done) === CANCEL || !alive()) return;
+          }
+        }
+        const shotCam = aimed(n);
+        const criteria: PhotoCriteria = {
+          all_in_frame: scene.allInFrame(shotCam, s.subjects),
+          player_in_zone: spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true,
+          posed_in_time: s.mode === 'timer' ? photoPosed : true,
+        };
+        scene.setGizmosVisible(false);
+        const shot = view.capture(scene.scene, shotCam, PHOTO_CONFIG.jpeg);
+        scene.setGizmosVisible(true);
+        const blob = await shot;
+        if (!alive()) return;
+        bus.emit('photo_attempt', { step_id: s.id, mode: s.mode, retry_index: retry, ...criteria });
+        takes.push({ blob, criteria });
+        if (n === 0 && retry === 0 && firstLine) {         // lần 1 lệch khung → câu của Châu (chỉ ở lượt chụp đầu)
+          ui.set({ photo: null });
+          if (!(await playLines([firstLine]))) return;
         }
       }
-      const criteria: PhotoCriteria = {
-        all_in_frame: scene.allInFrame(cam, s.subjects),
-        player_in_zone: spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true,
-        posed_in_time: s.mode === 'timer' ? photoPosed : true,
-      };
-      scene.setGizmosVisible(false);
-      const shot = view.capture(scene.scene, cam, PHOTO_CONFIG.jpeg);
-      scene.setGizmosVisible(true);
-      const blob = await shot;
-      if (!alive()) return;
-      bus.emit('photo_attempt', { step_id: s.id, mode: s.mode, retry_index: retry, ...criteria });
-      if (s.mode !== 'auto') {
+      let pick = 0;
+      if (s.mode !== 'auto' && total === 1) {
+        const { criteria, blob } = takes[0];
         const q = photoQuality(criteria, PHOTO_CONFIG);
         const url = URL.createObjectURL(blob);
-        ui.set({ photo: { ...base, phase: 'preview', seconds: 0, url, score: q.score, display: q.display, marks: (Object.keys(CRITERIA_LABELS) as (keyof PhotoCriteria)[]).map((k) => ({ label: CRITERIA_LABELS[k], ok: criteria[k] })) } });
+        ui.set({ photo: { ...base, phase: 'preview', seconds: 0, url, score: q.score, display: q.display, marks: marksOf(criteria) } });
         const decide = await wait<'keep' | 'retry'>('photo_decide');
         URL.revokeObjectURL(url);
         if (decide === CANCEL || !alive()) return;
         if (decide === 'retry') { scene.setPlayerMotion(null); continue; }
+      } else if (total > 1) {
+        // Màn chọn 1 tấm: mặc định chọn tấm cuối (đúng khung nhất); bấm tấm khác (hoặc phím 1–n) rồi "Giữ ảnh này".
+        const urls = takes.map((t) => URL.createObjectURL(t.blob));
+        photoPicked = total - 1;
+        ui.set({ photo: { ...base, marks: [], phase: 'pick', seconds: 0, picked: photoPicked,
+          picks: takes.map((t, i) => ({ url: urls[i], marks: marksOf(t.criteria), score: photoQuality(t.criteria, PHOTO_CONFIG).score })) } });
+        const decide = await wait<'keep' | 'retry'>('photo_decide');
+        urls.forEach((u) => URL.revokeObjectURL(u));
+        if (decide === CANCEL || !alive()) return;
+        if (decide === 'retry') { scene.setPlayerMotion(null); continue; }
+        pick = Math.min(Math.max(0, photoPicked), total - 1);
       }
       // "Giữ ảnh này": hoàn thành bước — chất lượng ảnh không chặn quest.
-      const key = `ph_${crypto.randomUUID()}`;
-      await photos.put(key, blob).catch(() => undefined);
-      const { removed } = album.addVariant(s.album_entry_id, key);
-      if (removed) void photos.delete(removed).catch(() => undefined);
+      const keys = takes.map(() => `ph_${crypto.randomUUID()}`);
+      await Promise.all(takes.map((t, i) => photos.put(keys[i], t.blob).catch(() => undefined)));
+      const removed = total > 1 ? album.keepShots(s.album_entry_id, keys, pick).removed : [album.addVariant(s.album_entry_id, keys[0]).removed];
+      for (const k of removed) if (k) void photos.delete(k).catch(() => undefined);
+      const oldUrl = photoUrls.get(s.album_entry_id);
+      if (oldUrl) URL.revokeObjectURL(oldUrl);
       photoUrls.delete(s.album_entry_id);
-      bus.emit('photo_kept', { step_id: s.id, mode: s.mode, retry_index: retry, ...criteria });
+      bus.emit('photo_kept', { step_id: s.id, mode: s.mode, retry_index: retry, ...takes[pick].criteria });
       ui.set({ photo: null });
       engine.complete(s.id);          // ảnh tự chụp dự phòng được chụp trong lúc này (nhân vật còn đang tạo dáng)
       scene.setStandZone(null); scene.setPlayerMotion(null);
@@ -530,7 +583,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   function albumView(): AlbumView {
     const prog = album.progress();
     const frag = (id: string) => idx.pack.fragments.find((f) => f.id === id);
-    const cover = ALBUM_CONFIG.cover_entry_id && album.owned(ALBUM_CONFIG.cover_entry_id) ? photoUrls.get(ALBUM_CONFIG.cover_entry_id) ?? null : null;
+    const coverId = album.coverEntryId();                  // Trang 4: ảnh cầu vồng (alb.d.g07.03.cover)
+    const cover = coverId ? photoUrls.get(coverId) ?? null : null;
     return {
       progress: prog.display === 'pages' ? `${prog.pages_restored}/${prog.pages_total} trang` : `${prog.percent}%`,
       coverUrl: cover,
@@ -549,10 +603,15 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     };
   }
   function loadAlbumPhotos() {
+    const todo = new Map<string, AlbumEntry>();
     for (const p of album.pages()) for (const { entry, owned } of p.entries) {
       if (!owned || photoUrls.has(entry.id) || (entry.slot_type !== 'main_photo' && entry.slot_type !== 'free_photo')) continue;
-      void photoUrl(entry).then(() => { if (ui.get().panel === 'album') ui.set({ album: albumView() }); });
+      todo.set(entry.id, entry);
     }
+    // Ô bìa (đã kiểm owned + ô ảnh trong coverEntryId) có thể không nằm trên trang nào của bản phát hành.
+    const coverId = album.coverEntryId(), cover = coverId ? idx.entries.get(coverId) : undefined;
+    if (cover && !photoUrls.has(cover.id)) todo.set(cover.id, cover);
+    for (const entry of todo.values()) void photoUrl(entry).then(() => { if (ui.get().panel === 'album') ui.set({ album: albumView() }); });
   }
   function phoneView(): PhoneView {
     const threads = idx.pack.hub.threads.map((t) => ({ id: t.id, title: fmt(t.title) }));
@@ -596,6 +655,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     photoPose() { const p = ui.get().photo; if (p?.phase === 'countdown' && !photoPosed) { photoPosed = true; dayScene?.setPlayerMotion('pose_peace'); ui.set({ photo: { ...p, posed: true } }); } },
     photoKeep() { signal('photo_decide', 'keep'); },
     photoRetry() { signal('photo_decide', 'retry'); },
+    photoPick(index) {
+      const p = ui.get().photo;
+      if (p?.phase !== 'pick' || !p.picks?.[index]) return;
+      photoPicked = index;
+      ui.set({ photo: { ...p, picked: index } });
+    },
     freeContinue() { signal('free'); },
     interact,
     hubClick(id) {
@@ -714,6 +779,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (code === 'Space' || code === 'Enter') { if (s.dialogue || s.notice) actions.next(); else actions.photoPose(); }
     else if (isControl('interact', code)) interact();
     else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
+    else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.photo?.phase === 'pick') actions.photoPick(Number(code.slice(-1)) - 1);
     else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
     else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
     else if (isControl('camera_mode', code) && !locked()) toggleCameraMode();

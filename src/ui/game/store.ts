@@ -25,9 +25,14 @@ export interface PhoneView {
   } | null;
 }
 export interface PhotoView {
-  phase: 'ready' | 'countdown' | 'preview';
+  phase: 'ready' | 'countdown' | 'preview' | 'pick';
   mode: string; seconds: number; posed: boolean;
   url: string | null; marks: { label: string; ok: boolean }[]; score: number; display: 'marks' | 'score';
+  /** Chụp nhiều lần (N-14): lần đang chụp (đếm từ 1) / tổng số lần. */
+  shot?: { index: number; total: number };
+  /** Màn chọn 1 tấm (phase 'pick'): các tấm vừa chụp và tấm đang chọn. */
+  picks?: { url: string; marks: { label: string; ok: boolean }[]; score: number }[];
+  picked?: number;
 }
 
 export interface UiState {
@@ -83,6 +88,8 @@ export interface UiActions {
   continueDayEnd(): void;
   endDayNow(): void;
   photoStart(): void; photoPose(): void; photoKeep(): void; photoRetry(): void;
+  /** Màn chọn 1 tấm: đánh dấu tấm thứ `index` (đếm từ 0); "Giữ ảnh này" mới lưu. */
+  photoPick(index: number): void;
   freeContinue(): void;
   hubClick(id: string): void;
   openPanel(p: NonNullable<UiState['panel']>): void;
