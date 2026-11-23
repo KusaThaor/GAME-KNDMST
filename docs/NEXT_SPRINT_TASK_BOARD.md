@@ -473,54 +473,50 @@ Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 
 ---
 
-## Mục 5 — Tình hình tiến độ (Integrator cập nhật 23/11/2026, 01:40 UTC+7)
+## Mục 5 — Tình hình tiến độ (Integrator cập nhật 23/11/2026, 09:00 UTC+7)
 
-Nhánh `feat/sprint-0412` @ `dfc156e`. Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã gộp · ⛔ bị chặn.
-"Kiểm thật" = Integrator tự chạy trên bản gộp thử (không lấy số trong mô tả PR). Mốc nền trước đợt gộp: vitest 266 đạt / 1 bỏ qua.
+Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã gộp · ⛔ bị chặn.
+"Kiểm thật" = Integrator tự chạy trên bản gộp thử. vitest: mốc nền 22/11 266/1 → 391/2 hiện tại. Gói giao việc mới: `docs/handoff/NEXT_BATCH_2026-11-23_N14-N23.md`.
 
 | Mã | Trạng thái | Kiểm thật | Ghi chú |
 |---|---|---|---|
-| N-00 | ✅ (22/11, trước đợt này) | — | — |
-| N-01 | 🔄 nhánh `task/N-01-sua-moc1` đã đẩy, **chưa mở PR** | chưa kiểm (chưa có PR) | Gộp thử lên nền mới: không xung đột chữ. Phải đổi `weather_by_step` Trang 4 sang s06/s07; sửa 4 file ngoài phạm vi (cần ghi lý do); đụng dòng `pde_03` với N-08 → phiếu A2 |
-| N-02 | ✅ PR #4, `f5fb467` | tsc ✓ · vitest 323/1 ✓ · validate ✓ · build ✓ · e2e 38/1 ✓ (33 phút, có ca A-01 mới) | Còn tạm ghi kết quả trò vào `flags` → phiếu N-02b (A1) |
-| N-03 | ✅ PR #1, `a9758c2` | tsc ✓ · vitest 281/1 ✓ · validate ✓ · build ✓ · e2e chưa chạy (không sửa luồng chơi) | `recordMg(save, id, round, opp?, context?)` khác chữ ký thẻ |
-| N-04 | ✅ PR #2, `203982f` | tsc ✓ · vitest 314/1 ✓ · validate ✓ · build ✓ · e2e 37/1 ✓ (31 phút) | 2 file ngoài phạm vi (manifest + test đi bộ) chấp nhận vì BG-1 |
-| N-05 | 🔍 PR #5 — yêu cầu sửa (23/11) | tsc ✓ · vitest 327/1 ✓ · validate ✓ · build ✓ · **e2e 37 đạt / 1 lỗi** (ca 8 `world.spec.ts:906`, đỏ cả khi chạy riêng; nền không có PR: 38/1) | Camera bị khóa ở cutscene cầu vồng ngay sau ảnh hẹn giờ. Sửa 3 file của task khác — **chủ dự án đồng ý 22/11**. Phiếu A0 |
-| N-06 | 🔄 nhánh đã đẩy, **chưa mở PR** | chưa kiểm | Gộp thử lên nền mới: không xung đột |
-| N-07 | 🔄 nhánh đã đẩy, **chưa mở PR** | chưa kiểm | Gộp thử lên nền mới: không xung đột |
-| N-08 | 🔄 nhánh đã đẩy, **chưa mở PR** | chưa kiểm | Sẽ xung đột 1 dòng `pde_03` với N-01 |
-| N-09 | ✅ PR #3, `dfc156e` | tsc ✓ · vitest 338/2 ✓ (ca mới cần Emulator: chưa chạy) · validate ✓ · build ✓ · e2e 38/1 ✓ (31 phút) | Sửa `game.ts`/`store.ts` — **chủ dự án đồng ý 22/11**. Vercel Preview + Firestore thật: chưa kiểm |
-| N-10 | ✅ PR #6, `b66528b` | tsc ✓ · vitest 294/1 ✓ · validate ✓ · build ✓ · e2e chưa chạy (không sửa luồng chơi) | — |
-| N-11a | 🔄 nhánh đã đẩy, **chưa mở PR** | chưa kiểm | Nhánh chứa 3 commit N-02 (đã gộp) → PR sẽ chỉ còn 4 trò |
-| N-11b | 🔄 nhánh đã đẩy, **chưa mở PR** | chưa kiểm | Như N-11a |
-| N-12 | ❌ → giao đợt 23/11 (B5) | — | — |
-| N-13 | ❌ chờ N-05 (prompt soạn sẵn) | — | Cần lửa trại + preset đêm của N-05 |
-| N-14 | ❌ → giao đợt 23/11 (B1), chờ N-02b | — | — |
-| N-15a…e | ❌ chưa sẵn sàng (chờ N-11a/b) | — | Khối lớn nhất, nằm trên đường găng |
-| N-15f | ❌ chờ N-15a…e | — | — |
-| N-16 | ❌ → giao đợt 23/11 (B2) | — | — |
-| N-17 | ❌ → giao đợt 23/11 (B3) | — | Validator chưa biết 3 mã `mg_screen_*` |
-| N-18 | ❌ chờ N-14 | — | — |
-| N-19 | ❌ cổng cuối | — | — |
-| N-20 | ❌ sẵn sàng (P2), để đợt sau | — | — |
-| N-21 | ❌ chờ N-17, N-06 | — | — |
-| N-22 | ❌ cổng cuối | — | — |
-| N-23 | ❌ → giao đợt 23/11 (B4) | — | Nhỏ; vá trước khi đạo cụ GLB dùng `loadProp` ngoài trang thử |
+| N-00 | ✅ 22/11 | — | — |
+| N-01 | 🔍 PR #8 — yêu cầu sửa | chưa chạy (PR xung đột `types.ts`) | Thoại Trang 2 tự viết, trái kịch bản (`d_g07_01.ts:103–120`); tự cập nhật bot e2e Trang 1–4; gộp **sau** N-05 rồi đổi khóa thời tiết |
+| N-02 | ✅ PR #4, `f5fb467` | e2e 38/1 | — |
+| N-02b | ✅ PR #7, `c637b5b` | tsc ✓ · vitest 339/2 ✓ · validate ✓ · build ✓ · e2e 38/1 ✓ (27,9 phút) | `recordMg`, `opponent`, `flag` đã nối |
+| N-03 | ✅ PR #1, `a9758c2` | — | — |
+| N-04 | ✅ PR #2, `203982f` | e2e 37/1 | Marker Mốc 2 → N-04b |
+| N-05 | 🔍 PR #5 — cần cập nhật nhánh | lượt trước: e2e 37/1 + 1 lỗi; bản sửa ca 8 chưa kiểm vì xung đột `game.ts` với N-02b | **Gộp đầu tiên khi xong** — chặn N-13, N-15 (biến thể g08/g09) |
+| N-06 | 🔍 PR #9 — yêu cầu sửa | tsc ✓ · vitest 373/2 ✓ · validate ✓ · build ✓; e2e trên chồng có N-06 không lỗi ca nào của N-06 | Họ tên tự đặt, `{player_name}` vẽ thô lên texture, "BÁO TUỔI TRẺ" |
+| N-07 | ✅ PR #10, `bd0d535` | tsc ✓ · vitest 347/2 ✓ · validate ✓ · build ✓ | 5.796 tam giác / 12 lượt vẽ; thiếu ảnh 4 hướng (nhắc) |
+| N-08 | 🔍 PR #11 — yêu cầu sửa | tsc ✓ · vitest 407/2 ✓ · validate ✓ · build ✓ · **e2e 1 lỗi** `game.spec.ts:304` (chạy riêng: nền xanh, có PR đỏ) | Độc thoại kỷ vật chờ Space làm bot không vào Ngày |
+| N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | — |
+| N-10 | ✅ PR #6, `b66528b` | — | Bổ sung mã màn 2D → N-10b |
+| N-11a | ✅ PR #12, `c25dd06` | tsc ✓ · vitest 369/2 ✓ · validate ✓ · build ✓ | Lời giải mật lệnh "RA CHƠI" |
+| N-11b | ✅ PR #13, `eeb09c2` | tsc ✓ · vitest 391/2 ✓ · validate ✓ · build ✓ · e2e nhánh thật sau đợt 38/1 ✓ (29,5 phút) | 5 điều luật khớp nguyên văn |
+| N-04b | ❌ → giao sóng 1 | — | Hợp đồng 16 mã marker Mốc 2 |
+| N-10b | ❌ → giao sóng 1 | — | 4 mã `mg_screen_*` |
+| N-12 | ❌ → giao sóng 1 | — | — |
+| N-13 | ❌ sóng 1b (chờ N-05) | — | — |
+| N-14 | ❌ → giao sóng 1 (sẵn sàng: N-02b ✅) | — | Kèm thay `{quan}–{duc}` trong `fmt` |
+| N-15a, b, c, e | ❌ → giao sóng 1 (viết ngay, gộp sau N-04b + N-05) | — | b là Trang lớn nhất (Valentine) → Opus |
+| N-15d | ❌ sóng 1b (chờ N-05: đêm Hội trại) | — | — |
+| N-15f | ❌ sóng 2 | — | — |
+| N-16, N-17, N-23, N-20 | ❌ → giao sóng 1 | — | N-20 sửa `docs/gdd/` → Integrator hỏi chủ dự án trước khi gộp |
+| N-18, N-21 | ❌ sóng 2 | — | — |
+| N-19, N-22 | ❌ sóng 3 (cổng cuối) | — | — |
 
 ### 5.1 So với lịch Mục 1.1
-- **22–23/11:** đạt và vượt — N-04 (khung + đầy đủ), N-03, N-10 đã gộp; N-02 (lịch 24–26/11), N-09 (lịch 27–30/11) cũng đã gộp sớm. Chưa có task **trễ**. N-05 trả về sửa (lịch 24–26/11, vẫn trong hạn).
-- **Điểm kiểm 26/11 (chơi tay trọn 4 Trang Mốc 1):** kịp nếu N-01, N-06, N-07, N-08 mở PR và gộp trong 24–25/11. N-01 là điều kiện chính (dữ liệu 4 Trang theo kịch bản).
-- **Điểm kiểm 30/11 (4 trò Trang 1 chơi thật):** N-11a đã có code → kịp nếu PR mở sớm.
-- **02/12 (điểm cắt):** chưa cần đề xuất cắt. Theo dõi N-15a…e — nếu 29/11 chưa có PR nào thì đề xuất cắt theo thang X-4 (N-21 → N-20 → N-17 → N-16 chỉ giữ Caro).
+- Chưa task nào trễ. N-11a/N-11b gộp sớm hơn điểm kiểm 30/11 (module trò đã có; chưa chơi được trong luồng vì N-01 chưa gộp).
+- **Điểm kiểm 26/11 (chơi tay trọn 4 Trang):** phụ thuộc N-01 + N-05 + N-06 + N-08 — cả 4 đang ở vòng sửa. Kịp nếu các PR quay lại trong 24/11.
+- **N-15 bắt đầu sớm 3–4 ngày so với lịch** (lịch 27–30/11) vì mã marker và mã trò đã chốt.
 
 ### 5.2 Đường găng
-N-11a/b → **N-15a…e** (5 Trang thoại Mốc 2) → N-15f → N-19 → N-22. Và N-01 → điểm kiểm 26/11 → N-22.
+N-05 → (N-04b) → N-15a…e → N-15f → N-19 → N-22. Và N-05 → N-01 → điểm kiểm 26/11.
 
 ### 5.3 Rủi ro
-1. **6 nhánh đã có code nhưng chưa mở PR** (N-01, N-06, N-07, N-08, N-11a, N-11b) — không duyệt được; nhánh N-01 đã ~12 giờ không có commit mới.
-2. **Hai task cùng một file:** N-01 ↔ N-08 (`src/content/hub.ts`, dòng `pde_03`); N-01 ↔ N-05 (`d_g07_03.ts`, khóa `weather_by_step` theo bước cũ — ai gộp sau đổi khóa); N-05 ↔ N-02b ↔ N-14 (`game.ts`, phải tuần tự).
-3. **N-05 đang chặn N-13** (và phần mưa/cầu vồng của điểm kiểm 26/11).
-4. **Bot e2e đi theo bước cũ của Trang 1–4** — sau N-01 ca "bot chơi hết" có thể đỏ; người sửa là N-19.
-5. Gói `game` 1,08 MB, gzip 298 kB (vượt ngưỡng cảnh báo 900 kB của Vite; đo ở bản build sau N-09) — chưa đo FPS trên laptop thật.
-6. Form phản hồi chỉ nhận Trang có trong bản phát hành → bản `production` (đang rỗng) sẽ từ chối mọi phản hồi tới khi N-22 khai 9 Trang.
-7. Chưa kiểm: Vercel Preview, Firestore thật, ca Emulator của N-09, FPS, chơi tay.
+1. **N-05 đang là nút cổ chai**: chặn N-01, N-13, N-15 (biến thể năm học g08/g09 do N-05 thêm).
+2. **e2e là lưới an toàn duy nhất cho luồng chơi** — 2 PR (N-01, N-08) đổi luồng mà chưa chạy e2e; đã quyết: PR nào đổi luồng thì tự cập nhật ca e2e bị ảnh hưởng (ngoại lệ `tests/e2e`).
+3. **Lệch kịch bản ↔ GDD ở Trang 5:** kịch bản v1.5 vẫn ghi "chọn ô 2 lần", GDD `02` §2.1 (duyệt 20/11) ghi rõ thay bằng Caro chơi thật → làm theo GDD; câu thoại theo kết quả Caro vẫn PROPOSED nên chưa vào game.
+4. Chữ tự viết lọt vào PR (N-01 thoại Trang 2, N-06 họ tên) — Integrator đối chiếu từng câu với kịch bản trước khi gộp.
+5. Gói `game` ~1,08 MB; chưa đo FPS laptop thật. Chưa kiểm: Vercel Preview, Firestore thật, ca Emulator, chơi tay.

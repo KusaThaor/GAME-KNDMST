@@ -1,5 +1,13 @@
 # DEV_SESSION_HANDOFF
 
+## Integrator — đợt gộp sáng 23/11/2026 (ĐỌC TRƯỚC)
+- **Đã gộp** (merge commit, theo thứ tự): N-02b #7 `c637b5b` → N-07 #10 `bd0d535` → N-11a #12 `c25dd06` → N-11b #13 `eeb09c2`.
+- **Trả về sửa** (bình luận chi tiết trên PR): N-05 #5 (xung đột `game.ts` với N-02b), N-08 #11 (e2e đỏ `game.spec.ts:304`), N-06 #9 (chữ tự đặt trên đạo cụ), N-01 #8 (thoại Trang 2 tự viết + xung đột + chưa e2e). Thứ tự gộp khi xong: N-05 → N-08 → N-06 → N-01.
+- **Đã kiểm thật:** 4 lệnh trên từng bản gộp thử + tsc/vitest/validate trên nhánh thật sau mỗi lần gộp (vitest 338/2 → 391/2). e2e đầy đủ: N-02b 38/1; chồng gộp có N-06/N-07/N-08/N-11 37/1 + 1 lỗi (do N-08, đã khoanh bằng chạy riêng); nhánh thật `eeb09c2` **38/1 (29,5 phút)**.
+- **Chưa kiểm:** FPS laptop thật · Vercel Preview · Firestore thật · ca Emulator · chơi tay · bản sửa ca 8 của N-05.
+- **Quyết định Integrator:** PR đổi luồng chơi tự sửa ca e2e bị ảnh hưởng (ngoại lệ `tests/e2e`); Trang 5 làm Caro chơi thật theo GDD `02` §2.1 (thay "chọn ô 2 lần" của kịch bản), đối thủ Đức.
+- **Việc tiếp:** gói giao việc N-04b, N-10b, N-12 → N-23 ở `docs/handoff/NEXT_BATCH_2026-11-23_N14-N23.md` (sóng 1 giao ngay). Tiến độ: board Mục 5.
+
 ## Integrator — đợt gộp 22–23/11/2026 (ĐỌC TRƯỚC)
 - **Đã gộp vào `feat/sprint-0412`** (merge commit, theo thứ tự): N-03 #1 `a9758c2` → N-10 #6 `b66528b` → N-04 #2 `203982f` → N-02 #4 `f5fb467` → N-09 #3 `dfc156e`. **N-05 #5 trả về sửa** (e2e ca 8 đỏ — camera khóa ở cutscene cầu vồng). Đầu nhánh sau đợt: `dfc156e`.
 - **Đã kiểm thật** (Integrator tự chạy trên từng bản gộp thử, rồi chạy lại tsc + vitest + validate trên nhánh thật sau mỗi lần gộp): tsc đạt; vitest 266/1 (mốc nền) → 338/2 sau đợt; `validate:world` 0 lỗi; build production đạt. e2e đầy đủ `--workers=1` cho 4 PR sửa luồng chơi: N-04 37/1, N-02 38/1, N-09 38/1; N-05 37/1 + **1 lỗi** (~32 phút/lượt, Linux 2 nhân, Chrome + SwiftShader).
