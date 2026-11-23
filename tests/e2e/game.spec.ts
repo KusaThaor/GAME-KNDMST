@@ -386,3 +386,22 @@ test.describe('phần khung game', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test('A-01: đóng Menu tại rãnh nước hoàn thành đúng một bước goto', async ({ page }) => {
+  const batches = await captureCollect(page);
+  await openGame(page, '&day=d.g07.03&step=q_m1_main_05.s01');
+  await page.locator('[data-act="consent-yes"]').click();
+  await expect.poll(async () => (await state(page)).mode).toBe('day');
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('panel-menu')).toBeVisible();
+  expect(await page.evaluate(() => window.__game!.teleportTo('itr.thcs.gutter'))).toBe(true);
+  // Để proximity quan sát vị trí này ít nhất một khung hình khi Menu còn khóa.
+  await page.evaluate(() => new Promise<void>(done => requestAnimationFrame(() => requestAnimationFrame(() => done()))));
+  expect((await state(page)).active).not.toContain('q_m1_side_02.s02');
+  await page.keyboard.press('Escape');
+  await expect.poll(async () => (await state(page)).active).toContain('q_m1_side_02.s02');
+  await page.evaluate(() => window.__game!.flush());
+  const completions = batches.flatMap(b => b.events).filter(e =>
+    e.name === 'quest_step_completed' && e.props?.step_id === 'q_m1_side_02.s01');
+  expect(completions).toHaveLength(1);
+});
