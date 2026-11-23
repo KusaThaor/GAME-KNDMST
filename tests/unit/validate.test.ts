@@ -210,6 +210,21 @@ describe('N-10 · mã trò và nội dung phát hành', () => {
     expect([...r.errors, ...r.warnings]).toEqual([]);
   });
 
+  it('production chấp nhận bốn màn 2D Mốc 2 và báo lỗi cho mã màn viết sai', () => {
+    const p = makePack(), q = p.quests[0];
+    const screens = ['mg_screen_confession', 'mg_screen_letter_write', 'mg_screen_letter_read', 'mg_screen_three_gates'];
+    q.steps.push(...screens.map((game, i): Step => ({
+      id: `${q.id}.s${i + 10}`, kind: 'minigame', game, level: 'min',
+    })));
+    const typo = { id: q.id + '.s14', kind: 'minigame', game: 'mg_screen_three_gate', level: 'min' } as const;
+    q.steps.push(typo);
+    const r = validateContent(p, makeConfig({ environment: 'production' }));
+    expect(r.errors.filter(e => e.code === 'minigame_unknown_id')).toEqual([
+      { code: 'minigame_unknown_id', id: typo.id, message: expect.stringContaining(typo.game) },
+    ]);
+    expect(r.warnings.filter(e => e.code === 'minigame_unknown_id')).toEqual([]);
+  });
+
   it.each(['test', 'production'] as const)('mã lạ ở %s ghi rõ mã trò và bước, đúng mức độ', environment => {
     const p = makePack(), q = p.quests[0];
     const id = q.id + '.s04';
