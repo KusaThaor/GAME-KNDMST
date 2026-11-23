@@ -27,23 +27,21 @@ test.describe('bàn phím thật', () => {
     await page.locator('[data-act="consent-yes"]').click({ timeout: 30_000 });
     const dlg = page.locator('[data-testid="dialogue"] .text');
     await expect(dlg).toBeVisible({ timeout: 30_000 });
+    // Lời dẫn mở đầu có 2 dòng (N-08, B10: độc thoại dời ra sau khi mở thùng): Space qua dòng 1, Enter qua dòng 2.
     const l1 = await dlg.textContent();
     await page.keyboard.press('Space');
     await expect(dlg).not.toHaveText(l1!);
     const l2 = await dlg.textContent();
-    await page.keyboard.press('Enter');
-    await expect(dlg).not.toHaveText(l2!);
-    const l3 = await dlg.textContent();
     // Esc khi đang có thoại → menu
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
     await page.keyboard.press('Space');
     await page.waitForTimeout(300);
-    await expect(dlg).toHaveText(l3!);                                       // menu đang mở: thoại bên dưới đứng yên
+    await expect(dlg).toHaveText(l2!);                                       // menu đang mở: thoại bên dưới đứng yên
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="panel-menu"]')).toHaveCount(0);
-    await page.keyboard.press('Space');
-    await expect(dlg).not.toHaveText(l3!);
+    await page.keyboard.press('Enter');
+    await expect.poll(async () => (await state(page)).ui.dialogue).not.toBe(l2);   // Enter = đi tiếp (sang form tên, hết thoại)
     expect(errors).toEqual([]);
   });
 

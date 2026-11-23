@@ -111,9 +111,14 @@ test.describe('phòng 2026 góc nhìn thứ nhất', () => {
     expect(await page.locator('[data-testid="dialogue"]').count()).toBe(0);
     expect((await state(page)).mode).toBe('hub');
 
-    // bấm mật lệnh → chuyển cảnh → Trang 1
+    // bấm mật lệnh → độc thoại B10 của Player (N-08: mở thùng trước, độc thoại sau; chờ Space) → chuyển cảnh → Trang 1
     await clickHub(page, 'art_m1_01');
-    await expect.poll(async () => { const s = await state(page); return `${s.mode}|${s.day}`; }, { timeout: 60_000 }).toBe('day|d.g06.01');
+    await expect(page.locator('[data-testid="dialogue"] .text')).toContainText('Mật lệnh này', { timeout: 10_000 });
+    await expect.poll(async () => {
+      const s = await state(page);
+      if (s.ui.dialogue) await page.keyboard.press('Space');
+      return `${s.mode}|${s.day}`;
+    }, { timeout: 60_000, intervals: [250] }).toBe('day|d.g06.01');
 
     // ---- xong Trang 1 → về phòng; món kế (Trang 2) sáng, Trang 3–4 còn mờ; mật lệnh đã lên kệ ----
     await finishDay(page);
@@ -164,6 +169,23 @@ test.describe('phòng 2026 góc nhìn thứ nhất', () => {
     expect(after.artifacts).toEqual(before.artifacts);
     expect(item(after.hub!, 'art_m1_02')).toMatchObject({ state: 'glow', clickable: true });
     expect(item(after.hub!, 'art_m1_03')).toMatchObject({ state: 'dim' });
+    expect(errors).toEqual([]);
+  });
+
+  test('kết demo (K2 + N-08): điện thoại — nhóm chat cũ không có dòng chat, chỉ nhãn "tin cuối…"; tin Rộn ràng hiện tỉ số 3–3', async ({ page }) => {
+    test.setTimeout(240_000);
+    const errors = collectErrors(page);
+    await open(page, '&hub=1&done=4');                                          // đã xong 4 Trang Mốc 1 (công cụ test)
+    await page.locator('[data-act="consent-yes"]').click({ timeout: 60_000 });
+    await expect.poll(async () => (await state(page)).mode, { timeout: 90_000 }).toBe('hub');
+    await spaceThrough(page, 30_000);
+    await page.evaluate(() => window.__game!.hubClick('itr.hub.phone'));
+    await expect(page.locator('[data-testid="panel-phone"]')).toBeVisible();
+    await page.locator('[data-act="thread-thread.old_group"]').click();
+    await expect(page.locator('[data-testid="thread-status"]')).toHaveText('tin cuối cùng đã từ rất lâu');
+    expect(await page.locator('.g-msg').count()).toBe(0);                      // B8: không có dòng chat cũ nào
+    await expect(page.locator('[data-act="opener-playful"]')).toContainText('Ván caro hồi lớp 8 vẫn đang 3–3 đó nha. Ai gỡ?', { timeout: 15_000 });
+    await expect(page.locator('[data-act="opener-playful"]')).not.toContainText('{quan}');
     expect(errors).toEqual([]);
   });
 });

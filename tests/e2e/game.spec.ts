@@ -182,7 +182,7 @@ test.describe('phần khung game', () => {
     const wire = JSON.stringify(batches);
     expect(wire).not.toContain(NAME);
     expect(wire).not.toContain('Bảo'); expect(wire).not.toContain('Ngọc');
-    for (const t of ['Nhớ hồi tụi mình mới đủ năm đứa', 'cuốn sổ luật Căn cứ', 'được dời, không được hủy']) expect(wire).not.toContain(t);   // nội dung tin nhắn (3 câu mở lời, hub.ts)
+    for (const t of ['Ván caro hồi lớp 8', 'cuốn sổ luật Căn cứ', 'được dời, không được hủy']) expect(wire).not.toContain(t);   // nội dung tin nhắn (3 câu mở lời, hub.ts)
     expect(wire).not.toContain('bắt đầu từ một mẩu giấy mật lệnh');       // nội dung ghi chú (frag.d.g06.01.02)
     expect(wire).not.toContain('chapter_id');
     for (const e of events) for (const k of Object.keys(e.props ?? {})) expect(FORBIDDEN_PROP_KEYS.has(k.toLowerCase()), `khóa cấm ${k}`).toBe(false);
@@ -204,7 +204,7 @@ test.describe('phần khung game', () => {
         stored.push(...(doc.events as { name: string }[]).map((e) => e.name));
         const text = JSON.stringify(doc);
         expect(text).not.toContain(NAME);
-        expect(text).not.toContain('Nhớ hồi tụi mình mới đủ năm đứa');
+        expect(text).not.toContain('Ván caro hồi lớp 8');
         expect(text).not.toMatch(/player_name|"email"|"ip"/);
       }
       expect(stored).toEqual(names);                                       // Firestore có đủ đúng những event trình duyệt đã gửi
@@ -306,7 +306,12 @@ test.describe('phần khung game', () => {
     await page.screenshot({ path: `${SHOTS}/71-hub-hop-ky-vat.png` });
     const art = await page.evaluate(() => window.__game!.hubPoint('art_m1_01'));
     await page.mouse.click(art!.x, art!.y);
-    await page.waitForFunction(() => (window.__game!.state() as { mode: string }).mode === 'day' && window.__game!.ready(), null, { timeout: 60_000 });
+    // B10 (N-08): mở thùng xong là độc thoại của Player, chờ Space — bấm Space qua hết thoại rồi mới chờ vào Ngày
+    await expect.poll(async () => {
+      const s = await state(page);
+      if (s.ui.dialogue) await page.keyboard.press('Space');
+      return s.mode === 'day' && !s.ui.dialogue && (await page.evaluate(() => window.__game!.ready()));
+    }, { timeout: 60_000, intervals: [250] }).toBe(true);
 
     // Giữ W tới khi đi được hơn 0,5 m. Không chờ cứng 1,2 giây: ngay sau khi vào Trang, Chrome headless (vẽ bằng CPU)
     // khựng còn 1–3 khung/giây — đo được cả trên bản gốc d5531b2 — nên 1,2 giây có lúc chỉ đi được 0,3 m.
