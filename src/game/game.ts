@@ -7,6 +7,7 @@ import { CAMERA_MODES, CAMERA_OPTIONS, DEFAULT_CAMERA_MODE, isCameraMode, isCont
 import { GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
+import { HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../config/hubRoom';
 import { CRITERIA_LABELS, PHOTO_CONFIG, photoQuality } from '../config/photo';
 import { attachAnalytics } from '../analytics/bridge';
 import { ActivePlaytime } from '../analytics/heartbeat';
@@ -32,7 +33,7 @@ import { MinigameHost } from './minigames/host';
 import { getMinigame } from './minigames/registry';
 import { createInput, type GameInput } from './input';
 import { buildDayScene, type DayControl, type DayScene } from './scenes/dayScene';
-import { buildHubScene, type HubScene } from './scenes/hubScene';
+import { buildHubScene, type BoxItemView, type HubPlayer, type HubScene } from './scenes/hubScene';
 import { playTransitionSound } from './sfx';
 import { createGameView, type GameView } from './view';
 
@@ -46,8 +47,14 @@ export interface GameHandle {
   idx: ContentIndex; save: SaveState; bus: EventBus; engine: QuestEngine; album: AlbumModel; hub: HubModel; flow: GameFlow;
   ui: UiStore; actions: UiActions; view: GameView; photos: PhotoStore; tracker: Tracker; input: GameInput;
   day(): { scene: DayScene; def: MemoryDay } | null;
-  /** Vị trí một vật của phòng 2026 trên trang (px) — để test bấm chuột thật. */
+  /** Vị trí một vật của phòng 2026 (hoặc một món trong Hộp Kỷ Vật đang mở) trên trang (px) — để test bấm chuột thật. */
   hubPoint(id: string): { x: number; y: number } | null;
+  /** Phòng 2026 lúc này: người chơi đứng đâu, nhìn đâu, vật nào trong tầm, hộp mở chưa, các món trong hộp. */
+  hubView(): { player: HubPlayer; nearest: string | null; boxOpen: boolean; boxBlend: number; items: (BoxItemView & { clickable: boolean })[] } | null;
+  /** Đặt người chơi ở phòng 2026 tới (x, z) — công cụ test. */
+  hubTeleport(x: number, z: number, yaw?: number): boolean;
+  /** Vật/món mà game "thấy" dưới điểm (px) trên trang — công cụ test. */
+  hubPick(px: number, py: number): string | null;
   store: SaveStore;
 }
 
@@ -117,6 +124,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   let phoneThread: string | null = null, phoneDraft: string | null = null;
   let promptId: string | null = null;
   let photoPosed = false;
+  // phòng 2026: con trỏ chuột (nhìn theo), vật dưới con trỏ trong tầm với, đang trình diễn một món trong hộp,
+  // đã nói câu "mở hộp" trong lượt về phòng này chưa
+  let hubCursor: { x: number; y: number } | null = null;
+  let hubMouseHover: string | null = null;
+  let boxBusy = false;
+  let boxLinesSaid = false;
 
   // ---------- hàng đợi trình diễn: mọi thoại/ảnh/thông báo chạy lần lượt ----------
   let chain: Promise<void> = Promise.resolve();
@@ -369,6 +382,35 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (!hubScene) return;
     hubScene.setLighting(hub.lightingPreset());
     hubScene.setShelf(hub.shelf());
+    hubScene.setBoxItems(boxItems());
+  }
+
+  // ---------- Hộp Kỷ Vật (cận cảnh 3D) ----------
+  /** Lần đầu = kỷ vật của Trang đầu tiên đang sáng (chưa chơi Trang 1): chỉ món đó bấm được. */
+  const firstArtifactId = () => idx.artifactOfDay(idx.releaseDays[0]?.id ?? '')?.id ?? null;
+  const boxFirstTime = () => { const id = firstArtifactId(); return !!id && hub.canOpen(id) === 'first'; };
+  /** Các món đang nằm trong hộp: kỷ vật chưa lên kệ (theo thứ tự Trang) + đồ linh tinh. */
+  function boxItems(): (BoxItemView & { clickable: boolean; name: string })[] {
+    const first = boxFirstTime();
+    const arts = hub.compartments().filter((c) => c.open).flatMap((c) => c.artifacts)
+      .filter((x) => x.state === 'glowing' || x.state === 'dim')
+      .map(({ artifact, state }) => ({
+        id: artifact.id, kind: 'artifact' as const, shape: artifact.shape ?? 'box', name: fmt(artifact.name),
+        state: state === 'glowing' ? 'glow' as const : 'dim' as const,
+        clickable: state === 'glowing' || !first,                       // lần đầu: món mờ không bấm được
+      }));
+    const decor = HUB_DECOR.map((d) => ({ id: d.id, kind: 'decor' as const, shape: d.shape, name: d.name, state: 'normal' as const, clickable: !first }));
+    return [...arts, ...decor];
+  }
+  function refreshBox() {
+    if (ui.get().panel !== 'box3d') return;
+    const first = boxFirstTime();
+    ui.set({ boxView: { hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal, hover: ui.get().boxView?.hover ?? null, first } });
+  }
+  /** Nói vài câu khi đang nhìn vào hộp (không chuyển cảnh). */
+  async function sayBox(lines: DialogueLine[]): Promise<boolean> {
+    boxBusy = true;
+    try { return await playLines(lines); } finally { boxBusy = false; }
   }
 
   async function goHub() {
@@ -378,7 +420,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     const first = !save.quests[introId];
     engine.enterHub();
     hub.refresh();
-    input.setLookMode('drag');                           // phòng 2026: góc cố định, chuột để chọn vật
+    input.setLookMode('drag');                           // phòng 2026: nhìn theo con trỏ (không kéo, không khóa chuột)
+    hubCursor = null; hubMouseHover = null; boxBusy = false; boxLinesSaid = false;
     hubScene = buildHubScene(idx.pack.hub, HUB_CONFIG);
     refreshHubScene();
     view.setScene(hubScene.scene, hubScene.camera);
@@ -504,7 +547,22 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     return dayScene.targets.filter((t) => t.position.distanceTo(p) <= t.radius && engine.peek('interact', t.id))
       .sort((a, b) => a.position.distanceTo(p) - b.position.distanceTo(p))[0] ?? null;
   }
+  // ---------- phòng 2026: lại gần, tương tác ----------
+  const hubLabel = (id: string | null) => (id ? idx.pack.hub.interactables.find((i) => i.id === id)?.label ?? null : null);
+  /** Mỗi khung hình: vật trong tầm với + đang nhìn về phía nó → gợi ý "E"; vật dưới con trỏ (trong tầm) được ưu tiên. */
+  function hubProximity() {
+    if (!hubScene || engine.context?.kind !== 'hub' || ui.get().panel === 'box3d') return;
+    const id = locked() ? null : hubMouseHover ?? hubScene.nearest();
+    hubScene.setHover(id);
+    if (id !== promptId) { promptId = id; const label = hubLabel(id); ui.set({ prompt: label ? { key: 'E', text: label } : null }); }
+  }
   function interact() {
+    if (engine.context?.kind === 'hub') {
+      if (locked() || !hubScene) return;
+      const id = hubMouseHover ?? hubScene.nearest();
+      if (id) actions.hubClick(id);
+      return;
+    }
     if (locked() || engine.context?.kind !== 'day') return;
     const tgt = nearestUseful();
     if (!tgt) { dayScene?.usePortal(); return; }
@@ -571,6 +629,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   function refreshPanels() {
     const p = ui.get().panel;
     if (p === 'box') ui.set({ box: boxView() });
+    if (p === 'box3d') { refreshBox(); hubScene?.setBoxItems(boxItems()); }
     if (p === 'album') { ui.set({ album: albumView() }); loadAlbumPhotos(); }
     if (p === 'phone') ui.set({ phone: phoneView() });
   }
@@ -603,7 +662,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       const r = engine.trigger('interact', id);
       if (r) { hub.refresh(); void enqueue(hubSettle); }
       if (!introDone()) return;
-      if (id === 'itr.hub.memory_box' || id === 'itr.hub.shelf') actions.openPanel('box');
+      if (id === 'itr.hub.memory_box') actions.openPanel('box3d');
+      else if (id === 'itr.hub.shelf') actions.openPanel('box');           // kệ: danh sách kỷ vật đã xong, xem lại ký ức
       else if (id === 'itr.hub.album') actions.openPanel('album');
       else if (id === 'itr.hub.phone') actions.openPanel('phone');
     },
@@ -613,7 +673,10 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
         if (p === 'menu') s.minigame.toggleOverlay('menu');
         return;
       }
-      if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
+      // Menu (Esc) mở được cả khi đang có thoại/thông báo/màn kết Trang: thứ bên dưới đứng chờ, đóng menu là tiếp tục.
+      // Không mở khi đang chuyển cảnh hay đang điền form (tên, đồng ý, phản hồi).
+      if (p === 'menu') { if (s.fade.on || s.profile || s.consentAsk || s.feedback || s.panel) return; }
+      else if (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo) return;
       if (s.mode === 'day' && p !== 'menu' && p !== 'journal') return;
       if (s.mode === 'hub' && p === 'journal') return;
       ui.set({ panel: p, wipeArmed: false, prompt: null });
@@ -621,16 +684,49 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (p === 'box') hub.refresh();
       if (p === 'album') album.markViewed();
       if (p === 'phone') { phoneThread = null; phoneDraft = null; }
-      hubScene?.setBoxOpen(p === 'box');
+      hubScene?.setBoxOpen(p === 'box3d');
+      if (p === 'box3d') {
+        hubMouseHover = null;
+        hubScene?.setBoxItems(boxItems());
+        ui.set({ boxView: { hint: '', hover: null, first: false } });
+        if (!boxLinesSaid) {
+          boxLinesSaid = true;
+          const lines = boxFirstTime() ? HUB_BOX_LINES.open_first : HUB_BOX_LINES.open_again;
+          void enqueue(async () => { if (ui.get().panel === 'box3d') await sayBox(lines); });
+        }
+      }
       refreshPanels();
     },
-    closePanel() { ui.set({ panel: null, wipeArmed: false }); hubScene?.setBoxOpen(false); },
+    closePanel() { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubScene?.setBoxOpen(false); },
     openArtifact(id) {
       if (flow.state !== 'hub_idle') return;
       const r = hub.openArtifact(id);
       if (!r) return;
       flow.dispatch('open_day');
       void goDay(r.day_id, r.replay, false);
+    },
+    boxPick(id) {
+      const s = ui.get();
+      if (s.panel !== 'box3d' || s.dialogue || s.notice || s.choice || s.fade.on || boxBusy) return;
+      const item = boxItems().find((x) => x.id === id);
+      if (!item?.clickable) return;                                       // lần đầu: chỉ mẩu giấy mật lệnh bấm được
+      if (item.kind === 'decor') { const d = HUB_DECOR.find((x) => x.id === id); if (d) void enqueue(async () => { await sayBox(d.lines); }); return; }
+      if (!hub.canOpen(id)) { void enqueue(async () => { await sayBox(HUB_BOX_LINES.locked); }); return; }   // chưa tới lượt: chỉ nói, không chuyển cảnh
+      if (flow.state !== 'hub_idle') return;
+      // Kỷ vật đang sáng: Player nói câu móc (hook_2026) rồi về quá khứ — cùng một đường với trước đây (hub.openArtifact → goDay).
+      const art = idx.artifacts.get(id);
+      const introLines = idx.quests.get(introId)?.steps.flatMap((st) => (st.kind === 'cutscene' ? st.lines.map((l) => l.text) : [])) ?? [];
+      const hook = art?.hook_2026 && !introLines.includes(art.hook_2026) ? [{ speaker: 'player', text: art.hook_2026 }] : [];
+      boxBusy = true;
+      void enqueue(async () => {
+        const ok = await sayBox(hook);
+        boxBusy = true;
+        if (!ok || engine.context?.kind !== 'hub') { boxBusy = false; return; }
+        ui.set({ panel: null, boxView: null });
+        hubScene?.setBoxOpen(false);
+        boxBusy = false;
+        actions.openArtifact(id);
+      });
     },
     albumFlip(pageId) {
       if (flipped.has(pageId)) flipped.delete(pageId); else {
@@ -709,11 +805,25 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   });
 
   // ---------- bàn phím, chuột ----------
+  /**
+   * Space/Enter = bấm nút "đi tiếp" của thứ đang hiện, đúng như click (thoại, thông báo, màn kết Trang, (minigame tự nghe phím),
+   * thẻ "Đi tiếp", tạo dáng khi hẹn giờ). Bảng đang mở (menu…) thì không đụng tới thứ bên dưới. Trả true nếu đã dùng phím.
+   */
+  function continueKey(): boolean {
+    const s = ui.get();
+    if ((s.panel && s.panel !== 'box3d') || s.fade.on) return false;   // nhìn vào Hộp Kỷ Vật vẫn nói chuyện được
+    if (s.dialogue || s.notice) { actions.next(); return true; }
+    if (s.dayEnd) { actions.continueDayEnd(); return true; }
+    if (s.minigame) return false;                                      // trò thật tự nghe phím (MinigameHost)
+    if (s.photo?.phase === 'countdown') { actions.photoPose(); return true; }
+    if (s.free && !s.choice && !s.endPrompt) { actions.freeContinue(); return true; }
+    return false;
+  }
   input.onKey((code) => {
     const s = ui.get();
-    if (code === 'Space' || code === 'Enter') { if (s.dialogue || s.notice) actions.next(); else actions.photoPose(); }
+    if (code === 'Space' || code === 'Enter') return continueKey();
     else if (isControl('interact', code)) interact();
-    else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
+    else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice && !s.panel) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
     else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
     else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
     else if (isControl('camera_mode', code) && !locked()) toggleCameraMode();
@@ -734,11 +844,22 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   ui.set({ freeLook: !!save.settings.free_look, camOptions: camOpts });
   input.onPointer((kind, x, y) => {
     if (hubScene && engine.context?.kind === 'hub') {
+      const s = ui.get();
+      if (s.panel === 'box3d') {
+        // cận cảnh hộp: rê chuột lên món nào thì món đó sáng + hiện tên; bấm để chọn
+        const busy = !!(s.dialogue || s.notice || s.choice || s.fade.on) || boxBusy;
+        const id = busy ? null : hubScene.pick(x, y);
+        const item = id ? boxItems().find((i) => i.id === id && i.clickable) ?? null : null;
+        hubScene.setHover(item?.id ?? null);
+        if ((item?.name ?? null) !== (s.boxView?.hover ?? null) && s.boxView) ui.set({ boxView: { ...s.boxView, hover: item?.name ?? null } });
+        if (kind === 'click' && item) actions.boxPick(item.id);
+        return;
+      }
+      if (kind === 'move' && input.device !== 'touch') hubCursor = { x, y };
+      // đi lại trong phòng: vật dưới con trỏ chỉ tính khi đứng đủ gần; bấm chuột = tương tác (vật dưới con trỏ, hoặc vật gần nhất)
       const id = locked() ? null : hubScene.pick(x, y);
-      hubScene.setHover(id);
-      const label = idx.pack.hub.interactables.find((i) => i.id === id)?.label;
-      if (id !== promptId) { promptId = id; ui.set({ prompt: label ? { key: 'Click', text: label } : null }); }
-      if (kind === 'click' && id) actions.hubClick(id);
+      hubMouseHover = id && hubScene.reachable(id) ? id : null;
+      if (kind === 'click') interact();
     } else if (kind === 'click') interact();
   });
 
@@ -774,7 +895,13 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       dayScene.update(dt, t, ctl);
       proximity();
     }
-    hubScene?.update(dt, t);
+    if (hubScene) {
+      const free = !locked();
+      const drag = input.takeLook();                    // luôn đọc để chuyển động lúc đang khóa không dồn lại
+      const touch = input.device === 'touch';
+      hubScene.update(dt, t, { move: free ? moveIntent() : null, cursor: free && !touch ? hubCursor : null, drag: free && touch ? drag : null });
+      hubProximity();
+    }
   });
   ui.set({ ready: true, placeholderBanner: idx.releaseDays.some((d) => d.main_chain.some((q) => idx.quests.get(q)?.ownership_label === 'AI_PROPOSED')) });
 
@@ -785,6 +912,15 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (!p) return null;
       const r = container.getBoundingClientRect();
       return { x: r.left + ((p.x + 1) / 2) * r.width, y: r.top + ((1 - p.y) / 2) * r.height };
+    },
+    hubView: () => (hubScene && engine.context?.kind === 'hub'
+      ? { player: hubScene.player, nearest: hubScene.nearest(), boxOpen: hubScene.boxOpen, boxBlend: hubScene.boxBlend, items: boxItems().map(({ id, kind, shape, state, clickable }) => ({ id, kind, shape, state, clickable })) }
+      : null),
+    hubTeleport: (x, z, yaw) => { if (!hubScene) return false; hubScene.teleport(x, z, yaw); return true; },
+    hubPick: (px, py) => {
+      if (!hubScene) return null;
+      const r = container.getBoundingClientRect();
+      return hubScene.pick(((px - r.left) / r.width) * 2 - 1, -(((py - r.top) / r.height) * 2 - 1));
     },
   };
 

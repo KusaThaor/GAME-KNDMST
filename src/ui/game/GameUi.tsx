@@ -157,9 +157,22 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
           ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để xoay · Chụm 2 ngón để phóng</div>
           : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · <kbd>E</kbd> tương tác · {lookHint(s)} · lăn chuột để phóng · touchpad: vuốt 2 ngón ngang để xoay, dọc để phóng</div>
       )}
-      {s.prompt && !blocking && !(touch && s.mode === 'day') && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
-      {touch && s.mode === 'day' && !s.fade.on && !blocking && (!s.photo || (s.photo.phase === 'countdown' && !s.photo.posed)) && <TouchStick a={a} />}
-      {touch && s.mode === 'day' && s.prompt && !blocking && !s.photo && <TouchInteract a={a} text={s.prompt.text} />}
+      {s.mode === 'hub' && !s.fade.on && !blocking && (
+        touch
+          ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để nhìn quanh</div>
+          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · rê chuột để nhìn quanh · <kbd>E</kbd> hoặc bấm chuột để tương tác</div>
+      )}
+      {s.prompt && !blocking && !(touch && (s.mode === 'day' || s.mode === 'hub')) && <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>}
+      {touch && (s.mode === 'day' || s.mode === 'hub') && !s.fade.on && !blocking && (!s.photo || (s.photo.phase === 'countdown' && !s.photo.posed)) && <TouchStick a={a} />}
+      {touch && (s.mode === 'day' || s.mode === 'hub') && s.prompt && !blocking && !s.photo && <TouchInteract a={a} text={s.prompt.text} />}
+      {s.panel === 'box3d' && s.boxView && (
+        <div class="g-box3d" data-testid="panel-box3d" data-first={String(s.boxView.first)}>
+          <b>Hộp Kỷ Vật</b>
+          <span class="g-box3d-hint" data-testid="box-hint">{s.boxView.hint}</span>
+          <span class="g-box3d-hover" data-testid="box-hover">{s.boxView.hover ?? ''}</span>
+          <button data-act="close" onClick={a.closePanel}>Đóng hộp{!touch && <> <kbd>Esc</kbd></>}</button>
+        </div>
+      )}
 
       {s.dialogue && (
         <div class="hud-dialogue g-click" data-testid="dialogue" data-act="next" onClick={a.next}>

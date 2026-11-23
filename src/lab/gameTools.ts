@@ -82,8 +82,34 @@ export function jumpTo(save: SaveState, idx: ContentIndex, dayId: string, stepId
   return null;
 }
 
+/** Dựng file lưu "đang ở phòng 2026, đã qua phần mở đầu": tên Bạn Thử, đã nhập tên và chọn giới, lời dẫn đã xong. */
+export function jumpToHub(save: SaveState, idx: ContentIndex, gender: 'male' | 'female' = 'male'): string | null {
+  Object.assign(save, newSave(save.attempt_id), { player_name: 'Bạn Thử', appearance: { gender, preset: 'default' }, profile_done: true });
+  const bus = new EventBus();
+  const engine = new QuestEngine({ idx, save, bus });
+  const album = new AlbumModel({ idx, save, bus, config: ALBUM_CONFIG });
+  const hub = new HubModel({ idx, save, bus, engine, album, config: HUB_CONFIG });
+  const introId = idx.pack.hub.intro_quest_id;
+  engine.enterHub();
+  for (let i = 0; i < 20 && engine.questState(introId) === 'active'; i++) {
+    const r = engine.activeSteps().find((x) => x.quest.id === introId);
+    if (!r || !autoStep(engine, r)) break;
+  }
+  hub.refresh(); hub.runPdes();
+  return engine.questState(introId) === 'completed' ? null : `Không qua được phần mở đầu của phòng 2026`;
+}
+
 export function runOptionsFromUrl(params: URLSearchParams): RunOptions {
   const day = params.get('day'), cast = params.get('cast');
+  // ?hub=1: bỏ qua phần mở đầu (tên, lời dẫn, bước mở hộp) và vào thẳng phòng 2026. Chỉ bản test.
+  if (params.get('hub') === '1' && !day) return {
+    castName: cast ?? undefined,
+    artStyle: params.get('style') ?? undefined,
+    prepareSave: (save, idx) => {
+      const err = jumpToHub(save, idx, params.get('gender') === 'female' ? 'female' : 'male');
+      if (err) console.error(`[công cụ test] ${err}`);
+    },
+  };
   return {
     castName: cast ?? undefined,
     artStyle: params.get('style') ?? undefined,
@@ -115,6 +141,14 @@ export interface GameToolsApi {
   world(): Record<string, unknown> | null;
   hubClick(id: string): void;
   hubPoint(id: string): { x: number; y: number } | null;
+  /** Phòng 2026: vị trí/hướng nhìn của người chơi, vật trong tầm, hộp mở chưa, các món trong hộp (null khi không ở phòng). */
+  hubView(): Record<string, unknown> | null;
+  /** Đặt người chơi ở phòng 2026 tới (x, z) — có va chạm như khi đi. */
+  hubTeleport(x: number, z: number, yaw?: number): boolean;
+  /** Bấm một món trong Hộp Kỷ Vật (như bấm chuột vào món đó). */
+  boxPick(id: string): void;
+  /** Vật/món mà game "thấy" dưới điểm (px) trên trang. */
+  hubPick(x: number, y: number): string | null;
   flush(): Promise<unknown>;
   bot: { running: boolean; done: boolean; steps: number; log: string[] };
 }
@@ -177,8 +211,11 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
     }
     const next = h.hub.compartments().flatMap((c) => c.artifacts).find((a) => h.hub.canOpen(a.artifact.id) === 'first');
     if (next) {
-      if (s.panel !== 'box') { if (s.panel) click('close'); else h.actions.hubClick('itr.hub.memory_box'); return 'box-open'; }
-      return click(`open-${next.artifact.id}`) ? `artifact:${next.artifact.id}` : 'wait';
+      // mở Hộp Kỷ Vật (cận cảnh 3D) rồi bấm kỷ vật đang sáng — cùng hành động với chuột/phím của người chơi
+      if (s.panel !== 'box3d') { if (s.panel) click('close'); else h.actions.hubClick('itr.hub.memory_box'); return 'box-open'; }
+      if (h.flow.state !== 'hub_idle') return 'wait';
+      h.actions.boxPick(next.artifact.id);
+      return `artifact:${next.artifact.id}`;
     }
     if (s.panel) { click('close'); return 'close'; }
     return 'done';
@@ -249,6 +286,7 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       camera: h.day() ? { mode: h.save.settings.camera_mode, look: h.input.lookMode, freeLook: h.input.freeLook, pointerLocked: h.input.pointerLocked, ...h.day()!.scene.debug() } : null,
       listeners: h.input.listenerCount,
       toast: h.ui.get().toast,
+      hub: h.hubView(),
       ui: { panel: h.ui.get().panel, dialogue: h.ui.get().dialogue?.text ?? null, who: h.ui.get().dialogue?.who ?? null, objective: h.ui.get().objective, feedback: h.ui.get().feedback, prompt: h.ui.get().prompt?.text ?? null },
     }),
     stats: () => {
@@ -269,6 +307,10 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
     },
     hubClick: (id) => h.actions.hubClick(id),
     hubPoint: (id) => h.hubPoint(id),
+    hubView: () => h.hubView(),
+    hubTeleport: (x, z, yaw) => h.hubTeleport(x, z, yaw),
+    boxPick: (id) => h.actions.boxPick(id),
+    hubPick: (x, y) => h.hubPick(x, y),
     flush: () => h.tracker.flush(),
     bot: { running: false, done: false, steps: 0, log: [] },
   };
