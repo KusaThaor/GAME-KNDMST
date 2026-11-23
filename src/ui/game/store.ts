@@ -94,6 +94,7 @@ export interface UiActions {
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   feedbackSkip(): void;
+  feedbackSubmitted(): void;
   toggleCameraMode(): void;
   /** Bật/tắt "Nhìn tự do" (phím L hoặc nút trong Menu). */
   toggleFreeLook(): void;

@@ -106,3 +106,32 @@ export interface ZoneIndex {
   /** [minX, minZ, maxX, maxZ] của phần sàn. */
   floor_bounds: [number, number, number, number] | null;
 }
+
+// ---------------------------------------------------------------- World Extras (N-04): thêm/bớt bằng code, KHÔNG xuất lại Blender
+
+/** Vật cản thêm bằng code. `gate_zone`/`open_zone` giống `htx_gate_zone`/`htx_open_zone` trong Blender. */
+export interface ExtraCollider extends ColliderShape {
+  /** Chỉ có khi khu này KHÔNG mở (chắn lối vào khu chưa mở). */
+  gate_zone?: string;
+  /** Chỉ có khi khu này ĐANG mở. */
+  open_zone?: string;
+}
+
+/** Sàn thêm (hình chữ nhật thẳng trục, mặt phẳng ngang ở độ cao `y`) — vá khe giữa hai khu khi mở lối mới. */
+export interface ExtraFloor { id: string; zone: string; x0: number; z0: number; x1: number; z1: number; y: number }
+
+/**
+ * Bổ sung cho một bản đồ, gộp vào sau khi đọc GLB, trước `world.finish()` (src/world/extras.ts → `applyExtras`).
+ * Dữ liệu ở `src/world/maps/<map_id>.extras.ts`. Phần để nhìn (tường, nhà kho…) dựng ở `src/world/dressing/sets/`.
+ */
+export interface WorldExtras {
+  map_id: string;
+  /** Marker mới (itr., spot., cam. + cam.….target, spawn.). Trùng ID với GLB hoặc với nhau → lỗi. */
+  markers: Marker[];
+  colliders: ExtraCollider[];
+  /** Tắt vật cản của GLB theo tên (`wall_fence_east` hoặc đủ `COLLIDER_wall_fence_east`). */
+  disableColliders: string[];
+  /** Ẩn phần để nhìn của GLB theo tên node (cả nhánh) — trước khi gộp mesh. Dùng cùng `disableColliders` khi mở lối. */
+  hideVisuals?: { zone: string; node: string }[];
+  floors?: ExtraFloor[];
+}

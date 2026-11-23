@@ -23,19 +23,19 @@
       "id": "zone.thcs.yard",
       "asset": "zone_yard.glb",
       "source": "tools/blender/world/map_thcs/zone_yard.blend",
-      "connections": ["zone.thcs.corridor", "zone.thcs.gate"]
+      "connections": ["zone.thcs.corridor", "zone.thcs.gate", "zone.thcs.field"]
     },
     {
       "id": "zone.thcs.gate",
       "asset": "zone_gate.glb",
       "source": "tools/blender/world/map_thcs/zone_gate.blend",
-      "connections": ["zone.thcs.yard", "zone.thcs.field"]
+      "connections": ["zone.thcs.yard"]
     },
     {
       "id": "zone.thcs.field",
       "asset": "zone_field.glb",
       "source": "tools/blender/world/map_thcs/zone_field.blend",
-      "connections": ["zone.thcs.gate", "zone.thcs.base"]
+      "connections": ["zone.thcs.yard", "zone.thcs.base"]
     },
     {
       "id": "zone.thcs.base",

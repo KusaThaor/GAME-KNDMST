@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { validateContent } from '../../src/content/validate';
+import { formatReport, validateContent } from '../../src/content/validate';
+import type { Step } from '../../src/content/types';
 import { makeConfig, makePack } from './fixtures/pack';
 
 const codes = (r: ReturnType<typeof validateContent>) => r.errors.map((e) => `${e.code}:${e.id}`);
@@ -125,5 +126,114 @@ describe('validateContent', () => {
     const r = validateContent(p, makeConfig());
     expect(r.errors).toEqual([]);
     expect(r.warnings.filter((w) => w.code === 'line_too_long')).toHaveLength(2);
+  });
+});
+
+describe('N-10 · bước mở quest tùy chọn', () => {
+  it.each(['side', 'daily'] as const)('%s không khởi động được bằng cutscene', type => {
+    const p = makePack();
+    const q = p.quests.find(q => q.type === type)!;
+    q.steps[0] = { id: q.steps[0].id, kind: 'cutscene', lines: [] };
+    expect(codes(validateContent(p, makeConfig()))).toContain(`optional_quest_unstartable:${q.id}`);
+  });
+
+  it('talk cần NPC đã đặt và marker spot trong khu mở của Trang', () => {
+    const p = makePack();
+    const day = p.days[0];
+    const npc = day.npc_placements.find(n => n.actor === 'NPC_B')!;
+    delete npc.position;
+    npc.marker = 'spot.thcs.yard_bench_2';
+    day.open_zones = ['zone.thcs.yard'];
+    const errors = () => validateContent(p, makeConfig()).errors.filter(e => e.code === 'optional_quest_unstartable');
+    expect(errors()).toEqual([]);
+    day.open_zones = ['zone.thcs.classroom'];
+    expect(errors()[0].message).toContain('zone.thcs.yard');
+    npc.marker = 'spot.thcs.missing';
+    expect(errors()[0].message).toContain(npc.marker);
+    day.npc_placements = [];
+    expect(errors()[0].message).toContain('NPC_B');
+  });
+
+  const target = 'itr.thcs.blackboard';
+  const id = 'q_m1_side_01.s01';
+  const openings: Step[] = [
+    { id, kind: 'interact', target },
+    { id, kind: 'goto', target },
+    { id, kind: 'place', item: 'chalk', target },
+    { id, kind: 'collect', item: 'chalk', targets: ['itr.thcs.desk', target], count: 2 },
+  ];
+
+  it.each(openings)('$kind kiểm từng đích trong Trang và khu mở', step => {
+    const p = makePack();
+    const day = p.days[0];
+    const q = p.quests.find(q => q.type === 'side')!;
+    q.steps[0] = step;
+    const errors = () => validateContent(p, makeConfig()).errors.filter(e => e.code === 'optional_quest_unstartable');
+    expect(errors()[0].message).toContain(target);
+    day.interactables.push({ id: target, kind: 'object', label: 'Bảng' });
+    expect(errors()).toEqual([]);
+    day.open_zones = ['zone.thcs.yard'];
+    expect(errors()[0].message).toContain('zone.thcs.classroom');
+  });
+
+  it('điểm tương tác được khai nhưng thiếu marker trong bản đồ', () => {
+    const p = makePack();
+    const q = p.quests.find(q => q.type === 'side')!;
+    const target = 'itr.thcs.nonexistent';
+    q.steps[0] = { id: q.steps[0].id, kind: 'interact', target };
+    p.days[0].interactables.push({ id: target, kind: 'object', label: 'Bảng' });
+    expect(validateContent(p, makeConfig()).errors).toContainEqual({
+      code: 'optional_quest_unstartable', id: q.id, message: expect.stringContaining(target),
+    });
+  });
+
+  it('Daily dùng chung kiểm riêng theo khu mở của từng Trang, kể cả vị trí cũ', () => {
+    const p = makePack();
+    for (const d of p.days) d.interactables.find(i => i.id === 'itr.thcs.board')!.zone_id = 'zone.thcs.yard';
+    p.days[0].open_zones = ['zone.thcs.yard'];
+    p.days[1].open_zones = [];
+    const issues = validateContent(p, makeConfig()).errors.filter(e => e.code === 'optional_quest_unstartable');
+    expect(issues).toHaveLength(1);
+    expect(issues[0]).toMatchObject({ id: 'q_m1_daily_01', message: expect.stringContaining(p.days[1].id) });
+  });
+});
+
+describe('N-10 · mã trò và nội dung phát hành', () => {
+  it('chấp nhận các mã trò cốt truyện N-01, N-15 và N-16', () => {
+    const p = makePack(), q = p.quests[0];
+    const games = ['cipher', 'footbag', 'wipe_board', 'noodle', 'boat', 'base_build', 'rules', 'lineup',
+      'caro', 'sudoku', 'throw', 'photo_hunt', 'decorate', 'mailbox_build'];
+    q.steps.push(...games.map((name, i): Step => ({
+      id: `${q.id}.s${i + 10}`, kind: 'minigame', game: `mg_${name}`, level: 'min',
+    })));
+    const r = validateContent(p, makeConfig());
+    expect([...r.errors, ...r.warnings]).toEqual([]);
+  });
+
+  it.each(['test', 'production'] as const)('mã lạ ở %s ghi rõ mã trò và bước, đúng mức độ', environment => {
+    const p = makePack(), q = p.quests[0];
+    const id = q.id + '.s04';
+    q.steps.push({ id, kind: 'minigame', game: 'mg_typo', level: 'min' });
+    const r = validateContent(p, makeConfig({ environment }));
+    const issues = (environment === 'production' ? r.errors : r.warnings).filter(e => e.code === 'minigame_unknown_id');
+    expect(issues).toEqual([{ code: 'minigame_unknown_id', id, message: expect.stringContaining('mg_typo') }]);
+    expect((environment === 'production' ? r.warnings : r.errors).some(e => e.code === 'minigame_unknown_id')).toBe(false);
+  });
+
+  it('báo từng quest AI phát hành đúng một lần, bỏ qua Side/Daily đã gỡ khỏi các Trang', () => {
+    const p = makePack(), prod = makeConfig({ environment: 'production' });
+    const blocked = () => validateContent(p, prod).errors.filter(e => e.code === 'placeholder_in_production');
+    const initial = blocked();
+    expect(initial.map(e => e.id).sort()).toEqual(p.quests.map(q => q.id).sort());
+    const report = formatReport({ errors: initial, warnings: [] });
+    for (const q of p.quests) expect(report).toContain(q.id);
+    for (const day of p.days) { day.side_quests = []; day.daily_pool = []; }
+    for (const q of p.quests) if (q.type !== 'side' && q.type !== 'daily') q.ownership_label = 'HUMAN_CANON';
+    expect(validateContent(p, prod).errors).toEqual([]);
+    p.days[0].side_quests = ['q_m1_side_01'];
+    p.quests.find(q => q.type === 'side')!.ownership_label = 'HUMAN_DRAFT';
+    expect(validateContent(p, prod).errors).toEqual([]);
+    p.quests[0].ownership_label = 'HUMAN_DRAFT';
+    expect(blocked().map(e => e.id)).toEqual([p.quests[0].id]);
   });
 });
