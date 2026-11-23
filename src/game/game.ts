@@ -17,7 +17,7 @@ import type { AlbumEntry, DialogueLine, Gender, MemoryDay, Step } from '../conte
 import { formatReport, validateContent } from '../content/validate';
 import { EventBus, type PhotoCriteria } from '../core/eventBus';
 import { IdbPhotoStore } from '../core/photoStoreIdb';
-import { MemoryPhotoStore, SaveStore, attachAutosave, reconcileSave, sanitizePlayerName, type PhotoStore, type SaveState } from '../core/save';
+import { MemoryPhotoStore, SaveStore, attachAutosave, reconcileSave, recordMg, sanitizePlayerName, type PhotoStore, type SaveState } from '../core/save';
 import { AlbumModel, autoPhotoKey } from '../systems/album';
 import { formatText, resolveLines, speakerName } from '../systems/dialogue';
 import { GameFlow } from '../systems/gameFlow';
@@ -28,7 +28,7 @@ import { ART_STYLES } from '../render/style';
 import { mountGameUi } from '../ui/game/GameUi';
 import { createUiStore, type AlbumView, type BoxView, type PhoneView, type UiActions, type UiState, type UiStore } from '../ui/game/store';
 import { formatProblems } from '../world/validate';
-import { MinigameHost, recordRound } from './minigames/host';
+import { MinigameHost } from './minigames/host';
 import { getMinigame } from './minigames/registry';
 import { createInput, type GameInput } from './input';
 import { buildDayScene, type DayControl, type DayScene } from './scenes/dayScene';
@@ -180,9 +180,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     } else if (s.kind === 'photo') {
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
-      const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: null, difficulty: null };
+      const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: s.opponent ?? null, difficulty: null };
       const prefix = `mg.${s.game}.`;
-      const host = new MinigameHost(getMinigame(s.game), save.flags[prefix + 'result'] !== undefined, {
+      const host = new MinigameHost(getMinigame(s.game), save.minigames_story[s.game] !== undefined, {
         opponentId: mg.opponent_id, difficulty: mg.difficulty,
         save: {
           get(key) {
@@ -201,7 +201,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
         changed: () => ui.set({ minigame: host }),
         started: () => bus.emit('minigame_started', mg),
         finished(round, duration_s) {
-          recordRound(save.flags, s.game, round);
+          recordMg(save, s.game, round, mg.opponent_id, mg.context);
           bus.emit('minigame_finished', { ...mg, duration_s, result: round.result,
             stars: round.stars ?? null, hints_used: round.hints_used ?? null, score: round.score ?? null });
           bus.emit('save_requested', { reason: 'minigame_result' });
@@ -326,7 +326,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       const day = idx.dayOfPage(entry.page_id);
       const point = day?.cameras.find((c) => c.id === entry.snapshot!.camera_id);
       if (day && point) {
-        const tmp = await buildDayScene(day, idx, save.appearance.gender, { style, stepId: entry.snapshot.at_step_id });
+        const tmp = await buildDayScene(day, idx, save.appearance.gender, { style, flag: n => engine.flag(n), stepId: entry.snapshot.at_step_id });
         const cam = tmp.cameraFor(point);
         if (cam) {
           tmp.update(0, 0, { move: null, look: null }); tmp.setGizmosVisible(false);
@@ -435,7 +435,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     if (!resume) { engine.startDay(dayId, { replay }); save.current.zone_id = null; }
     const ep = epoch;
     const scene = await buildDayScene(day, idx, save.appearance.gender, {
-      style, bus, stepId: engine.mainStep()?.step.id, startZone: resume ? save.current.zone_id : null,
+      style, flag: n => engine.flag(n), bus, stepId: engine.mainStep()?.step.id, startZone: resume ? save.current.zone_id : null,
     });
     if (ep !== epoch) { scene.dispose(); return; }       // người chơi đã rời đi trong lúc tải
     currentDay = day; dayScene = scene;

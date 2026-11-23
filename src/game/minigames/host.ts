@@ -1,17 +1,4 @@
-import type { FlagValue } from '../../content/types';
 import type { MinigameCtx, MinigameInstance, MinigameModule, MinigameResult } from './types';
-
-// Save v2: giữ kết quả kể chuyện đầu tiên, còn thống kê tính từng ván.
-export function recordRound(flags: Record<string, FlagValue>, id: string, round: MinigameResult) {
-  const prefix = `mg.${id}.`;
-  flags[prefix + 'result'] ??= round.result;
-  const counter = prefix + (round.result === 'quit' ? 'lose' : round.result);
-  flags[counter] = Number(flags[counter] ?? 0) + 1;
-  if (round.score !== undefined) {
-    const best = flags[prefix + 'best_score'];
-    flags[prefix + 'best_score'] = typeof best === 'number' ? Math.max(best, round.score) : round.score;
-  }
-}
 
 interface HostHooks {
   changed(): void;
