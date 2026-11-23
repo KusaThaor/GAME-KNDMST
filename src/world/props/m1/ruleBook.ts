@@ -58,7 +58,7 @@ export function makeRuleBook(): THREE.Group {
 
     // Chữ LUẬT viết tay to
     g.fillStyle = '#ffffff';
-    g.font = '900 46px Nunito, sans-serif';
+    g.font = '800 46px Nunito, sans-serif';
     g.textAlign = 'center';
     g.fillText('LUẬT', 128, 110);
     // Kịch bản Trang 3: sổ bìa xanh chỉ ghi "LUẬT" — không thêm chữ khác.

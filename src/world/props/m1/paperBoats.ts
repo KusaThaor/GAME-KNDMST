@@ -52,7 +52,9 @@ export function makePaperBoats(): THREE.Group {
   root.name = 'paperBoats';
 
   const boatGeo = createPaperBoatGeometry();
-  const boatMat = toon('#ffffff', { vertexColors: true, side: THREE.DoubleSide });
+  // Màu từng thuyền đi qua instanceColor. KHÔNG bật vertexColors: hình học không có
+  // thuộc tính color nên shader đọc màu đỉnh = 0 → cả 5 thuyền thành màu đen.
+  const boatMat = toon('#ffffff', { side: THREE.DoubleSide });
 
   // 5 chiếc thuyền dùng InstancedMesh
   const boatMesh = new THREE.InstancedMesh(boatGeo, boatMat, 5);

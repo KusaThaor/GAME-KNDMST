@@ -247,6 +247,17 @@ describe('Đạo cụ Procedural Three.js Mốc 1 (N-06)', () => {
     });
   });
 
+  describe('PX-20 · màu thuyền giấy', () => {
+    it('mỗi thuyền có màu riêng qua instanceColor, không bật vertexColors khi hình học thiếu thuộc tính color', () => {
+      const boats = makePaperBoats();
+      const inst = boats.getObjectByName('paperBoats:instances') as THREE.InstancedMesh;
+      expect(inst.instanceColor).not.toBeNull();
+      const mat = inst.material as THREE.MeshToonMaterial;
+      // vertexColors mà thiếu attribute color thì shader nhân màu với 0 → thuyền đen
+      expect(mat.vertexColors && !inst.geometry.getAttribute('color')).toBe(false);
+    });
+  });
+
   describe('PX-21 · Dòng nước rãnh hiên (gutterFlow)', () => {
     it('makeGutterFlow có min.y ≈ 0 và tam giác ≤ 200', () => {
       const gutter = makeGutterFlow();
@@ -481,7 +492,7 @@ describe('Chữ trên texture đạo cụ Mốc 1 — không chữ tự đặt (
     for (const s of names) expect(['Đức', 'Châu', 'Quân', 'Hạ']).toContain(s);
   });
 
-  it('biển Căn cứ chỉ ghi đúng "CĂN CỨ BÍ MẬT" (vẽ từng chữ cái nguệch ngoạc)', () => {
+  it('biển Căn cứ chỉ ghi đúng "CĂN CỨ BÍ MẬT" (vẽ từng chữ cái nguệch ngoạc, hai dòng)', () => {
     const texts = textsOf(() => makeBaseSign());
     expect(texts.join('').normalize('NFC')).toBe('CĂNCỨBÍMẬT'.normalize('NFC'));
   });

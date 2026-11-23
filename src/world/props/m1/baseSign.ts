@@ -41,35 +41,44 @@ export function makeBaseSign(): THREE.Group {
     g.lineWidth = 8;
     g.strokeRect(6, 6, 500, 244);
 
-    // Chữ "CĂN CỨ BÍ MẬT" viết nguệch ngoạc (kịch bản Trang 3): mỗi chữ cái lệch
-    // cao thấp, nghiêng một chút, cỡ không đều. Chỉ đúng dòng chữ này, không thêm gì.
-    // Không vẽ tên người chơi: DressingCtx không có tên, và kịch bản không ghi chữ ký.
-    const chars = Array.from('CĂN CỨ BÍ MẬT'.normalize('NFC'));
+    // Chữ "CĂN CỨ BÍ MẬT" viết nguệch ngoạc (kịch bản Trang 3), hai dòng bút lông:
+    // mỗi chữ cái lệch cao thấp, nghiêng một chút, cỡ không đều, vài chỗ sơn chảy.
+    // Chỉ đúng dòng chữ này, không thêm gì. Không vẽ tên người chơi: DressingCtx
+    // không có tên, và kịch bản không ghi chữ ký.
+    // Độ đậm 800: game chỉ nạp Nunito 400/700/800 (main.ts) — 900 làm dấu rơi sang phông khác.
     let s = 7;
     const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
     g.fillStyle = '#1b263b';
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-    const step = 456 / chars.length;
-    for (let i = 0; i < chars.length; i++) {
-      const ch = chars[i];
-      if (ch === ' ') continue;
-      const size = 44 + Math.round(rnd() * 12);
-      g.save();
-      g.translate(28 + step * (i + 0.5), 128 + (rnd() - 0.5) * 22 + (i - chars.length / 2) * 1.2);
-      g.rotate((rnd() - 0.5) * 0.32);
-      g.font = `900 ${size}px Nunito, sans-serif`;
-      g.fillText(ch, 0, 0);
-      g.restore();
-    }
-    // Vệt sơn chảy dưới vài chữ cho ra nét bút lông vội
     g.strokeStyle = '#1b263b';
-    g.lineWidth = 3;
-    for (const x of [92, 236, 402]) {
-      g.beginPath();
-      g.moveTo(x, 152);
-      g.lineTo(x + 2, 168 + rnd() * 14);
-      g.stroke();
+    g.textAlign = 'center';
+    g.textBaseline = 'alphabetic';
+    const lines: [string, number][] = [['CĂN CỨ', 112], ['BÍ MẬT', 214]];
+    for (const [line, baseY] of lines) {
+      const chars = Array.from(line.normalize('NFC'));
+      const step = 62;
+      const x0 = 256 - ((chars.length - 1) * step) / 2;
+      for (let i = 0; i < chars.length; i++) {
+        const ch = chars[i];
+        if (ch === ' ') continue;
+        const size = 70 + Math.round(rnd() * 16);
+        const x = x0 + i * step + (rnd() - 0.5) * 8;
+        const y = baseY + (rnd() - 0.5) * 12;
+        g.save();
+        g.translate(x, y);
+        g.rotate((rnd() - 0.5) * 0.3);
+        g.font = `800 ${size}px Nunito, sans-serif`;
+        g.fillText(ch, 0, 0);
+        g.restore();
+        // Sơn chảy dưới chân một số chữ
+        if (rnd() < 0.4) {
+          const dx = x + (rnd() - 0.5) * size * 0.4;
+          g.lineWidth = 3 + rnd() * 2;
+          g.beginPath();
+          g.moveTo(dx, y - 2);
+          g.lineTo(dx + 1, y + 8 + rnd() * 16);
+          g.stroke();
+        }
+      }
     }
   });
 
