@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
 
+/** Mọi chuỗi chữ đã vẽ lên texture canvas (fillText/strokeText) — để kiểm không có chữ tự đặt. */
+const drawnTexts: string[] = [];
+
 // Mock document.createElement('canvas') trong môi trường Node.js (vitest)
 if (typeof document === 'undefined') {
   function createMockCanvas(w = 256, h = 256) {
@@ -23,7 +26,18 @@ if (typeof document === 'undefined') {
         erased = 0;
         pixels.fill(255);
       },
-      fillText: () => {},
+      globalAlpha: 1,
+      fillText: (text: string) => {
+        drawnTexts.push(String(text));
+      },
+      strokeText: (text: string) => {
+        drawnTexts.push(String(text));
+      },
+      save: () => {},
+      restore: () => {},
+      translate: () => {},
+      rotate: () => {},
+      quadraticCurveTo: () => {},
       beginPath: () => {},
       moveTo: () => {},
       lineTo: () => {},
@@ -411,5 +425,72 @@ describe('Bộ gắn đồ trang trí cảnh Mốc 1 (Dressing Sets)', () => {
       expect(obj).toBeInstanceOf(THREE.Object3D);
       expect(obj.children.length).toBe(2);
     });
+  });
+});
+
+describe('Chữ trên texture đạo cụ Mốc 1 — không chữ tự đặt (Integrator PR #9)', () => {
+  /** Dựng một đạo cụ và trả về các chuỗi chữ nó vẽ lên texture. */
+  function textsOf(make: () => THREE.Object3D): string[] {
+    const from = drawnTexts.length;
+    make();
+    return drawnTexts.slice(from);
+  }
+
+  const allProps: [string, () => THREE.Object3D][] = [
+    ['classList', () => makeClassList()],
+    ['notebook', () => makeNotebook()],
+    ['cipherPaper', () => makeCipherPaper()],
+    ['redPen', () => makeRedPen()],
+    ['compactCamera', () => makeCompactCamera()],
+    ['footbag', () => makeFootbag()],
+    ['shuttlecockBush', () => makeShuttlecockBush()],
+    ['footbagSpot', () => makeFootbagSpot()],
+    ['chalkSmudge', () => makeChalkSmudge()],
+    ['groceryFront', () => makeGroceryFront()],
+    ['paperBoats', () => makePaperBoats()],
+    ['gutterFlow', () => makeGutterFlow()],
+    ['baseSign', () => makeBaseSign()],
+    ['ruleBook', () => makeRuleBook()],
+    ['baseDecor paper', () => makeBaseDecor('paper')],
+    ['baseDecor flowers', () => makeBaseDecor('flowers')],
+    ['baseDecor photos', () => makeBaseDecor('photos')],
+    ['surveySpots', () => makeSurveySpots()],
+    ['rainbow', () => makeRainbow()],
+  ];
+
+  it('mock canvas thật sự ghi lại chữ (test không chạy rỗng)', () => {
+    expect(textsOf(() => makeRuleBook())).toContain('LUẬT');
+  });
+
+  it.each(allProps)('%s: không chuỗi nào chứa "{" (không vẽ biến như {player_name})', (_name, make) => {
+    for (const s of textsOf(make)) expect(s, `chữ "${s}"`).not.toContain('{');
+  });
+
+  it('không họ tên tự đặt, tên lớp, năm hay tên báo thật trên mọi texture', () => {
+    const banned = /Gia Tuệ|Huỳnh|Minh Đức|Lê Hoàng|Nguyễn|Trần|player_name|TUỔI TRẺ|Tuổi Trẻ|6Ad|LỚP d|20dd/;
+    for (const [name, make] of allProps) {
+      for (const s of textsOf(make)) expect(s, `${name}: "${s}"`).not.toMatch(banned);
+    }
+  });
+
+  it('bảng phân lớp chỉ dùng tên gọi đã có (Đức, Châu)', () => {
+    const texts = textsOf(() => makeClassList());
+    expect(texts).toContain('DANH SÁCH PHÂN LỚP');
+    const names = texts.filter((s) => s !== 'DANH SÁCH PHÂN LỚP');
+    expect(names.length).toBeGreaterThan(0);
+    for (const s of names) expect(['Đức', 'Châu', 'Quân', 'Hạ']).toContain(s);
+  });
+
+  it('biển Căn cứ chỉ ghi đúng "CĂN CỨ BÍ MẬT" (vẽ từng chữ cái nguệch ngoạc)', () => {
+    const texts = textsOf(() => makeBaseSign());
+    expect(texts.join('').normalize('NFC')).toBe('CĂNCỨBÍMẬT'.normalize('NFC'));
+  });
+
+  it('sổ luật chỉ ghi "LUẬT" như kịch bản', () => {
+    expect(textsOf(() => makeRuleBook())).toEqual(['LUẬT']);
+  });
+
+  it('tờ báo gấp thuyền không in chữ nào (chỉ nét chữ giả)', () => {
+    expect(textsOf(() => makePaperBoats())).toEqual([]);
   });
 });

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
-import { safeCanvasTexture } from './texHelper';
+import { illegibleLine, safeCanvasTexture } from './texHelper';
 
 /**
  * Tạo BufferGeometry hình chiếc thuyền giấy gấp học sinh.
@@ -95,22 +95,19 @@ export function makePaperBoats(): THREE.Group {
     g.fillStyle = '#e5dfd3';
     g.fillRect(0, 0, 256, 256);
 
-    g.fillStyle = '#222222';
-    g.font = 'bold 20px "Times New Roman", serif';
-    g.fillText('BÁO TUỔI TRẺ', 15, 28);
+    // Măng-sét báo: khối chữ in đậm giả, không đọc được (không in tên báo thật)
+    illegibleLine(g, 15, 28, 150, { color: '#222222', height: 16, lineWidth: 5, seed: 41 });
+    g.strokeStyle = '#222222';
+    g.lineWidth = 2;
+    g.beginPath(); g.moveTo(15, 37); g.lineTo(240, 37); g.stroke();
 
     g.strokeStyle = '#555555';
     g.lineWidth = 1;
-    for (let y = 45; y < 240; y += 12) {
-      g.beginPath();
-      g.moveTo(15, y);
-      g.lineTo(120, y);
-      g.stroke();
-
-      g.beginPath();
-      g.moveTo(135, y);
-      g.lineTo(240, y);
-      g.stroke();
+    // Hai cột chữ in nhỏ giả
+    let seed = 50;
+    for (let y = 50; y < 240; y += 12) {
+      illegibleLine(g, 15, y, 105, { color: '#555555', height: 5, lineWidth: 1, seed: seed++ });
+      illegibleLine(g, 135, y, 105, { color: '#555555', height: 5, lineWidth: 1, seed: seed++ });
     }
   });
 

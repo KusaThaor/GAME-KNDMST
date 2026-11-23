@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { safeCanvasTexture } from './texHelper';
+import { illegibleLine, safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 /**
@@ -53,8 +53,8 @@ export function makeNotebook(): THREE.Group {
     g.font = 'bold 20px Nunito, sans-serif';
     g.textAlign = 'center';
     g.fillText('VỞ BÀI TẬP', 128, 42);
-    g.font = '16px Nunito, sans-serif';
-    g.fillText('LỚP: 6A2', 128, 80);
+    // Dòng tên/lớp viết tay mờ (kịch bản không ghi tên lớp)
+    illegibleLine(g, 64, 84, 128, { color: '#1e3d2f', height: 10, seed: 3 });
   });
   const labelMat = new THREE.MeshToonMaterial({ map: labelTex });
   labelMat.userData.outlineParameters = { visible: false };
@@ -105,12 +105,11 @@ export function makeCipherPaper(): THREE.Group {
     g.strokeStyle = '#d62828';
     g.lineWidth = 2.5;
     g.strokeRect(145, 30, 85, 35);
-    g.fillStyle = '#d62828';
-    g.font = 'bold 16px Nunito, sans-serif';
-    g.textAlign = 'center';
-    g.fillText('SAI RỒI!', 187, 54);
-    g.font = 'bold 22px Nunito, sans-serif';
-    g.fillText('✓ 6A2', 170, 180);
+    // Kịch bản: "vài chỗ bị gạch bằng mực đỏ" — chỉ nét gạch, không thêm chữ
+    g.beginPath(); g.moveTo(150, 40); g.lineTo(225, 58); g.stroke();
+    g.beginPath(); g.moveTo(150, 58); g.lineTo(225, 40); g.stroke();
+    g.beginPath(); g.moveTo(40, 170); g.lineTo(120, 176); g.stroke();
+    g.beginPath(); g.moveTo(150, 180); g.lineTo(160, 192); g.lineTo(182, 166); g.stroke();
   });
 
   const mat = new THREE.MeshToonMaterial({ map: tex });

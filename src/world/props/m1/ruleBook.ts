@@ -61,12 +61,7 @@ export function makeRuleBook(): THREE.Group {
     g.font = '900 46px Nunito, sans-serif';
     g.textAlign = 'center';
     g.fillText('LUẬT', 128, 110);
-
-    g.font = 'bold 18px Nunito, sans-serif';
-    g.fillStyle = '#ffd166';
-    g.fillText('CĂN CỨ BÍ MẬT', 128, 160);
-    g.font = '14px Nunito, sans-serif';
-    g.fillText('(5 Điều Quy Định)', 128, 190);
+    // Kịch bản Trang 3: sổ bìa xanh chỉ ghi "LUẬT" — không thêm chữ khác.
   });
 
   const titleMat = new THREE.MeshToonMaterial({ map: tex });

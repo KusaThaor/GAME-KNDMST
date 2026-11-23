@@ -41,17 +41,36 @@ export function makeBaseSign(): THREE.Group {
     g.lineWidth = 8;
     g.strokeRect(6, 6, 500, 244);
 
-    // Dòng chữ tay viết to bằng bút lông (như kịch bản)
+    // Chữ "CĂN CỨ BÍ MẬT" viết nguệch ngoạc (kịch bản Trang 3): mỗi chữ cái lệch
+    // cao thấp, nghiêng một chút, cỡ không đều. Chỉ đúng dòng chữ này, không thêm gì.
+    // Không vẽ tên người chơi: DressingCtx không có tên, và kịch bản không ghi chữ ký.
+    const chars = Array.from('CĂN CỨ BÍ MẬT'.normalize('NFC'));
+    let s = 7;
+    const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
     g.fillStyle = '#1b263b';
-    g.font = '900 48px Nunito, sans-serif';
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.fillText('CĂN CỨ BÍ MẬT', 256, 110);
-
-    // 5 chữ ký nhỏ phía dưới
-    g.font = 'italic 18px Nunito, sans-serif';
-    g.fillStyle = '#415a77';
-    g.fillText('Đức • Châu • Hạ • Quân • {player_name}', 256, 190);
+    const step = 456 / chars.length;
+    for (let i = 0; i < chars.length; i++) {
+      const ch = chars[i];
+      if (ch === ' ') continue;
+      const size = 44 + Math.round(rnd() * 12);
+      g.save();
+      g.translate(28 + step * (i + 0.5), 128 + (rnd() - 0.5) * 22 + (i - chars.length / 2) * 1.2);
+      g.rotate((rnd() - 0.5) * 0.32);
+      g.font = `900 ${size}px Nunito, sans-serif`;
+      g.fillText(ch, 0, 0);
+      g.restore();
+    }
+    // Vệt sơn chảy dưới vài chữ cho ra nét bút lông vội
+    g.strokeStyle = '#1b263b';
+    g.lineWidth = 3;
+    for (const x of [92, 236, 402]) {
+      g.beginPath();
+      g.moveTo(x, 152);
+      g.lineTo(x + 2, 168 + rnd() * 14);
+      g.stroke();
+    }
   });
 
   const faceMat = new THREE.MeshToonMaterial({ map: signTex });

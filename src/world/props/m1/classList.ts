@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { safeCanvasTexture } from './texHelper';
+import { illegibleLine, safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 export interface ClassListOpts {
@@ -43,7 +43,10 @@ export function makeClassList(opts: ClassListOpts = {}): THREE.Group {
   frame.receiveShadow = true;
   root.add(frame);
 
-  // Mặt giấy dán danh sách lớp
+  // Mặt giấy dán danh sách lớp.
+  // Không in năm, tên lớp, họ tên đầy đủ hay tên người chơi: kịch bản Trang 1 chỉ nói
+  // "bảng phân lớp dán ở hành lang". Chỉ dùng tên gọi đã có (Đức, Châu); mọi dòng khác
+  // là nét chữ mờ không đọc được (illegibleLine).
   const tex = safeCanvasTexture(512, 256, (g) => {
     // Nền bảng
     g.fillStyle = '#f8f4ea';
@@ -58,7 +61,7 @@ export function makeClassList(opts: ClassListOpts = {}): THREE.Group {
     g.fillStyle = '#1e3d2f';
     g.font = 'bold 22px Nunito, sans-serif';
     g.textAlign = 'center';
-    g.fillText('DANH SÁCH PHÂN LỚP KHỐI 6 (2014)', 256, 40);
+    g.fillText('DANH SÁCH PHÂN LỚP', 256, 40);
 
     // Kẻ vạch ngăn đôi
     g.strokeStyle = '#a49f8e';
@@ -68,30 +71,24 @@ export function makeClassList(opts: ClassListOpts = {}): THREE.Group {
     g.lineTo(256, 235);
     g.stroke();
 
-    // Cột 6A1
-    g.fillStyle = '#2f3e46';
-    g.font = 'bold 18px Nunito, sans-serif';
-    g.fillText('LỚP 6A1 (Phòng 1)', 130, 80);
-    g.font = '14px Nunito, sans-serif';
-    g.textAlign = 'left';
-    g.fillStyle = '#4f5d65';
-    g.fillText('• Nguyễn Văn An', 40, 115);
-    g.fillText('• Trần Thị Bình', 40, 145);
-    g.fillText('• Lê Hoàng Cúc', 40, 175);
-    g.fillText('• …', 40, 205);
+    // Đầu cột: nét đậm không đọc được (không ghi tên lớp)
+    illegibleLine(g, 80, 82, 100, { color: '#2f3e46', height: 12, lineWidth: 3, seed: 11 });
+    illegibleLine(g, 330, 82, 100, { color: '#b5533c', height: 12, lineWidth: 3, seed: 12 });
 
-    // Cột 6A2 (Lớp của Đức & Player)
-    g.textAlign = 'center';
-    g.fillStyle = '#b5533c'; // nhấn đỏ gạch
-    g.font = 'bold 18px Nunito, sans-serif';
-    g.fillText('LỚP 6A2 (Phòng 2)', 380, 80);
-    g.font = '14px Nunito, sans-serif';
+    // Cột trái: toàn dòng mờ
+    for (let i = 0; i < 5; i++) {
+      illegibleLine(g, 40, 112 + i * 26, 150 - (i % 3) * 22, { seed: 20 + i });
+    }
+
+    // Cột phải (lớp của Đức & Châu): hai tên gọi đã có xen giữa các dòng mờ
     g.textAlign = 'left';
     g.fillStyle = '#4f5d65';
-    g.fillText('• Châu Gia Tuệ (Lớp trưởng)', 290, 115);
-    g.fillText('• Huỳnh Minh Đức', 290, 145);
-    g.fillText('• {player_name}', 290, 175);
-    g.fillText('• …', 290, 205);
+    g.font = '15px Nunito, sans-serif';
+    illegibleLine(g, 290, 112, 140, { seed: 31 });
+    g.fillText('Châu', 290, 143);
+    illegibleLine(g, 290, 164, 120, { seed: 32 });
+    g.fillText('Đức', 290, 195);
+    illegibleLine(g, 290, 216, 150, { seed: 33 });
   });
 
   const paperMat = new THREE.MeshToonMaterial({ map: tex });
