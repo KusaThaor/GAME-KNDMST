@@ -1,5 +1,12 @@
 # DEV_SESSION_HANDOFF
 
+## Integrator — đợt gộp 22–23/11/2026 (ĐỌC TRƯỚC)
+- **Đã gộp vào `feat/sprint-0412`** (merge commit, theo thứ tự): N-03 #1 `a9758c2` → N-10 #6 `b66528b` → N-04 #2 `203982f` → N-02 #4 `f5fb467` → N-09 #3 `dfc156e`. **N-05 #5 trả về sửa** (e2e ca 8 đỏ — camera khóa ở cutscene cầu vồng). Đầu nhánh sau đợt: `dfc156e`.
+- **Đã kiểm thật** (Integrator tự chạy trên từng bản gộp thử, rồi chạy lại tsc + vitest + validate trên nhánh thật sau mỗi lần gộp): tsc đạt; vitest 266/1 (mốc nền) → 338/2 sau đợt; `validate:world` 0 lỗi; build production đạt. e2e đầy đủ `--workers=1` cho 4 PR sửa luồng chơi: N-04 37/1, N-02 38/1, N-09 38/1; N-05 37/1 + **1 lỗi** (~32 phút/lượt, Linux 2 nhân, Chrome + SwiftShader).
+- **Chưa kiểm:** FPS laptop thật · Vercel Preview · Firestore thật · ca Emulator của N-09 (`it.skipIf`) · chơi tay · 6 nhánh chưa mở PR (N-01, N-06, N-07, N-08, N-11a, N-11b).
+- **Chủ dự án đồng ý 22/11:** N-05 sửa `game.ts`/`dayScene.ts`/`d_g07_03.ts` (vẫn hiệu lực khi PR sửa xong); N-09 sửa `game.ts`/`store.ts`.
+- **Việc tiếp:** phiếu N-05, N-02b + mở PR 6 nhánh + đợt N-12/14/16/17/23 — `docs/handoff/NEXT_BATCH_2026-11-23.md`. Tiến độ: `docs/NEXT_SPRINT_TASK_BOARD.md` Mục 5.
+
 ## S2 — tiến độ (cập nhật 17/11/2026, 01:30 UTC+7, sau phiên 2c) — ĐỌC TRƯỚC
 Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
 
