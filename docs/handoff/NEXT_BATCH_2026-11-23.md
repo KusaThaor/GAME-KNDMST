@@ -1,5 +1,7 @@
 # Đợt việc kế — 23/11/2026 (Integrator)
 
+> **Đã cũ (23/11 sáng):** mục A đã xử lý; mục B/C được thay bằng `NEXT_BATCH_2026-11-23_N14-N23.md` (đủ mọi prompt). Giữ file này làm lịch sử.
+
 Nền khi soạn: `feat/sprint-0412` @ `dfc156e` — đã gộp N-03 (#1), N-10 (#6), N-04 (#2), N-02 (#4), N-09 (#3). **N-05 (#5) bị trả về sửa** (e2e đỏ — phiếu A0).
 Cách dùng: mỗi khối dưới đây là **một prompt**, copy nguyên khối dán cho agent tương ứng. Mọi prompt đều kèm quy chuẩn chung ở `docs/NEXT_SPRINT_TASK_BOARD.md` mục 2.0.
 
