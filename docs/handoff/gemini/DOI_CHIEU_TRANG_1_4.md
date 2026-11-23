@@ -59,7 +59,7 @@
 | Cảnh 4: Thả thuyền đua rãnh nước | `minigame` | `q_m1_main_02.s04` | `mg_boat` | Trò đua thuyền giấy rãnh nước, giữ thoại kết quả gốc. |
 | Cảnh 5: Ký tên lên buồm chiếc thuyền vớt được | `cutscene` | `q_m1_main_02.s05` | Cả nhóm 5 người | Hạ vớt thuyền, cả nhóm ký tên, chính thức kết bạn 5 người. |
 | Nhiệm vụ phụ (đề xuất): Mẹo gấp thuyền | `talk` | `q_m1_ai_side_03.s01` | `NPC_D` (Quân) | `[PLACEHOLDER]` Quân chỉ cách gấp thuyền giấy đáy rộng. |
-| Album: Năm chiếc thuyền giấy | `snapshot` | `alb.d.g07.01.01` | `cam.d0701.boats` (`cam.thcs.gutter`) | `at_step_id: 'q_m1_main_02.s04'` (`required_for_restore: true`). |
+| Album: Năm chiếc thuyền giấy | `snapshot` | `alb.d.g07.01.01` | `cam.d0701.boats` (`cam.thcs.gutter`) | `at_step_id: 'q_m1_main_02.s05'` (`required_for_restore: true`). |
 
 ---
 
