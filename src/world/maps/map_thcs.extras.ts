@@ -11,8 +11,38 @@
 import { boxCollider, cameraPair, marker } from '../extras';
 import type { ExtraCollider, WorldExtras } from '../types';
 
-const Z = { corridor: 'zone.thcs.corridor', yard: 'zone.thcs.yard', gate: 'zone.thcs.gate', field: 'zone.thcs.field', base: 'zone.thcs.base' } as const;
-const CORRIDOR_Y = 0.15;          // sàn hành lang cao hơn sân 0,15 m
+const Z = { classroom: 'zone.thcs.classroom', corridor: 'zone.thcs.corridor', yard: 'zone.thcs.yard', gate: 'zone.thcs.gate', field: 'zone.thcs.field', base: 'zone.thcs.base' } as const;
+const CORRIDOR_Y = 0.15;          // sàn hành lang + lớp học cao hơn sân 0,15 m
+const PI = Math.PI;
+
+/**
+ * Marker Mốc 2 (N-04b) — đúng 16 mã của hợp đồng ở docs/handoff/NEXT_BATCH_2026-11-23_N14-N23.md mục 2.
+ * Quy ước: `itr.`/`spot.` là CHỖ ĐỨNG (có sàn, ngoài vật cản), `facing` = hướng người đứng nhìn (0 = +z nam, π/2 = +x đông).
+ * Đồ vật chưa có trong GLB (cột rổ, tivi, hòm thư, lều, lửa trại) do task đạo cụ dựng; ghi chỗ đặt ngay cạnh từng marker.
+ */
+export const M2_MARKERS = [
+  // Trang 5 — Lên lớp 8
+  ...cameraPair('cam.thcs.m2_opening', Z.yard, [4, 0.5, 6.6], [4, 2.0, 1.0]),                    // ảnh khai giảng: máy thấp, ngửa lên (hàng spot.thcs.yard_group_1…4 + trời + cột cờ)
+  marker('interact', 'itr.thcs.chalk_box', Z.classroom, [0, CORRIDOR_Y, -28.4], -PI / 2),        // hộp phấn trên bàn giáo viên (−0,7; −28,4); đứng giữa bàn và bảng, nhìn sang bàn
+  ...cameraPair('cam.thcs.m2_caro_board', Z.classroom, [-3.8, 1.65, -26], [1.0, 1.7, -26]),       // nhìn thẳng bảng đen (rộng 4,3 m lọt khung ở fov 40)
+  marker('spot', 'spot.thcs.guard_corridor', Z.corridor, [1.4, CORRIDOR_Y, -20.8], -PI / 2),     // bác bảo vệ ngoài cửa lớp, nhìn về cửa (x −1,6…−0,4)
+  // Trang 6 — Valentine
+  marker('spot', 'spot.thcs.library_porch', Z.corridor, [19.2, CORRIDOR_Y, -20.5], 0),           // hiên phòng cuối dãy (cửa x ≈ 20,4) coi là thư viện; GLB chưa có biển thư viện
+  marker('spot', 'spot.thcs.phuong_root', Z.yard, [-10.2, 0, -5.0], 1.06),                         // gốc phượng (−12; −6), lưng tựa bồn cây, nhìn ra sân
+  marker('interact', 'itr.thcs.m2_mailbox', Z.base, [45.8, 0, -28.0], -1.75),                      // hòm thư đứng ĐÚNG chỗ này, mặt quay về bàn Căn cứ (43; −28,75)
+  ...cameraPair('cam.thcs.m2_valentine_group', Z.base, [42.5, 1.0, -28.6], [46.6, 0.9, -29.4]),   // máy đặt trên bàn Căn cứ; hòm thư bên phải khung, nhóm trước chòi
+  marker('interact', 'itr.thcs.m2_hoop', Z.yard, [-29, 0, -14], -3 * PI / 4),                     // chỗ ném; cột rổ (chưa có trong GLB) ở góc tây bắc sân, ~2 m trước mặt
+  // Trang 7 — Báo tường
+  ...cameraPair('cam.thcs.m2_newspaper', Z.classroom, [-6, 1.8, -27.3], [-6, 1.75, -29.8]),       // nhìn thẳng góc báo tường (itr.thcs.wall_news)
+  // Trang 8 — Rã băng
+  marker('interact', 'itr.thcs.m2_grocery_tv', Z.gate, [-4.4, 0, 28.3], 0),                       // tivi đặt ở mép đông quầy tạp hóa (≈ −4,4; 29,4), quay ra ngõ
+  ...cameraPair('cam.thcs.m2_tv_group', Z.gate, [-4.4, 1.45, 23.8], [-4.4, 1.1, 28.6]),           // nhìn về tiệm: nhóm ngồi trước, tivi + mái hiên phía sau
+  marker('interact', 'itr.thcs.m2_tent', Z.field, [40.5, 0, 9], -PI / 2),                          // trước cửa lều; lều dựng phía tây marker (≈ 38,5; 9)
+  marker('interact', 'itr.thcs.m2_campfire', Z.field, [44.5, 0, 0.5], 0, 2.5),                     // TÂM lửa trại chung (N-13 đặt lửa ở đây)
+  ...cameraPair('cam.thcs.m2_campfire_group', Z.field, [45, 0.8, 9.6], [44.6, 1.0, 1.0]),         // máy đặt trên khúc gỗ (spot.thcs.field_log), lửa trại phía sau nhóm
+  // Trang 9 — Vẫn đủ năm đứa
+  ...cameraPair('cam.thcs.m2_final_five', Z.yard, [-4.0, 1.3, -4.6], [-10.6, 2.6, -5.8]),         // nhìn về gốc phượng (tán cây lọt khung), hoàng hôn
+];
 
 /** Một đoạn tường thẳng theo trục x hoặc z, từ (x0, z0) tới (x1, z1). */
 export interface WallSeg { id: string; zone: string; x0: number; z0: number; x1: number; z1: number }
@@ -70,6 +100,7 @@ export const EXTRAS: WorldExtras = {
     ...cameraPair('cam.thcs.rainbow', Z.yard, [4, 1.3, 10.5], [4, 3.5, -10]),                         // ảnh cầu vồng (gốc phượng)
     // BG-1: vào sân sau từ sân, nhìn về phía đông
     marker('spawn', 'spawn.thcs.backyard', Z.field, [30, 0, -12], Math.PI / 2),
+    ...M2_MARKERS,
   ],
   disableColliders: ['wall_fence_east'],
   hideVisuals: [{ zone: Z.yard, node: 'WALL_fence_east' }],
