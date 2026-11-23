@@ -43,10 +43,36 @@ export const HUB_ROOM = {
     window: { x: -0.6, z: -2.5 },
     rug: { x: -0.9, z: 0.0 },
   },
-  /** Màu vật liệu phòng (tường, sàn, đồ lớn). Đổi tông phòng = sửa ở đây, không sửa scene. */
+  /**
+   * Đồ trang trí K2 (world/props/hub): tâm đáy, mét; `rot_deg` quay quanh trục Y (mặt trước +z: 90 = quay ra +x, −90 = ra −x).
+   * Tường trái (x = −3,5): kệ sách, chậu cây, móc balo, cửa ra vào. Tường phải (x = 3,5): tủ áo (+ hộp trên nóc), bảng ghim trên giường.
+   */
+  decor: {
+    bookshelf: { x: -3.34, z: -0.6, rot_deg: 90 },
+    plant: { x: -3.12, z: 0.3 },
+    bag_hook: { x: -3.5, z: 0.95, y: 0.95, rot_deg: 90 },
+    door: { x: -3.5, z: 1.85, rot_deg: 90 },
+    wardrobe: { x: 3.225, z: -0.85, rot_deg: -90 },
+    storage_boxes: { x: 3.2, z: -0.85, y: 1.9, rot_deg: -90 },
+    chair: { x: 1.9, z: -1.4, rot_deg: 180 },
+    pinboard: { x: 3.5, z: 1.0, y: 1.15, rot_deg: -90 },
+    ceiling_lamp: { x: 0, z: 0, y: 2.68 },
+  },
+  /** Va chạm thêm cho đồ K2 (hình chữ nhật trên mặt sàn, mét) — camera đi lại không xuyên qua. */
+  colliders: [
+    { id: 'bookshelf', x0: -3.5, x1: -3.18, z0: -1.05, z1: -0.15 },
+    { id: 'plant', x0: -3.3, x1: -2.94, z0: 0.12, z1: 0.48 },
+    { id: 'wardrobe', x0: 2.95, x1: 3.5, z0: -1.35, z1: -0.35 },
+    { id: 'chair', x0: 1.67, x1: 2.13, z0: -1.63, z1: -1.17 },
+  ],
+  /**
+   * Màu vật liệu phòng (K2 khử ám vàng: trung tính, ấm rất nhẹ). Đổi tông phòng = sửa ở đây, không sửa scene.
+   * Trước K2: sàn #b89b7a, tường #d9d2c4 / #cfc8ba, trần #ece6da, bàn #a67c52 — đều ngả be → cả khung hình vàng.
+   */
   colors: {
-    floor: '#b89b7a', ceiling: '#ece6da', wall: '#d9d2c4', wall_side: '#cfc8ba',
-    bed: '#7f95b5', pillow: '#f1ede4', desk: '#a67c52', desk_leg: '#8a6642',
+    floor: '#a3988c', ceiling: '#f3f3f1', wall: '#ecebe7', wall_side: '#e6e5e1',
+    bed: '#7f95b5', pillow: '#f4f2ee', desk: '#a68d74', desk_leg: '#8a7560', shelf: '#9a8268',
+    rug: ['#8ea3b8', '#e9e4da', '#6f86a0'] as const, curtain: '#e6dccd',
   },
 } as const;
 

@@ -129,12 +129,26 @@ describe('Present-day Event', () => {
   });
 });
 
-describe('tông phòng (BG-4: ấm từ đầu, cấu hình được)', () => {
-  it('mọi mốc số Ngày đã xong đều dùng một preset ấm: đèn bàn sáng, cửa sổ ban đêm', () => {
-    for (const n of [0, 1, 2, 9]) expect(hubLightPresetName(HUB_CONFIG, n)).toBe('warm');
-    expect(HUB_CONFIG.lighting_by_days_done.every((r) => r.preset === 'warm')).toBe(true);
-    expect(HUB_CONFIG.presets.warm).toMatchObject({ window: 'night' });
-    expect(HUB_CONFIG.presets.warm.lamp).toBeGreaterThan(0);
+describe('tông phòng (BG-4: ấm từ đầu, ấm dần; K2: không ám vàng; cấu hình được)', () => {
+  const presets = HUB_CONFIG.lighting_by_days_done.map((r) => HUB_CONFIG.presets[r.preset]);
+  it('ấm từ đầu: buổi tối, đèn bàn đã sáng ngay khi vào game; mọi hàng trỏ tới preset có thật', () => {
+    expect(HUB_CONFIG.lighting_by_days_done[0].min_days_done).toBe(0);
+    for (const p of presets) { expect(p).toBeDefined(); expect(p.lamp).toBeGreaterThan(0); }
+    expect(presets[0].window).not.toBe('sunny');                                 // lời dẫn mở đầu: "Buổi tối, ánh đèn bàn…"
+  });
+  it('ấm dần theo số Ngày: đèn bàn không tối đi; sau nhiều Ngày là đêm, đèn sáng hết cỡ', () => {
+    for (let i = 1; i < presets.length; i++) expect(presets[i].lamp).toBeGreaterThanOrEqual(presets[i - 1].lamp);
+    expect(HUB_CONFIG.presets[hubLightPresetName(HUB_CONFIG, 9)]).toMatchObject({ window: 'night', lamp: 1 });
+  });
+  it('K2 khử ám vàng: ánh sáng chung không vàng hơn #fff1df (B/R ≥ 0,87), không sáng hơn 1,35', () => {
+    const br = (hex: string) => { const c = new THREE.Color(hex); return c.b / c.r; };
+    const limit = br('#fff1df');
+    for (const name of new Set(HUB_CONFIG.lighting_by_days_done.map((r) => r.preset))) {
+      const p = HUB_CONFIG.presets[name];
+      expect(br(p.key), `${name}.key`).toBeGreaterThanOrEqual(limit - 1e-9);
+      expect(br(p.ambient), `${name}.ambient`).toBeGreaterThanOrEqual(limit - 1e-9);
+      expect(p.keyIntensity, `${name}.keyIntensity`).toBeLessThanOrEqual(1.35);
+    }
   });
   it('bảng vẫn là cấu hình: đổi hàng → đổi preset, lấy mốc lớn nhất không vượt quá số Ngày đã xong', () => {
     const cfg = { ...HUB_CONFIG, lighting_by_days_done: [{ min_days_done: 0, preset: 'cold' }, { min_days_done: 2, preset: 'warm' }] };
@@ -142,11 +156,11 @@ describe('tông phòng (BG-4: ấm từ đầu, cấu hình được)', () => {
     expect(hubLightPresetName(cfg, 1)).toBe('cold');
     expect(hubLightPresetName(cfg, 5)).toBe('warm');
   });
-  it('HubModel: phòng ấm cả trước lẫn sau Ngày 1', () => {
+  it('HubModel: preset theo số Ngày đã xong (0 Ngày → evening; 1 Ngày vẫn evening)', () => {
     const t = setup(); t.intro();
-    expect(t.hub.lightingPreset()).toBe('warm');
+    expect(t.hub.lightingPreset()).toBe(hubLightPresetName(HUB_CONFIG, 0));
     t.playDay1();
-    expect(t.hub.lightingPreset()).toBe('warm');
+    expect(t.hub.lightingPreset()).toBe(hubLightPresetName(HUB_CONFIG, 1));
   });
 });
 

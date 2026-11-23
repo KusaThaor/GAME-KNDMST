@@ -3,9 +3,14 @@
  * Preset ánh sáng chọn theo số Ngày đã xong; đổi tông = đổi bảng này, không sửa engine.
  */
 export interface HubLightPreset {
-  background: string; ambient: string; ambientIntensity: number; key: string; keyIntensity: number;
-  window: 'rain' | 'cloudy' | 'sunny' | 'night';
-  /** Độ sáng đèn bàn (0 = tắt). */
+  /** Nền cảnh (chỉ lộ ra ngoài khung phòng). */
+  background: string;
+  /** Đèn bán cầu: màu trời (`ambient`), màu đất (`ground`), cường độ. */
+  ambient: string; ground: string; ambientIntensity: number;
+  /** Đèn hướng (ánh sáng chính). */
+  key: string; keyIntensity: number;
+  window: 'rain' | 'cloudy' | 'sunny' | 'twilight' | 'dusk' | 'night';
+  /** Độ sáng đèn bàn 0–1 (vật tự sáng, không phải nguồn sáng; 0 = tắt). */
   lamp: number;
 }
 
@@ -33,16 +38,23 @@ export const HUB_CONFIG: HubConfig = {
   show_adult_player: false,
   old_chat_last_label: 'tin cuối cùng đã từ rất lâu',
   caro_series_default: { quan: 3, duc: 3 },
-  // BG-4: phòng ấm ngay từ đầu — mọi mốc dùng cùng một preset ấm (buổi tối, đèn bàn).
+  // BG-4: phòng ấm ngay từ đầu (buổi tối, đèn bàn sáng — lời dẫn mở đầu), và ấm dần theo số Ngày đã xong.
+  // K2 khử ám vàng: ánh sáng chung trắng trung tính; "ấm" nằm ở đèn bàn tự sáng + cửa sổ (chạng vạng → hoàng hôn → đêm),
+  // không tô vàng toàn cảnh. Giới hạn: không preset nào vàng hơn #fff1df hay sáng hơn 1,35 (tests/unit/hub.test.ts).
   lighting_by_days_done: [
-    { min_days_done: 0, preset: 'warm' },
+    { min_days_done: 0, preset: 'evening' },
+    { min_days_done: 2, preset: 'dusk' },
+    { min_days_done: 4, preset: 'warm' },
   ],
   presets: {
-    cold: { background: '#2b3442', ambient: '#9fb4d6', ambientIntensity: 0.75, key: '#cfe0ff', keyIntensity: 0.9, window: 'rain', lamp: 0 },
-    cool: { background: '#3a4250', ambient: '#c2cbdc', ambientIntensity: 0.9, key: '#ffe9c4', keyIntensity: 1.1, window: 'cloudy', lamp: 0 },
-    warm: { background: '#5a4a3c', ambient: '#ffe6c0', ambientIntensity: 1.05, key: '#ffd9a0', keyIntensity: 1.5, window: 'night', lamp: 1 },
+    cold: { background: '#2b3442', ambient: '#c9d6e8', ground: '#8f949c', ambientIntensity: 0.8, key: '#e6eefa', keyIntensity: 1.0, window: 'rain', lamp: 0 },
+    cool: { background: '#3a4250', ambient: '#e6ebf2', ground: '#9a978f', ambientIntensity: 0.9, key: '#f6f3ee', keyIntensity: 1.15, window: 'cloudy', lamp: 0 },
+    evening: { background: '#9fb2cc', ambient: '#f2f5fa', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff3e3', keyIntensity: 1.25, window: 'twilight', lamp: 0.55 },
+    dusk: { background: '#d9c9b8', ambient: '#f3f3f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff2e1', keyIntensity: 1.28, window: 'dusk', lamp: 0.8 },
+    warm: { background: '#1f2a48', ambient: '#f4f4f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff3e5', keyIntensity: 1.3, window: 'night', lamp: 1 },
   },
-  window_colors: { rain: '#7d90ad', cloudy: '#c9d3e0', sunny: '#ffe9b0', night: '#1f2a48' },
+  // 'sunny' = trời ban ngày #cfdbe8 (gợi ý K2) — để sẵn, đổi một hàng lighting_by_days_done là dùng được.
+  window_colors: { rain: '#7d90ad', cloudy: '#c9d3e0', sunny: '#cfdbe8', twilight: '#9fb2cc', dusk: '#d9c9b8', night: '#1f2a48' },
 };
 
 export function hubLightPresetName(cfg: HubConfig, daysDone: number): string {

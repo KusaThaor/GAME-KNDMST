@@ -60,21 +60,21 @@ export function makeGlassFrame(w = 0.2, h = 0.15): THREE.Group {
 }
 
 /** Thảm bầu dục ba lớp (cao 2–3 cm). Gốc ở tâm, đáy y = 0. */
-export function makeRug(rx = 1.5, rz = 1.0): THREE.Group {
+export function makeRug(rx = 1.5, rz = 1.0, colors: readonly [string, string, string] = [PAL.roof, PAL.wallCream, PAL.roofDark]): THREE.Group {
   const g = new THREE.Group();
   const layer = (k: number, h: number, color: string) => {
     const geo = new THREE.CylinderGeometry(k, k, h, 40); geo.translate(0, h / 2, 0);
     const m = new THREE.Mesh(geo, toon(color, { outline: false })); m.scale.set(rx, 1, rz);
     return m;
   };
-  g.add(layer(1, 0.02, PAL.roof), layer(0.82, 0.024, PAL.wallCream), layer(0.66, 0.028, PAL.roofDark));
+  g.add(layer(1, 0.02, colors[0]), layer(0.82, 0.024, colors[1]), layer(0.66, 0.028, colors[2]));
   return g;
 }
 
 /** Một tấm rèm xếp nếp (InstancedMesh các dải đứng), treo từ y = h xuống y = 0. */
-export function makeCurtain(w: number, h: number, folds = 6): THREE.InstancedMesh {
+export function makeCurtain(w: number, h: number, folds = 6, color: string = PAL.wallYellow): THREE.InstancedMesh {
   const geo = new THREE.BoxGeometry((w / folds) * 0.94, h, 0.04); geo.translate(0, h / 2, 0);
-  const mesh = new THREE.InstancedMesh(geo, toon(PAL.wallYellow), folds);
+  const mesh = new THREE.InstancedMesh(geo, toon(color), folds);
   const m = new THREE.Matrix4();
   for (let i = 0; i < folds; i++) { m.makeTranslation((i - (folds - 1) / 2) * (w / folds), 0, i % 2 ? 0.035 : 0); mesh.setMatrixAt(i, m); }
   mesh.instanceMatrix.needsUpdate = true;
