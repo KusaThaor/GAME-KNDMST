@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 
 export interface GutterFlowOpts {
   length?: number;
@@ -24,7 +24,7 @@ export function makeGutterFlow(opts: GutterFlowOpts = {}): THREE.Group & { flowC
   const speed = opts.speed ?? 0.35;
 
   // Texture dòng nước gợn sóng lặp lại
-  const waterTex = canvasTexture(256, 64, (g) => {
+  const waterTex = safeCanvasTexture(256, 64, (g) => {
     g.fillStyle = '#6ab8ee';
     g.fillRect(0, 0, 256, 64);
 

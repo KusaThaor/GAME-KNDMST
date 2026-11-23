@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 /**
@@ -54,7 +54,7 @@ function makeNoodlePack(opened = false): THREE.Group {
   const h = 0.035;
   const d = 0.09;
 
-  const tex = canvasTexture(128, 128, (ctx) => {
+  const tex = safeCanvasTexture(128, 128, (ctx) => {
     ctx.fillStyle = '#f3c68f'; // màu giấy kraft mì tôm xưa
     ctx.fillRect(0, 0, 128, 128);
     ctx.strokeStyle = '#b22222';

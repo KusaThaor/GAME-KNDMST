@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 /**
@@ -47,7 +47,7 @@ export function makeRuleBook(): THREE.Group {
   root.add(spine);
 
   // Chữ viết tay "LUẬT" trên bìa
-  const tex = canvasTexture(256, 256, (g) => {
+  const tex = safeCanvasTexture(256, 256, (g) => {
     g.fillStyle = '#0077b6';
     g.fillRect(0, 0, 256, 256);
 

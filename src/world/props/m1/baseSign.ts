@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 /**
@@ -26,7 +26,7 @@ export function makeBaseSign(): THREE.Group {
   root.add(board);
 
   // Mặt chữ vẽ tay "CĂN CỨ BÍ MẬT"
-  const signTex = canvasTexture(512, 256, (g) => {
+  const signTex = safeCanvasTexture(512, 256, (g) => {
     // Vân gỗ
     g.fillStyle = '#eed7a1';
     g.fillRect(0, 0, 512, 256);

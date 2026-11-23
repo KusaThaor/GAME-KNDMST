@@ -29,7 +29,17 @@ export function makeChalkSmudge(opts: ChalkSmudgeOpts = {}): THREE.Group & { smu
   const cw = opts.canvasWidth ?? 512;
   const ch = opts.canvasHeight ?? 256;
 
-  const canvas = document.createElement('canvas');
+  const canvas = typeof document !== 'undefined'
+    ? document.createElement('canvas')
+    : ({
+        width: cw, height: ch,
+        getContext: () => ({
+          clearRect: () => {}, fillStyle: '', strokeStyle: '', lineWidth: 1, font: '',
+          globalCompositeOperation: '', beginPath: () => {}, arc: () => {}, fill: () => {},
+          moveTo: () => {}, lineTo: () => {}, stroke: () => {}, closePath: () => {},
+          fillText: () => {}, getImageData: () => ({ data: new Uint8Array(4) })
+        }),
+      } as unknown as HTMLCanvasElement);
   canvas.width = cw;
   canvas.height = ch;
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;

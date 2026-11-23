@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 export interface ClassListOpts {
@@ -44,7 +44,7 @@ export function makeClassList(opts: ClassListOpts = {}): THREE.Group {
   root.add(frame);
 
   // Mặt giấy dán danh sách lớp
-  const tex = canvasTexture(512, 256, (g) => {
+  const tex = safeCanvasTexture(512, 256, (g) => {
     // Nền bảng
     g.fillStyle = '#f8f4ea';
     g.fillRect(0, 0, 512, 256);

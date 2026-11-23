@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 
 /**
  * Tạo BufferGeometry hình chiếc thuyền giấy gấp học sinh.
@@ -91,7 +91,7 @@ export function makePaperBoats(): THREE.Group {
   root.add(boatMesh);
 
   // Tờ giấy báo gấp thuyền còn thừa bên bờ hiên
-  const newsTex = canvasTexture(256, 256, (g) => {
+  const newsTex = safeCanvasTexture(256, 256, (g) => {
     g.fillStyle = '#e5dfd3';
     g.fillRect(0, 0, 256, 256);
 

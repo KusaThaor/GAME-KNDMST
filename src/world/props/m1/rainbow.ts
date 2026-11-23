@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 
 export interface RainbowOpts {
   radius?: number;
@@ -18,7 +18,7 @@ export function makeRainbow(opts: RainbowOpts = {}): THREE.Group {
   const w = opts.width ?? 3.2;
 
   // Texture 7 dải màu cầu vồng
-  const rainbowTex = canvasTexture(16, 256, (g) => {
+  const rainbowTex = safeCanvasTexture(16, 256, (g) => {
     const grad = g.createLinearGradient(0, 256, 0, 0);
     grad.addColorStop(0.0, 'rgba(230, 57, 70, 0.7)');   // Đỏ
     grad.addColorStop(0.18, 'rgba(244, 162, 97, 0.65)'); // Cam

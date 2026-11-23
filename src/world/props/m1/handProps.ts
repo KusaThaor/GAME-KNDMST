@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
-import { canvasTexture } from '../../../render/canvasTex';
+import { safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
 
 /**
@@ -43,7 +43,7 @@ export function makeNotebook(): THREE.Group {
   root.add(spine);
 
   // Nhãn vở dán trên bìa
-  const labelTex = canvasTexture(256, 128, (g) => {
+  const labelTex = safeCanvasTexture(256, 128, (g) => {
     g.fillStyle = '#ffffff';
     g.fillRect(0, 0, 256, 128);
     g.strokeStyle = '#2b4c38';
@@ -79,7 +79,7 @@ export function makeCipherPaper(): THREE.Group {
   const d = 0.12;
   const h = 0.003;
 
-  const tex = canvasTexture(256, 256, (g) => {
+  const tex = safeCanvasTexture(256, 256, (g) => {
     // Giấy kẻ ô ly học sinh
     g.fillStyle = '#fbf7ee';
     g.fillRect(0, 0, 256, 256);
