@@ -6,7 +6,7 @@
 import { CAMERA_MODES, CAMERA_OPTIONS, DEFAULT_CAMERA_MODE, isCameraMode, isControl, nextCameraMode } from '../config/camera';
 import { GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
-import { HUB_CONFIG } from '../config/hub';
+import { HUB_CONFIG, fillCaroScore } from '../config/hub';
 import { HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../config/hubRoom';
 import { CRITERIA_LABELS, PHOTO_CONFIG, photoQuality } from '../config/photo';
 import { attachAnalytics } from '../analytics/bridge';
@@ -108,7 +108,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   if (!camOpts.freeLook && save.settings.free_look) save.settings = { ...save.settings, free_look: false };
   const style = ART_STYLES[opts.artStyle ?? ''];        // undefined → phong cách mặc định
   const profile = () => ({ player_name: save.player_name, gender: save.appearance.gender });
-  const fmt = (text: string) => formatText(text, profile());
+  // {quan}–{duc} (tin Rộn ràng, B9b) = tỉ số caro.series hiện hành, mặc định 3–3 — việc treo từ N-14, sau N-08.
+  const fmt = (text: string) => fillCaroScore(formatText(text, profile()), HUB_CONFIG, save.caro.series);
   const introId = idx.pack.hub.intro_quest_id;
   const introDone = () => save.quests[introId]?.state === 'completed';
 
@@ -621,6 +622,8 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       app: HUB_CONFIG.app_chat_name, threads,
       thread: {
         id: th.id, title: fmt(th.title),
+        // B8: nhóm chat cũ không có dòng chat nào → chỉ một dòng trạng thái (config/hub.ts)
+        status: th.history.length === 0 ? HUB_CONFIG.old_chat_last_label : null,
         messages: hub.threadMessages(th.id).map((m) => ({ who: speakerName(m.speaker, idx, profile()), text: fmt(m.text), mine: m.speaker === 'player' })),
         compose: step && step.kind === 'compose_message' ? { draft: phoneDraft, openers: step.openers.map((o) => ({ id: o.id, text: fmt(o.text), tone: o.tone ? GAME_CONFIG.tone_labels[o.tone] : null })) } : null,
       },

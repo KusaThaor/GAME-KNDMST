@@ -114,7 +114,7 @@ function Phone({ s, a }: { s: UiState; a: UiActions }) {
       {th && (
         <div class="g-thread" data-thread={th.id}>
           <div class="g-thread-head"><button data-act="thread-back" onClick={() => a.phoneOpenThread(null)}>‹</button><b>{th.title}</b></div>
-          <div class="g-msgs">{th.messages.map((m) => <div class={`g-msg ${m.mine ? 'mine' : ''}`}>{!m.mine && <small>{m.who}</small>}<span>{m.text}</span></div>)}</div>
+          <div class="g-msgs">{th.status && <div class="g-msg-status" data-testid="thread-status">{th.status}</div>}{th.messages.map((m) => <div class={`g-msg ${m.mine ? 'mine' : ''}`}>{!m.mine && <small>{m.who}</small>}<span>{m.text}</span></div>)}</div>
           {th.compose && (
             <div class="g-compose" data-testid="compose">
               {th.compose.draft === null

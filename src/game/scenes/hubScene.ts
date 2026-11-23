@@ -4,14 +4,18 @@
  * - Nhìn: rê chuột về phía nào thì nhìn về phía đó, chỉ trong giới hạn (không quay vòng). Cảm ứng: kéo màn hình.
  * - Lại gần một vật đang ở trong góc nhìn → `nearest()` (game hiện gợi ý E / bấm chuột).
  * - Mở Hộp Kỷ Vật: camera lướt vào cận cảnh miệng hộp; các món trong hộp bấm được qua `pick()`.
- * Hình khối tạm (greybox có màu) — đồ thật và ánh sáng theo tiến trình sẽ bổ sung sau; tông phòng lấy từ config/hub.ts (D-13).
+ * Đồ trong phòng dựng procedural (D3, PX-50; hàm dựng ở world/props/hub): đồ tĩnh gộp bằng `mergeStatic()`, vật lặp dùng
+ * `InstancedMesh`. Tông phòng (preset theo số Ngày đã xong) lấy từ config/hub.ts; bố trí + va chạm ở config/hubRoom.ts.
+ * Đèn bàn là vật tự sáng (emissive), không phải nguồn sáng — xem ghi chú ở bộ đèn bên dưới. [K2: ghép N-08 vào khung hub-2026]
  */
 import * as THREE from 'three';
 import type { HubConfig } from '../../config/hub';
 import { HUB_ROOM } from '../../config/hubRoom';
 import type { Artifact, HubContent } from '../../content/types';
 import { toon } from '../../render/materials';
-import { box } from '../../world/school/props';
+import { mergeStatic } from '../../render/merge';
+import { PAL, box } from '../../world/school/props';
+import { lift, makeCurtain, makeDeskLamp, makeGlassFrame, makeNightWindow, makeRug, makeRulebook, makeWallFrame } from '../../world/props/hub/room';
 import { disposeScene } from '../view';
 
 export interface HubMove { forward: number; strafe: number; run: boolean }
@@ -65,6 +69,12 @@ function artifactMesh(shape: string | undefined): THREE.Object3D {
     case 'photo': { const g = new THREE.Group(); g.add(box(0.2, 0.01, 0.15, '#f8f4ea')); const p = box(0.16, 0.011, 0.11, '#c9b37a'); p.position.y = 0.001; g.add(p); g.rotation.y = -0.2; return g; }
     case 'boat': { const g = new THREE.Group(); const hull = box(0.2, 0.04, 0.07, '#e9e1c6'); const sail = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 3), toon('#f1e9d0')); sail.position.y = 0.07; g.add(hull, sail); g.rotation.y = 0.5; return g; }
     case 'sign': { const g = new THREE.Group(); g.add(box(0.22, 0.02, 0.1, '#b98a5a')); const book = box(0.11, 0.025, 0.15, '#3f6fa0'); book.position.set(0.02, 0.022, 0.02); book.rotation.y = -0.3; g.add(book); return g; }
+    case 'box': {                                         // hộp phấn giấy đã móp (N-08): thân + nắp lệch
+      const g = new THREE.Group();
+      g.add(lift(box(0.16, 0.065, 0.1, PAL.trim, 0.01), 0.0325));
+      const lid = lift(box(0.165, 0.02, 0.105, PAL.wallYellow, 0.006), 0.075); lid.rotation.z = 0.06; g.add(lid);
+      g.rotation.y = 0.25; return g;
+    }
     default: return box(0.14, 0.1, 0.14, '#c9a56b', 0.02);
   }
 }
@@ -103,26 +113,51 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   // khác (vd. PointLight) làm Three.js phải biên dịch lại mọi shader lúc chuyển cảnh → khựng gần 1 giây khi vào Trang.
   scene.add(ambient, key);
 
+  // Kính trong suốt không đổ bóng.
+  const shadowed = (m: THREE.Object3D) => m.traverse((c) => {
+    const mesh = c as THREE.Mesh;
+    if (mesh.isMesh) { mesh.castShadow = !(mesh.material as THREE.Material).transparent; mesh.receiveShadow = true; }
+  });
   const room = new THREE.Group(); scene.add(room);
-  const put = (m: THREE.Object3D, x: number, y: number, z: number) => { m.position.set(x, y, z); room.add(m); m.traverse((c) => { c.castShadow = true; c.receiveShadow = true; }); return m; };
-  put(box(R.size.w, 0.1, R.size.d, '#b89b7a'), 0, -0.05, 0);                       // sàn
-  put(box(R.size.w, 0.08, R.size.d, '#ece6da'), 0, H + 0.04, 0);                    // trần
-  put(box(R.size.w, H, 0.12, '#d9d2c4'), 0, H / 2, -Dz - 0.06);                    // tường có cửa sổ
-  put(box(R.size.w, H, 0.12, '#d4ccbd'), 0, H / 2, Dz + 0.06);                     // tường sau lưng
-  put(box(0.12, H, R.size.d, '#cfc8ba'), -W - 0.06, H / 2, 0);                     // tường trái
-  put(box(0.12, H, R.size.d, '#cfc8ba'), W + 0.06, H / 2, 0);                      // tường phải
-  const windowPane = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.1), new THREE.MeshBasicMaterial({ color: '#9fb4d6' }));
-  windowPane.material.userData.outlineParameters = { visible: false };
-  windowPane.position.set(-0.6, 1.65, -Dz + 0.005); room.add(windowPane);
-  put(box(1.66, 0.08, 0.1, '#f3efe6'), -0.6, 1.06, -Dz + 0.05); put(box(1.66, 0.08, 0.1, '#f3efe6'), -0.6, 2.24, -Dz + 0.05);
+  /** Vật tương tác / vật động: đặt thẳng vào `room` để còn bắt chuột và phóng to khi rê. */
+  const put = (m: THREE.Object3D, x: number, y: number, z: number) => { m.position.set(x, y, z); room.add(m); shadowed(m); return m; };
+  /** Đồ tĩnh: gom vào `decor`, cuối hàm gộp một lần bằng `mergeStatic` (ít lượt vẽ). */
+  const decor = new THREE.Group();
+  const fix = (m: THREE.Object3D, x: number, y: number, z: number, rotY = 0, rotZ = 0) => { m.position.set(x, y, z); m.rotation.y = rotY; m.rotation.z = rotZ; decor.add(m); shadowed(m); return m; };
+  const C = R.colors;
+  fix(box(R.size.w, 0.1, R.size.d, C.floor), 0, -0.05, 0);                          // sàn
+  fix(box(R.size.w, 0.08, R.size.d, C.ceiling), 0, H + 0.04, 0);                    // trần
+  fix(box(R.size.w, H, 0.12, C.wall), 0, H / 2, -Dz - 0.06);                       // tường có cửa sổ
+  fix(box(R.size.w, H, 0.12, C.wall), 0, H / 2, Dz + 0.06);                        // tường sau lưng
+  fix(box(0.12, H, R.size.d, C.wall_side), -W - 0.06, H / 2, 0);                   // tường trái
+  fix(box(0.12, H, R.size.d, C.wall_side), W + 0.06, H / 2, 0);                    // tường phải
+  // cửa sổ (N-08): khung tĩnh gộp; ô kính + trăng sao đổi theo preset
+  const WX = L.window.x, WIN_Y = 1.65 - 0.08 - 1.1 / 2, WZ = -Dz + 0.05;
+  const win = makeNightWindow(1.5, 1.1);
+  fix(win.frame, WX, WIN_Y, WZ);
+  win.pane.position.add(new THREE.Vector3(WX, WIN_Y, WZ)); room.add(win.pane);
+  win.sky.position.set(WX, WIN_Y, WZ); room.add(win.sky);
+  fix(box(2.5, 0.03, 0.03, PAL.trunkDark), WX, 2.38, -Dz + 0.12);                 // thanh treo rèm
+  for (const dx of [-1.05, 1.05]) { const c = makeCurtain(0.4, 1.44); c.position.set(WX + dx, 0.92, -Dz + 0.11); room.add(c); }
+  // khung ảnh tường (N-08) — góc trái tường cửa sổ, trên Hộp Kỷ Vật
+  fix(makeWallFrame(0.46, 0.34, '#9db7c9'), -2.65, 1.58, -Dz, 0, 0.02);
+  fix(makeWallFrame(0.3, 0.4, PAL.wallYellow), -2.03, 1.83, -Dz, 0, -0.03);
+  fix(makeWallFrame(0.36, 0.26, PAL.leaf2), -2.13, 1.38, -Dz, 0, 0.015);
+  fix(makeRug(1.4, 0.95), L.rug.x, 0, L.rug.z);                                     // thảm giữa phòng
   // giường sát tường phải, đầu giường phía sau lưng
-  put(box(1.5, 0.42, 2.2, '#7f95b5', 0.06), L.bed.x, 0.21, L.bed.z);
-  put(box(0.6, 0.12, 0.4, '#f1ede4', 0.05), L.bed.x, 0.48, L.bed.z + 0.8);
-  // bàn học dưới kệ, có đèn bàn
-  put(box(1.9, 0.08, 0.8, '#a67c52'), L.desk.x, 0.78, L.desk.z);
-  for (const [dx, dz] of [[-0.85, -0.3], [0.85, -0.3], [-0.85, 0.3], [0.85, 0.3]]) put(box(0.08, 0.76, 0.08, '#8a6642'), L.desk.x + dx, 0.38, L.desk.z + dz);
-  put(new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.08, 0.32, 10), toon('#e7d9b8')), L.desk.x + 0.7, 0.98, L.desk.z - 0.15);
-  put(new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), toon('#ffe3a6', { emissive: '#ffcf7a' })), L.desk.x + 0.7, 1.17, L.desk.z - 0.15);   // bóng đèn bàn (tự sáng, không phải nguồn sáng)
+  fix(box(1.5, 0.42, 2.2, C.bed, 0.06), L.bed.x, 0.21, L.bed.z);
+  fix(box(0.6, 0.12, 0.4, C.pillow, 0.05), L.bed.x, 0.48, L.bed.z + 0.8);
+  // bàn học dưới kệ
+  fix(box(1.9, 0.08, 0.8, C.desk), L.desk.x, 0.78, L.desk.z);
+  for (const [dx, dz] of [[-0.85, -0.3], [0.85, -0.3], [-0.85, 0.3], [0.85, 0.3]]) fix(box(0.08, 0.76, 0.08, C.desk_leg), L.desk.x + dx, 0.38, L.desk.z + dz);
+  fix(makeGlassFrame(0.2, 0.15), L.desk.x + 0.1, 0.82, L.desk.z - 0.25, 0.15);      // khung kính trên bàn (N-08)
+  // đèn bàn: vật tự sáng (emissive), KHÔNG phải nguồn sáng. Độ sáng = preset.lamp (setLighting).
+  const lamp = put(makeDeskLamp(), L.desk.x + 0.7, 0.82, L.desk.z - 0.2);
+  const lampShade = lamp.getObjectByName('lamp:shade') as THREE.Mesh, lampBulb = lamp.getObjectByName('lamp:bulb') as THREE.Mesh;
+  lampShade.material = (lampShade.material as THREE.MeshToonMaterial).clone();
+  lampBulb.material = (lampBulb.material as THREE.MeshBasicMaterial).clone();
+  const shadeMat = lampShade.material as THREE.MeshToonMaterial, bulbMat = lampBulb.material as THREE.MeshBasicMaterial;
+  const BULB_OFF = new THREE.Color('#bdb6a8'), BULB_ON = new THREE.Color('#fff1c8');
 
   // ---- vật tương tác trong phòng (id khớp content/hub.ts) ----
   const items = new Map<string, THREE.Object3D>();
@@ -151,11 +186,17 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   shelf.add(box(1.8, 0.05, 0.3, '#9a7650'));
   const plank2 = box(1.8, 0.05, 0.3, '#9a7650'); plank2.position.y = 0.55; shelf.add(plank2);
   items.set('itr.hub.shelf', put(shelf, L.shelf.x, 1.45, -Dz + 0.16)); spots.set('itr.hub.shelf', L.shelf);
+  // Sổ luật Căn cứ (N-08, Kết demo Bước 1): đứng ở đầu phải tấm ván dưới, hơi xoay và nhô ra phía trước.
+  const rulebook = put(makeRulebook(), L.rulebook.x, 1.45 + 0.025, -Dz + 0.18);
+  rulebook.rotation.y = 0.3;
+  items.set('itr.hub.rulebook', rulebook); spots.set('itr.hub.rulebook', L.rulebook);
   for (const it of hub.interactables) if (!items.has(it.id)) {
     const p = { x: it.position?.[0] ?? 0, z: it.position?.[1] ?? 0 };
     items.set(it.id, put(box(0.3, 0.3, 0.3, '#c0b090'), p.x, 0.15, p.z)); spots.set(it.id, p);
   }
   const shelfItems = new THREE.Group(); shelfItems.position.set(L.shelf.x, 1.48, -Dz + 0.16); room.add(shelfItems);
+
+  room.add(mergeStatic(decor));
 
   // ---- va chạm: đồ đạc là hình chữ nhật (hộp xoay → lấy khung bao) ----
   const rot = boxGroup.rotation.y, bhx = (Math.abs(Math.cos(rot)) * BW + Math.abs(Math.sin(rot)) * BD) / 2, bhz = (Math.abs(Math.sin(rot)) * BW + Math.abs(Math.cos(rot)) * BD) / 2;
@@ -298,7 +339,11 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
       scene.background = new THREE.Color(pr.background);
       ambient.color.set(pr.ambient); ambient.intensity = pr.ambientIntensity;
       key.color.set(pr.key); key.intensity = pr.keyIntensity;
-      windowPane.material.color.set(pr.window === 'sunny' ? '#ffe9b0' : pr.window === 'cloudy' ? '#c9d3e0' : '#7d90ad');
+      win.pane.material.color.set(config.window_colors[pr.window]);
+      win.sky.visible = pr.window === 'night';
+      const lampK = clamp(pr.lamp, 0, 1);
+      shadeMat.emissiveIntensity = lampK;
+      bulbMat.color.copy(BULB_OFF).lerp(BULB_ON, lampK);
     },
     setShelf(artifacts) {
       for (const c of [...shelfItems.children]) { shelfItems.remove(c); c.traverse((o) => (o as THREE.Mesh).geometry?.dispose()); }

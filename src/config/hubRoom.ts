@@ -37,6 +37,16 @@ export const HUB_ROOM = {
     album: { x: 1.35, z: -2.05 },
     phone: { x: 2.45, z: -1.95 },
     shelf: { x: 2.2, z: -2.3 },
+    /** Sổ luật Căn cứ (N-08): đứng ở đầu phải ván dưới của kệ. */
+    rulebook: { x: 3.03, z: -2.2 },
+    /** Tâm ô kính cửa sổ trên tường z âm. */
+    window: { x: -0.6, z: -2.5 },
+    rug: { x: -0.9, z: 0.0 },
+  },
+  /** Màu vật liệu phòng (tường, sàn, đồ lớn). Đổi tông phòng = sửa ở đây, không sửa scene. */
+  colors: {
+    floor: '#b89b7a', ceiling: '#ece6da', wall: '#d9d2c4', wall_side: '#cfc8ba',
+    bed: '#7f95b5', pillow: '#f1ede4', desk: '#a67c52', desk_leg: '#8a6642',
   },
 } as const;
 

@@ -40,6 +40,18 @@ function autoStep(engine: QuestEngine, ref: StepRef): boolean {
 }
 
 /**
+ * Phần mở đầu ở phòng 2026: quest mở đầu + các quest nối thẳng sau nó (B10: độc thoại sau khi mở thùng, N-08).
+ * Tự chạy hết để công cụ test vào phòng/Ngày mà không kẹt ở thoại chờ Space.
+ */
+function finishIntro(engine: QuestEngine, introId: string): void {
+  const chained = (r: StepRef) => r.quest.id === introId || (r.quest.available_when as { quest?: string } | undefined)?.quest === introId;
+  for (let i = 0; i < 40; i++) {
+    const r = engine.activeSteps().find(chained);
+    if (!r || !autoStep(engine, r)) break;
+  }
+}
+
+/**
  * Dựng file lưu "đang ở bước X của Ngày Y": chạy engine thật trên một event bus riêng (không nối analytics, không tự lưu),
  * nên trạng thái sinh ra đúng như người chơi đã đi tới đó, mà không phát event đo lường giả.
  */
@@ -57,7 +69,7 @@ export function jumpTo(save: SaveState, idx: ContentIndex, dayId: string, stepId
   const introId = idx.pack.hub.intro_quest_id;
   const visitHub = () => {
     engine.enterHub();
-    for (let i = 0; i < 20 && engine.questState(introId) === 'active'; i++) { const r = engine.activeSteps().find((x) => x.quest.id === introId); if (!r || !autoStep(engine, r)) break; }
+    finishIntro(engine, introId);
     hub.refresh(); hub.runPdes();
   };
   const playMain = (until: string | null): boolean => {
@@ -82,31 +94,39 @@ export function jumpTo(save: SaveState, idx: ContentIndex, dayId: string, stepId
   return null;
 }
 
-/** Dựng file lưu "đang ở phòng 2026, đã qua phần mở đầu": tên Bạn Thử, đã nhập tên và chọn giới, lời dẫn đã xong. */
-export function jumpToHub(save: SaveState, idx: ContentIndex, gender: 'male' | 'female' = 'male'): string | null {
+/**
+ * Dựng file lưu "đang ở phòng 2026, đã qua phần mở đầu": tên Bạn Thử, đã nhập tên và chọn giới, lời dẫn đã xong.
+ * `done` > 0: tự chơi trước `done` Ngày đầu của bản phát hành (để xem phòng sau nhiều Trang — K2 ảnh nghiệm thu).
+ */
+export function jumpToHub(save: SaveState, idx: ContentIndex, gender: 'male' | 'female' = 'male', done = 0): string | null {
   Object.assign(save, newSave(save.attempt_id), { player_name: 'Bạn Thử', appearance: { gender, preset: 'default' }, profile_done: true });
   const bus = new EventBus();
   const engine = new QuestEngine({ idx, save, bus });
   const album = new AlbumModel({ idx, save, bus, config: ALBUM_CONFIG });
   const hub = new HubModel({ idx, save, bus, engine, album, config: HUB_CONFIG });
   const introId = idx.pack.hub.intro_quest_id;
-  engine.enterHub();
-  for (let i = 0; i < 20 && engine.questState(introId) === 'active'; i++) {
-    const r = engine.activeSteps().find((x) => x.quest.id === introId);
-    if (!r || !autoStep(engine, r)) break;
+  const visitHub = () => { engine.enterHub(); finishIntro(engine, introId); hub.refresh(); hub.runPdes(); };
+  visitHub();
+  if (engine.questState(introId) !== 'completed') return `Không qua được phần mở đầu của phòng 2026`;
+  for (const d of idx.releaseDays.slice(0, Math.max(0, done))) {
+    engine.startDay(d.id);
+    for (let i = 0; i < 500; i++) { const m = engine.mainStep(); if (!m || !autoStep(engine, m)) break; }
+    if (engine.mainStep()) return `Không tự chơi hết được Ngày ${d.id}`;
+    if (engine.phase === 'end_prompt') engine.answerEndPrompt('leave');
+    visitHub();
   }
-  hub.refresh(); hub.runPdes();
-  return engine.questState(introId) === 'completed' ? null : `Không qua được phần mở đầu của phòng 2026`;
+  return null;
 }
 
 export function runOptionsFromUrl(params: URLSearchParams): RunOptions {
   const day = params.get('day'), cast = params.get('cast');
-  // ?hub=1: bỏ qua phần mở đầu (tên, lời dẫn, bước mở hộp) và vào thẳng phòng 2026. Chỉ bản test.
+  // ?hub=1: bỏ qua phần mở đầu (tên, lời dẫn, bước mở hộp, độc thoại B10) và vào thẳng phòng 2026. Chỉ bản test.
+  // &done=N: đã xong N Ngày đầu (phòng sau N Trang).
   if (params.get('hub') === '1' && !day) return {
     castName: cast ?? undefined,
     artStyle: params.get('style') ?? undefined,
     prepareSave: (save, idx) => {
-      const err = jumpToHub(save, idx, params.get('gender') === 'female' ? 'female' : 'male');
+      const err = jumpToHub(save, idx, params.get('gender') === 'female' ? 'female' : 'male', Number(params.get('done') ?? 0) || 0);
       if (err) console.error(`[công cụ test] ${err}`);
     },
   };

@@ -20,6 +20,8 @@ export interface PhoneView {
   threads: { id: string; title: string }[];
   thread: {
     id: string; title: string;
+    /** Dòng trạng thái thay cho lịch sử chat (B8: "tin cuối cùng đã từ rất lâu"); null = không hiện. */
+    status: string | null;
     messages: { who: string; text: string; mine: boolean }[];
     compose: { openers: { id: string; text: string; tone: string | null }[]; draft: string | null } | null;
   } | null;
