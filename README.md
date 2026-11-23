@@ -43,7 +43,8 @@ Engine không cần sửa. Chỉ thêm dữ liệu rồi chạy lệnh kiểm.
 
 1. **Tạo file `src/content/days/d_gNN_KK.ts`** (chép từ `d_g06_01.ts`), xuất 5 thứ:
    - `day` — ID `d.gNN.KK`, năm học, bản đồ + biến thể, chỗ đứng NPC (dùng vai `NPC_A…NPC_D`, không ghi thẳng `chr_*`), điểm tương tác `itr.<map>.<tên>`, máy ảnh ảo `cam.<…>.<…>`, `main_chain`, `side_quests`, `daily_pool`, `album_page_id`.
-   - `quests` — Main/Side/Daily của Ngày; ID `q_<m1|m2|m3>_<main|side|daily|event>_NN`, bước `<quest_id>.sNN`. Side/Daily phải có `blocks_main: false`.
+   - `quests` — Main/Side/Daily của Ngày; ID `q_<m1|m2|m3>_<main|side|daily|event>_NN`, bước `<quest_id>.sNN`. Side/Daily phải có `blocks_main: false`. Bước `goto` tự hoàn thành nếu người chơi đã đứng trong bán kính khi bước mở hoặc khi đóng giao diện.
+   - Với bước `minigame`, dùng ID của module trong `src/game/minigames/games/` (ví dụ `mg_demo`). Module xuất mặc định theo `MinigameModule` và được đăng ký tự động. ID chưa có trò sẽ hiện thẻ Xong.
    - `artifact` — đúng **một** kỷ vật dẫn vào Ngày (`art_<mốc>_NN`), `appear_when` = điều kiện sáng lên (thường là xong Ngày trước).
    - `fragments`, `entries` — mảnh ký ức và các ô của trang Album (`frag.<ngày>.NN`, `alb.<ngày>.NN`); ít nhất một ô `required_for_restore: true`.
 2. **Thêm vào `DAYS`** trong `src/content/pack.ts`.

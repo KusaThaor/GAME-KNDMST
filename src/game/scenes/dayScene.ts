@@ -17,15 +17,18 @@ import { GAME_CONFIG } from '../../config/game';
 import type { ContentIndex } from '../../content/indexContent';
 import type { CameraPoint, Gender, MemoryDay, StandZone } from '../../content/types';
 import { toon, flat } from '../../render/materials';
+import { createFx } from '../../render/fx';
 import { addDaylight } from '../../render/stage';
 import { ART_STYLES, DEFAULT_ART_STYLE, type ArtStyle } from '../../render/style';
+import { createAtmosphere } from '../../world/atmosphere';
 import { bindCamera, bindDay, bindStandZone, type Placed } from '../../world/dayBindings';
+import { mountDressing } from '../../world/dressing';
 import { WORLD_MANIFESTS } from '../../world/maps';
 import { clouds, skyDome } from '../../world/sky';
 import { ZoneTracker, type TravelEvent } from '../../world/travel';
 import type { ColliderShape, WorldManifest, WorldProblem } from '../../world/types';
 import { DECOR_SETS, DEFAULT_DECOR, DEFAULT_LIGHTING, LIGHTING_PRESETS } from '../../world/variants';
-import { loadWorld, World, WorldLoadError } from '../../world/world';
+import { loadWorld, World, WORLD_EXTRAS, WorldLoadError } from '../../world/world';
 import { disposeScene } from '../view';
 
 export interface DayTarget { id: string; label: string; position: THREE.Vector3; kind: 'npc' | 'object' | 'marker'; radius: number; zone: string | null }
@@ -42,6 +45,8 @@ export interface DaySceneOptions {
   rigAdapter?: CharacterRigAdapter;
   /** Tự cung cấp dữ liệu GLB (test). */
   fetchAsset?: (url: string) => Promise<ArrayBuffer>;
+  /** Đọc flag của bản lưu cho đồ trang trí (vd. 'm1.base_decor'). Không truyền → mọi flag là undefined. */
+  flag?: (name: string) => unknown;
 }
 
 export interface DayScene {
@@ -100,7 +105,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     world = World.placeholder(emptyManifest(day.map_id, day.spawn_point ?? 'spawn.none'), [{ level: 'error', code: 'map_without_world', ref: day.map_id, message: `Bản đồ ${day.map_id} chưa có manifest (src/world/maps/${day.map_id}.world.json)` }]);
   } else {
     try {
-      world = await loadWorld(manifest, { openZones: day.open_zones ?? 'all', decorSet: variant?.decor_set ?? null, style: opts.style ?? ART_STYLES[DEFAULT_ART_STYLE], fetchAsset: opts.fetchAsset });
+      world = await loadWorld(manifest, { openZones: day.open_zones ?? 'all', decorSet: variant?.decor_set ?? null, style: opts.style ?? ART_STYLES[DEFAULT_ART_STYLE], fetchAsset: opts.fetchAsset, extras: WORLD_EXTRAS[day.map_id] ?? null });
     } catch (e) {
       world = World.placeholder(manifest, e instanceof WorldLoadError ? e.problems : [{ level: 'error', code: 'asset_load_failed', ref: day.map_id, message: String((e as Error)?.message ?? e) }]);
     }
@@ -115,12 +120,19 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   hemi.color.set(light.hemiSky); hemi.groundColor.set(light.hemiGround); hemi.intensity = light.hemiIntensity;
   sun.color.set(light.sunColor); sun.intensity = light.sunIntensity;
   const sky = new THREE.Group();
-  sky.add(skyDome(light.sky), clouds());
+  const dome = skyDome(light.sky);
+  sky.add(dome, clouds());
   scene.add(sky, world.root);
+  // Điểm gắn chung cho N-05/N-06/N-07/N-13: hạt, bầu không khí, đồ trang trí procedural (không sửa file này để thêm đồ).
+  const fx = createFx(scene);
+  const atmosphere = createAtmosphere(scene, { sun, hemi, fx, sky: dome, sunOffset, day }, variant?.lighting_preset ?? null);
+  const updaters: ((dt: number, t: number) => void)[] = [];
+  const dressing = await mountDressing({ scene, world, dayId: day.id, decor, flag: opts.flag ?? (() => undefined), addUpdate: (fn) => { updaters.push(fn); } });
   const gizmos = new THREE.Group(); scene.add(gizmos);
 
   const bound = bindDay(day, map, world);
-  const problems: WorldProblem[] = [...world.problems, ...bound.problems];
+  const problems: WorldProblem[] = [...world.problems, ...bound.problems,
+    ...dressing.failed.map((f): WorldProblem => ({ level: 'warn', code: 'dressing_failed', ref: f.id, message: `Bộ đồ trang trí "${f.id}" lỗi khi dựng: ${f.message}` }))];
   const groundAt = (p: { x: number; y: number; z: number }) => world.ground(p.x, p.z, p.y) ?? p.y;
 
   // ---- nhân vật ----
@@ -224,6 +236,9 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       sky.position.set(cam.camera.position.x, 0, cam.camera.position.z);
       followSun();
       for (const m of marks.values()) if (m.gem.visible) { m.gem.rotation.y = t * 1.6; m.gem.position.y = m.baseY + Math.sin(t * 2.4) * 0.08; }
+      atmosphere.update(dt);
+      fx.update(dt);
+      for (const fn of updaters) fn(dt, t);
     },
     teleport(x, z, facing) { place({ x, y: ctl.y, z, facing: facing ?? ctl.facing }, facing !== undefined); },
     toSpawn(id) {
@@ -272,6 +287,6 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     },
     setGizmosVisible(v) { gizmos.visible = v; },
     debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing }),
-    dispose() { disposeScene(scene); world.dispose(); },
+    dispose() { dressing.dispose(); atmosphere.dispose(); fx.dispose(); updaters.length = 0; disposeScene(scene); world.dispose(); },
   };
 }
