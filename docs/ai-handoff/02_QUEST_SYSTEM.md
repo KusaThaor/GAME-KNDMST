@@ -135,7 +135,7 @@ export const sideExample: Quest = {
 
 ## 6. Bẫy khi viết (đọc trước khi viết quest)
 1. **Side/Daily: bước đầu phải là `talk | interact | goto | collect | place`** (A-02). Sau T-01 validator sẽ báo lỗi; trước đó không ai báo.
-2. **Đừng đặt đích `goto` sát chỗ người chơi vừa đứng nói chuyện** cho tới khi T-01 xong (A-01).
+2. **`goto` kiểm vị trí hiện tại.** Nếu người chơi đã đứng trong bán kính khi bước bắt đầu hoặc khi đóng Menu, bước tự hoàn thành (A-01).
 3. **Không viết điều kiện `{ quest: <id Daily> }`** (A-05). Dùng `rewards.flags` của Daily rồi điều kiện theo flag.
 4. Main trong Ngày chạy theo thứ tự `main_chain`; `available_when` của Main bị bỏ qua.
 5. Dòng thoại có `when` theo flag bắt buộc có `fallback` (validator báo `callback_without_fallback`).
@@ -145,3 +145,5 @@ export const sideExample: Quest = {
 9. Các trường `hint`, `time_phases`, `transition_fx`, `rewards.fragment_ids`, `item` hiện **không có tác dụng** (A-07).
 10. NPC đứng yên suốt Ngày; mỗi vai một chỗ đứng (A-06).
 11. ID đã phát hành public thì không đổi (bản lưu tham chiếu theo ID; `reconcileSave` chỉ xử lý bước bị xóa).
+
+Với bước `minigame`, đặt `game` bằng ID module trong `src/game/minigames/games/`. Thua và bỏ qua đều cho phép đi tiếp. Kết quả ván đầu dùng cho thoại, chơi lại chỉ cập nhật thành tích.
