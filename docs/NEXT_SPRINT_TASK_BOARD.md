@@ -481,15 +481,16 @@ Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu:
 | Mã | Trạng thái | Kiểm thật | Ghi chú |
 |---|---|---|---|
 | N-00 | ✅ 22/11 | — | — |
-| N-01 | 🔍 PR #8 — chờ sửa (xung đột `types.ts`) | chưa chạy 4 lệnh/e2e trên bản gộp | Thoại Trang 2 đã sửa ở `b829023`; còn: giải xung đột, đổi khóa thời tiết sang `s06`/`s07`, sửa ca 8 + bot e2e, chạy e2e đủ |
+| N-01 | 🔍 PR #8 — chờ sửa lần 2 | 4 lệnh ✓ (vitest 413/2) · e2e **37/1 đỏ/1 bỏ qua** (21,6 phút) | Đã giải xung đột + sửa thoại/thời tiết; còn 1 ca đỏ: `game.ts` không phát `lines` của bước minigame → chủ dự án cho N-01 sửa đúng chỗ đó (24/11), `expect.soft` → `expect`, mục tiêu e2e 38/0/1 |
 | N-02 | ✅ PR #4, `f5fb467` | e2e 38/1 | — |
 | N-02b | ✅ PR #7, `c637b5b` | tsc ✓ · vitest 339/2 ✓ · validate ✓ · build ✓ · e2e 38/1 ✓ (27,9 phút) | `recordMg`, `opponent`, `flag` đã nối |
 | N-03 | ✅ PR #1, `a9758c2` | — | — |
 | N-04 | ✅ PR #2, `203982f` | e2e 37/1 | Marker Mốc 2 → N-04b |
 | N-05 | ✅ PR #5, `8257863` | tsc ✓ · vitest 412/2 ✓ · validate ✓ · build ✓ · e2e **38/1 ✓** (17,8 phút) | Đã mở khóa N-01, N-13, N-15 |
-| N-06 | 🔍 PR #9 — yêu cầu sửa | tsc ✓ · vitest 373/2 ✓ · validate ✓ · build ✓; e2e trên chồng có N-06 không lỗi ca nào của N-06 | Họ tên tự đặt, `{player_name}` vẽ thô lên texture, "BÁO TUỔI TRẺ" |
+| N-06 | ✅ PR #9, `628bc5a` | tsc ✓ · vitest 472/2 ✓ · validate ✓ · build ✓ · e2e **38/0/1 ✓** (17,9 phút) | Đã bỏ họ tên tự đặt, `{player_name}`, "TUỔI TRẺ" |
 | N-07 | ✅ PR #10, `bd0d535` | tsc ✓ · vitest 347/2 ✓ · validate ✓ · build ✓ | 5.796 tam giác / 12 lượt vẽ; thiếu ảnh 4 hướng (nhắc) |
-| N-08 | 🔍 PR #11 — yêu cầu sửa | tsc ✓ · vitest 407/2 ✓ · validate ✓ · build ✓ · **e2e 1 lỗi** `game.spec.ts:304` (chạy riêng: nền xanh, có PR đỏ) | Độc thoại kỷ vật chờ Space làm bot không vào Ngày |
+| N-08 | ✅ gộp qua PR #17 (K2), `2a987b6` — PR #11 đã đóng | xem dòng K2 | Ca e2e 304 đã sửa trong K2 |
+| K2 | ✅ PR #17, `2a987b6` | tsc ✓ · vitest 521/2 ✓ · validate ✓ · build ✓ · e2e **45/0/1 ✓** (20,4 phút) | Phòng 2026 đi lại tự do (chủ dự án chốt 24/11) + N-08 + khử ám vàng. **GDD 00 dòng 35/158/239 còn ghi "góc cố định" — chủ dự án cập nhật** |
 | N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | — |
 | N-10 | ✅ PR #6, `b66528b` | — | Bổ sung mã màn 2D → N-10b |
 | N-11a | ✅ PR #12, `c25dd06` | tsc ✓ · vitest 369/2 ✓ · validate ✓ · build ✓ | Lời giải mật lệnh "RA CHƠI" |
