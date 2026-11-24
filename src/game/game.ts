@@ -179,7 +179,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     const ep = epoch, s = ref.step;
     const alive = () => ep === epoch;
     if (s.kind === 'cutscene') {
-      if (!(await playLines(s.lines))) return;
+      const weatherShot = dayScene?.lockWeatherCamera(s.id);
+      if (!(await playLines(s.lines))) return; // cancelAll đã nhả camera
+      if (weatherShot) dayScene?.lockCamera(null);
       if (ref.quest.id === introId && !save.profile_done) {
         ui.set({ profile: true });
         if ((await wait('profile')) === CANCEL || !alive()) return;
@@ -377,7 +379,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       const day = idx.dayOfPage(entry.page_id);
       const point = day?.cameras.find((c) => c.id === entry.snapshot!.camera_id);
       if (day && point) {
-        const tmp = await buildDayScene(day, idx, save.appearance.gender, { style, flag: n => engine.flag(n) });
+        const tmp = await buildDayScene(day, idx, save.appearance.gender, { style, flag: n => engine.flag(n), stepId: entry.snapshot.at_step_id });
         const cam = tmp.cameraFor(point);
         if (cam) {
           tmp.update(0, 0, { move: null, look: null }); tmp.setGizmosVisible(false);
@@ -485,7 +487,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     teardown();
     if (!resume) { engine.startDay(dayId, { replay }); save.current.zone_id = null; }
     const ep = epoch;
-    const scene = await buildDayScene(day, idx, save.appearance.gender, { style, flag: n => engine.flag(n), startZone: resume ? save.current.zone_id : null });
+    const scene = await buildDayScene(day, idx, save.appearance.gender, {
+      style, flag: n => engine.flag(n), bus, stepId: engine.mainStep()?.step.id, startZone: resume ? save.current.zone_id : null,
+    });
     if (ep !== epoch) { scene.dispose(); return; }       // người chơi đã rời đi trong lúc tải
     currentDay = day; dayScene = scene;
     if (scene.problems.length) console.warn(`[world] ${day.map_id}:\n${formatProblems(scene.problems)}`);

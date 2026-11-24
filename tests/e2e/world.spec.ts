@@ -873,7 +873,7 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     expect(errors).toEqual([]);
   });
 
-  test('ca 8: bước chụp ảnh hẹn giờ — camera khóa ở khung ngắm (kéo chuột không xoay), bấm hẹn giờ thì trả lại đúng góc cũ; chụp xong vẫn tự do', async ({ page }) => {
+  test('ca 8: camera khóa ở khung ngắm, trả góc cũ khi bấm hẹn giờ và nhả sau thoại cầu vồng', async ({ page }) => {
     test.setTimeout(420_000);
     const errors = collectErrors(page);
     await captureCollect(page);
@@ -902,7 +902,16 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     // hẹn giờ 8 giây theo đồng hồ game; Chrome headless vẽ chậm nên chờ lâu hơn máy thật
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
     await page.locator('[data-act="photo-keep"]').click();
-    await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s04');
+    // Giữ ảnh mở ngay cutscene cầu vồng. Camera của cutscene được nhả sau câu thoại cuối.
+    const rainbowStep = 'q_m1_main_05.s05';
+    await expect.poll(async () => (await state(page)).step).toBe(rainbowStep);
+    const dialogue = page.getByTestId('dialogue');
+    await expect(dialogue).toBeVisible();
+    while (await dialogue.isVisible()) {
+      expect((await cam(page)).locked).toBe(true);
+      await dialogue.click();
+    }
+    await expect.poll(async () => (await state(page)).step).not.toBe(rainbowStep);
     expect((await cam(page)).locked).toBe(false);
     expect(errors).toEqual([]);
   });
