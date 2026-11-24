@@ -43,7 +43,11 @@ async function clickHub(page: Page, id: string) {
 async function finishDay(page: Page) {
   const t0 = Date.now();
   while (!(await page.locator('[data-testid="day-end"]').count())) {
-    await page.evaluate(() => window.__game!.botStep({ name: 'Tí', optional: false }));
+    await page.evaluate(() => {
+      // N-01: Trang 1 có trò thật (mật lệnh, đá cầu, lau bảng, mì tôm) — bot không chơi được nên bấm "Bỏ qua" như người chơi
+      const skip = [...document.querySelectorAll<HTMLButtonElement>('[data-testid="minigame"] button')].find((b) => b.textContent?.trim() === 'Bỏ qua');
+      if (skip) skip.click(); else window.__game!.botStep({ name: 'Tí', optional: false });
+    });
     await page.waitForTimeout(60);
     if (Date.now() - t0 > 200_000) throw new Error('không tới màn kết Trang');
   }

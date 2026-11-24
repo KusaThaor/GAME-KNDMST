@@ -143,7 +143,7 @@ test.describe('phần khung game', () => {
     expect(all).toContain(NAME);
     // B2: Châu nói với Đức → luôn "ông", kể cả Player nữ. Câu nằm trong `lines` của bước minigame s04; game.ts hiện CHƯA phát
     // `lines` của bước minigame (chỉ mở trò rồi complete) → soft để vẫn đỏ báo lỗi mà các kiểm phía sau vẫn chạy.
-    expect.soft(all, 'thoại của bước minigame (lines) không được phát').toContain('Mới quen một bữa mà ông mày tao rồi hả?');
+    expect(all, 'thoại của bước minigame (lines) phải được phát').toContain('Mới quen một bữa mà ông mày tao rồi hả?');
     expect(all).toContain('Bà tiện đường qua cột cờ');                   // {g:Ông|Bà} khi Châu gọi Player (q_m1_ai_side_01), Player nữ
     expect(all).not.toContain('Ông tiện đường qua cột cờ');
     expect(all).not.toMatch(/\{player_name\}|\{g:/);

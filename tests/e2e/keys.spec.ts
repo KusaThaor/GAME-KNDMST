@@ -51,7 +51,11 @@ test.describe('bàn phím thật', () => {
     await open(page, '&day=d.g06.01&step=q_m1_main_01.s02');
     const t0 = Date.now();
     while (!(await page.locator('[data-testid="day-end"]').count())) {        // bot chơi tới màn kết Trang (không bấm nút ở đó)
-      await page.evaluate(() => window.__game!.botStep({ name: 'Tí', optional: false }));
+      await page.evaluate(() => {
+        // N-01: Trang 1 có trò thật — bot không chơi được nên bấm "Bỏ qua" như người chơi
+        const skip = [...document.querySelectorAll<HTMLButtonElement>('[data-testid="minigame"] button')].find((b) => b.textContent?.trim() === 'Bỏ qua');
+        if (skip) skip.click(); else window.__game!.botStep({ name: 'Tí', optional: false });
+      });
       await page.waitForTimeout(60);
       if (Date.now() - t0 > 150_000) throw new Error('không tới màn kết Trang');
     }
