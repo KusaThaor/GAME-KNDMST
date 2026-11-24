@@ -473,7 +473,7 @@ Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 
 ---
 
-## Mục 5 — Tình hình tiến độ (Integrator cập nhật 23/11/2026, 09:00 UTC+7)
+## Mục 5 — Tình hình tiến độ (Integrator cập nhật 24/11/2026, 14:00 UTC+7)
 
 Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã gộp · ⛔ bị chặn.
 "Kiểm thật" = Integrator tự chạy trên bản gộp thử. vitest: mốc nền 22/11 266/1 → 391/2 hiện tại. Gói giao việc mới: `docs/handoff/NEXT_BATCH_2026-11-23_N14-N23.md`.
@@ -481,15 +481,16 @@ Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu:
 | Mã | Trạng thái | Kiểm thật | Ghi chú |
 |---|---|---|---|
 | N-00 | ✅ 22/11 | — | — |
-| N-01 | 🔍 PR #8 — yêu cầu sửa | chưa chạy (PR xung đột `types.ts`) | Thoại Trang 2 tự viết, trái kịch bản (`d_g07_01.ts:103–120`); tự cập nhật bot e2e Trang 1–4; gộp **sau** N-05 rồi đổi khóa thời tiết |
+| N-01 | 🔍 PR #8 — chờ sửa lần 2 | 4 lệnh ✓ (vitest 413/2) · e2e **37/1 đỏ/1 bỏ qua** (21,6 phút) | Đã giải xung đột + sửa thoại/thời tiết; còn 1 ca đỏ: `game.ts` không phát `lines` của bước minigame → chủ dự án cho N-01 sửa đúng chỗ đó (24/11), `expect.soft` → `expect`, mục tiêu e2e 38/0/1 |
 | N-02 | ✅ PR #4, `f5fb467` | e2e 38/1 | — |
 | N-02b | ✅ PR #7, `c637b5b` | tsc ✓ · vitest 339/2 ✓ · validate ✓ · build ✓ · e2e 38/1 ✓ (27,9 phút) | `recordMg`, `opponent`, `flag` đã nối |
 | N-03 | ✅ PR #1, `a9758c2` | — | — |
 | N-04 | ✅ PR #2, `203982f` | e2e 37/1 | Marker Mốc 2 → N-04b |
-| N-05 | 🔍 PR #5 — cần cập nhật nhánh | lượt trước: e2e 37/1 + 1 lỗi; bản sửa ca 8 chưa kiểm vì xung đột `game.ts` với N-02b | **Gộp đầu tiên khi xong** — chặn N-13, N-15 (biến thể g08/g09) |
-| N-06 | 🔍 PR #9 — yêu cầu sửa | tsc ✓ · vitest 373/2 ✓ · validate ✓ · build ✓; e2e trên chồng có N-06 không lỗi ca nào của N-06 | Họ tên tự đặt, `{player_name}` vẽ thô lên texture, "BÁO TUỔI TRẺ" |
+| N-05 | ✅ PR #5, `8257863` | tsc ✓ · vitest 412/2 ✓ · validate ✓ · build ✓ · e2e **38/1 ✓** (17,8 phút) | Đã mở khóa N-01, N-13, N-15 |
+| N-06 | ✅ PR #9, `628bc5a` | tsc ✓ · vitest 472/2 ✓ · validate ✓ · build ✓ · e2e **38/0/1 ✓** (17,9 phút) | Đã bỏ họ tên tự đặt, `{player_name}`, "TUỔI TRẺ" |
 | N-07 | ✅ PR #10, `bd0d535` | tsc ✓ · vitest 347/2 ✓ · validate ✓ · build ✓ | 5.796 tam giác / 12 lượt vẽ; thiếu ảnh 4 hướng (nhắc) |
-| N-08 | 🔍 PR #11 — yêu cầu sửa | tsc ✓ · vitest 407/2 ✓ · validate ✓ · build ✓ · **e2e 1 lỗi** `game.spec.ts:304` (chạy riêng: nền xanh, có PR đỏ) | Độc thoại kỷ vật chờ Space làm bot không vào Ngày |
+| N-08 | ✅ gộp qua PR #17 (K2), `2a987b6` — PR #11 đã đóng | xem dòng K2 | Ca e2e 304 đã sửa trong K2 |
+| K2 | ✅ PR #17, `2a987b6` | tsc ✓ · vitest 521/2 ✓ · validate ✓ · build ✓ · e2e **45/0/1 ✓** (20,4 phút) | Phòng 2026 đi lại tự do (chủ dự án chốt 24/11) + N-08 + khử ám vàng. **GDD 00 dòng 35/158/239 còn ghi "góc cố định" — chủ dự án cập nhật** |
 | N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | — |
 | N-10 | ✅ PR #6, `b66528b` | — | Bổ sung mã màn 2D → N-10b |
 | N-11a | ✅ PR #12, `c25dd06` | tsc ✓ · vitest 369/2 ✓ · validate ✓ · build ✓ | Lời giải mật lệnh "RA CHƠI" |
@@ -515,7 +516,7 @@ Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu:
 N-05 → (N-04b) → N-15a…e → N-15f → N-19 → N-22. Và N-05 → N-01 → điểm kiểm 26/11.
 
 ### 5.3 Rủi ro
-1. **N-05 đang là nút cổ chai**: chặn N-01, N-13, N-15 (biến thể năm học g08/g09 do N-05 thêm).
+1. ~~N-05 là nút cổ chai~~ — **đã gộp 24/11**. Nút cổ chai mới: **N-01 (#8)** — chặn điểm kiểm 26/11 và N-22.
 2. **e2e là lưới an toàn duy nhất cho luồng chơi** — 2 PR (N-01, N-08) đổi luồng mà chưa chạy e2e; đã quyết: PR nào đổi luồng thì tự cập nhật ca e2e bị ảnh hưởng (ngoại lệ `tests/e2e`).
 3. **Lệch kịch bản ↔ GDD ở Trang 5:** kịch bản v1.5 vẫn ghi "chọn ô 2 lần", GDD `02` §2.1 (duyệt 20/11) ghi rõ thay bằng Caro chơi thật → làm theo GDD; câu thoại theo kết quả Caro vẫn PROPOSED nên chưa vào game.
 4. Chữ tự viết lọt vào PR (N-01 thoại Trang 2, N-06 họ tên) — Integrator đối chiếu từng câu với kịch bản trước khi gộp.

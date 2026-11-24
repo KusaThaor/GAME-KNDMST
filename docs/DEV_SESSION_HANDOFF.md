@@ -1,5 +1,18 @@
 # DEV_SESSION_HANDOFF
 
+## Integrator — 24/11/2026, đợt 2 (ĐỌC TRƯỚC)
+- **Đã gộp thêm:** N-06 #9 → `628bc5a` (e2e 38/0/1) · K2 #17 → `2a987b6` (e2e 45/0/1; chứa N-08, nên **#11 đã đóng**). Nhánh thật sau gộp: tsc ✓ · vitest 521/2 · validate 0 lỗi.
+- **Chưa gộp:** N-01 #8 — còn 1 ca e2e đỏ (`game.ts` không phát thoại của bước minigame); chủ dự án đồng ý cho N-01 sửa đúng chỗ đó rồi mới gộp.
+- **Quyết định chủ dự án 24/11:** phòng 2026 đi lại tự do (thay "góc cố định"). Cần cập nhật `docs/gdd/00_MASTER_GDD.md`.
+- **Chưa kiểm:** build production trên nhánh thật sau gộp · FPS laptop thật · Vercel Preview · Firestore thật · chơi tay.
+
+## Integrator — 24/11/2026, đợt 1
+- **Đã gộp:** N-05 #5 → `8257863` (merge commit) vào `feat/sprint-0412`. Mở khóa N-01 #8, N-13, N-15 (biến thể g08/g09).
+- **Đã kiểm thật** trên bản gộp thử (nền `48677c5`): tsc ✓ · vitest 408/2 → **412/2** · validate:world 0 lỗi · build production ✓ · e2e đầy đủ `--workers=1` **38 đạt / 1 bỏ qua / 0 lỗi** (17,8 phút). Sau gộp, trên nhánh thật `8257863`: tsc ✓ · vitest 412/2 · validate 0 lỗi.
+- **Chưa kiểm:** build production trên nhánh thật sau gộp (đã đạt ở bản gộp thử) · FPS laptop thật · Vercel Preview · Firestore thật · chơi tay.
+- **N-01 #8:** thoại Trang 2 tự viết đã hết ở `b829023`; còn 1 xung đột `types.ts` + đổi khóa thời tiết `d_g07_03.ts` (s06/s07) + chạy lại e2e. "Mục 5.0 / 6.3 / 8 ca e2e đỏ" N-01 nhắc **không tồn tại** ở nhánh nào — đã báo lại trên PR #8.
+- **Lưu ý:** PR #18 (`feat/sprint-0412` → `dev`) và #17 (K2, chứa N-08) đang mở do chủ dự án; Integrator chưa duyệt/gộp.
+
 ## Integrator — đợt gộp sáng 23/11/2026 (ĐỌC TRƯỚC)
 - **Đã gộp** (merge commit, theo thứ tự): N-02b #7 `c637b5b` → N-07 #10 `bd0d535` → N-11a #12 `c25dd06` → N-11b #13 `eeb09c2`.
 - **Trả về sửa** (bình luận chi tiết trên PR): N-05 #5 (xung đột `game.ts` với N-02b), N-08 #11 (e2e đỏ `game.spec.ts:304`), N-06 #9 (chữ tự đặt trên đạo cụ), N-01 #8 (thoại Trang 2 tự viết + xung đột + chưa e2e). Thứ tự gộp khi xong: N-05 → N-08 → N-06 → N-01.
