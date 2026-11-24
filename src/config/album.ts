@@ -10,8 +10,10 @@ export interface AlbumConfig {
   progress_display: 'pages' | 'percent';
   percent_weights: { photo: number; sticker: number; note: number };
   allowed_sources: EntrySource[];
-  /** Ô hiện trên bìa Album (ảnh "đủ năm đứa" — chờ D-02). null = bìa trống. */
+  /** Ô hiện trên bìa Album (kịch bản Trang 4: ảnh cầu vồng). null = bìa trống. */
   cover_entry_id: string | null;
+  /** Ô dùng cho bìa khi nội dung chưa có `cover_entry_id` (trước khi N-01 thêm ô cầu vồng). Bỏ được sau khi N-01 gộp. */
+  cover_fallback_entry_id?: string | null;
 }
 
 export const ALBUM_CONFIG: AlbumConfig = {
@@ -19,7 +21,8 @@ export const ALBUM_CONFIG: AlbumConfig = {
   progress_display: 'pages',
   percent_weights: { photo: 60, sticker: 25, note: 15 },
   allowed_sources: ['gameplay_photo', 'auto_snapshot', 'text', 'sticker_art'],
-  cover_entry_id: 'alb.d.g07.03.01',
+  cover_entry_id: 'alb.d.g07.03.cover',
+  cover_fallback_entry_id: 'alb.d.g07.03.01',
 };
 
 export const SLOT_WEIGHT_GROUP: Record<SlotType, keyof AlbumConfig['percent_weights']> = {
