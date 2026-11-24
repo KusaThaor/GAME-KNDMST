@@ -5,6 +5,7 @@
 - **Đã kiểm thật:** bản gộp thử #8: tsc ✓ · vitest 521/2 → **522/2** · validate 0 lỗi · build production ✓ · e2e `--workers=1` **45 đạt / 0 đỏ / 1 bỏ qua** (22,0 phút). Sau gộp, trên `303bd09` và trên `dev` `d5f1a09`: tsc ✓ · vitest 522/2 · validate 0 lỗi · build production ✓, bản build không chứa `tweakpane`, `__game`, `inputdebug`, `camtest`, `bot=release`. Vercel build `d5f1a09`: success.
 - **Chưa kiểm:** chơi tay trên Preview `dev` · FPS laptop thật · `/api/health` + Firestore thật trên Vercel (không mở được Preview từ phiên này) · ca Emulator.
 - **Production Mốc 1: chưa sẵn sàng.** Khối `production` của `release.ts` vẫn 0 Trang (Production chỉ có trang chủ); khai ngay thì Side/Daily `AI_PROPOSED` lọt vào vì validator production chỉ in lỗi ra console. Cần N-01b + N-22a + N-19a + chủ dự án chốt Q1 (màn kết Mốc 1 đang nhắc chuyện lớp 8) rồi mới gộp `main`.
+- **Chủ dự án chốt 25/11:** chưa gộp `main` · màn kết Mốc 1 = phương án A · tên game đổi thành "Vùng Ký Ức" (task N-24) · Codex không dùng nữa · Firebase `configured` · GDD phòng 2026 đã sửa.
 - **Việc tiếp:** `docs/handoff/NEXT_BATCH_2026-11-25.md` (N-01b, N-22a, N-19a, N-12, N-18). Tiến độ: board Mục 5.
 
 ## Integrator — 24/11/2026, đợt 2 (ĐỌC TRƯỚC)

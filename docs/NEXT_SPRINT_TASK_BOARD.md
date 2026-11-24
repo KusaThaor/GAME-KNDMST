@@ -482,6 +482,7 @@ Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã 
 |---|---|---|---|
 | N-00 | ✅ 22/11 | — | — |
 | N-01 | ✅ PR #8, `303bd09` | tsc ✓ · vitest 522/2 ✓ · validate ✓ · build ✓ · e2e **45/0/1 ✓** (22,0 phút) | Câu Hạ "…bỏ bạn đó **ở lại**…" đã sửa (`2bbf275`). Tồn: thoại trước/sau trò → **N-01b** |
+| N-24 | ❌ → giao 25/11 | — | Đổi tên game "Vùng Ký Ức" (chủ dự án chốt 25/11). `docs/gdd/` + `CLAUDE.md` do chủ dự án sửa. Gộp trước N-18 (cùng `src/main.ts`) |
 | N-01b | ❌ → giao 25/11 | — | Tách thoại trước/sau minigame Trang 1 + Luật Căn cứ Trang 3 (Mốc 1, P0) |
 | N-02 | ✅ PR #4, `f5fb467` | e2e 38/1 | — |
 | N-02b | ✅ PR #7, `c637b5b` | e2e 38/1 | — |
@@ -491,7 +492,7 @@ Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã 
 | N-05 | ✅ PR #5, `8257863` | e2e 38/1 | — |
 | N-06 | ✅ PR #9, `628bc5a` | e2e 38/0/1 | — |
 | N-07 | ✅ PR #10, `bd0d535` | — | Thiếu ảnh 4 hướng (nhắc) |
-| N-08 + K2 | ✅ PR #17, `2a987b6` | e2e 45/0/1 | **GDD 00 dòng 35/158/239 còn ghi phòng 2026 "góc cố định" — chủ dự án cập nhật** |
+| N-08 + K2 | ✅ PR #17, `2a987b6` | e2e 45/0/1 | GDD 00 đã sửa "đi lại tự do" (`2fe845a`, 25/11) |
 | N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | Firestore thật chưa kiểm |
 | N-10 | ✅ PR #6, `b66528b` | — | — |
 | N-10b | ✅ PR #14, `9ca9b96` | gộp 24/11; nằm trong lần kiểm #18 | — |
@@ -503,7 +504,7 @@ Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã 
 | N-15b, N-15d, N-15e | ❌ (giao 23/11, chưa thấy nhánh) | — | Mốc 2 |
 | N-15f | ❌ sóng 2 | — | **Phần `filterPackForRelease` chuyển sang N-22a**; gộp sau N-22a, N-01b |
 | N-16, N-17 | ❌ (giao 23/11, chưa thấy nhánh) | — | Mốc 2 |
-| N-18 | ❌ → giao 25/11 | — | Cần trước kỳ đo 05/12; chờ Q2 (sửa dở `src/main.ts`) |
+| N-18 | ❌ → giao 25/11 | — | Cần trước kỳ đo 05/12; gộp sau N-24; Codex không dùng nữa → giao Sonnet/Opus |
 | N-19a | ❌ → giao 25/11 (người) | — | Chơi tay Mốc 1 + FPS trên Preview `dev` |
 | N-19 | ❌ cổng cuối | — | e2e 9 Trang |
 | N-20, N-21, N-23 | ❌ P2 | — | N-20 sửa `docs/gdd/` → hỏi chủ dự án trước khi gộp |
@@ -516,8 +517,8 @@ Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã 
 1. **N-22a** — khối `production` của `release.ts` đang **0 Trang** (Production hiện chỉ có trang chủ, không có nút chơi). Khai ngay thì 5 quest Side/Daily `AI_PROPOSED` lọt vào game vì validator production **chỉ in lỗi ra console, không chặn**.
 2. **N-01b** — thoại trước/sau trò đang ngược ở Trang 1 (mật lệnh, đá cầu, bóp mì, 3 câu tấm tự sướng) và Trang 3 (5 điều luật).
 3. **N-19a** — chưa ai chơi tay trọn Mốc 1, chưa đo FPS laptop thật.
-4. **Q1** — màn kết bản Mốc 1: 2/3 tin nhắn kết nhắc chuyện lớp 8 (caro, Điều 6) mà người chơi chưa gặp.
-5. Biến `FIREBASE_SERVICE_ACCOUNT` trên Vercel (Production + Preview) — chưa kiểm được từ đây; mở `/api/health` phải thấy `firebase: configured`.
+4. ~~Q1~~ — chủ dự án chốt phương án A (25/11): giữ màn kết như bản test tới khi Mốc 2 lên.
+5. ~~Firebase trên Vercel~~ — chủ dự án kiểm 25/11: `/api/health` → `firebase: configured`. (Chưa ghi rõ kiểm bản Production hay chỉ Preview — hỏi lại.)
 **Nên có (không chặn):** N-12 (người lớn, học sinh nền), N-18 (event trang chủ — cần trước 05/12).
 
 ### 5.2 So với lịch Mục 1.1
