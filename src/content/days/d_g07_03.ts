@@ -14,7 +14,11 @@ export const day: MemoryDay = {
   title: 'Trang 4: Đủ năm đứa',
   school_year_id: 'g07',
   map_id: 'map_thcs',
-  map_variant: 'g07',
+  map_variant: 'g07_end',
+  weather_by_step: {
+    'q_m1_main_05.s04': 'rain_shower',
+    'q_m1_main_05.s05': 'after_rain_rainbow',
+  },
   open_zones: ['zone.thcs.classroom', 'zone.thcs.corridor', 'zone.thcs.yard', 'zone.thcs.gate', 'zone.thcs.field', 'zone.thcs.base'],
   spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_05',

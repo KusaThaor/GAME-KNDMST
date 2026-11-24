@@ -13,7 +13,7 @@ import { collectSets, DRESSING_SETS, mountDressing, type DressingCtx, type Dress
 import { makeShed, pillarSpots } from '../../../src/world/dressing/sets/backyard';
 import { boxCollider, cameraPair, marker } from '../../../src/world/extras';
 import { WORLD_INDEXES } from '../../../src/world/maps';
-import { BACKYARD, EXTRAS } from '../../../src/world/maps/map_thcs.extras';
+import { BACKYARD, EXTRAS, M2_MARKERS } from '../../../src/world/maps/map_thcs.extras';
 import type { MarkerKind, WorldExtras } from '../../../src/world/types';
 import { validateWorld, validateWorldContent } from '../../../src/world/validate';
 import { DEFAULT_DECOR, LIGHTING_PRESETS } from '../../../src/world/variants';
@@ -201,6 +201,90 @@ describe('World Extras trên bản đồ thật map_thcs', () => {
     const c = at(w, 18, -12);
     expect(walk(c, [30, -12], { run: true, maxSeconds: 8 })).toBe(false);
     expect(c.x).toBeLessThan(26);
+  });
+});
+
+describe('N-04b — marker Mốc 2 (hợp đồng mã NEXT_BATCH_2026-11-23_N14-N23 mục 2)', () => {
+  /** Đúng 16 mã của bảng hợp đồng: mã → [loại, khu]. */
+  const CONTRACT: Record<string, [MarkerKind, string]> = {
+    'cam.thcs.m2_opening': ['camera', 'yard'],
+    'itr.thcs.chalk_box': ['interact', 'classroom'],
+    'cam.thcs.m2_caro_board': ['camera', 'classroom'],
+    'spot.thcs.guard_corridor': ['spot', 'corridor'],
+    'spot.thcs.library_porch': ['spot', 'corridor'],
+    'spot.thcs.phuong_root': ['spot', 'yard'],
+    'itr.thcs.m2_mailbox': ['interact', 'base'],
+    'cam.thcs.m2_valentine_group': ['camera', 'base'],
+    'itr.thcs.m2_hoop': ['interact', 'yard'],
+    'cam.thcs.m2_newspaper': ['camera', 'classroom'],
+    'itr.thcs.m2_grocery_tv': ['interact', 'gate'],
+    'cam.thcs.m2_tv_group': ['camera', 'gate'],
+    'itr.thcs.m2_tent': ['interact', 'field'],
+    'itr.thcs.m2_campfire': ['interact', 'field'],
+    'cam.thcs.m2_campfire_group': ['camera', 'field'],
+    'cam.thcs.m2_final_five': ['camera', 'yard'],
+  };
+  const CAMS = Object.keys(CONTRACT).filter((id) => CONTRACT[id][0] === 'camera');
+  let world: World;
+  beforeAll(async () => { world = await load(); });
+
+  it('M2_MARKERS có ĐÚNG 16 mã hợp đồng (không thừa, không thiếu) + một đích cho mỗi máy ảnh', () => {
+    expect(Object.keys(CONTRACT)).toHaveLength(16);
+    expect(M2_MARKERS.filter((m) => m.kind !== 'target').map((m) => m.id).sort()).toEqual(Object.keys(CONTRACT).sort());
+    expect(M2_MARKERS.filter((m) => m.kind === 'target').map((m) => m.id).sort()).toEqual(CAMS.map((id) => `${id}.target`).sort());
+    for (const m of M2_MARKERS) expect(EXTRAS.markers, m.id).toContain(m);
+  });
+
+  it('mỗi mã nạp được trên bản đồ thật, đúng loại, đúng khu; vị trí (cả máy ảnh) nằm trong khu đó', () => {
+    expect(world.problems).toEqual([]);
+    for (const [id, [kind, zone]] of Object.entries(CONTRACT)) {
+      const m = world.marker(kind, id);
+      expect(m, id).not.toBeNull();
+      expect(m!.zone, id).toBe(Z(zone));
+      expect(world.zoneAt(m!.position[0], m!.position[2]), id).toBe(Z(zone));
+    }
+  });
+
+  it('máy ảnh có cặp .target cùng khu, nhìn thẳng tới đích không bị vật cản che', () => {
+    for (const id of CAMS) {
+      const t = world.marker('target', `${id}.target`);
+      expect(t, id).not.toBeNull();
+      expect(t!.zone, id).toBe(world.marker('camera', id)!.zone);
+      const b = bindCamera({ id, marker: id }, world)!;
+      expect(world.segmentHit(b.position, b.look_at, 0.05), id).toBeNull();
+    }
+  });
+
+  it('chủ thể của từng ảnh nằm trong khung (fov 40, 4:3)', () => {
+    const inFrame = (camId: string, p: [number, number, number]) => {
+      const b = bindCamera({ id: 'x', marker: camId }, world)!;
+      const cam = new THREE.PerspectiveCamera(b.fov, 4 / 3, 0.1, 400);
+      cam.position.set(...b.position); cam.lookAt(new THREE.Vector3(...b.look_at)); cam.updateMatrixWorld(true);
+      const v = new THREE.Vector3(...p).project(cam);
+      return Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9 && v.z < 1;
+    };
+    const pos = (kind: MarkerKind, id: string, dy = 0): [number, number, number] => { const p = world.marker(kind, id)!.position; return [p[0], p[1] + dy, p[2]]; };
+    const subjects: [string, [number, number, number][]][] = [
+      ['cam.thcs.m2_opening', [1, 2, 3, 4].map((i) => pos('spot', `spot.thcs.yard_group_${i}`, 1.5))],      // đầu 4 bạn
+      ['cam.thcs.m2_caro_board', [[1.04, 1.1, -28.1], [1.04, 2.3, -23.9]]],                                // hai góc bảng đen
+      ['cam.thcs.m2_newspaper', [[-7.1, 1.25, -29.84], [-4.9, 2.35, -29.84]]],                             // hai góc báo tường
+      ['cam.thcs.m2_valentine_group', [pos('interact', 'itr.thcs.m2_mailbox', 0.5)]],
+      ['cam.thcs.m2_tv_group', [pos('interact', 'itr.thcs.m2_grocery_tv', 1.0)]],
+      ['cam.thcs.m2_campfire_group', [pos('interact', 'itr.thcs.m2_campfire', 0.8)]],
+      ['cam.thcs.m2_final_five', [pos('spot', 'spot.thcs.phuong_root', 1.0), [-12, 5, -6]]],                // người ở gốc + tán phượng
+    ];
+    for (const [cam, pts] of subjects) for (const p of pts) expect(inFrame(cam, p), `${cam} ← ${p}`).toBe(true);
+    const o = world.marker('camera', 'cam.thcs.m2_opening')!, ot = world.marker('target', 'cam.thcs.m2_opening.target')!;
+    expect(ot.position[1] - o.position[1]).toBeGreaterThan(1);                                              // chụp từ dưới lên
+    const log = world.marker('spot', 'spot.thcs.field_log')!, fc = world.marker('camera', 'cam.thcs.m2_campfire_group')!;
+    expect(Math.hypot(fc.position[0] - log.position[0], fc.position[2] - log.position[2])).toBeLessThan(0.01); // máy trên khúc gỗ
+  });
+
+  it('validate:world vẫn 0 lỗi, 0 nhắc; thiếu một .target → camera_no_target', () => {
+    expect(validateWorld(THCS, WORLD_INDEXES.map_thcs, PRESETS)).toEqual([]);
+    const e = clone(EXTRAS);
+    e.markers = e.markers.filter((m) => m.id !== 'cam.thcs.m2_final_five.target');
+    expect(codes(validateWorld(THCS, WORLD_INDEXES.map_thcs, PRESETS, e))).toEqual(['camera_no_target']);
   });
 });
 

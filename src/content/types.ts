@@ -68,8 +68,8 @@ export type Step =
   | (StepBase & { kind: 'choice'; choice_id: string; prompt?: DialogueLine; options: ChoiceOption[]; about?: ActorRef[]; measured?: boolean })
   | (StepBase & { kind: 'collect'; item: string; targets: string[]; count: number })
   | (StepBase & { kind: 'place'; item: string; target: string })
-  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone })
-  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; opponent?: string; lines?: DialogueLine[] })
+  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone; /** handheld: số lần chụp rồi chọn 1 (mặc định 1) */ shots?: number })
+  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; lines?: DialogueLine[]; opponent?: string })
   | (StepBase & { kind: 'cutscene'; lines: DialogueLine[] })
   | (StepBase & { kind: 'free'; prompt?: string })
   | (StepBase & { kind: 'setFlag'; flag: string; value: FlagValue })
@@ -135,6 +135,7 @@ export interface CameraPoint { id: string; marker?: string; position?: [number, 
 export interface StandZone { marker?: string; center?: [number, number]; radius: number }
 
 export interface MemoryDay {
+  weather_by_step?: Record<string, string>;
   id: string;                         // d.gNN.KK
   title: string;
   school_year_id: string;

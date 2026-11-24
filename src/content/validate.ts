@@ -36,10 +36,11 @@ export const ID_PATTERNS = {
 export const PLACEHOLDER_TAG = '[PLACEHOLDER]';
 export const LINE_LIMITS = { maxChars: 90, maxLines: 2, playerNameChars: 12 } as const;
 
-// Mã nội dung đã chốt trong N-01/N-15/N-16, kể cả các trò còn chờ module đồ họa.
+// Mã trò chơi và màn 2D đã chốt cho nội dung cốt truyện.
 const STORY_MINIGAMES = new Set([
   'mg_cipher', 'mg_footbag', 'mg_wipe_board', 'mg_noodle', 'mg_boat', 'mg_base_build', 'mg_rules', 'mg_lineup',
   'mg_caro', 'mg_sudoku', 'mg_throw', 'mg_photo_hunt', 'mg_decorate', 'mg_mailbox_build',
+  'mg_screen_confession', 'mg_screen_letter_write', 'mg_screen_letter_read', 'mg_screen_three_gates',
 ]);
 
 const extras = import.meta.glob<{ map_id: string; markers: Marker[] }>('../world/maps/*.extras.ts', { eager: true, import: 'EXTRAS' });
