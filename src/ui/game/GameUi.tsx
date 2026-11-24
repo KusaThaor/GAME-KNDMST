@@ -136,7 +136,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
   // đăng ký xong thì đọc lại ngay: trạng thái có thể đã đổi giữa lần vẽ đầu và lúc effect chạy (vd. câu hỏi đồng ý lúc mở game)
   useEffect(() => { const off = store.subscribe(setS); setS(store.get()); return off; }, []);
   const touch = s.device === 'touch';
-  const blocking = s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel;
+  const blocking = s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.photo?.phase === 'pick' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel;
   return (
     <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''} data-device={s.device}>
       {s.placeholderBanner && <div class="g-banner">Bản khung — nội dung [PLACEHOLDER], không phải cốt truyện</div>}
@@ -194,11 +194,31 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       )}
       {s.photo && s.photo.phase === 'ready' && (
         <Pop class="g-card g-photo-ready" testid="photo-ready">
-          <h2>Máy ảnh đã đặt</h2>
-          <p>{s.photo.mode === 'timer' ? `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm ${touch ? 'nút Tạo dáng' : 'Space'} để tạo dáng (${s.photo.seconds} giây).` : 'Bấm để chụp.'}</p>
-          <button class="primary" data-act="photo-start" onClick={a.photoStart}>{s.photo.mode === 'timer' ? 'Hẹn giờ' : 'Chụp'}</button>
+          <h2>{s.photo.shot ? `Tự sướng — lần ${s.photo.shot.index}/${s.photo.shot.total}` : 'Máy ảnh đã đặt'}</h2>
+          <p>{s.photo.mode === 'timer' ? `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm ${touch ? 'nút Tạo dáng' : 'Space'} để tạo dáng (${s.photo.seconds} giây).`
+            : s.photo.shot ? `Máy quay ngược, không thấy khung — cứ đoán rồi bấm. Chụp đủ ${s.photo.shot.total} lần rồi chọn một tấm để giữ.` : 'Bấm để chụp.'}</p>
+          <button class="primary" data-act="photo-start" data-shot={s.photo.shot?.index} onClick={a.photoStart}>{s.photo.mode === 'timer' ? 'Hẹn giờ' : 'Chụp'}</button>
         </Pop>
       )}
+      {s.photo && s.photo.phase === 'pick' && s.photo.picks && (() => {
+        const ph = s.photo, chosen = ph.picks![ph.picked ?? 0];
+        return (
+          <Pop class="g-card g-photo g-photo-pick" testid="photo-pick">
+            <h2>Chọn một tấm để giữ</h2>
+            {chosen && <img src={chosen.url} alt={`Tấm ${(ph.picked ?? 0) + 1}`} data-testid="photo-picked" data-index={ph.picked ?? 0} style={{ maxHeight: 'min(38vh, 320px)' }} />}
+            <div class="g-row g-picks" style={{ justifyContent: 'center' }}>{ph.picks!.map((p, i) => (
+              <button class={i === ph.picked ? 'on' : ''} data-act={`photo-pick-${i}`} aria-pressed={i === ph.picked} onClick={() => a.photoPick(i)}>
+                <img src={p.url} alt="" style={{ width: '96px', height: '72px', objectFit: 'cover', borderWidth: '3px', marginBottom: '4px' }} />
+                {!touch && <kbd>{i + 1}</kbd>} Tấm {i + 1}
+              </button>
+            ))}</div>
+            {chosen && (ph.display === 'marks'
+              ? <div class="g-marks">{chosen.marks.map((m) => <span class={m.ok ? 'ok' : ''} data-mark={String(m.ok)}>{m.ok ? '●' : '○'} {m.label}</span>)}</div>
+              : <div class="g-marks"><span class="ok">Điểm ảnh: {chosen.score}</span></div>)}
+            <div class="g-row"><button data-act="photo-retry" onClick={a.photoRetry}>Chụp lại cả {ph.picks!.length} tấm</button><button class="primary" data-act="photo-keep" onClick={a.photoKeep}>Giữ ảnh này</button></div>
+          </Pop>
+        );
+      })()}
       {s.photo && s.photo.phase === 'countdown' && (
         <div class="g-countdown" data-testid="photo-countdown"><b>{Math.max(0, Math.ceil(s.photo.seconds))}</b>{s.photo.posed ? <span>Giữ nguyên nha!</span> : <button class="primary" data-act="photo-pose" onClick={a.photoPose}>Tạo dáng{!touch && <> <kbd>Space</kbd></>}</button>}</div>
       )}
