@@ -63,13 +63,13 @@ it('Trang 4 chuyển mưa sang cầu vồng theo step_activated; rời cảnh h�
   const sky = skyDome();
   scene.add(sky); scene.fog = new THREE.Fog(0xffffff);
   const atm = createAtmosphere(scene, { sun: new THREE.DirectionalLight(), hemi: new THREE.HemisphereLight(),
-    fx, camera, bus, sky, day, stepId: 'q_m1_main_05.s04' }, 'late_afternoon');
+    fx, camera, bus, sky, day, stepId: 'q_m1_main_05.s06' }, 'late_afternoon');
   camera.position.set(30, 2, -5); atm.update(1 / 60);
   const rain = scene.getObjectByName('rain')!;
   expect(rain.position.toArray()).toEqual(camera.position.toArray());
   const activate = (step_id: string) => bus.emit('step_activated', { step_id, quest_id: 'q_m1_main_05', kind: 'cutscene', is_replay: false, resumed: false });
   const before = sky.material.uniforms.zenith.value.clone();
-  activate('q_m1_main_05.s05');
+  activate('q_m1_main_05.s07');
   atm.update(0.7);
   expect(sky.material.uniforms.zenith.value.equals(before)).toBe(false);
   expect(rain.visible).toBe(false);
@@ -78,7 +78,7 @@ it('Trang 4 chuyển mưa sang cầu vồng theo step_activated; rời cảnh h�
   expect(scene.getObjectByName('rainbow')?.visible).toBe(false);
   expect(scene.getObjectByName('stars')?.visible).toBe(true);
   atm.dispose(); fx.dispose();
-  activate('q_m1_main_05.s04');
+  activate('q_m1_main_05.s06');
   expect(atm.preset).toBe('night_campfire');
   expect(scene.children).toHaveLength(1);
   expect(scene.children[0]).toBe(sky);
