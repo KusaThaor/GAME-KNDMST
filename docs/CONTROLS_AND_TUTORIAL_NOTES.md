@@ -23,7 +23,7 @@ Nguồn sự thật trong code:
 | Tạo dáng khi chụp ảnh hẹn giờ | `Space` hoặc nút "Tạo dáng" | Chạy vào vòng sáng trước |
 | Sổ tay | `J` (hoặc `Tab`), nút "Sổ tay" góc trên phải | |
 | Menu | `Esc`, nút "Menu" góc trên phải | |
-| Phòng 2026 | bấm chuột vào đồ vật | Camera cố định |
+| Phòng 2026 | **đi lại góc nhìn thứ nhất** (như `feat/hub-2026`): `W A S D`/mũi tên đi theo hướng đang nhìn, giữ `Shift` chạy; **rê chuột** về phía nào thì nhìn về phía đó (không cần bấm, giới hạn ±65° ngang, không quay vòng); cảm ứng: kéo màn hình để nhìn. Lại gần đồ vật đang nhìn → `E` hoặc bấm chuột để tương tác; Hộp Kỷ Vật mở cận cảnh 3D, bấm món đang sáng; `Esc` đóng hộp / mở menu | Camera đi lại, có va chạm với tường và đồ đạc (số liệu ở `src/config/hubRoom.ts`). Thay "Camera cố định" từ K2 (24/11) |
 | (để dành) Máy ảnh cầm tay / cuộn phim | `C` | Chưa làm, không gán việc khác |
 
 **Dòng hướng dẫn đang hiện dưới màn hình:**

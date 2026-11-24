@@ -159,7 +159,7 @@ export const artifact: Artifact = {
   description: 'Bức ảnh chụp dưới gốc phượng cuối năm lớp 7, dán ở Căn cứ lâu ngày nên bị ố vàng.',
   school_year_id: 'g07',
   hook_2026: 'Tấm này ố hết rồi mà vẫn giữ.',
-  appear_when: { any: [{ day: 'd.g07.02' }, { day: 'd.g06.01' }] },
+  appear_when: { day: 'd.g07.02' },   // chỉ sáng khi xong Trang 3 (chủ dự án chốt 22/11: thứ tự Trang 1→4 ở Hộp Kỷ Vật)
   target_memory_day_id: 'd.g07.03',
   complete_when: 'day_completed',
   reward_fragment_ids: ['frag.d.g07.03.01'],
