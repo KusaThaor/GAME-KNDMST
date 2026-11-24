@@ -13,6 +13,11 @@ export const RELEASES: Record<'test' | 'production', ReleaseDef> = {
     end_day_id: 'd.g07.03',
     end_step_id: 'q_hub_pd_03.s01',
   },
-  // Bản production: chờ hoàn tất nghiệm thu T-06 và kiểm toán chốt D-03 để kích hoạt trọn Mốc 1.
-  production: { memory_day_ids: [], end_day_id: null },
+  // Bản production Mốc 1 (N-22a): cùng 4 Trang, cùng thứ tự với bản test. Kết theo Q1 = phương án A (chủ dự án chốt 25/11):
+  // giữ màn kết như bản test tới khi Mốc 2 lên. Side/Daily do AI nghĩ KHÔNG khai ở đây mà bị tắt bởi `filterPackForRelease` (pack.ts).
+  production: {
+    memory_day_ids: ['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03'],
+    end_day_id: 'd.g07.03',
+    end_step_id: 'q_hub_pd_03.s01',
+  },
 };

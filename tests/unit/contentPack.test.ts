@@ -3,7 +3,7 @@
  * Nội dung sai ID/tham chiếu → test này đỏ và in đúng ID bị sai.
  */
 import { describe, expect, it } from 'vitest';
-import { CONTENT, contentConfig } from '../../src/content/pack';
+import { CONTENT, contentConfig, filterPackForRelease } from '../../src/content/pack';
 import { ACTIVE_CAST, CAST_TABLES } from '../../src/content/cast';
 import { RELEASES } from '../../src/content/release';
 import { formatReport, validateContent } from '../../src/content/validate';
@@ -16,9 +16,10 @@ describe('gói nội dung trong repo', () => {
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
   });
   it('hợp lệ ở production (nội dung giả không được lọt vào)', () => {
-    const r = validateContent(CONTENT, contentConfig('production'));
+    // Từ N-22a production có 4 Trang; Side/Daily AI bị tắt bởi filterPackForRelease (kiểm chi tiết ở releaseProduction.test.ts).
+    const r = validateContent(filterPackForRelease(CONTENT, 'production'), contentConfig('production'));
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
-    expect(RELEASES.production.memory_day_ids).toEqual([]);
+    expect(RELEASES.production.memory_day_ids).toHaveLength(4);
   });
   it('mọi bảng vai (D-01) đều chạy được với cùng nội dung', () => {
     expect(Object.keys(CAST_TABLES)).toContain(ACTIVE_CAST);
