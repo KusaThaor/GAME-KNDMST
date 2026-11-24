@@ -8,6 +8,7 @@ import { HUB_CONFIG } from '../../src/config/hub';
 import { HUB } from '../../src/content/hub';
 import { buildHubScene } from '../../src/game/scenes/hubScene';
 import { mergeStatic } from '../../src/render/merge';
+import { addDaylight } from '../../src/render/stage';
 import { HUB_DECOR_BUILDERS, HUB_PROP_COLORS, buildHubDecor, type HubDecorKey } from '../../src/world/props/hub';
 import { makeCurtain, makeDeskLamp, makeGlassFrame, makeNightWindow, makeRug, makeRulebook, makeWallFrame } from '../../src/world/props/hub/room';
 
@@ -129,6 +130,18 @@ describe('K2 phòng 2026 — đặt đồ và va chạm', () => {
     const want = new THREE.Color(HUB_PROP_COLORS.lamp_diffuser).getHex();
     const diffuser = meshes(s.scene).find((m) => (m.material as THREE.MeshToonMaterial).color?.getHex() === want && (m.material as THREE.MeshToonMaterial).emissiveIntensity > 0);
     expect(diffuser, 'đèn trần tự sáng').toBeDefined();
+    s.dispose();
+  });
+  it('bộ đèn phòng 2026 trùng bộ đèn cảnh Trang (addDaylight) → chuyển cảnh không đổi số nguồn sáng, không biên dịch lại shader', () => {
+    const sig = (root: THREE.Object3D) => {
+      const out: string[] = [];
+      root.traverse((o) => { const l = o as THREE.Light; if (l.isLight) out.push(`${l.type}:${l.castShadow ? 'bóng' : '-'}`); });
+      return out.sort();
+    };
+    const s = scene();
+    const day = new THREE.Scene(); addDaylight(day, { shadowSize: 24 });
+    expect(sig(s.scene)).toEqual(sig(day));
+    expect(sig(s.scene)).toEqual(['DirectionalLight:bóng', 'HemisphereLight:-']);
     s.dispose();
   });
 });
