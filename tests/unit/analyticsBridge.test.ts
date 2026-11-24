@@ -42,23 +42,60 @@ function playAll(t: ReturnType<typeof setup>) {
   e.trigger('interact', 'itr.hub.memory_box'); hub.refresh();
   hub.openArtifact('art_m1_01');
   e.startDay('d.g06.01');
-  e.trigger('interact', 'NPC_B'); e.complete('q_m1_side_01.s01'); e.trigger('arrive', 'itr.thcs.flagpole');
+  e.trigger('interact', 'NPC_B'); e.complete('q_m1_ai_side_01.s01'); e.trigger('arrive', 'itr.thcs.flagpole');
   e.trigger('interact', 'itr.thcs.duty_spot');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_01.s01');
-  e.trigger('interact', 'itr.thcs.stone_bench'); e.complete('q_m1_main_01.s02');
+  e.complete('q_m1_main_01.s02');
+  e.complete('q_m1_main_01.s03');
+  e.complete('q_m1_main_01.s04');
+  e.complete('q_m1_main_01.s05');
+  e.complete('q_m1_main_01.s06');
+  bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  e.complete('q_m1_main_01.s07');
   e.enterHub(); hub.refresh(); hub.runPdes();
+
+  hub.openArtifact('art_m1_02');
+  e.startDay('d.g07.01');
+  e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_02.s01');
+  e.trigger('interact', 'NPC_C'); e.complete('q_m1_main_02.s02');
+  e.complete('q_m1_main_02.s03', { option_id: 'friendship' });
+  e.trigger('interact', 'itr.thcs.gutter'); e.complete('q_m1_main_02.s04');
+  e.complete('q_m1_main_02.s05');
+  e.answerEndPrompt('leave');
+  e.enterHub(); hub.refresh(); hub.runPdes();
+
+  hub.openArtifact('art_m1_03');
+  e.startDay('d.g07.02');
+  e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_03.s01');
+  e.trigger('interact', 'itr.thcs.base_survey_roof'); e.trigger('interact', 'itr.thcs.base_survey_stump'); e.trigger('interact', 'itr.thcs.base_survey_boxes');
+  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
+  e.complete('q_m1_main_03.s04');
+  e.complete('q_m1_main_03.s05');
+  e.complete('q_m1_main_03.s06');
+  e.answerEndPrompt('leave');
+  e.enterHub(); hub.refresh(); hub.runPdes();
+
   album.markViewed(); album.markBackViewed('alb.d.g07.03.02');
   hub.openArtifact('art_m1_05');
   e.startDay('d.g07.03');
+  // Side giả 02 (thêm ở S2): đi một vòng 5 khu còn lại của bản đồ
+  for (const place of ['gutter', 'blackboard', 'snack_cart', 'marble_spot', 'old_table']) e.trigger('arrive', `itr.thcs.${place}`);
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_05.s01');
   e.complete('q_m1_main_05.s02', { option_id: 'gentle' });
-  e.trigger('interact', 'itr.thcs.tripod_spot');
-  bus.emit('photo_attempt', { step_id: 'q_m1_main_05.s04', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
-  bus.emit('photo_kept', { step_id: 'q_m1_main_05.s04', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
-  e.complete('q_m1_main_05.s04'); e.complete('q_m1_main_05.s05');
+  e.trigger('interact', 'itr.thcs.tripod_spot'); e.complete('q_m1_main_05.s03');
+  e.complete('q_m1_main_05.s04');
+  bus.emit('photo_attempt', { step_id: 'q_m1_main_05.s05', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  bus.emit('photo_kept', { step_id: 'q_m1_main_05.s05', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  e.complete('q_m1_main_05.s05');
+  e.complete('q_m1_main_05.s06');
+  bus.emit('photo_attempt', { step_id: 'q_m1_main_05.s07', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  bus.emit('photo_kept', { step_id: 'q_m1_main_05.s07', mode: 'timer', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+  e.complete('q_m1_main_05.s07');
+  e.complete('q_m1_main_05.s08');
   e.enterHub(); hub.refresh(); hub.runPdes();
   e.complete('q_hub_pd_02.s01');
-  e.complete('q_hub_pd_03.s01', { option_id: 'curious' });
+  e.complete('q_hub_pd_03.s01', { option_id: 'deep' });
   bus.emit('feedback_shown', { placement: 'demo_end' });
   bus.emit('feedback_skipped', { placement: 'demo_end' });
 }
@@ -70,7 +107,7 @@ describe('cầu nối analytics (F8)', () => {
 
   it('có đủ event mới sau khi chơi hết gói giả', () => {
     const t = setup(); playAll(t);
-    for (const n of ['game_started', 'appearance_selected', 'artifact_opened', 'memory_day_started', 'memory_day_completed', 'milestone_completed',
+    for (const n of ['game_started', 'appearance_selected', 'artifact_opened', 'page_started', 'page_completed', 'milestone_completed',
       'quest_started', 'quest_step_completed', 'quest_completed', 'choice_made', 'photo_attempt', 'photo_kept',
       'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'public_demo_completed', 'feedback_shown', 'feedback_skipped'] as const) {
       expect(t.names(), n).toContain(n);
@@ -79,22 +116,26 @@ describe('cầu nối analytics (F8)', () => {
 
   it('memory_day_* mang milestone_id, school_year, memory_day_id, chapter_label, is_replay', () => {
     const t = setup(); playAll(t);
-    expect(t.of('memory_day_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', memory_day_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Chương lớp 6', is_replay: false });
-    expect(t.of('memory_day_completed').map((p) => p.memory_day_id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', is_replay: false });
+    expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03']);
     expect(t.of('milestone_completed')).toEqual([{ milestone_id: 'm1' }]);
   });
 
   it('event quest có quest_type, milestone_id (m1/hub), memory_day_id, is_replay', () => {
     const t = setup(); playAll(t);
-    expect(t.of('quest_completed').find((p) => p.quest_id === 'q_m1_side_01')).toEqual({ quest_id: 'q_m1_side_01', quest_type: 'side', milestone_id: 'm1', memory_day_id: 'd.g06.01', is_replay: false });
+    expect(t.of('quest_completed').find((p) => p.quest_id === 'q_m1_ai_side_01')).toEqual({ quest_id: 'q_m1_ai_side_01', quest_type: 'side', milestone_id: 'm1', memory_day_id: 'd.g06.01', is_replay: false });
     expect(t.of('quest_started').find((p) => p.quest_id === 'q_hub_pd_02')).toMatchObject({ quest_type: 'pd', milestone_id: 'hub', memory_day_id: null });
     expect(t.of('quest_step_completed').every((p) => typeof p.step_id === 'string' && 'is_replay' in p)).toBe(true);
   });
 
   it('pd_quest_step chỉ có sắc thái, không có nội dung tin nhắn', () => {
     const t = setup(); playAll(t);
-    expect(t.of('pd_quest_step').at(-1)).toEqual({ quest_id: 'q_hub_pd_03', step_id: 'q_hub_pd_03.s01', choice_tone: 'curious' });
-    expect(t.of('choice_made')).toEqual([{ choice_id: 'c_m1_05_tone', tone: 'gentle', memory_day_id: 'd.g07.03', is_replay: false }]);
+    expect(t.of('pd_quest_step').at(-1)).toEqual({ quest_id: 'q_hub_pd_03', step_id: 'q_hub_pd_03.s01', choice_tone: 'deep' });
+    expect(t.of('choice_made')).toEqual([
+      { choice_id: 'c_m1_02_wish', tone: 'gentle', memory_day_id: 'd.g07.01', is_replay: false },
+      { choice_id: 'c_m1_03_decor', tone: 'deep', memory_day_id: 'd.g07.02', is_replay: false },
+      { choice_id: 'c_m1_05_tone', tone: 'gentle', memory_day_id: 'd.g07.03', is_replay: false },
+    ]);
   });
 
   it('public_demo_completed được ghi TRƯỚC khi form hiện; bỏ qua form không đổi trạng thái hoàn thành', () => {
@@ -118,14 +159,21 @@ describe('cầu nối analytics (F8)', () => {
     expect(r.batch?.events).toHaveLength(t.sent.length);
   });
 
-  it('chơi lại: event mang is_replay=true và không phát lại memory_day_completed "thật"', () => {
+  it('chơi lại: event mang is_replay=true và không phát lại page_completed "thật"', () => {
     const t = setup(); playAll(t);
     t.sent.length = 0;
     t.hub.openArtifact('art_m1_01');
     t.engine.startDay('d.g06.01', { replay: true });
     t.engine.trigger('interact', 'NPC_A'); t.engine.complete('q_m1_main_01.s01');
-    t.engine.trigger('interact', 'itr.thcs.stone_bench'); t.engine.complete('q_m1_main_01.s02');
-    for (const n of ['artifact_opened', 'memory_day_started', 'memory_day_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
+    t.engine.complete('q_m1_main_01.s02');
+    t.engine.complete('q_m1_main_01.s03');
+    t.engine.complete('q_m1_main_01.s04');
+    t.engine.complete('q_m1_main_01.s05');
+    t.engine.complete('q_m1_main_01.s06');
+    t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+    t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+    t.engine.complete('q_m1_main_01.s07');
+    for (const n of ['artifact_opened', 'page_started', 'page_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
       expect(t.of(n).length, n).toBeGreaterThan(0);
       expect(t.of(n).every((p) => p.is_replay === true), n).toBe(true);
     }
@@ -138,7 +186,14 @@ describe('cầu nối analytics (F8)', () => {
     t.engine.enterHub(); t.engine.complete('q_hub_pd_01.s01'); t.engine.trigger('interact', 'itr.hub.memory_box');
     t.engine.startDay('d.g06.01');
     t.engine.trigger('interact', 'NPC_A'); t.engine.complete('q_m1_main_01.s01');
-    t.engine.trigger('interact', 'itr.thcs.stone_bench'); t.engine.complete('q_m1_main_01.s02');
+    t.engine.complete('q_m1_main_01.s02');
+    t.engine.complete('q_m1_main_01.s03');
+    t.engine.complete('q_m1_main_01.s04');
+    t.engine.complete('q_m1_main_01.s05');
+    t.engine.complete('q_m1_main_01.s06');
+    t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+    t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
+    t.engine.complete('q_m1_main_01.s07');
     t.engine.answerEndPrompt('leave');
     expect(t.of('skip_prompt_answered')).toEqual([{ answer: 'leave', open_side_quests: 1 }]);
   });
@@ -149,7 +204,7 @@ describe('danh sách event', () => {
     const names = new Set<string>(EVENT_NAMES);
     expect(names.has('chapter_started')).toBe(false);
     expect(names.has('chapter_completed')).toBe(false);
-    for (const n of ['artifact_opened', 'memory_day_started', 'memory_day_completed', 'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'choice_made']) expect(names.has(n), n).toBe(true);
+    for (const n of ['artifact_opened', 'page_started', 'page_completed', 'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'choice_made']) expect(names.has(n), n).toBe(true);
   });
   it('server bỏ event mang nội dung tin nhắn / ghi chú / tên', () => {
     const u = () => crypto.randomUUID();

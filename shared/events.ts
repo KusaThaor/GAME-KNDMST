@@ -8,8 +8,10 @@ export const EVENT_NAMES = [
   'landing_view', 'cta_click',
   'game_load_started', 'game_ready', 'game_started', 'game_resumed',
   'appearance_selected',
-  // GDD v1: Ngày ký ức thay cho chapter (chapter_id ch1–ch6 → memory_day_id + chapter_label)
-  'artifact_opened', 'memory_day_started', 'memory_day_completed', 'milestone_completed', 'public_demo_completed',
+  // GDD v1.0: Trang (page_id = d.gNN.KK) thay cho Ngày ký ức / chapter.
+  'artifact_opened', 'page_started', 'page_completed', 'milestone_completed', 'public_demo_completed',
+  // GDD 02 §5.1 (skeleton): minigame, Khu Vui Chơi Căn cứ, tin nhắn cuối demo.
+  'minigame_started', 'minigame_finished', 'hub_opened', 'end_message_sent',
   'quest_started', 'quest_step_completed', 'quest_completed', 'choice_made',
   'photo_attempt', 'photo_kept', 'free_photo_taken',
   'zone_entered', 'interactable_viewed', 'skip_prompt_answered',

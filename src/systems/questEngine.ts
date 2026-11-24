@@ -288,8 +288,8 @@ export class QuestEngine {
     for (const a of about) {
       const chr = this.idx.resolveActor(a);
       if (!chr) continue;
-      const rel = (this.save.relationships[chr.id] ??= { character_id: chr.id, flags: {}, tone_counts: { playful: 0, gentle: 0, curious: 0 }, arc_progress: {}, bond: null, contacted_2026: false });
-      rel.tone_counts[opt.tone]++;
+      const rel = (this.save.relationships[chr.id] ??= { character_id: chr.id, flags: {}, tone_counts: { playful: 0, gentle: 0, deep: 0 }, arc_progress: {}, bond: null, contacted_2026: false });
+      rel.tone_counts[opt.tone] = (rel.tone_counts[opt.tone] ?? 0) + 1; // ?? 0: bản lưu cũ còn khóa "curious"
     }
   }
 

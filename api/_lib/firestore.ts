@@ -52,3 +52,14 @@ export function firestoreBatchStore(): BatchStore {
 /** Môi trường do server quyết định: chỉ Vercel Production là "production". */
 export const serverEnvironment = (): AppEnvironment => (process.env.VERCEL_ENV === 'production' ? 'production' : 'test');
 export const serverBuild = (): string => (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7);
+
+export async function createFeedback(key: string, doc: import('../feedback.js').FeedbackDocument) {
+  try {
+    await getDb().collection(COLLECTIONS.feedback).doc(key).create(doc);
+    return 'created' as const;
+  } catch (err) {
+    const code = (err as { code?: number | string }).code;
+    if (code === 6 || code === 'already-exists') return 'duplicate' as const;
+    throw err;
+  }
+}

@@ -19,7 +19,7 @@ const SESSION_IDLE_MS = 30 * 60 * 1000;
 const FLUSH_MS = 60_000;
 const MAX_QUEUE = 1000;
 const IMMEDIATE: ReadonlySet<EventName> = new Set([
-  'game_started', 'memory_day_started', 'memory_day_completed', 'milestone_completed', 'public_demo_completed', 'feedback_submitted', 'pipeline_test',
+  'game_started', 'page_started', 'page_completed', 'milestone_completed', 'end_message_sent', 'public_demo_completed', 'feedback_submitted', 'pipeline_test',
 ]);
 
 const uuid = () => crypto.randomUUID();

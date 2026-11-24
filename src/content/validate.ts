@@ -3,6 +3,8 @@
  * Lỗi (errors) chặn; cảnh báo (warnings) chỉ nhắc. Mỗi mục có `id` của thứ sai để người viết tìm ngay.
  * Quy tắc: FRAMEWORK_IMPLEMENTATION_HANDOFF_v1 §5 F1, §6.
  */
+import { WORLD_INDEXES } from '../world/maps';
+import type { Marker } from '../world/types';
 import { CAST_ROLES, type Condition, type ContentConfig, type ContentPack, type DialogueLine, type MemoryDay, type Quest, type Step } from './types';
 
 export interface Issue { code: string; id: string; message: string }
@@ -13,10 +15,10 @@ const DAY = 'd\\.g(?:0[6-9]|1[0-2])\\.\\d{2}';
 const SCOPE = '(?:m1|m2|m3|hub)';
 export const ID_PATTERNS = {
   day: new RegExp(`^${DAY}$`),
-  quest: new RegExp(`^q_(${SCOPE})_(main|side|daily|event|pd)_\\d{2}$`),
+  quest: new RegExp(`^q_(${SCOPE})_(?:ai_)?(main|side|daily|event|pd)_\\d{2}$`),
   artifact: new RegExp(`^art_${SCOPE}_\\d{2}$`),
   page: new RegExp(`^page\\.${DAY}$`),
-  entry: new RegExp(`^alb\\.${DAY}\\.\\d{2}$`),
+  entry: new RegExp(`^alb\\.${DAY}\\.(?:\\d{2}|cover)$`),
   fragment: new RegExp(`^frag\\.${DAY}\\.\\d{2}$`),
   character: new RegExp(`^chr_${SLUG}$`),
   npc: new RegExp(`^npc_${SLUG}$`),
@@ -34,6 +36,53 @@ export const ID_PATTERNS = {
 export const PLACEHOLDER_TAG = '[PLACEHOLDER]';
 export const LINE_LIMITS = { maxChars: 90, maxLines: 2, playerNameChars: 12 } as const;
 
+// Mã trò chơi và màn 2D đã chốt cho nội dung cốt truyện.
+const STORY_MINIGAMES = new Set([
+  'mg_cipher', 'mg_footbag', 'mg_wipe_board', 'mg_noodle', 'mg_boat', 'mg_base_build', 'mg_rules', 'mg_lineup',
+  'mg_caro', 'mg_sudoku', 'mg_throw', 'mg_photo_hunt', 'mg_decorate', 'mg_mailbox_build',
+  'mg_screen_confession', 'mg_screen_letter_write', 'mg_screen_letter_read', 'mg_screen_three_gates',
+]);
+
+const extras = import.meta.glob<{ map_id: string; markers: Marker[] }>('../world/maps/*.extras.ts', { eager: true, import: 'EXTRAS' });
+const markerZones = new Map<string, string>();
+for (const world of Object.values(WORLD_INDEXES)) {
+  for (const [zone, data] of Object.entries(world.zones)) {
+    for (const m of data.markers) markerZones.set(`${world.map_id}/${m.kind}/${m.id}`, zone);
+  }
+}
+for (const world of Object.values(extras)) {
+  for (const m of world.markers) markerZones.set(`${world.map_id}/${m.kind}/${m.id}`, m.zone);
+}
+
+/** Cùng các loại trigger với QuestEngine.matchesWith(). */
+function openingTargets(s: Step): string[] | undefined {
+  switch (s.kind) {
+    case 'talk': return [s.with];
+    case 'goto': case 'interact': case 'place': return [s.target];
+    case 'collect': return s.targets;
+    default: return undefined;
+  }
+}
+
+/** Kiểm cả danh sách của Ngày lẫn vị trí thực của marker; tương thích dữ liệu cũ ghi tọa độ. */
+function openingTargetProblem(day: MemoryDay, step: Step, target: string): string | undefined {
+  let zone: string | undefined;
+  if (step.kind === 'talk') {
+    const npc = day.npc_placements.find(n => n.actor === target);
+    if (!npc) return `chưa đặt nhân vật "${target}"`;
+    if (!npc.marker) return npc.position ? undefined : `nhân vật "${target}" thiếu chỗ đứng`;
+    zone = markerZones.get(`${day.map_id}/spot/${npc.marker}`);
+    if (!zone) return `thiếu marker "${npc.marker}" của ${target}`;
+  } else {
+    const it = day.interactables.find(i => i.id === target);
+    if (!it) return `chưa khai điểm tương tác "${target}"`;
+    zone = markerZones.get(`${day.map_id}/interact/${target}`);
+    if (!zone && !it.position) return `thiếu marker "${target}"`;
+    zone ??= it.zone_id;
+  }
+  if (zone && day.open_zones && !day.open_zones.includes(zone)) return `"${target}" nằm trong khu đóng "${zone}"`;
+}
+
 /** Độ dài dòng khi hiện ra (tên dài nhất 12 ký tự, nhánh giới tính dài nhất, bỏ nhãn [PLACEHOLDER]). */
 export function renderedLength(text: string): number {
   return text
@@ -49,7 +98,7 @@ const hasFlagCond = (c: Condition): boolean =>
 function stepLines(s: Step): DialogueLine[] {
   switch (s.kind) {
     case 'talk': case 'cutscene': return s.lines;
-    case 'interact': return s.lines ?? [];
+    case 'interact': case 'minigame': return s.lines ?? [];
     case 'choice': return s.prompt ? [s.prompt] : [];
     default: return [];
   }
@@ -128,12 +177,19 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
   for (const m of pack.maps) m.zones.forEach((z) => { if (!z.zone_id.startsWith('zone.')) err('bad_id', z.zone_id, `khu "${z.zone_id}" phải bắt đầu bằng "zone."`); });
 
   // ---- quest + bước ----
+  const optionalTargets = new Map<string, string[]>();
   for (const q of pack.quests) {
     const m = ID_PATTERNS.quest.exec(q.id);
     if (m && (m[1] !== q.scope || m[2] !== q.type)) err('id_mismatch', q.id, `quest "${q.id}" khai scope=${q.scope}, type=${q.type} không khớp ID`);
     if (q.type === 'main' || q.type === 'event') need(days, q.memory_day_id, `quest ${q.id}`);
     else if (q.memory_day_id) need(days, q.memory_day_id, `quest ${q.id}`);
     if ((q.type === 'side' || q.type === 'daily') && q.blocks_main) err('side_blocks_main', q.id, `quest ${q.type} "${q.id}" phải có blocks_main=false`);
+    if ((q.type === 'side' || q.type === 'daily') && q.steps.length) {
+      const first = q.steps[0];
+      const targets = openingTargets(first);
+      if (targets) optionalTargets.set(q.id, targets);
+      else err('optional_quest_unstartable', q.id, `Quest ${q.id} không thể bắt đầu bằng bước ${first.id} (${first.kind})`);
+    }
     if (!q.steps.length) err('empty_quest', q.id, `quest "${q.id}" không có bước nào`);
     checkCond(q.available_when, `quest ${q.id}`);
     checkFlags(q.rewards?.flags, `quest ${q.id}`);
@@ -154,6 +210,10 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
       }
       if (q.ownership_label === 'AI_PROPOSED' && stepTexts(s).some((t) => !t.includes(PLACEHOLDER_TAG))) {
         err('missing_placeholder_tag', s.id, `bước "${s.id}": nội dung AI_PROPOSED phải ghi ${PLACEHOLDER_TAG} ở mọi chữ`);
+      }
+      if (s.kind === 'minigame' && !STORY_MINIGAMES.has(s.game)) {
+        const report = config.environment === 'production' ? err : warn;
+        report('minigame_unknown_id', s.id, `Bước ${s.id} dùng mã trò chưa có trong danh sách: "${s.game}"`);
       }
       if (s.kind === 'choice') { s.options.forEach((o) => checkFlags(o.set_flags, `bước ${s.id}`)); s.about?.forEach((a) => checkActor(a, `bước ${s.id}`)); if (s.options.length < 2) err('bad_choice', s.id, `bước "${s.id}" cần ít nhất 2 lựa chọn`); }
       if (s.kind === 'setFlag') checkFlags({ [s.flag]: s.value }, `bước ${s.id}`);
@@ -209,6 +269,10 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
       if (!q) continue;
       if (!types.includes(q.type)) err('wrong_quest_type', q.id, `${where}: quest ${q.id} (${q.type}) đặt sai danh sách`);
       if (q.type !== 'daily' && q.memory_day_id !== d.id) err('quest_day_mismatch', q.id, `${where}: quest ${q.id} khai memory_day_id=${q.memory_day_id}`);
+      for (const target of optionalTargets.get(q.id) ?? []) {
+        const problem = openingTargetProblem(d, q.steps[0], target);
+        if (problem) err('optional_quest_unstartable', q.id, `${where}: bước đầu ${q.steps[0].id} của ${q.id} — ${problem}`);
+      }
       checkStepWorld(q, where, targets, placed, cameras);
     }
     const pageEntries = pack.album_entries.filter((e) => e.page_id === d.album_page_id);
@@ -269,8 +333,10 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
     for (const id of rel.memory_day_ids) { const d = days.get(id); if (d) [...d.main_chain, ...d.side_quests, ...d.daily_pool].forEach((q) => reach.add(q)); }
     for (const id of reach) {
       const q = quests.get(id);
-      if (q && (q.ownership_label === 'AI_PROPOSED' || ((q.type === 'main' || q.type === 'event') && q.ownership_label !== 'HUMAN_CANON'))) {
-        err('placeholder_in_production', q.id, `quest "${q.id}" (${q.ownership_label}) không được nằm trong bản production`);
+      if (q?.ownership_label === 'AI_PROPOSED') {
+        err('placeholder_in_production', q.id, `Quest "${q.id}" bị chặn trong production vì có nhãn AI_PROPOSED`);
+      } else if (q && (q.type === 'main' || q.type === 'event') && q.ownership_label !== 'HUMAN_CANON') {
+        err('placeholder_in_production', q.id, `Quest "${q.id}" (${q.type}, ${q.ownership_label}) cần HUMAN_CANON để phát hành`);
       }
     }
   }

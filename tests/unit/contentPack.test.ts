@@ -6,8 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { CONTENT, contentConfig } from '../../src/content/pack';
 import { ACTIVE_CAST, CAST_TABLES } from '../../src/content/cast';
 import { RELEASES } from '../../src/content/release';
-import { CHAPTERS } from '../../src/content/chapters';
-import { formatReport, validateContent, PLACEHOLDER_TAG } from '../../src/content/validate';
+import { formatReport, validateContent } from '../../src/content/validate';
 import { indexContent } from '../../src/content/indexContent';
 import { PHOTO_CONFIG, photoQuality } from '../../src/config/photo';
 
@@ -29,25 +28,56 @@ describe('gói nội dung trong repo', () => {
       expect(new Set(Object.values(CAST_TABLES[name])).size).toBe(4);
     }
   });
-  it('có 2 Ngày giả d.g06.01 và d.g07.03 với kỷ vật art_m1_01, art_m1_05', () => {
+  it('có đủ 4 Ngày Mốc 1 (d.g06.01 -> d.g07.03) với các kỷ vật tương ứng', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));
-    expect(idx.releaseDays.map((d) => d.id)).toEqual(['d.g06.01', 'd.g07.03']);
+    expect(idx.releaseDays.map((d) => d.id)).toEqual(['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03']);
     expect(idx.artifactOfDay('d.g06.01')?.id).toBe('art_m1_01');
+    expect(idx.artifactOfDay('d.g07.01')?.id).toBe('art_m1_02');
+    expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
-    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(2);
-    expect(d1.side_quests).toHaveLength(1);
-    expect(d1.daily_pool).toHaveLength(1);
-    const photo = idx.quests.get('q_m1_main_05')!.steps.find((s) => s.kind === 'photo');
-    expect(photo).toMatchObject({ mode: 'timer' });
-    expect(photo && photo.kind === 'photo' && photo.subjects).toHaveLength(5);
+    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(7);
+    expect(d1.side_quests).toEqual(['q_m1_ai_side_01']);
+    expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
+
+    const d2 = idx.days.get('d.g07.01')!;
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(5);
+    expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
+    expect(d2.daily_pool).toHaveLength(0);
+
+    const d3 = idx.days.get('d.g07.02')!;
+    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(6);
+    expect(d3.side_quests).toHaveLength(0);
+    expect(d3.daily_pool).toHaveLength(0);
+
+    const d4 = idx.days.get('d.g07.03')!;
+    expect(idx.quests.get(d4.main_chain[0])!.steps).toHaveLength(8);
+    expect(d4.side_quests).toEqual(['q_m1_ai_side_02']);
+    expect(d4.daily_pool).toHaveLength(0);
+
+    const photos = idx.quests.get('q_m1_main_05')!.steps.filter((s) => s.kind === 'photo');
+    expect(photos).toHaveLength(2);
+    expect(photos[0]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.01' });
+    expect(photos[0] && photos[0].kind === 'photo' && photos[0].subjects).toHaveLength(5);
+    expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
+    expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
   });
-  it('mọi quest là AI_PROPOSED và mọi chữ có nhãn [PLACEHOLDER]', () => {
-    for (const q of CONTENT.quests) expect(q.ownership_label).toBe('AI_PROPOSED');
-    for (const a of CONTENT.artifacts) { expect(a.name).toContain(PLACEHOLDER_TAG); expect(a.hook_2026).toContain(PLACEHOLDER_TAG); }
-    for (const f of CONTENT.fragments) if (f.text) expect(f.text).toContain(PLACEHOLDER_TAG);
-    for (const t of CONTENT.hub.threads) for (const l of t.history) expect(l.text).toContain(PLACEHOLDER_TAG);
-    for (const c of CHAPTERS) expect(c.label).toContain(PLACEHOLDER_TAG);
+  it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const days = idx.releaseDays.map((d) => d.id);
+    expect(idx.artifactOfDay(days[0])?.appear_when).toEqual({ quest: idx.pack.hub.intro_quest_id });
+    for (let i = 1; i < days.length; i++) expect(idx.artifactOfDay(days[i])?.appear_when, days[i]).toEqual({ day: days[i - 1] });
+  });
+  it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const days = idx.releaseDays.map((d) => d.id);
+    expect(idx.artifactOfDay(days[0])?.appear_when).toEqual({ quest: idx.pack.hub.intro_quest_id });
+    for (let i = 1; i < days.length; i++) expect(idx.artifactOfDay(days[i])?.appear_when, days[i]).toEqual({ day: days[i - 1] });
+  });
+  it('nội dung kịch bản Mốc 1 chuẩn hóa vai diễn và quyền sở hữu', () => {
+    for (const q of CONTENT.quests) {
+      expect(['HUMAN_CANON', 'HUMAN_DRAFT', 'AI_ASSISTED', 'AI_PROPOSED']).toContain(q.ownership_label);
+    }
   });
   it('nội dung chỉ dùng vai NPC_A…D, không gọi thẳng chr_* (chờ D-01)', () => {
     const json = JSON.stringify({ q: CONTENT.quests, d: CONTENT.days, h: CONTENT.hub, p: CONTENT.pdes });

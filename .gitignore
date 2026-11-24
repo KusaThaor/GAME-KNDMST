@@ -12,3 +12,4 @@ service-account*.json
 firebase-debug.log
 __pycache__
 *.blend1
+backups/
