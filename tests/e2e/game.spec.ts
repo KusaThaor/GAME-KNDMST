@@ -332,11 +332,14 @@ test.describe('phần khung game', () => {
     await expect(page.locator('[data-testid="panel-journal"]')).toContainText('Xem bảng phân công trực nhật');   // Side q_m1_side_01
     await page.keyboard.press('KeyJ');
 
-    // menu "Chơi lại Ngày từ đầu": làm xong bước 1 rồi quay lại bước 1
-    await drive(page, { optional: false }, (_l, s) => s.step === 'q_m1_main_01.s02' && !s.ui.dialogue);
+    // menu "Chơi lại Ngày từ đầu". N-01: sau s01 Trang 1 là chuỗi bước tự hiện (trò thật, thẻ chữ, ảnh) — menu game không mở được
+    // giữa chừng — nên lấy tiến độ ở Side: xong bước 1 (nói chuyện với Châu) rồi chơi lại → Side về bước 1, Main ở s01
+    await drive(page, {}, (_l, s) => s.active.includes('q_m1_ai_side_01.s02') && !s.ui.dialogue);
+    expect((await state(page)).step).toBe('q_m1_main_01.s01');
     await page.keyboard.press('Escape');
     await page.locator('[data-act="restart-day"]').click();
-    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_01.s01');
+    await expect.poll(async () => (await state(page)).active).not.toContain('q_m1_ai_side_01.s02');
+    expect((await state(page)).step).toBe('q_m1_main_01.s01');
     expect((await state(page)).days['d.g06.01']).toBe('in_progress');
 
     // menu "Xóa tiến trình" (bấm 2 lần) → tiến trình mới, tên cũ không còn trong máy
