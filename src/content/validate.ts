@@ -98,7 +98,8 @@ const hasFlagCond = (c: Condition): boolean =>
 function stepLines(s: Step): DialogueLine[] {
   switch (s.kind) {
     case 'talk': case 'cutscene': return s.lines;
-    case 'interact': case 'minigame': return s.lines ?? [];
+    case 'interact': return s.lines ?? [];
+    case 'minigame': return [...(s.intro_lines ?? []), ...(s.lines ?? [])];
     case 'choice': return s.prompt ? [s.prompt] : [];
     default: return [];
   }

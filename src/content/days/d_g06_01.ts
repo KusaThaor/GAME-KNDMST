@@ -75,13 +75,15 @@ export const quests: Quest[] = [
         game: 'mg_cipher',
         level: 'min',
         objective: 'Giải mật lệnh cùng Đức và Châu trong giờ học',
-        lines: [
+        intro_lines: [
           { speaker: 'NPC_A', text: 'Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.' },
           { speaker: 'player', text: 'Sao nhìn giống cậu vẽ linh tinh hơn vậy?' },
           { speaker: 'NPC_B', text: 'Hai người làm gì đó? Đang trong giờ học mà.' },
           { speaker: 'NPC_A', text: 'Không có gì! Tụi tớ đang… nghiên cứu tài liệu.' },
           { speaker: 'NPC_B', text: 'Tài liệu gì toàn hình tròn hình vuông vậy trời? Đưa đây.' },
           { speaker: 'NPC_A', text: 'Ơ… dạ, Châu Tổng.' },
+        ],
+        lines: [
           { speaker: 'NPC_B', text: 'Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.' },
         ],
       },
@@ -91,8 +93,10 @@ export const quests: Quest[] = [
         game: 'mg_footbag',
         level: 'min',
         objective: 'Xuống sân đá cầu cùng Đức và Châu',
-        lines: [
+        intro_lines: [
           { speaker: 'NPC_A', text: 'Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!' },
+        ],
+        lines: [
           { speaker: 'NPC_B', text: 'Ừ, giỏi dữ chưa. Đá hụt cầu bay vô bụi rồi kìa, để tui đi lượm.' },
         ],
       },
@@ -123,13 +127,12 @@ export const quests: Quest[] = [
         game: 'mg_noodle',
         level: 'min',
         objective: 'Chia gói mì tôm ở bậc thềm tiệm tạp hóa',
-        lines: [
+        intro_lines: [
           { speaker: 'NPC_A', text: 'Ra tiệm tạp hóa đi! Còn đúng một gói mì nè, mua lẹ chia ba!' },
           { speaker: 'NPC_B', text: 'Chia đều. Không bàn cãi nữa.' },
+        ],
+        lines: [
           { speaker: 'NPC_A', text: '{player_name} có máy ảnh mà! Quay ngược máy lại tự sướng đi!' },
-          { speaker: 'NPC_B', text: 'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.' },
-          { speaker: 'player', text: 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.' },
-          { speaker: 'NPC_A', text: 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!' },
         ],
       },
       {
@@ -140,6 +143,15 @@ export const quests: Quest[] = [
         subjects: ['player', 'NPC_A', 'NPC_B'],
         album_entry_id: 'alb.d.g06.01.01',
         objective: 'Chụp bức ảnh tự sướng đầu tiên của bộ ba',
+      },
+      {
+        id: 'q_m1_main_01.s08',
+        kind: 'cutscene',
+        lines: [
+          { speaker: 'NPC_B', text: 'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.' },
+          { speaker: 'player', text: 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.' },
+          { speaker: 'NPC_A', text: 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!' },
+        ],
       },
     ],
   },

@@ -53,6 +53,7 @@ function playAll(t: ReturnType<typeof setup>) {
   bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
   bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
   e.complete('q_m1_main_01.s07');
+  e.complete('q_m1_main_01.s08');
   e.enterHub(); hub.refresh(); hub.runPdes();
 
   hub.openArtifact('art_m1_02');
@@ -173,6 +174,7 @@ describe('cầu nối analytics (F8)', () => {
     t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.engine.complete('q_m1_main_01.s07');
+    t.engine.complete('q_m1_main_01.s08');
     for (const n of ['artifact_opened', 'page_started', 'page_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
       expect(t.of(n).length, n).toBeGreaterThan(0);
       expect(t.of(n).every((p) => p.is_replay === true), n).toBe(true);
@@ -194,6 +196,7 @@ describe('cầu nối analytics (F8)', () => {
     t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.engine.complete('q_m1_main_01.s07');
+    t.engine.complete('q_m1_main_01.s08');
     t.engine.answerEndPrompt('leave');
     expect(t.of('skip_prompt_answered')).toEqual([{ answer: 'leave', open_side_quests: 1 }]);
   });
