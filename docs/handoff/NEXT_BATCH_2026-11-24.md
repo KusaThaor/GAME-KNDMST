@@ -13,3 +13,12 @@ Bạn là agent đã làm N-01 (PR #8, nhánh task/N-01-sua-moc1) cho repo KusaT
 Lưu ý: "mục 5.0, mục 6.3, bảng 8 ca e2e đỏ" KHÔNG tồn tại ở nhánh nào — đừng chờ chúng. Không tự thêm thoại; thoại Trang 2 giữ như b829023 (nguyên văn kịch bản dòng 182–211).
 Chỉ sửa file đã có trong PR + tests/e2e (phần Trang 1–4). Chạy 4 lệnh: npx tsc --noEmit · npm test (mốc nền 412 đạt / 2 bỏ qua) · npm run validate:world · VERCEL_ENV=production npm run build, cộng e2e đủ. Dán kết quả THẬT vào PR (lệnh nào chưa chạy ghi "chưa chạy"), commit kết bằng [N-01], rồi bình luận "Đã sửa".
 ```
+
+## Phiếu N-01 lần 3 — PR #8 (chủ dự án chốt 24/11 chiều)
+```
+Bạn là agent đã làm N-01 (PR #8, nhánh task/N-01-sua-moc1). Đọc bình luận MỚI NHẤT của Integrator trên PR #8 (24/11, "thoại bước minigame hiện SAU khi chơi xong") và làm đúng:
+1. src/game/game.ts, nhánh minigame trong presentStep — CHỈ chỗ này: mở trò → chơi xong (thắng/thua/Bỏ qua) → phát s.lines → complete bước. Đổi dòng "phát thoại trước trò" của lần 2 thành "sau trò".
+2. tests/e2e/game.spec.ts: ca thoại minigame kiểm thứ tự (Bỏ qua trước, thoại sau).
+3. Liệt kê vào PR những câu vốn là lời TRƯỚC khi chơi mà giờ nằm sau trò nghe sai mạch — không tự sửa chữ.
+4. Merge origin/feat/sprint-0412 (không rebase/force), chạy 4 lệnh + npx playwright test --workers=1 (mục tiêu 45 đạt / 0 đỏ / 1 bỏ qua), dán kết quả thật; KHÔNG commit index.html, src/main.ts. Bình luận "Đã sửa lần 3".
+```
