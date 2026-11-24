@@ -21,9 +21,11 @@ export const day: MemoryDay = {
   main_chain: ['q_m1_main_01'],
   side_quests: ['q_m1_ai_side_01'],
   daily_pool: ['q_m1_ai_daily_01'],
+  // Đức + Châu đứng ở bậc thềm tiệm tạp hóa, trong khung cam.thcs.grocery (ảnh bộ ba s07).
+  // NPC đứng yên cả Ngày và s02–s07 đều tự hiện, nên người chơi gặp Đức ở s01 rồi đứng tại đây tới lúc chụp.
   npc_placements: [
-    { actor: 'NPC_A', marker: 'spot.thcs.yard_bench_1', motion: 'idle' },
-    { actor: 'NPC_B', marker: 'spot.thcs.yard_bench_2', motion: 'idle' },
+    { actor: 'NPC_A', marker: 'spot.thcs.grocery_1', motion: 'idle' },
+    { actor: 'NPC_B', marker: 'spot.thcs.grocery_2', motion: 'idle' },
   ],
   interactables: [
     { id: 'itr.thcs.class_list', label: 'Bảng phân lớp', zone_id: 'zone.thcs.corridor', kind: 'marker' },

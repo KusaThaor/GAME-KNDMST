@@ -24,7 +24,8 @@
 
 ## 2. Trang 1 (`d.g06.01`) — Mật lệnh số 01 (Lớp 6, 2014)
 - **File dữ liệu:** `src/content/days/d_g06_01.ts`
-- **Map:** `map_thcs` (variant `g06`) · Open zones: `zone.thcs.yard`, `zone.thcs.corridor`, `zone.thcs.classroom`
+- **Map:** `map_thcs` (variant `g06`) · Open zones: `zone.thcs.yard`, `zone.thcs.corridor`, `zone.thcs.classroom`, `zone.thcs.gate` (Cảnh B ở tiệm tạp hóa)
+- **Chỗ đứng NPC:** Đức `spot.thcs.grocery_1`, Châu `spot.thcs.grocery_2` — bậc thềm tiệm tạp hóa, trong khung `cam.thcs.grocery`, để ảnh bộ ba `s07` có đủ người (N-14 phát hiện 3 tấm trống). NPC đứng yên cả Ngày và `s02`–`s07` tự hiện, nên người chơi gặp Đức ở `s01` tại đây rồi ở lại tới lúc chụp.
 - **Kỷ vật dẫn vào:** `art_m1_01` (Mẩu giấy gấp tư đầy hình vẽ ký hiệu và nét bút bi đỏ sửa lỗi của Châu Tổng)
 - **Quy tắc xưng hô:** Đức mới quen: "cậu - tớ", lỡ miệng lúc trực nhật: "mày - tao". Châu: "tui - ông" (sửa câu trực nhật thành "Mới quen một bữa mà ông mày tao rồi hả?").
 - **Chuẩn hóa N-01 (B1, B2, B3, C1, G-7):** Tách 7 bước canonical, Side/Daily gắn `AI_PROPOSED` + `[PLACEHOLDER]`.
@@ -83,7 +84,8 @@
 
 ## 5. Trang 4 (`d.g07.03`) — Đủ năm đứa (Cuối lớp 7, Tháng 5/2016)
 - **File dữ liệu:** `src/content/days/d_g07_03.ts`
-- **Map:** `map_thcs` (variant `g07`) · Toàn bộ 6 khu vực mở
+- **Map:** `map_thcs` (variant `g07_end`) · Toàn bộ 6 khu vực mở
+- **Thời tiết (N-05):** `weather_by_step` — `q_m1_main_05.s06`: `rain_shower` (mưa, chạy về Căn cứ), `q_m1_main_05.s07`: `after_rain_rainbow` (ảnh cầu vồng).
 - **Kỷ vật dẫn vào:** `art_m1_05` (Bức ảnh nhóm bị ố chụp ở gốc phượng, `appear_when: { day: 'd.g07.02' }` theo C4)
 - **Chuẩn hóa N-01 (B6, B7, C1, C4, C5, D1, G-1, G-7):**
   - Nhãn `itr.thcs.tripod_spot`: `'Ghế đá dưới gốc phượng'` (B7).

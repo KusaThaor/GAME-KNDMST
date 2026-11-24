@@ -88,6 +88,8 @@ export const EXTRAS: WorldExtras = {
     marker('interact', 'itr.thcs.class_list', Z.corridor, [-6, CORRIDOR_Y, -20.4]),                 // bảng phân lớp, hành lang
     marker('interact', 'itr.thcs.grocery_steps', Z.gate, [-7.75, 0, 27.2]),                          // trước tiệm tạp hóa
     ...cameraPair('cam.thcs.grocery', Z.gate, [-5.5, 1.6, 24.5], [-7.75, 0.8, 27.6]),                // ảnh bộ ba
+    marker('spot', 'spot.thcs.grocery_1', Z.gate, [-8.6, 0, 27.5], 2.4),                              // Đức, bậc thềm tiệm: trong khung cam.thcs.grocery, nhìn về máy [N-01]
+    marker('spot', 'spot.thcs.grocery_2', Z.gate, [-6.9, 0, 27.6], 2.6),                              // Châu, như trên [N-01]
     // Trang 2 — 5 chỗ đứng trú mưa dưới hiên, nhìn ra rãnh nước (+z)
     ...[-16, -14.8, -13.6, -12.4, -11.2].map((x, i) => marker('spot', `spot.thcs.eave_${i + 1}`, Z.corridor, [x, CORRIDOR_Y, -20.4], 0)),
     ...cameraPair('cam.thcs.gutter', Z.yard, [-12, 2.0, -16.5], [-14, 0, -18.1]),                    // ảnh 5 thuyền
