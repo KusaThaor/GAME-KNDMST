@@ -211,7 +211,6 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     } else if (s.kind === 'photo') {
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
-      if (s.lines?.length && !(await playLines(s.lines))) return; // thoại của bước phát trước khi mở trò (chơi thật hay "Bỏ qua" đều nghe) [N-01]
       const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: s.opponent ?? null, difficulty: null };
       const prefix = `mg.${s.game}.`;
       const host = new MinigameHost(getMinigame(s.game), save.minigames_story[s.game] !== undefined, {
@@ -244,6 +243,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       ui.set({ minigame: host });
       if ((await done) === CANCEL || !alive()) return;
       ui.set({ minigame: null });
+      if (s.lines?.length && !(await playLines(s.lines))) return; // thoại của bước phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") [N-01]
       engine.complete(s.id);
     } else if (s.kind === 'free') {
       ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });

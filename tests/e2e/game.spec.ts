@@ -99,12 +99,14 @@ test.describe('phần khung game', () => {
     const shot = new Set<string>();
     const snap = async (name: string) => { if (shot.has(name)) return; shot.add(name); await page.screenshot({ path: `${SHOTS}/${String(shot.size).padStart(2, '0')}-${name}.png` }); };
     const lines: string[] = [];
+    const timeline: string[] = [];                                         // thứ tự "Bỏ qua" (kèm bước) và thoại — kiểm thoại minigame phát SAU trò
     let onScreen: string[] = [];
     const visible = (id: string) => onScreen.includes(id);
 
     const log = await drive(page, { name: NAME, gender: 'female' }, (label) => label === 'feedback', {
-      each: async (_label, s) => {
-        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) lines.push(s.ui.dialogue);
+      each: async (label, s) => {
+        if (label === 'minigame-skip') timeline.push(`skip ${s.step}`);
+        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) { lines.push(s.ui.dialogue); timeline.push(`line ${s.ui.dialogue}`); }
         onScreen = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('[data-testid]')].map((e) => e.dataset.testid ?? ''));
         if (visible('profile')) await snap('hub-nhap-ten');
         else if (visible('panel-box')) await snap(s.days['d.g06.01'] === 'completed' ? 'hub-hop-ky-vat-ngay-2' : 'hub-hop-ky-vat');
@@ -141,9 +143,13 @@ test.describe('phần khung game', () => {
     // ---- hội thoại: tên có dấu + biến thể nam/nữ (F5) ----
     const all = lines.join('\n');
     expect(all).toContain(NAME);
-    // B2: Châu nói với Đức → luôn "ông", kể cả Player nữ. Câu nằm trong `lines` của bước minigame s04; game.ts hiện CHƯA phát
-    // `lines` của bước minigame (chỉ mở trò rồi complete) → soft để vẫn đỏ báo lỗi mà các kiểm phía sau vẫn chạy.
+    // B2: Châu nói với Đức → luôn "ông", kể cả Player nữ. Câu nằm trong `lines` của bước minigame s04 (lau bảng).
+    // Chủ dự án chốt 24/11: thoại bước minigame phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") → bấm "Bỏ qua" ở s04 rồi mới nghe câu này.
     expect(all, 'thoại của bước minigame (lines) phải được phát').toContain('Mới quen một bữa mà ông mày tao rồi hả?');
+    const skipAt = timeline.indexOf('skip q_m1_main_01.s04');
+    const lineAt = timeline.indexOf('line Mới quen một bữa mà ông mày tao rồi hả?');
+    expect(skipAt, 'bot phải bấm "Bỏ qua" ở trò lau bảng (q_m1_main_01.s04)').toBeGreaterThanOrEqual(0);
+    expect(lineAt, 'thoại s04 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skipAt);
     expect(all).toContain('Bà tiện đường qua cột cờ');                   // {g:Ông|Bà} khi Châu gọi Player (q_m1_ai_side_01), Player nữ
     expect(all).not.toContain('Ông tiện đường qua cột cờ');
     expect(all).not.toMatch(/\{player_name\}|\{g:/);
