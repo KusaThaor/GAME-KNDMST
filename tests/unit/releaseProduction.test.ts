@@ -100,6 +100,10 @@ describe('filterPackForRelease', () => {
     }
     // PDE: chỉ pde_03 (hiện mảnh "danh sách trực nhật" khi xong Side) bị gỡ.
     expect(production().pdes.map((p) => p.id)).toEqual(CONTENT.pdes.map((p) => p.id).filter((id) => id !== 'pde_03'));
+    // Gỡ đúng chừng ấy, không hơn (chặn lọc nhầm ô/mảnh của Main): 5 quest, 6 ô Album tùy chọn, 6 mảnh ký ức.
+    expect(CONTENT.quests.length - production().quests.length).toBe(5);
+    expect(CONTENT.album_entries.length - production().album_entries.length).toBe(6);
+    expect(CONTENT.fragments.length - production().fragments.length).toBe(6);
   });
 
   it('không sửa gói gốc, và chạy lại trên gói đã lọc không đổi gì', () => {
