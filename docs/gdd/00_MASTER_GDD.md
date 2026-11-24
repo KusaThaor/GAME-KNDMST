@@ -3,7 +3,7 @@
 | Trường | Giá trị |
 |---|---|
 | Phiên bản | **v1.2-draft** (nền v1.0 APPROVED 20/11) |
-| Ngày cập nhật | 21/11/2026 (UTC+7) |
+| Ngày cập nhật | 25/11/2026 (UTC+7) |
 | Trạng thái | **v1.0 APPROVED 20/11; v1.2-draft: Trang 6 (Hòm thư Valentine vào Main) đã được chủ dự án CHỐT HƯỚNG ngày 21/11 (chiều) để triển khai.** Chưa đóng dấu APPROVED cả file; các mục khác vẫn APPROVED. Chủ dự án duyệt ngày 20/11/2026. Mục ghi PROPOSED trong file là thiết kế đã duyệt để dựng; con số là giá trị khởi điểm, chỉnh khi chơi thử không cần xin duyệt lại. Mục ghi "Còn mở" vẫn chờ chốt |
 | Phạm vi file | Tầm nhìn, vòng chơi cốt lõi, cấu trúc Mốc/Trang, art direction, bản đồ và luồng di chuyển |
 | File đi kèm | `01_NARRATIVE_AND_SCENES.md` · `02_GAMEPLAY_AND_MECHANICS.md` · `03_ASSETS_AND_AUDIO.md` |
