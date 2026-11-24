@@ -166,7 +166,7 @@ export const artifact: Artifact = {
   reward_fragment_ids: ['frag.d.g07.02.01', 'frag.d.g07.02.02', 'frag.d.g07.02.03'],
   album_entry_ids: ['alb.d.g07.02.01', 'alb.d.g07.02.02', 'alb.d.g07.02.03', 'alb.d.g07.02.04'],
   new_present_action: 'pde_10',
-  shape: 'paper',
+  shape: 'sign',   // biển tên + sổ luật (hình 3D ở phòng 2026; trước ghi 'paper')
 };
 
 export const fragments: MemoryFragment[] = [

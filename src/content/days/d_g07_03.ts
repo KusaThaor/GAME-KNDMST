@@ -16,8 +16,8 @@ export const day: MemoryDay = {
   map_id: 'map_thcs',
   map_variant: 'g07_end',
   weather_by_step: {
-    'q_m1_main_05.s04': 'rain_shower',
-    'q_m1_main_05.s05': 'after_rain_rainbow',
+    'q_m1_main_05.s06': 'rain_shower',
+    'q_m1_main_05.s07': 'after_rain_rainbow',
   },
   open_zones: ['zone.thcs.classroom', 'zone.thcs.corridor', 'zone.thcs.yard', 'zone.thcs.gate', 'zone.thcs.field', 'zone.thcs.base'],
   spawn_point: 'spawn.thcs.yard',
@@ -171,7 +171,7 @@ export const artifact: Artifact = {
   description: 'Bức ảnh chụp dưới gốc phượng cuối năm lớp 7, dán ở Căn cứ lâu ngày nên bị ố vàng.',
   school_year_id: 'g07',
   hook_2026: 'Tấm này ố hết rồi mà vẫn giữ.',
-  appear_when: { day: 'd.g07.02' },
+  appear_when: { day: 'd.g07.02' },   // chỉ sáng khi xong Trang 3 (chủ dự án chốt 22/11: thứ tự Trang 1→4 ở Hộp Kỷ Vật)
   target_memory_day_id: 'd.g07.03',
   complete_when: 'day_completed',
   reward_fragment_ids: ['frag.d.g07.03.01', 'frag.d.g07.03.06'],

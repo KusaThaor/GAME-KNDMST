@@ -62,6 +62,12 @@ describe('gói nội dung trong repo', () => {
     expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
     expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
   });
+  it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const days = idx.releaseDays.map((d) => d.id);
+    expect(idx.artifactOfDay(days[0])?.appear_when).toEqual({ quest: idx.pack.hub.intro_quest_id });
+    for (let i = 1; i < days.length; i++) expect(idx.artifactOfDay(days[i])?.appear_when, days[i]).toEqual({ day: days[i - 1] });
+  });
   it('nội dung kịch bản Mốc 1 chuẩn hóa vai diễn và quyền sở hữu', () => {
     for (const q of CONTENT.quests) {
       expect(['HUMAN_CANON', 'HUMAN_DRAFT', 'AI_ASSISTED', 'AI_PROPOSED']).toContain(q.ownership_label);
