@@ -91,6 +91,35 @@ export class AlbumModel {
     return { removed };
   }
 
+  /**
+   * Giữ cả loạt ảnh của một lần chụp nhiều tấm (N-14, ảnh tự sướng Trang 1): loạt mới thay các phiên bản cũ của ô,
+   * `pick` = tấm người chơi chọn (chỉ số trong loạt) → `selected`. Loạt dài hơn `max_variants` thì luôn giữ tấm được chọn
+   * và bỏ bớt tấm khác ở cuối loạt. Trả về các khóa ảnh không còn dùng để xóa khỏi máy.
+   */
+  keepShots(entryId: string, keys: string[], pick: number): { removed: string[] } {
+    if (!keys.length) return { removed: [] };
+    if (!this.idx.entries.has(entryId)) return { removed: [...keys] };
+    const chosen = keys[Math.min(Math.max(0, Math.floor(pick) || 0), keys.length - 1)];
+    const others = keys.filter((k) => k !== chosen).slice(0, Math.max(1, this.config.max_variants) - 1);
+    const kept = keys.filter((k) => k === chosen || others.includes(k));
+    const r = this.rec(entryId);
+    const removed = [...r.variants, ...keys].filter((k) => !kept.includes(k));
+    r.variants = kept;
+    r.selected = kept.indexOf(chosen);
+    r.status = 'owned';
+    return { removed: [...new Set(removed)] };
+  }
+
+  /**
+   * Ô ảnh trên bìa Album (Trang 4: ảnh cầu vồng). Lấy ô đầu tiên trong cấu hình CÓ trong nội dung và là ô ảnh;
+   * ô dự phòng chỉ dùng khi ô chính chưa có trong nội dung. null = bìa trống (chưa nhận ô đó).
+   */
+  coverEntryId(): string | null {
+    const id = [this.config.cover_entry_id, this.config.cover_fallback_entry_id].find((x) => !!x && this.idx.entries.has(x));
+    if (!id || !PHOTO_SLOTS.has(this.idx.entries.get(id)!.slot_type)) return null;
+    return this.owned(id) ? id : null;
+  }
+
   selectVariant(entryId: string, index: number): boolean {
     const r = this.save.album[entryId];
     if (!r || index < 0 || index >= r.variants.length) return false;
