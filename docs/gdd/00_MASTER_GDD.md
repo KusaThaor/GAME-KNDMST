@@ -32,7 +32,7 @@ Năm 2026, `{player_name}` 23 tuổi, sống một mình, lục ra một thùng 
 |---|---|---|
 | Thể loại | 3D Narrative / Cozy Adventure, khám phá bán mở | CONFIRMED 14/11 |
 | Nền tảng | Web, ưu tiên máy tính (chuột + bàn phím) | CONFIRMED 13/11 |
-| Góc nhìn | Góc thứ ba trong ký ức; phòng 2026 góc cố định | CONFIRMED 13/11 |
+| Góc nhìn | Góc thứ ba trong ký ức; phòng 2026 đi lại tự do (camera đi theo người chơi) | CONFIRMED 24/11 |
 | Bối cảnh | Trường THCS hư cấu ở miền Nam Việt Nam, 2014–2018 (bản public) | CONFIRMED 14/11 |
 | Giọng điệu | Cozy, hoài niệm, tình bạn; không phản diện, mâu thuẫn nhỏ được hàn gắn | CONFIRMED 13/11 |
 | Phong cách hình | Semi-chibi 3D, tươi sáng, không ám tối | CONFIRMED 20/11 |
@@ -155,7 +155,7 @@ Mọi trò nhỏ trong kịch bản quy về 6 kiểu. Từ 20/11 (CONFIRMED), n
 ### 5.1 Danh sách bản đồ cho bản public
 | ID | Bản đồ | Dùng cho | Trạng thái |
 |---|---|---|---|
-| `hub_room` | Phòng 2026 | Mở đầu, giữa các Trang, chuyển Mốc, kết demo | CONFIRMED (góc cố định) |
+| `hub_room` | Phòng 2026 | Mở đầu, giữa các Trang, chuyển Mốc, kết demo |CONFIRMED (đi lại tự do, 24/11) |
 | `map_thcs` | Trường THCS + cổng + ngõ quà vặt + Căn cứ; một bản đồ dùng chung lớp 6–9 | Trang 1–9 | CONFIRMED 14/11 (dùng chung); đang dựng |
 | Màn hình 2D | Trang confession, điện thoại, nhóm chat; **giao diện làm hòm thư và chọn thư Valentine** | Trang 6, kết demo | PROPOSED |
 | `map_town`, `map_thpt_p` | Khu phố, trường cấp 3 | Mốc 3 | Ngoài bản public |
@@ -236,7 +236,7 @@ Các địa điểm khác từng xuất hiện trong bản nháp (thư viện, n
 | Máy ảnh | C bật/tắt chế độ chụp cầm tay |
 | Sổ tay | J hoặc Tab: mục tiêu, Side, Album |
 | Thoát kẹt | Esc → "Về chỗ an toàn" |
-| Phòng 2026 | Góc cố định; rê chuột làm sáng vật; click/E để chọn; không đi lại |
+| Phòng 2026 | Đi lại tự do trong phòng (WASD); lại gần vật thì sáng; bấm E hoặc click để chọn|
 | Màn hình 2D (điện thoại, confession, **chọn thư Valentine**) | Click để mở, Esc để đóng |
 
 Máy ảnh là **của Player** (CONFIRMED 19/11). Không thiết kế cho cảm ứng/màn hình dọc ở bản public.
