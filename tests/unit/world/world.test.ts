@@ -64,7 +64,7 @@ describe('nạp bản đồ map_thcs', () => {
       for (const t of b.targets) expect(t.zone, t.id).toBe(d.interactables.find((i) => i.id === t.id)!.zone_id);
       for (const c of d.cameras) expect(bindCamera(c, world), c.id).not.toBeNull();
     }
-    const photo = CONTENT.quests.flatMap((q) => q.steps).find((s) => s.kind === 'photo');
+    const photo = CONTENT.quests.flatMap((q) => q.steps).find((s) => s.kind === 'photo' && s.stand_zone);
     const spot = photo?.kind === 'photo' ? bindStandZone(photo.stand_zone, world) : null;
     expect(spot).toMatchObject({ radius: 1.1 });
     expect(world.zoneAt(spot!.center[0], spot!.center[1])).toBe(Z('yard'));
@@ -182,7 +182,7 @@ describe('đi lại trong bản đồ (điều khiển + va chạm thật)', () 
 
 describe('khu mở theo từng Ngày (open_zones)', () => {
   it('Ngày chỉ mở sân + hành lang + lớp: cổng khóa, không ra ngõ được; lớp vào được', async () => {
-    const world = await load({ openZones: day('d.g06.01').open_zones });
+    const world = await load({ openZones: day('d.g07.01').open_zones });
     expect(world.isOpen(Z('gate'))).toBe(false);
     const c = at(world, 'spawn.thcs.yard');
     expect(walk(c, [0, 22], { run: true, maxSeconds: 15 })).toBe(false);

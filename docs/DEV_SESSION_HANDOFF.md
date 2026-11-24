@@ -28,6 +28,29 @@
 - **Chủ dự án đồng ý 22/11:** N-05 sửa `game.ts`/`dayScene.ts`/`d_g07_03.ts` (vẫn hiệu lực khi PR sửa xong); N-09 sửa `game.ts`/`store.ts`.
 - **Việc tiếp:** phiếu N-05, N-02b + mở PR 6 nhánh + đợt N-12/14/16/17/23 — `docs/handoff/NEXT_BATCH_2026-11-23.md`. Tiến độ: `docs/NEXT_SPRINT_TASK_BOARD.md` Mục 5.
 
+---
+
+## Sprint 04/12 — Tiến độ Task N-01 (22/11/2026)
+- **Task thực hiện:** `N-01 · Sửa dữ liệu Mốc 1 theo quyết định B/C/D đã chốt` (Backlog: `docs/NEXT_SPRINT_TASK_BOARD.md`).
+- **Nhánh làm việc:** `task/N-01-sua-moc1` (từ `origin/feat/sprint-0412`), commit `ab4553b`, đã push lên remote `origin/task/N-01-sua-moc1`.
+- **Nội dung đã hoàn thành:**
+  - `d_g06_01.ts` (Trang 1): Tách 7 bước canonical (`s01 talk` tìm lớp bảng phân lớp, `s02 minigame mg_cipher`, `s03 minigame mg_footbag`, `s04 minigame mg_wipe_board` sửa câu Châu "Mới quen một bữa mà ông mày tao rồi hả?", `s05 cutscene` "Mấy tháng sau", `s06 minigame mg_noodle` tại `itr.thcs.grocery_steps`, `s07 photo` tự sướng bộ ba tại `cam.d0601.grocery`). Side/Daily gắn `AI_PROPOSED` + `[PLACEHOLDER]`.
+  - `d_g07_01.ts` (Trang 2): Marker camera `cam.thcs.gutter`; bước 4 đổi thành `minigame 'mg_boat'` (giữ thoại kết quả); gỡ daily trùng lặp theo G-7; Side gắn `AI_PROPOSED` + `[PLACEHOLDER]`.
+  - `d_g07_02.ts` (Trang 3): Thêm bước `collect` 3 điểm khảo sát `itr.thcs.base_survey_roof/stump/boxes`; lời lựa chọn `c_m1_03_decor` trả về "Giấy màu" / "Hoa" / "Ảnh" (flag `m1.base_decor`); bước dựng `minigame 'mg_base_build'`; bước luật `minigame 'mg_rules'`; ảnh chính biển tên tại `cam.thcs.base_sign` (snapshot `s06`); gỡ `q_m1_side_04` khỏi `side_quests`; gỡ daily trùng lặp.
+  - `d_g07_03.ts` (Trang 4): `art_m1_05.appear_when` trỏ `{ day: 'd.g07.02' }` (C4); nhãn ghế đá `itr.thcs.tripod_spot` đổi thành 'Ghế đá dưới gốc phượng' (B7); thêm camera `cam.d0703.rainbow` (`cam.thcs.rainbow`); flag `m1.group_photo_style` (C5); chèn `minigame 'mg_lineup'` (G-1); tách cutscene trú mưa (`s06`) -> ảnh cầu vồng bìa Album `alb.d.g07.03.cover` (`s07`) -> dán ảnh Căn cứ (`s08`); gỡ daily trùng lặp.
+  - `src/content/types.ts`: Hỗ trợ `lines?: DialogueLine[]` và `level?: 'min'` cho `Step` dạng `minigame`.
+  - `src/content/validate.ts`: Hỗ trợ ID pattern entry `alb.d.g07.03.cover` và quest ID `(?:ai_)?(main|side|daily|event|pd)`.
+  - `src/content/hub.ts`: Cập nhật `pde_03` trigger trỏ sang `q_m1_ai_side_01` (bàn giao tiếp cho N-08).
+  - `tests/unit/contentPack.test.ts`: Cập nhật kiểm tra số bước canonical (7/5/6/8), quest ID mới, và 2 ảnh timer Trang 4 -> 100% pass (7/7 tests).
+  - `tests/unit/analyticsBridge.test.ts`: Cập nhật `playAll` theo chuỗi bước mới của Mốc 1 -> 100% pass (13/13 tests).
+  - `docs/handoff/gemini/DOI_CHIEU_TRANG_1_4.md`: Cập nhật bảng đối chiếu kịch bản Trang 1–4 khớp toàn bộ dữ liệu code mới.
+- **Kết quả kiểm tra (DoD Mục 2.0):**
+  - `npx tsc --noEmit`: 0 lỗi.
+  - `npx vitest run tests/unit/contentPack.test.ts tests/unit/validate.test.ts tests/unit/analyticsBridge.test.ts`: 100% pass (36/36 tests).
+  - `VERCEL_ENV=production npm run build`: Thành công 100% (dist sinh đầy đủ không lỗi).
+  - `npm run validate:world`: Báo thiếu 8 marker mới (`itr.thcs.class_list`, `itr.thcs.grocery_steps`, `cam.thcs.grocery`, `cam.thcs.gutter`, `cam.thcs.base_sign`, `cam.thcs.rainbow`, `itr.thcs.base_survey_*`) — Đây là phụ thuộc đã định rõ trong task card chờ task N-04 (`map_thcs.extras.ts`) gộp vào.
+- **Link PR đề xuất:** `https://github.com/KusaThaor/GAME-KNDMST/pull/new/task/N-01-sua-moc1` vào `feat/sprint-0412`.
+
 ## S2 — tiến độ (cập nhật 17/11/2026, 01:30 UTC+7, sau phiên 2c) — ĐỌC TRƯỚC
 Phần dưới (v2) viết trước khi có S2. Riêng về S2, mục này và `docs/S2_EXECUTION_BLUEPRINT.md` mới là bản đúng.
 

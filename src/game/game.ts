@@ -243,6 +243,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       ui.set({ minigame: host });
       if ((await done) === CANCEL || !alive()) return;
       ui.set({ minigame: null });
+      if (s.lines?.length && !(await playLines(s.lines))) return; // thoại của bước phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") [N-01]
       engine.complete(s.id);
     } else if (s.kind === 'free') {
       ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });

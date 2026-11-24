@@ -36,12 +36,37 @@ describe('gói nội dung trong repo', () => {
     expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
-    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(2);
-    expect(d1.side_quests).toHaveLength(1);
-    expect(d1.daily_pool).toHaveLength(1);
-    const photo = idx.quests.get('q_m1_main_05')!.steps.find((s) => s.kind === 'photo');
-    expect(photo).toMatchObject({ mode: 'timer' });
-    expect(photo && photo.kind === 'photo' && photo.subjects).toHaveLength(5);
+    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(7);
+    expect(d1.side_quests).toEqual(['q_m1_ai_side_01']);
+    expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
+
+    const d2 = idx.days.get('d.g07.01')!;
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(5);
+    expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
+    expect(d2.daily_pool).toHaveLength(0);
+
+    const d3 = idx.days.get('d.g07.02')!;
+    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(6);
+    expect(d3.side_quests).toHaveLength(0);
+    expect(d3.daily_pool).toHaveLength(0);
+
+    const d4 = idx.days.get('d.g07.03')!;
+    expect(idx.quests.get(d4.main_chain[0])!.steps).toHaveLength(8);
+    expect(d4.side_quests).toEqual(['q_m1_ai_side_02']);
+    expect(d4.daily_pool).toHaveLength(0);
+
+    const photos = idx.quests.get('q_m1_main_05')!.steps.filter((s) => s.kind === 'photo');
+    expect(photos).toHaveLength(2);
+    expect(photos[0]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.01' });
+    expect(photos[0] && photos[0].kind === 'photo' && photos[0].subjects).toHaveLength(5);
+    expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
+    expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
+  });
+  it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const days = idx.releaseDays.map((d) => d.id);
+    expect(idx.artifactOfDay(days[0])?.appear_when).toEqual({ quest: idx.pack.hub.intro_quest_id });
+    for (let i = 1; i < days.length; i++) expect(idx.artifactOfDay(days[i])?.appear_when, days[i]).toEqual({ day: days[i - 1] });
   });
   it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));

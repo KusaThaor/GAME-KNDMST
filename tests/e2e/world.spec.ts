@@ -59,6 +59,11 @@ async function freeInDay(page: Page) {
   }
 }
 const cam = async (page: Page) => (await state(page)).camera!;
+/** Bước minigame mở trò thật (N-11a/N-11b): chờ khung trò hiện rồi bấm "Bỏ qua" ở màn luật. */
+async function skipMinigame(page: Page) {
+  await page.locator('[data-testid="minigame"]').getByRole('button', { name: 'Bỏ qua', exact: true }).click({ timeout: 20_000 });
+  await expect(page.locator('[data-testid="minigame"]')).toHaveCount(0);
+}
 /** Chờ vài khung hình (Chrome headless vẽ bằng CPU nên chậm). */
 const frames = (page: Page, n = 6) => page.evaluate((k) => new Promise<void>((r) => { let i = 0; const f = () => (++i >= k ? r() : requestAnimationFrame(f)); requestAnimationFrame(f); }), n);
 
@@ -409,7 +414,10 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await page.evaluate(() => window.__game!.teleportTo('itr.thcs.tripod_spot'));
     await expect(e).toBeVisible({ timeout: 20_000 });
     await e.tap();
+    // N-01: s04 xếp đội hình là trò thật (mg_lineup) → chạm "Bỏ qua"; ảnh hẹn giờ giờ là s05
+    await page.locator('[data-testid="minigame"]').getByRole('button', { name: 'Bỏ qua', exact: true }).tap();
     await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
+    expect((await state(page)).step).toBe('q_m1_main_05.s05');
     await page.locator('[data-act="photo-start"]').tap();
     const pose = page.locator('[data-act="photo-pose"]');
     await expect(pose).toBeVisible({ timeout: 20_000 });
@@ -419,7 +427,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 120_000 });
     await page.screenshot({ path: `${SHOTS}/11-anh-hen-gio.png` });
     await page.locator('[data-act="photo-keep"]').tap();
-    await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s04');
+    await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s05');
     expect(await pageStill(page)).toEqual({ scrollX: 0, scrollY: 0, scale: 1, docScroll: 0 });
     expect(errors).toEqual([]);
   });
@@ -831,22 +839,29 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     expect(errors).toEqual([]);
   });
 
-  test('ca 3: Ngày d.g06.01 chỉ mở 3 khu — đi về phía cổng trường bị chặn, không vào được khu cổng', async ({ page }) => {
+  test('ca 3: Ngày d.g06.01 mở 4 khu (N-01: có khu cổng cho Cảnh B tiệm tạp hóa) — đi ra cổng được; lối sân sau (khu chưa mở) bị chặn', async ({ page }) => {
     test.setTimeout(240_000);
     const errors = collectErrors(page);
     await captureCollect(page);
     await openDay(page);
+    // khu cổng mở: từ sân đi thẳng về phía nam là vào khu cổng
     await page.evaluate(([f]) => window.__game!.teleport(3, 13, f), [FACE.south]);
     await frames(page, 3);
+    await page.keyboard.down('KeyW');
+    await expect.poll(async () => (await state(page)).zone, { timeout: 30_000 }).toBe('zone.thcs.gate');
+    await page.keyboard.up('KeyW');
+    // khu sân sau (zone.thcs.field) không mở trong Trang 1: lối trên tường rào phía đông (x = 26, z −14…−10) chặn lại
+    await page.evaluate(([f]) => window.__game!.teleport(22, -12, f), [FACE.east]);
+    await frames(page, 3);
     const r = await holdUntilStill(page, 'KeyW');
-    expect(r.stopped, 'vẫn đi tiếp — cổng không chặn').toBe(true);
+    expect(r.stopped, 'vẫn đi tiếp — lối sân sau không chặn').toBe(true);
     const s = await state(page);
     expect(s.zone).toBe('zone.thcs.yard');
-    expect(s.player!.z).toBeGreaterThan(14);                              // đã đi về phía cổng
-    expect(s.player!.z).toBeLessThan(18.3);                               // vẫn trên sân (sàn sân hết ở z = 18.3)
+    expect(s.player!.x).toBeGreaterThan(23);                              // đã đi về phía lối sân sau
+    expect(s.player!.x).toBeLessThan(26);                                 // chưa qua tường rào
     await page.keyboard.down('ShiftLeft');                                  // thử chạy cũng không qua
     await hold(page, 'KeyW', 2000); await page.keyboard.up('ShiftLeft');
-    expect((await state(page)).zone).not.toBe('zone.thcs.gate');
+    expect((await state(page)).zone).not.toBe('zone.thcs.field');
     expect(errors).toEqual([]);
   });
 
@@ -873,8 +888,8 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     expect(errors).toEqual([]);
   });
 
-  test('ca 8: camera khóa ở khung ngắm, trả góc cũ khi bấm hẹn giờ và nhả sau thoại cầu vồng', async ({ page }) => {
-    test.setTimeout(420_000);
+  test('ca 8: camera khóa ở khung ngắm, trả góc cũ khi bấm hẹn giờ; Trang 4 qua cảnh mưa s06 rồi ảnh cầu vồng s07', async ({ page }) => {
+    test.setTimeout(600_000);
     const errors = collectErrors(page);
     await captureCollect(page);
     await openDay(page, '&day=d.g07.03&step=q_m1_main_05.s03');
@@ -885,7 +900,10 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     const before = await cam(page);
     await expect(page.locator('[data-testid="prompt"]')).toBeVisible({ timeout: 20_000 });
     await page.keyboard.press('KeyE');
+    // N-01: s04 xếp đội hình là trò thật (mg_lineup) → bấm "Bỏ qua"; ảnh hẹn giờ giờ là s05
+    await skipMinigame(page);
     await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
+    expect((await state(page)).step).toBe('q_m1_main_05.s05');
     expect((await cam(page)).locked).toBe(true);
     const lockedYaw = (await cam(page)).yaw;
     await page.mouse.move(900, 300); await page.mouse.down(); await page.mouse.move(1100, 300, { steps: 10 }); await page.mouse.up();
@@ -902,16 +920,27 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     // hẹn giờ 8 giây theo đồng hồ game; Chrome headless vẽ chậm nên chờ lâu hơn máy thật
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
     await page.locator('[data-act="photo-keep"]').click();
-    // Giữ ảnh mở ngay cutscene cầu vồng. Camera của cutscene được nhả sau câu thoại cuối.
-    const rainbowStep = 'q_m1_main_05.s05';
-    await expect.poll(async () => (await state(page)).step).toBe(rainbowStep);
+    // Giữ ảnh mở ngay cutscene mưa rào s06 (weather_by_step: s06 rain_shower — không có máy cutscene nên camera không khóa).
+    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_05.s06');
     const dialogue = page.getByTestId('dialogue');
     await expect(dialogue).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/08-s06-mua-rao.png` });
     while (await dialogue.isVisible()) {
-      expect((await cam(page)).locked).toBe(true);
+      expect((await cam(page)).locked).toBe(false);
       await dialogue.click();
     }
-    await expect.poll(async () => (await state(page)).step).not.toBe(rainbowStep);
+    // s07 ảnh cầu vồng (weather_by_step: s07 after_rain_rainbow): khung ngắm khóa, bấm hẹn giờ thì trả góc
+    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_05.s07');
+    await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
+    expect((await cam(page)).locked).toBe(true);
+    await frames(page, 6);
+    await page.screenshot({ path: `${SHOTS}/08-s07-khung-cau-vong.png` });
+    await page.locator('[data-act="photo-start"]').click();
+    await expect.poll(async () => (await cam(page)).locked, { timeout: 10_000 }).toBe(false);
+    await page.keyboard.press('Space');
+    await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
+    await page.locator('[data-act="photo-keep"]').click();
+    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_05.s08');
     expect((await cam(page)).locked).toBe(false);
     expect(errors).toEqual([]);
   });

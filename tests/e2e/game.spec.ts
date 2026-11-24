@@ -62,13 +62,20 @@ async function openGame(page: Page, query = '') {
 }
 const state = (page: Page) => page.evaluate(() => window.__game!.state() as unknown as GameState);
 const step = (page: Page, opts: BotOpts) => page.evaluate((o) => window.__game!.botStep(o), opts);
+/** Bước minigame Trang 1–4 mở trò thật (N-11a/N-11b): bot bấm "Bỏ qua" ở màn luật thay vì chơi ván. Trả true nếu đã bấm. */
+const skipMinigame = (page: Page) => page.evaluate(() => {
+  const btn = [...document.querySelectorAll<HTMLButtonElement>('[data-testid="minigame"] button')].find((b) => b.textContent?.trim() === 'Bỏ qua');
+  if (!btn) return false;
+  btn.click();
+  return true;
+});
 
 /** Cho bot chơi tới khi `until` đúng. Trả về nhật ký nhãn. */
 async function drive(page: Page, opts: BotOpts, until: (label: string, s: GameState) => boolean, hooks: { each?: (label: string, s: GameState) => Promise<void> | void; maxMs?: number } = {}) {
   const log: string[] = [];
   const t0 = Date.now();
   for (;;) {
-    const label = await step(page, opts);
+    const label = (await skipMinigame(page)) ? 'minigame-skip' : await step(page, opts);
     const s = await state(page);
     if (label !== 'wait' && label !== log[log.length - 1]) log.push(label);
     await hooks.each?.(label, s);
@@ -92,12 +99,14 @@ test.describe('phần khung game', () => {
     const shot = new Set<string>();
     const snap = async (name: string) => { if (shot.has(name)) return; shot.add(name); await page.screenshot({ path: `${SHOTS}/${String(shot.size).padStart(2, '0')}-${name}.png` }); };
     const lines: string[] = [];
+    const timeline: string[] = [];                                         // thứ tự "Bỏ qua" (kèm bước) và thoại — kiểm thoại minigame phát SAU trò
     let onScreen: string[] = [];
     const visible = (id: string) => onScreen.includes(id);
 
     const log = await drive(page, { name: NAME, gender: 'female' }, (label) => label === 'feedback', {
-      each: async (_label, s) => {
-        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) lines.push(s.ui.dialogue);
+      each: async (label, s) => {
+        if (label === 'minigame-skip') timeline.push(`skip ${s.step}`);
+        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) { lines.push(s.ui.dialogue); timeline.push(`line ${s.ui.dialogue}`); }
         onScreen = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('[data-testid]')].map((e) => e.dataset.testid ?? ''));
         if (visible('profile')) await snap('hub-nhap-ten');
         else if (visible('panel-box')) await snap(s.days['d.g06.01'] === 'completed' ? 'hub-hop-ky-vat-ngay-2' : 'hub-hop-ky-vat');
@@ -119,11 +128,10 @@ test.describe('phần khung game', () => {
     expect(s.days).toEqual(allDays('completed'));
     expect(Object.keys(s.artifacts)).toHaveLength(DAYS.length);          // mỗi Ngày đúng một kỷ vật dẫn vào
     expect(new Set(Object.values(s.artifacts))).toEqual(new Set(['on_shelf']));
-    for (const d of DAYS) {
-      expect(['restored', 'enriched', 'complete'], `trang ${d}`).toContain(s.pages[`page.${d}`]);
-      expect(s.quests[`q_m1_daily_01@${d}`], `daily ${d}`).toBe('completed');   // Daily: 1 lần mỗi Ngày, khóa theo Ngày
-    }
-    expect(s.quests['q_m1_side_01']).toBe('completed');                 // Side làm xong mà không chặn Main
+    for (const d of DAYS) expect(['restored', 'enriched', 'complete'], `trang ${d}`).toContain(s.pages[`page.${d}`]);
+    expect(s.quests['q_m1_ai_daily_01@d.g06.01']).toBe('completed');    // Daily (N-01: chỉ Trang 1 có daily_pool), khóa theo Ngày
+    for (const q of ['q_m1_ai_side_01', 'q_m1_ai_side_03', 'q_m1_ai_side_02']) expect(s.quests[q], q).toBe('completed');   // Side làm xong mà không chặn Main
+    expect(log).toContain('minigame-skip');                               // gặp trò thật (N-11a/N-11b) → bấm "Bỏ qua"
     expect(s.quests['q_hub_pd_03']).toBe('completed');
     expect(s.phone['thread.old_group']).toBe(1);                         // đã gửi 1 tin
     expect(s.public_demo_done).toBe(true);
@@ -135,8 +143,15 @@ test.describe('phần khung game', () => {
     // ---- hội thoại: tên có dấu + biến thể nam/nữ (F5) ----
     const all = lines.join('\n');
     expect(all).toContain(NAME);
-    expect(all).toContain('Mới quen một bữa mà bà mày tao rồi hả?');   // d_g06_01: {g:ông|bà}, Player nữ
-    expect(all).not.toContain('Mới quen một bữa mà ông mày tao rồi hả?');
+    // B2: Châu nói với Đức → luôn "ông", kể cả Player nữ. Câu nằm trong `lines` của bước minigame s04 (lau bảng).
+    // Chủ dự án chốt 24/11: thoại bước minigame phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") → bấm "Bỏ qua" ở s04 rồi mới nghe câu này.
+    expect(all, 'thoại của bước minigame (lines) phải được phát').toContain('Mới quen một bữa mà ông mày tao rồi hả?');
+    const skipAt = timeline.indexOf('skip q_m1_main_01.s04');
+    const lineAt = timeline.indexOf('line Mới quen một bữa mà ông mày tao rồi hả?');
+    expect(skipAt, 'bot phải bấm "Bỏ qua" ở trò lau bảng (q_m1_main_01.s04)').toBeGreaterThanOrEqual(0);
+    expect(lineAt, 'thoại s04 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skipAt);
+    expect(all).toContain('Bà tiện đường qua cột cờ');                   // {g:Ông|Bà} khi Châu gọi Player (q_m1_ai_side_01), Player nữ
+    expect(all).not.toContain('Ông tiện đường qua cột cờ');
     expect(all).not.toMatch(/\{player_name\}|\{g:/);
     // dòng có điều kiện (when + fallback): nội dung thật Trang 1–4 chưa dùng; cơ chế kiểm ở tests/unit/dialogue.test.ts
 
@@ -151,8 +166,8 @@ test.describe('phần khung game', () => {
     await expect(page.locator('[data-page="page.d.g06.01"]')).toContainText('bắt đầu từ một mẩu giấy mật lệnh');
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${SHOTS}/90-album.png` });
-    await page.locator('[data-act="flip-page.d.g07.03"]').click();
-    await expect(page.locator('[data-testid="photo-back"]')).toBeVisible();
+    await page.locator('[data-act="flip-page.d.g07.03"]').first().click();   // N-01: Trang 4 có 2 ảnh (nhóm s05 + cầu vồng s07)
+    await expect(page.locator('[data-testid="photo-back"]').first()).toBeVisible();
     await page.locator('[data-act="close"]').click();
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${SHOTS}/91-hub-sau-2-ngay.png` });
@@ -169,6 +184,10 @@ test.describe('phần khung game', () => {
       'album_page_restored', 'album_viewed', 'photo_back_viewed', 'pd_quest_step', 'public_demo_completed', 'feedback_shown', 'feedback_skipped']) {
       expect(names, `thiếu event ${n}`).toContain(n);
     }
+    // ảnh bộ ba Trang 1 (cam.thcs.grocery, 3 lần chụp N-14): Đức + Châu đứng ở bậc thềm tiệm → tấm cuối (đúng khung) đủ người
+    const groceryShots = events.filter((e) => e.name === 'photo_attempt' && e.props?.step_id === 'q_m1_main_01.s07');
+    expect(groceryShots.length).toBeGreaterThanOrEqual(3);
+    expect(groceryShots[groceryShots.length - 1].props?.all_in_frame, 'ảnh bộ ba: tấm cuối thiếu người trong khung').toBe(true);
     expect(names.indexOf('public_demo_completed')).toBeLessThan(names.indexOf('feedback_shown'));   // ghi hoàn thành TRƯỚC form
     expect(names.filter((n) => n === 'public_demo_completed')).toHaveLength(1);
     for (const e of events.filter((x) => /^(quest_|memory_day_)/.test(x.name) || x.name === 'artifact_opened')) expect(typeof e.props?.is_replay, e.name).toBe('boolean');
@@ -238,11 +257,11 @@ test.describe('phần khung game', () => {
     s = await state(page);
     expect(s).toMatchObject({ mode: 'day', day: 'd.g06.01', step: 'q_m1_main_01.s02', attempt_id: before.attempt_id });
     expect(s.quests).toEqual(before.quests);
-    expect(s.ui.objective).toContain('Xuống sân đá cầu');                 // mục tiêu của q_m1_main_01.s02
+    expect(s.ui.objective).toContain('Giải mật lệnh cùng Đức và Châu');   // mục tiêu của q_m1_main_01.s02
 
     // chơi tiếp được tới hết Ngày và về phòng
     await drive(page, { optional: false }, (_l, x) => x.mode === 'hub' && x.days['d.g06.01'] === 'completed' && x.artifacts['art_m1_01'] === 'on_shelf');
-    expect((await state(page)).quests['q_m1_side_01']).toBe('missed');    // Side bỏ qua → missed, không chặn Main
+    expect((await state(page)).quests['q_m1_ai_side_01']).toBe('missed'); // Side bỏ qua → missed, không chặn Main
     expect(errors).toEqual([]);
   });
 
@@ -329,11 +348,14 @@ test.describe('phần khung game', () => {
     await expect(page.locator('[data-testid="panel-journal"]')).toContainText('Xem bảng phân công trực nhật');   // Side q_m1_side_01
     await page.keyboard.press('KeyJ');
 
-    // menu "Chơi lại Ngày từ đầu": làm xong bước 1 rồi quay lại bước 1
-    await drive(page, { optional: false }, (_l, s) => s.step === 'q_m1_main_01.s02' && !s.ui.dialogue);
+    // menu "Chơi lại Ngày từ đầu". N-01: sau s01 Trang 1 là chuỗi bước tự hiện (trò thật, thẻ chữ, ảnh) — menu game không mở được
+    // giữa chừng — nên lấy tiến độ ở Side: xong bước 1 (nói chuyện với Châu) rồi chơi lại → Side về bước 1, Main ở s01
+    await drive(page, {}, (_l, s) => s.active.includes('q_m1_ai_side_01.s02') && !s.ui.dialogue);
+    expect((await state(page)).step).toBe('q_m1_main_01.s01');
     await page.keyboard.press('Escape');
     await page.locator('[data-act="restart-day"]').click();
-    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_01.s01');
+    await expect.poll(async () => (await state(page)).active).not.toContain('q_m1_ai_side_01.s02');
+    expect((await state(page)).step).toBe('q_m1_main_01.s01');
     expect((await state(page)).days['d.g06.01']).toBe('in_progress');
 
     // menu "Xóa tiến trình" (bấm 2 lần) → tiến trình mới, tên cũ không còn trong máy
@@ -407,11 +429,11 @@ test('A-01: đóng Menu tại rãnh nước hoàn thành đúng một bước go
   expect(await page.evaluate(() => window.__game!.teleportTo('itr.thcs.gutter'))).toBe(true);
   // Để proximity quan sát vị trí này ít nhất một khung hình khi Menu còn khóa.
   await page.evaluate(() => new Promise<void>(done => requestAnimationFrame(() => requestAnimationFrame(() => done()))));
-  expect((await state(page)).active).not.toContain('q_m1_side_02.s02');
+  expect((await state(page)).active).not.toContain('q_m1_ai_side_02.s02');
   await page.keyboard.press('Escape');
-  await expect.poll(async () => (await state(page)).active).toContain('q_m1_side_02.s02');
+  await expect.poll(async () => (await state(page)).active).toContain('q_m1_ai_side_02.s02');
   await page.evaluate(() => window.__game!.flush());
   const completions = batches.flatMap(b => b.events).filter(e =>
-    e.name === 'quest_step_completed' && e.props?.step_id === 'q_m1_side_02.s01');
+    e.name === 'quest_step_completed' && e.props?.step_id === 'q_m1_ai_side_02.s01');
   expect(completions).toHaveLength(1);
 });

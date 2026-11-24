@@ -15,10 +15,10 @@ const DAY = 'd\\.g(?:0[6-9]|1[0-2])\\.\\d{2}';
 const SCOPE = '(?:m1|m2|m3|hub)';
 export const ID_PATTERNS = {
   day: new RegExp(`^${DAY}$`),
-  quest: new RegExp(`^q_(${SCOPE})_(main|side|daily|event|pd)_\\d{2}$`),
+  quest: new RegExp(`^q_(${SCOPE})_(?:ai_)?(main|side|daily|event|pd)_\\d{2}$`),
   artifact: new RegExp(`^art_${SCOPE}_\\d{2}$`),
   page: new RegExp(`^page\\.${DAY}$`),
-  entry: new RegExp(`^alb\\.${DAY}\\.\\d{2}$`),
+  entry: new RegExp(`^alb\\.${DAY}\\.(?:\\d{2}|cover)$`),
   fragment: new RegExp(`^frag\\.${DAY}\\.\\d{2}$`),
   character: new RegExp(`^chr_${SLUG}$`),
   npc: new RegExp(`^npc_${SLUG}$`),
@@ -98,7 +98,7 @@ const hasFlagCond = (c: Condition): boolean =>
 function stepLines(s: Step): DialogueLine[] {
   switch (s.kind) {
     case 'talk': case 'cutscene': return s.lines;
-    case 'interact': return s.lines ?? [];
+    case 'interact': case 'minigame': return s.lines ?? [];
     case 'choice': return s.prompt ? [s.prompt] : [];
     default: return [];
   }

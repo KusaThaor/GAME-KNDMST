@@ -2,11 +2,12 @@
  * TRANG 4 (d.g07.03) — ĐỦ NĂM ĐỨA (Cuối lớp 7, Tháng 5/2016)
  * Kịch bản nguồn: KICH_BAN_DEMO_M1_M2_v1.md v1.4 & 01_NARRATIVE_AND_SCENES.md
  * Xưng hô: Đức xưng "mày - tao" với cả nhóm; Châu xưng "tui - ông/bà"; Quân xưng "cậu - tớ"; Hạ xưng tên.
+ * Chuẩn hóa N-01 (B6, B7, C4, C5, D1, G-1, G-7).
  */
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_DRAFT', status: 'SPEC_READY', version: 'v1.4' } as const;
+const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g07.03',
@@ -15,15 +16,15 @@ export const day: MemoryDay = {
   map_id: 'map_thcs',
   map_variant: 'g07_end',
   weather_by_step: {
-    'q_m1_main_05.s04': 'rain_shower',
-    'q_m1_main_05.s05': 'after_rain_rainbow',
+    'q_m1_main_05.s06': 'rain_shower',
+    'q_m1_main_05.s07': 'after_rain_rainbow',
   },
   open_zones: ['zone.thcs.classroom', 'zone.thcs.corridor', 'zone.thcs.yard', 'zone.thcs.gate', 'zone.thcs.field', 'zone.thcs.base'],
   spawn_point: 'spawn.thcs.yard',
   anchor_artifact_id: 'art_m1_05',
   main_chain: ['q_m1_main_05'],
-  side_quests: ['q_m1_side_02'],
-  daily_pool: ['q_m1_daily_01'],
+  side_quests: ['q_m1_ai_side_02'],
+  daily_pool: [],
   npc_placements: [
     { actor: 'NPC_A', marker: 'spot.thcs.yard_group_1', motion: 'idle' },
     { actor: 'NPC_B', marker: 'spot.thcs.yard_group_2', motion: 'idle' },
@@ -31,7 +32,7 @@ export const day: MemoryDay = {
     { actor: 'NPC_D', marker: 'spot.thcs.yard_group_4', motion: 'idle' },
   ],
   interactables: [
-    { id: 'itr.thcs.tripod_spot', label: 'Chỗ đặt máy ảnh gốc phượng', zone_id: 'zone.thcs.yard', kind: 'object' },
+    { id: 'itr.thcs.tripod_spot', label: 'Ghế đá dưới gốc phượng', zone_id: 'zone.thcs.yard', kind: 'object' },
     { id: 'itr.thcs.duty_spot', label: 'Chỗ để đồ trực nhật', zone_id: 'zone.thcs.yard', kind: 'object' },
     { id: 'itr.thcs.gutter', label: 'Rãnh nước mái hiên', zone_id: 'zone.thcs.corridor', kind: 'marker' },
     { id: 'itr.thcs.blackboard', label: 'Bảng đen lớp học', zone_id: 'zone.thcs.classroom', kind: 'marker' },
@@ -39,7 +40,10 @@ export const day: MemoryDay = {
     { id: 'itr.thcs.marble_spot', label: 'Chỗ chơi bi bãi đất', zone_id: 'zone.thcs.field', kind: 'marker' },
     { id: 'itr.thcs.old_table', label: 'Bàn gỗ cũ ở Căn cứ', zone_id: 'zone.thcs.base', kind: 'marker' },
   ],
-  cameras: [{ id: 'cam.d0703.group', marker: 'cam.thcs.yard_group', fov: 38 }],
+  cameras: [
+    { id: 'cam.d0703.group', marker: 'cam.thcs.yard_group', fov: 38 },
+    { id: 'cam.d0703.rainbow', marker: 'cam.thcs.rainbow', fov: 42 },
+  ],
   album_page_id: 'page.d.g07.03',
   completion: 'main_chain',
 };
@@ -78,9 +82,9 @@ export const quests: Quest[] = [
           text: 'Tấm này phải ngầu nha. Tao đứng giữa! Mọi người chọn kiểu dáng nào?',
         },
         options: [
-          { id: 'playful', tone: 'playful', text: 'Tạo dáng nhí nhố làm mặt hề', set_flags: { 'm1.placeholder_tone': 'playful' } },
-          { id: 'gentle', tone: 'gentle', text: 'Đứng tự nhiên, khoác vai cười tươi', set_flags: { 'm1.placeholder_tone': 'gentle' } },
-          { id: 'deep', tone: 'deep', text: 'Nghiêm trang chỉnh tề như ảnh thẻ', set_flags: { 'm1.placeholder_tone': 'deep' } },
+          { id: 'playful', tone: 'playful', text: 'Tạo dáng nhí nhố làm mặt hề', set_flags: { 'm1.group_photo_style': 'playful' } },
+          { id: 'gentle', tone: 'gentle', text: 'Đứng tự nhiên, khoác vai cười tươi', set_flags: { 'm1.group_photo_style': 'gentle' } },
+          { id: 'deep', tone: 'deep', text: 'Nghiêm trang chỉnh tề như ảnh thẻ', set_flags: { 'm1.group_photo_style': 'deep' } },
         ],
       },
       {
@@ -91,6 +95,13 @@ export const quests: Quest[] = [
       },
       {
         id: 'q_m1_main_05.s04',
+        kind: 'minigame',
+        game: 'mg_lineup',
+        level: 'min',
+        objective: 'Xếp đội hình 5 người dưới gốc phượng',
+      },
+      {
+        id: 'q_m1_main_05.s05',
         kind: 'photo',
         mode: 'timer',
         camera_id: 'cam.d0703.group',
@@ -100,9 +111,9 @@ export const quests: Quest[] = [
         objective: 'Hẹn giờ 10 giây và chạy vào giữa đội hình',
       },
       {
-        id: 'q_m1_main_05.s05',
+        id: 'q_m1_main_05.s06',
         kind: 'cutscene',
-        objective: 'Trú mưa rào ở Căn cứ và chụp ảnh cầu vồng',
+        objective: 'Trú mưa rào ở Căn cứ và ngắm cầu vồng',
         lines: [
           { speaker: 'NPC_A', text: 'Máy ảnh của {player_name} đâu? Đừng để ướt!' },
           { speaker: 'NPC_D', text: 'Tớ ôm rồi. Yên tâm.' },
@@ -111,6 +122,23 @@ export const quests: Quest[] = [
           { speaker: 'NPC_B', text: 'Hiện tượng tự nhiên thôi.' },
           { speaker: 'player', text: 'Chụp thêm một tấm với cầu vồng nha!' },
           { speaker: 'NPC_C', text: 'Lần này khỏi tạo dáng. Đứng cạnh nhau là được.' },
+        ],
+      },
+      {
+        id: 'q_m1_main_05.s07',
+        kind: 'photo',
+        mode: 'timer',
+        camera_id: 'cam.d0703.rainbow',
+        subjects: ['player', 'NPC_A', 'NPC_B', 'NPC_C', 'NPC_D'],
+        album_entry_id: 'alb.d.g07.03.cover',
+        stand_zone: { marker: 'spot.thcs.yard_group', radius: 1.1 },
+        objective: 'Chụp ảnh cả nhóm với cầu vồng trên sân',
+      },
+      {
+        id: 'q_m1_main_05.s08',
+        kind: 'cutscene',
+        objective: 'Dán ảnh kỷ niệm lên tường Căn cứ Bí mật',
+        lines: [
           { speaker: 'NPC_A', text: 'Nhìn nè! Từ ba đứa thành năm đứa rồi!' },
           { speaker: 'NPC_B', text: 'Ừ. Cũng không ngờ chơi với nhau lâu vậy.' },
           { speaker: 'player', text: 'Mai mốt chụp nữa nha. Đừng để thiếu ai.' },
@@ -121,34 +149,18 @@ export const quests: Quest[] = [
   },
   {
     ...sideMeta,
-    id: 'q_m1_side_02',
+    id: 'q_m1_ai_side_02',
     type: 'side',
     scope: 'm1',
     memory_day_id: 'd.g07.03',
-    title: 'Đi dạo một vòng các khu trường cũ',
+    title: '[PLACEHOLDER] Đi dạo một vòng các khu trường cũ',
     blocks_main: false,
     steps: [
-      { id: 'q_m1_side_02.s01', kind: 'goto', target: 'itr.thcs.gutter', objective: 'Tới hành lang rãnh nước' },
-      { id: 'q_m1_side_02.s02', kind: 'goto', target: 'itr.thcs.blackboard', objective: 'Vào lớp học bảng đen' },
-      { id: 'q_m1_side_02.s03', kind: 'goto', target: 'itr.thcs.snack_cart', objective: 'Ra xe quà vặt cổng trường' },
-      { id: 'q_m1_side_02.s04', kind: 'goto', target: 'itr.thcs.marble_spot', objective: 'Sang bãi đất trống chơi bi' },
-      { id: 'q_m1_side_02.s05', kind: 'goto', target: 'itr.thcs.old_table', objective: 'Ghé thăm Căn cứ Bí mật' },
-    ],
-  },
-  {
-    ...sideMeta,
-    id: 'q_m1_daily_01',
-    type: 'daily',
-    scope: 'm1',
-    title: 'Kiểm tra đồ trực nhật',
-    blocks_main: false,
-    steps: [
-      {
-        id: 'q_m1_daily_01.s01',
-        kind: 'interact',
-        target: 'itr.thcs.duty_spot',
-        objective: 'Thu dọn dụng cụ trực nhật cuối năm',
-      },
+      { id: 'q_m1_ai_side_02.s01', kind: 'goto', target: 'itr.thcs.gutter', objective: '[PLACEHOLDER] Tới hành lang rãnh nước' },
+      { id: 'q_m1_ai_side_02.s02', kind: 'goto', target: 'itr.thcs.blackboard', objective: '[PLACEHOLDER] Vào lớp học bảng đen' },
+      { id: 'q_m1_ai_side_02.s03', kind: 'goto', target: 'itr.thcs.snack_cart', objective: '[PLACEHOLDER] Ra xe quà vặt cổng trường' },
+      { id: 'q_m1_ai_side_02.s04', kind: 'goto', target: 'itr.thcs.marble_spot', objective: '[PLACEHOLDER] Sang bãi đất trống chơi bi' },
+      { id: 'q_m1_ai_side_02.s05', kind: 'goto', target: 'itr.thcs.old_table', objective: '[PLACEHOLDER] Ghé thăm Căn cứ Bí mật' },
     ],
   },
 ];
@@ -162,8 +174,8 @@ export const artifact: Artifact = {
   appear_when: { day: 'd.g07.02' },   // chỉ sáng khi xong Trang 3 (chủ dự án chốt 22/11: thứ tự Trang 1→4 ở Hộp Kỷ Vật)
   target_memory_day_id: 'd.g07.03',
   complete_when: 'day_completed',
-  reward_fragment_ids: ['frag.d.g07.03.01'],
-  album_entry_ids: ['alb.d.g07.03.01', 'alb.d.g07.03.02', 'alb.d.g07.03.03', 'alb.d.g07.03.04', 'alb.d.g07.03.05'],
+  reward_fragment_ids: ['frag.d.g07.03.01', 'frag.d.g07.03.06'],
+  album_entry_ids: ['alb.d.g07.03.01', 'alb.d.g07.03.02', 'alb.d.g07.03.03', 'alb.d.g07.03.04', 'alb.d.g07.03.05', 'alb.d.g07.03.cover'],
   new_present_action: 'pde_05',
   shape: 'photo',
 };
@@ -172,14 +184,16 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g07.03.01', memory_day_id: 'd.g07.03', kind: 'photo', source_quest_id: 'q_m1_main_05', media_spec: 'A' },
   { id: 'frag.d.g07.03.02', memory_day_id: 'd.g07.03', kind: 'back_note', text: 'Cuối năm lớp 7, dưới gốc phượng chớm nở: "Đủ năm đứa".' },
   { id: 'frag.d.g07.03.03', memory_day_id: 'd.g07.03', kind: 'artifact' },
-  { id: 'frag.d.g07.03.04', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_daily_01', text: 'Dấu trực nhật cuối năm' },
-  { id: 'frag.d.g07.03.05', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_side_02', text: 'Ký ức khắp sân trường' },
+  { id: 'frag.d.g07.03.04', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_ai_daily_01', text: '[PLACEHOLDER] Dấu trực nhật cuối năm' },
+  { id: 'frag.d.g07.03.05', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_ai_side_02', text: '[PLACEHOLDER] Ký ức khắp sân trường' },
+  { id: 'frag.d.g07.03.06', memory_day_id: 'd.g07.03', kind: 'photo', source_quest_id: 'q_m1_main_05', media_spec: 'A' },
 ];
 
 export const entries: AlbumEntry[] = [
-  { id: 'alb.d.g07.03.01', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.03.01', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.group', at_step_id: 'q_m1_main_05.s04' }, replayable: true },
+  { id: 'alb.d.g07.03.01', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.03.01', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.group', at_step_id: 'q_m1_main_05.s05' }, replayable: true },
   { id: 'alb.d.g07.03.02', page_id: 'page.d.g07.03', slot_type: 'back_note', slot_index: 1, fragment_id: 'frag.d.g07.03.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.03.03', page_id: 'page.d.g07.03', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.03.03', source: 'sticker_art', required_for_restore: true },
-  { id: 'alb.d.g07.03.04', page_id: 'page.d.g07.03', slot_type: 'quest_record', slot_index: 3, fragment_id: 'frag.d.g07.03.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_daily_01', replayable: true },
-  { id: 'alb.d.g07.03.05', page_id: 'page.d.g07.03', slot_type: 'sticker', slot_index: 4, fragment_id: 'frag.d.g07.03.05', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_side_02', replayable: true },
+  { id: 'alb.d.g07.03.04', page_id: 'page.d.g07.03', slot_type: 'quest_record', slot_index: 3, fragment_id: 'frag.d.g07.03.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_daily_01', replayable: true },
+  { id: 'alb.d.g07.03.05', page_id: 'page.d.g07.03', slot_type: 'sticker', slot_index: 4, fragment_id: 'frag.d.g07.03.05', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_02', replayable: true },
+  { id: 'alb.d.g07.03.cover', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 5, fragment_id: 'frag.d.g07.03.06', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.rainbow', at_step_id: 'q_m1_main_05.s07' }, replayable: true },
 ];
