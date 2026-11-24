@@ -107,7 +107,7 @@ export const quests: Quest[] = [
           { speaker: 'NPC_B', text: 'Phải có luật. Điều 1: không tự lấy đồ của người khác.' },
           { speaker: 'NPC_A', text: 'Điều 2: đứa nào ăn hết đồ ăn thì tự giác mua thêm!' },
           { speaker: 'NPC_D', text: '…Ai tới trước thì dọn chỗ ngồi.' },
-          { speaker: 'NPC_C', text: 'Nếu có ai buồn thì… mọi người đừng bỏ bạn đó lại một mình nha.' },
+          { speaker: 'NPC_C', text: 'Nếu có ai buồn thì… mọi người đừng bỏ bạn đó ở lại một mình nha.' },
           { speaker: 'player', text: 'Điều 5: chụp ảnh thì phải đủ người.' },
           { speaker: 'NPC_A', text: 'Chốt! Ai vô căn cứ cũng phải tuân thủ!' },
           { speaker: 'NPC_B', text: 'Ông nói như có cả trăm người muốn vô.' },
