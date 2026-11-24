@@ -1,5 +1,12 @@
 # DEV_SESSION_HANDOFF
 
+## Integrator — 25/11/2026, sáng (ĐỌC TRƯỚC)
+- **Đã gộp:** N-01 #8 → `feat/sprint-0412` @ `303bd09` (merge commit) · #18 `feat/sprint-0412` → `dev` @ `d5f1a09` (chủ dự án duyệt chủ trương; cây mã `dev` trùng `303bd09`). `main` chưa đụng (`4adf991`).
+- **Đã kiểm thật:** bản gộp thử #8: tsc ✓ · vitest 521/2 → **522/2** · validate 0 lỗi · build production ✓ · e2e `--workers=1` **45 đạt / 0 đỏ / 1 bỏ qua** (22,0 phút). Sau gộp, trên `303bd09` và trên `dev` `d5f1a09`: tsc ✓ · vitest 522/2 · validate 0 lỗi · build production ✓, bản build không chứa `tweakpane`, `__game`, `inputdebug`, `camtest`, `bot=release`. Vercel build `d5f1a09`: success.
+- **Chưa kiểm:** chơi tay trên Preview `dev` · FPS laptop thật · `/api/health` + Firestore thật trên Vercel (không mở được Preview từ phiên này) · ca Emulator.
+- **Production Mốc 1: chưa sẵn sàng.** Khối `production` của `release.ts` vẫn 0 Trang (Production chỉ có trang chủ); khai ngay thì Side/Daily `AI_PROPOSED` lọt vào vì validator production chỉ in lỗi ra console. Cần N-01b + N-22a + N-19a + chủ dự án chốt Q1 (màn kết Mốc 1 đang nhắc chuyện lớp 8) rồi mới gộp `main`.
+- **Việc tiếp:** `docs/handoff/NEXT_BATCH_2026-11-25.md` (N-01b, N-22a, N-19a, N-12, N-18). Tiến độ: board Mục 5.
+
 ## Integrator — 24/11/2026, đợt 2 (ĐỌC TRƯỚC)
 - **Đã gộp thêm:** N-06 #9 → `628bc5a` (e2e 38/0/1) · K2 #17 → `2a987b6` (e2e 45/0/1; chứa N-08, nên **#11 đã đóng**). Nhánh thật sau gộp: tsc ✓ · vitest 521/2 · validate 0 lỗi.
 - **Chưa gộp:** N-01 #8 — còn 1 ca e2e đỏ (`game.ts` không phát thoại của bước minigame); chủ dự án đồng ý cho N-01 sửa đúng chỗ đó rồi mới gộp.
