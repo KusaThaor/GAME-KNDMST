@@ -154,6 +154,43 @@ describe('QuestEngine — Ngày ký ức', () => {
     expect(t.save.quests['q_m1_daily_01@d.g07.03'].state).toBe('completed');
   });
 
+  it('A-05: conditions.questCompleted hỗ trợ khóa Daily (<id>@<dayId>) theo đúng Ngày và ở Hub', () => {
+    const pack = makePack();
+    pack.quests.find((q) => q.id === 'q_m1_side_01')!.available_when = { quest: 'q_m1_daily_01' };
+    const side2: Quest = {
+      ...pack.quests.find((q) => q.id === 'q_m1_side_01')!,
+      id: 'q_m1_side_02',
+      memory_day_id: 'd.g07.03',
+      available_when: { quest: 'q_m1_daily_01' },
+      steps: [{ id: 'q_m1_side_02.s01', kind: 'interact', target: 'itr.thcs.board' }],
+    };
+    pack.quests.push(side2);
+    pack.days[1].side_quests = ['q_m1_side_02'];
+    const t = setup(pack);
+
+    t.engine.startDay('d.g06.01');
+    expect(t.engine.questState('q_m1_side_01')).toBe('locked');
+    expect(t.engine.conditions.questCompleted('q_m1_daily_01')).toBe(false);
+    expect(t.engine.trigger('interact', 'itr.thcs.board')?.action).toBe('completed');
+    expect(t.engine.conditions.questCompleted('q_m1_daily_01')).toBe(true);
+    expect(t.engine.questState('q_m1_side_01')).toBe('available');
+
+    playDay1Main(t.engine);
+    t.engine.answerEndPrompt('leave');
+
+    // Sang Ngày 2: Daily làm ở Ngày 1 không làm tự mở Side của Ngày 2
+    t.engine.startDay('d.g07.03');
+    expect(t.engine.questState('q_m1_side_02')).toBe('locked');
+    expect(t.engine.conditions.questCompleted('q_m1_daily_01')).toBe(false);
+    expect(t.engine.trigger('interact', 'itr.thcs.board')?.action).toBe('completed');
+    expect(t.engine.conditions.questCompleted('q_m1_daily_01')).toBe(true);
+    expect(t.engine.questState('q_m1_side_02')).toBe('available');
+
+    // Ở Hub vẫn tra được Daily đã xong ở bất kỳ Ngày nào
+    t.engine.enterHub();
+    expect(t.engine.conditions.questCompleted('q_m1_daily_01')).toBe(true);
+  });
+
   it('chuỗi Main nhiều quest: tuyến tính, quest sau chỉ mở khi quest trước xong', () => {
     const pack = makePack();
     const second: Quest = {
