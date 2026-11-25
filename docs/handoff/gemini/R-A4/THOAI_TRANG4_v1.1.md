@@ -188,7 +188,7 @@
   **Tôi:** "Không biết giờ nhóm chat cũ còn mở không nữa…"
 
 - *(Người chơi tới bàn, bấm vào **Điện thoại** để tìm lại nhóm chat cũ)*
-  - Trên màn hình ứng dụng nhắn tin *(tên app chờ chốt ở Phần 2)*, mở vào nhóm **"Căn cứ Bí mật"**.
+  - Trên màn hình ứng dụng nhắn tin **NhắnTí**, mở vào nhóm **"Căn cứ Bí mật"**.
   - Khung chat trống trơn, chỉ hiện một dòng trạng thái mờ: *"tin cuối cùng đã từ rất lâu"*.
 
 - **Người chơi chọn 1 trong 3 tin nhắn mở đầu để gửi cho nhóm bạn:**
@@ -221,6 +221,8 @@
 
 | Mã | Người nói | Chữ | Trạng thái |
 |---|---|---|---|
+| `app_chat_name` (`src/config/hub.ts`) | Giao diện điện thoại | NhắnTí | **PROPOSED** (tên app hư cấu, theo chỉ đạo chủ dự án) |
+| `ch_m1` (`src/content/chapters.ts`) | Nhãn Mốc 1 | Mốc 1 · Lớp 6–7 (2014–2016) | **PROPOSED** (theo năm học lớp 6–7, chỉ đạo chủ dự án) |
 | `HUB_BOX_LINES.locked` | Player (23t) | Món này còn mờ quá… để mình nhớ lại từ từ đã. | **PROPOSED** (thay `[PLACEHOLDER]`) |
 | `art_m1_05.hook_2026` | Player (23t) | Tấm ảnh đủ năm đứa đầu tiên… góc bị ố mất rồi mà mình vẫn giữ. | **PROPOSED** (chuốt từ câu cũ) |
 | Chuyển tiếp sau Trang 4 (1) | Player (23t) | Tấm ảnh cầu vồng nằm ngay bìa rồi… hồi đó tụi mình nói không để thiếu ai. | **PROPOSED** (bổ sung nối Album → Điện thoại) |
@@ -502,17 +504,10 @@
 
 ## [HỎI CHỦ DỰ ÁN]
 
-1. **Tên ứng dụng nhắn tin hư cấu (`app_chat_name` cho R-P1 mục 2, thay `[PLACEHOLDER] Ứng dụng nhắn tin` trong `src/config/hub.ts`):**
-   - **Phương án A:** `AloNhau` — gọn, Việt hóa tự nhiên, gợi app chat quen thuộc.
-   - **Phương án B:** `NhắnTí` — thân mật, nhẹ nhàng, hợp tông bạn bè cũ.
-   - **Phương án C:** `PingMe` — ngắn, trung tính, dễ nhận diện.
-
-2. **Tên nhãn Mốc 1 (`ch_m1` cho R-P1 mục 1, thay `[PLACEHOLDER] Mốc 1 · lớp 6–7` trong `src/content/chapters.ts`):**
-   - **Phương án A:** `Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)` — nhấn vào nơi chốn chung gắn kết cả nhóm.
-   - **Phương án B:** `Mốc 1 · Những ngày lập nhóm (Lớp 6–7)` — nhấn vào hành trình từ 3 lên 5 đứa.
-   - **Phương án C:** `Mốc 1 · Đủ năm đứa (Lớp 6–7)` — lấy theo tên Trang kết Mốc 1.
-
-*(Trang 4 không có câu hỏi mới — cả 4 câu hỏi của khung đã chốt phương án A ngày 25/11/2026.)*
+Không còn câu hỏi mở:
+- `app_chat_name` (R-P1 mục 2): đặt tên hư cấu **`NhắnTí`**.
+- `ch_m1` (R-P1 mục 1): lấy theo số liệu năm lớp 6–7 là **`Mốc 1 · Lớp 6–7 (2014–2016)`**.
+- Trang 4: không có câu hỏi mới (4 câu hỏi khung đã chốt phương án A ngày 25/11/2026).
 
 ---
 
