@@ -5,6 +5,8 @@
  * ngay sau lưng. Chiều cao lấy theo `src/actors/character/presets.ts` (lớp 6–7, `g6.height`). Không có thua.
  * Kiểu ảnh (nghiêm túc / tự nhiên / hài) do bước `choice` của quest chọn, trò này không hỏi lại.
  */
+import { createHiDpiCanvas, MG_INK, MG_RED, mgFont } from '../shared/canvasStage';
+import { createMinigameLoop } from '../shared/loopLifecycle';
 import type { MinigameModule, MinigameResult } from '../types';
 
 export const LINEUP = {
@@ -65,7 +67,7 @@ export class LineupLogic {
   result(): MinigameResult { return { result: 'complete' }; }
 }
 
-const W = 480, H = 340, TRAY_Y = 316, INK = '#3a2c26', RED = '#d8332a', FIG = 92;
+const W = 480, H = 340, TRAY_Y = 316, FIG = 92;
 
 export default {
   id: 'mg_lineup',
@@ -77,41 +79,24 @@ export default {
     'Bàn phím: ←/→ chọn người, phím 1–5 đặt vào chỗ có số đó.',
   ] },
   mount(el, ctx) {
-    const canvas = document.createElement('canvas');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.dataset.testid = 'mg-lineup';
-    canvas.style.cssText = `display:block;width:100%;max-width:${W}px;aspect-ratio:${W}/${H};margin:0 auto;border:2px solid ${INK};border-radius:12px;touch-action:none;cursor:grab;user-select:none`;
-    el.append(canvas);
-    const g = canvas.getContext('2d')!;
-    g.scale(dpr, dpr);
+    const { canvas, ctx: g, toLocal } = createHiDpiCanvas(el, { width: W, height: H, testId: 'mg-lineup', cursor: 'grab' });
 
     const logic = new LineupLogic();
     const people = LINEUP.people;
     const home = new Map(people.map((p, i) => [p.id, { x: 72 + i * 84, y: TRAY_Y }]));
     const pos = new Map([...home].map(([k, v]) => [k, { ...v }]));
-    let paused = false, finished = false, pending = false, timer = 0, raf = 0, sel = 0;
+    let sel = 0;
     let drag: { id: string; dx: number; dy: number } | null = null;
 
-    const finish = () => {
-      if (finished) return;
-      if (paused) { pending = true; return; }
-      finished = true;
-      ctx.onFinish(logic.result());
-    };
     const settleAll = () => {
       for (const p of people) {
         const i = logic.spotOf(p.id);
         pos.set(p.id, i === null ? { ...home.get(p.id)! } : { x: LINEUP.spots[i].x, y: LINEUP.spots[i].y });
       }
-      if (logic.done && !timer) timer = window.setTimeout(finish, LINEUP.finishDelayMs);
-      else if (!logic.done && timer) { clearTimeout(timer); timer = 0; }
+      if (logic.done) loop.scheduleFinish(LINEUP.finishDelayMs, () => logic.result());
+      else loop.cancelFinish();
     };
 
-    const local = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
-    };
     const hit = (p: { x: number; y: number }) => [...people].reverse().find(pp => {
       const q = pos.get(pp.id)!, h = FIG * pp.height * (q.y >= TRAY_Y ? 0.5 : 1);
       return Math.abs(p.x - q.x) <= 18 && p.y <= q.y + 6 && p.y >= q.y - h;
@@ -120,14 +105,14 @@ export default {
     const figure = (p: typeof people[number], x: number, y: number, scale: number, on: boolean, bad: boolean) => {
       const h = FIG * p.height * scale, head = 13 * scale;
       g.save();
-      g.lineWidth = on ? 4 : 2; g.strokeStyle = bad ? RED : INK;
+      g.lineWidth = on ? 4 : 2; g.strokeStyle = bad ? MG_RED : MG_INK;
       g.fillStyle = p.color;
       g.beginPath(); g.roundRect(x - 14 * scale, y - h + head * 2, 28 * scale, h - head * 2, 8 * scale); g.fill(); g.stroke();
       g.fillStyle = '#f6dcc0';
       g.beginPath(); g.arc(x, y - h + head, head, 0, Math.PI * 2); g.fill(); g.stroke();
-      g.fillStyle = INK; g.font = `800 ${Math.round(12 * Math.max(scale, 0.9))}px Nunito, sans-serif`; g.textAlign = 'center';
+      g.fillStyle = MG_INK; g.font = mgFont(Math.round(12 * Math.max(scale, 0.9))); g.textAlign = 'center';
       g.fillText(p.name, x, y + 14);
-      if (bad) { g.fillStyle = RED; g.font = '800 18px Nunito, sans-serif'; g.fillText('!', x + 18 * scale, y - h + 8); }
+      if (bad) { g.fillStyle = MG_RED; g.font = mgFont(18); g.fillText('!', x + 18 * scale, y - h + 8); }
       g.restore();
     };
 
@@ -138,13 +123,13 @@ export default {
       g.fillStyle = '#e0563a'; for (let i = 0; i < 14; i++) { g.beginPath(); g.arc(330 + ((i * 47) % 150), 18 + ((i * 29) % 40), 4, 0, Math.PI * 2); g.fill(); }
       g.fillStyle = '#efe2c4'; g.fillRect(0, TRAY_Y - 70, W, H - TRAY_Y + 70);
       // khung ngắm
-      g.strokeStyle = INK; g.lineWidth = 3; g.setLineDash([10, 6]);
+      g.strokeStyle = MG_INK; g.lineWidth = 3; g.setLineDash([10, 6]);
       g.strokeRect(110, 40, 260, 196); g.setLineDash([]);
       const bad = new Set(logic.covered());
       LINEUP.spots.forEach((s, i) => {
         g.strokeStyle = 'rgba(58,44,38,.6)'; g.lineWidth = 2;
         g.beginPath(); g.ellipse(s.x, s.y, 22, 7, 0, 0, Math.PI * 2); g.stroke();
-        if (!logic.slots[i]) { g.fillStyle = INK; g.font = '800 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(String(i + 1), s.x, s.y + 4); }
+        if (!logic.slots[i]) { g.fillStyle = MG_INK; g.font = mgFont(13); g.textAlign = 'center'; g.fillText(String(i + 1), s.x, s.y + 4); }
       });
       // vẽ hàng sau trước, hàng trước sau, người đang kéo trên cùng
       const placedOrder = [0, 1, 2, 3, 4].map(i => logic.slots[i]).filter((id): id is string => !!id && id !== drag?.id);
@@ -162,11 +147,17 @@ export default {
         g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(110, 40, 260, 196);
       }
     };
-    const frame = () => { draw(); raf = requestAnimationFrame(frame); };
+
+    const loop = createMinigameLoop({
+      onFinish: ctx.onFinish,
+      onDraw: draw,
+      onPause() { if (drag) { drag = null; settleAll(); } },
+      onDispose: () => canvas.remove(),
+    });
 
     const onDown = (e: PointerEvent) => {
-      if (e.button !== 0 || paused || logic.done) return;
-      const p = local(e), who = hit(p);
+      if (e.button !== 0 || loop.paused || logic.done) return;
+      const p = toLocal(e), who = hit(p);
       if (!who) return;
       e.preventDefault();
       const q = pos.get(who.id)!;
@@ -176,8 +167,8 @@ export default {
       try { canvas.setPointerCapture(e.pointerId); } catch { /* bỏ qua */ }
     };
     const onMove = (e: PointerEvent) => {
-      if (!drag || paused) return;
-      const p = local(e);
+      if (!drag || loop.paused) return;
+      const p = toLocal(e);
       pos.set(drag.id, { x: p.x + drag.dx, y: p.y });
     };
     const onUp = () => {
@@ -191,7 +182,7 @@ export default {
       settleAll();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (paused || logic.done || drag) return;
+      if (loop.paused || logic.done || drag) return;
       if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') sel = (sel + (e.code === 'ArrowLeft' ? -1 : 1) + people.length) % people.length;
       else if (/^(Digit|Numpad)[1-5]$/.test(e.code)) {
         logic.place(people[sel].id, Number(e.code.slice(-1)) - 1);
@@ -201,17 +192,12 @@ export default {
       } else return;
       e.preventDefault();
     };
-    canvas.addEventListener('pointerdown', onDown);
-    canvas.addEventListener('pointermove', onMove);
-    canvas.addEventListener('pointerup', onUp);
-    canvas.addEventListener('pointercancel', onUp);
-    window.addEventListener('keydown', onKey);
-    raf = requestAnimationFrame(frame);
+    loop.on(canvas, 'pointerdown', onDown);
+    loop.on(canvas, 'pointermove', onMove);
+    loop.on(canvas, 'pointerup', onUp);
+    loop.on(canvas, 'pointercancel', onUp);
+    loop.on(window, 'keydown', onKey);
 
-    return {
-      pause() { paused = true; if (drag) { drag = null; settleAll(); } },
-      resume() { paused = false; if (pending) { pending = false; finish(); } },
-      dispose() { cancelAnimationFrame(raf); clearTimeout(timer); window.removeEventListener('keydown', onKey); canvas.remove(); },
-    };
+    return loop.instance;
   },
 } satisfies MinigameModule;
