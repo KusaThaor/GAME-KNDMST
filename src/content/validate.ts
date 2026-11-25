@@ -5,7 +5,8 @@
  */
 import { WORLD_INDEXES } from '../world/maps';
 import type { Marker } from '../world/types';
-import { CAST_ROLES, type Condition, type ContentConfig, type ContentPack, type DialogueLine, type MemoryDay, type Quest, type Step } from './types';
+import { LIGHTING_PRESETS } from '../world/variants';
+import { CAST_ROLES, type Condition, type ContentConfig, type ContentPack, type DialogueLine, type MemoryDay, type NarrativeLine, type Quest, type Step } from './types';
 
 export interface Issue { code: string; id: string; message: string }
 export interface ValidationReport { errors: Issue[]; warnings: Issue[] }
@@ -35,10 +36,13 @@ export const ID_PATTERNS = {
 
 export const PLACEHOLDER_TAG = '[PLACEHOLDER]';
 export const LINE_LIMITS = { maxChars: 90, maxLines: 2, playerNameChars: 12 } as const;
+/** Lời dẫn hệ thống (dải dẫn chuyện) và thẻ chữ được dài hơn thoại nhân vật. */
+export const NARRATIVE_LIMITS = { maxChars: 180, titleChars: 40, subtitleChars: 70 } as const;
 
 // Mã trò chơi và màn 2D đã chốt cho nội dung cốt truyện.
 const STORY_MINIGAMES = new Set([
   'mg_cipher', 'mg_footbag', 'mg_wipe_board', 'mg_noodle', 'mg_boat', 'mg_base_build', 'mg_rules', 'mg_lineup',
+  'mg_fold_boat',                                                   // R-B5: gấp thuyền giấy (Trang 2 Cảnh 3), chốt 25/11
   'mg_caro', 'mg_sudoku', 'mg_throw', 'mg_photo_hunt', 'mg_decorate', 'mg_mailbox_build',
   'mg_screen_confession', 'mg_screen_letter_write', 'mg_screen_letter_read', 'mg_screen_three_gates',
 ]);
@@ -100,12 +104,27 @@ function stepLines(s: Step): DialogueLine[] {
     case 'talk': case 'cutscene': return s.lines;
     case 'interact': return s.lines ?? [];
     case 'minigame': return [...(s.intro_lines ?? []), ...(s.lines ?? [])];
-    case 'choice': return s.prompt ? [s.prompt] : [];
+    case 'choice': return [...(s.prompt ? [s.prompt] : []), ...s.options.flatMap((o) => o.lines ?? [])];
+    case 'collect': return Object.values(s.lines_by_target ?? {}).flat();
+    case 'photo': return [...(s.first_line ? [s.first_line] : []), ...(s.countdown_lines ?? []), ...(s.after_lines ?? [])];
     default: return [];
   }
 }
+/** Dòng chính của bước — là các dòng mà cue `{ at: { line: N } }` đếm theo. */
+function mainLines(s: Step): DialogueLine[] {
+  switch (s.kind) {
+    case 'talk': case 'cutscene': return s.lines;
+    case 'interact': return s.lines ?? [];
+    case 'minigame': return s.intro_lines ?? [];
+    default: return [];
+  }
+}
+const narrativeLines = (s: Step): NarrativeLine[] => [...(s.narrative?.before ?? []), ...(s.narrative?.after ?? [])];
 function stepTexts(s: Step): string[] {
   const t = stepLines(s).flatMap((l) => [l.text, ...(l.fallback ? [l.fallback] : [])]);
+  t.push(...narrativeLines(s).flatMap((l) => [l.text, ...(l.fallback ? [l.fallback] : [])]));
+  if (s.title_card) t.push(s.title_card.title, ...(s.title_card.subtitle ? [s.title_card.subtitle] : []));
+  if (s.kind === 'photo') { if (s.prompt) t.push(s.prompt); t.push(...(s.shot_prompts ?? [])); }
   if (s.kind === 'choice') t.push(...s.options.map((o) => o.text));
   if (s.kind === 'compose_message') t.push(...s.openers.map((o) => o.text));
   if (s.kind === 'free' && s.prompt) t.push(s.prompt);
@@ -177,6 +196,41 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
   for (const c of pack.chapters) c.memory_day_ids.forEach((d) => need(days, d, `chapter ${c.id}`));
   for (const m of pack.maps) m.zones.forEach((z) => { if (!z.zone_id.startsWith('zone.')) err('bad_id', z.zone_id, `khu "${z.zone_id}" phải bắt đầu bằng "zone."`); });
 
+  // ---- trình bày (R-D0): thẻ chữ, lời dẫn, cue đạo diễn (phần không cần biết Ngày), dữ liệu chụp/gom/chọn ----
+  const checkPresentation = (s: Step) => {
+    const tc = s.title_card;
+    if (tc) {
+      if (!tc.title.trim()) err('bad_title_card', s.id, `bước "${s.id}": thẻ chữ thiếu dòng tiêu đề`);
+      if (renderedLength(tc.title) > NARRATIVE_LIMITS.titleChars || (tc.subtitle && renderedLength(tc.subtitle) > NARRATIVE_LIMITS.subtitleChars)) warn('title_card_too_long', s.id, `bước "${s.id}": thẻ chữ dài quá (${NARRATIVE_LIMITS.titleChars}/${NARRATIVE_LIMITS.subtitleChars} ký tự)`);
+    }
+    for (const l of narrativeLines(s)) {
+      checkCond(l.when, `bước ${s.id}`);
+      if (l.when && hasFlagCond(l.when) && l.fallback === undefined) err('callback_without_fallback', s.id, `bước "${s.id}": lời dẫn có điều kiện theo flag phải có fallback`);
+      if (!l.text.trim()) err('empty_narrative', s.id, `bước "${s.id}": lời dẫn rỗng`);
+      if (renderedLength(l.text) > NARRATIVE_LIMITS.maxChars) warn('narrative_too_long', s.id, `bước "${s.id}": lời dẫn dài quá ~${NARRATIVE_LIMITS.maxChars} ký tự`);
+    }
+    const lineCount = mainLines(s).length;
+    for (const c of s.stage ?? []) {
+      if ('actor' in c) checkActor(c.actor, `cue ${c.cue} bước ${s.id}`);
+      if (c.at && typeof c.at === 'object' && (c.at.line < 0 || c.at.line >= lineCount)) err('stage_bad_line', s.id, `bước "${s.id}": cue ${c.cue} chờ dòng ${c.at.line} nhưng bước chỉ có ${lineCount} dòng`);
+      if (c.cue === 'weather' && !(c.preset in LIGHTING_PRESETS)) err('missing_ref', c.preset, `preset thời tiết "${c.preset}" không có (bước ${s.id})`);
+      if (c.cue === 'visible' && c.actor === 'player') err('stage_bad_cue', s.id, `bước "${s.id}": không ẩn người chơi bằng cue visible`);
+    }
+    if (s.kind === 'choice') {
+      for (const o of s.options) for (const l of o.lines ?? []) { checkActor(l.speaker, `bước ${s.id}`); checkCond(l.when, `bước ${s.id}`); }
+    }
+    if (s.kind === 'collect') {
+      for (const k of Object.keys(s.lines_by_target ?? {})) if (!s.targets.includes(k)) err('missing_ref', k, `bước "${s.id}": lines_by_target có điểm "${k}" không nằm trong targets`);
+    }
+    if (s.kind === 'photo') {
+      const shots = s.shots ?? 1;
+      if (s.shot_prompts && s.shot_prompts.length > shots) err('bad_photo', s.id, `bước "${s.id}": ${s.shot_prompts.length} lời nhắc nhưng chỉ chụp ${shots} lần`);
+      if (s.hide_pose && s.mode !== 'timer') warn('bad_photo', s.id, `bước "${s.id}": hide_pose chỉ có nghĩa với ảnh hẹn giờ (timer)`);
+      if (s.countdown_lines?.length && s.mode !== 'timer') err('bad_photo', s.id, `bước "${s.id}": countdown_lines chỉ dùng cho ảnh hẹn giờ (timer)`);
+      for (const l of s.countdown_lines ?? []) if (l.at_s !== undefined && l.at_s < 0) err('bad_photo', s.id, `bước "${s.id}": at_s phải ≥ 0`);
+    }
+  };
+
   // ---- quest + bước ----
   const optionalTargets = new Map<string, string[]>();
   for (const q of pack.quests) {
@@ -223,16 +277,28 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
       if (s.kind === 'photo') { need(entries, s.album_entry_id, `bước ${s.id}`); s.subjects.forEach((a) => checkActor(a, `bước ${s.id}`)); }
       if (s.kind === 'album_restore' && !pack.days.some((d) => d.album_page_id === s.page_id)) err('missing_ref', s.page_id, `trang "${s.page_id}" không tồn tại (ở bước ${s.id})`);
       if (s.kind === 'collect' && (s.count < 1 || s.count > s.targets.length)) err('bad_collect', s.id, `bước "${s.id}": count phải từ 1 tới số điểm gom`);
+      checkPresentation(s);
     }
     if (q.ownership_label === 'AI_PROPOSED' && !q.title.includes(PLACEHOLDER_TAG)) err('missing_placeholder_tag', q.id, `quest "${q.id}": tên phải ghi ${PLACEHOLDER_TAG}`);
     q.parts?.forEach((p) => { if (!q.steps.some((s) => s.id === p.first_step_id)) err('missing_ref', p.first_step_id, `phần "${p.id}" của ${q.id} trỏ tới bước không có`); });
   }
 
   // ---- bước ↔ thế giới (vật tương tác, nhân vật đã đặt, máy ảnh) ----
-  const checkStepWorld = (q: Quest, where: string, targets: Set<string>, placed: Set<string> | null, cameras: Set<string> | null) => {
+  const checkStepWorld = (q: Quest, where: string, targets: Set<string>, placed: Set<string> | null, cameras: Set<string> | null, mapId?: string) => {
     const tgt = (id: string) => { if (!targets.has(id)) err('missing_ref', id, `"${id}" không có trong ${where} (quest ${q.id})`); };
     const act = (a: string) => { if (placed && a !== 'player' && !placed.has(a)) err('actor_not_placed', a, `"${a}" chưa được đặt trong ${where} (quest ${q.id})`); };
+    /** Cue đạo diễn trỏ marker: phải có trên bản đồ (GLB hoặc World Extras), đúng loại chỗ đứng. */
+    const place = (id: string, s: Step, kinds: string[]) => {
+      if (!mapId) return;
+      if (!kinds.some((k) => markerZones.has(`${mapId}/${k}/${id}`))) err('missing_marker', id, `marker "${id}" (${kinds.join('/')}) không có trên ${mapId} (cue ở bước ${s.id})`);
+    };
     for (const s of q.steps) {
+      for (const c of s.stage ?? []) {
+        if ('actor' in c) act(c.actor);
+        if (c.cue === 'move' || c.cue === 'teleport') place(c.to, s, ['spot', 'interact', 'spawn']);
+        if (c.cue === 'face' && !(placed?.has(c.toward) || c.toward === 'player')) place(c.toward, s, ['spot', 'interact', 'target', 'camera']);
+        if (c.cue === 'camera' && c.camera_id !== null && cameras && !cameras.has(c.camera_id)) err('missing_ref', c.camera_id, `máy ảnh "${c.camera_id}" không có trong ${where} (cue ở bước ${s.id})`);
+      }
       if (s.kind === 'goto' || s.kind === 'interact' || s.kind === 'place') tgt(s.target);
       if (s.kind === 'collect') s.targets.forEach(tgt);
       if (s.kind === 'talk') act(s.with);
@@ -254,6 +320,16 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
     d.interactables.forEach((i) => { if (!ID_PATTERNS.interactable.test(i.id)) err('bad_id', i.id, `vật tương tác "${i.id}" sai mẫu itr.<map>.<slug>`); });
     d.cameras.forEach((c) => { if (!ID_PATTERNS.camera.test(c.id)) err('bad_id', c.id, `máy ảnh "${c.id}" sai mẫu cam.<slug>.<slug>`); });
     d.npc_placements.forEach((n) => checkActor(n.actor, where));
+    for (const o of d.zone_name_overrides ?? []) {
+      if (map && !map.zones.some((z) => z.zone_id === o.zone_id)) err('missing_ref', o.zone_id, `khu "${o.zone_id}" không có trong ${d.map_id} (zone_name_overrides, ${where})`);
+      if (!o.name.trim()) err('bad_zone_override', d.id, `${where}: zone_name_overrides cho ${o.zone_id} thiếu tên`);
+      if (o.until_step) {
+        const ref = steps.get(o.until_step);
+        if (!ref) err('missing_ref', o.until_step, `bước "${o.until_step}" không tồn tại (zone_name_overrides, ${where})`);
+        else if (!d.main_chain.includes(ref.quest.id) && !d.side_quests.includes(ref.quest.id)) err('bad_zone_override', o.until_step, `${where}: until_step "${o.until_step}" không thuộc quest nào của Ngày này`);
+      }
+      checkCond(o.when, `${where} zone_name_overrides`);
+    }
 
     const mine = pack.artifacts.filter((a) => a.target_memory_day_id === d.id);
     if (mine.length !== 1) err('day_artifact_count', d.id, `${where} phải có đúng 1 kỷ vật dẫn vào (đang có ${mine.length})`);
@@ -274,7 +350,7 @@ export function validateContent(pack: ContentPack, config: ContentConfig): Valid
         const problem = openingTargetProblem(d, q.steps[0], target);
         if (problem) err('optional_quest_unstartable', q.id, `${where}: bước đầu ${q.steps[0].id} của ${q.id} — ${problem}`);
       }
-      checkStepWorld(q, where, targets, placed, cameras);
+      checkStepWorld(q, where, targets, placed, cameras, d.map_id);
     }
     const pageEntries = pack.album_entries.filter((e) => e.page_id === d.album_page_id);
     if (!pageEntries.length) err('day_no_album_page', d.id, `${where} chưa có trang Album (không có ô nào thuộc ${d.album_page_id})`);
