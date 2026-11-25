@@ -66,6 +66,7 @@ const step = (page: Page, opts: BotOpts) => page.evaluate((o) => window.__game!.
 const skipMinigame = (page: Page) => page.evaluate(() => {
   const btn = [...document.querySelectorAll<HTMLButtonElement>('[data-testid="minigame"] button')].find((b) => b.textContent?.trim() === 'Bỏ qua');
   if (!btn) return false;
+  (window as unknown as { __tl?: string[] }).__tl?.push(`skip ${(window.__game!.state() as unknown as { step: string | null }).step}`);   // dòng thời gian của ca thoại minigame
   btn.click();
   return true;
 });
@@ -99,14 +100,26 @@ test.describe('phần khung game', () => {
     const shot = new Set<string>();
     const snap = async (name: string) => { if (shot.has(name)) return; shot.add(name); await page.screenshot({ path: `${SHOTS}/${String(shot.size).padStart(2, '0')}-${name}.png` }); };
     const lines: string[] = [];
-    const timeline: string[] = [];                                         // thứ tự "Bỏ qua" (kèm bước) và thoại — kiểm thoại minigame phát SAU trò
+    // Dòng thời gian ghi NGAY TRONG TRANG (MutationObserver) để không sót câu nào dù bot chỉ đọc trạng thái sau mỗi nhịp:
+    // `step <id>` khi bước đổi, `line <câu>` khi hộp thoại đổi chữ, `skip <id>` khi bot bấm "Bỏ qua" (skipMinigame).
+    await page.evaluate(() => {
+      const w = window as unknown as { __tl: string[] };
+      w.__tl = [];
+      let lastStep = '', lastLine = '';
+      new MutationObserver(() => {
+        const step = (window.__game!.state() as unknown as { step: string | null }).step ?? '';
+        if (step && step !== lastStep) { lastStep = step; w.__tl.push(`step ${step}`); }
+        const t = document.querySelector('[data-testid="dialogue"] .text')?.textContent ?? '';
+        if (t && t !== lastLine) w.__tl.push(`line ${t}`);
+        lastLine = t;
+      }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    });
     let onScreen: string[] = [];
     const visible = (id: string) => onScreen.includes(id);
 
     const log = await drive(page, { name: NAME, gender: 'female' }, (label) => label === 'feedback', {
-      each: async (label, s) => {
-        if (label === 'minigame-skip') timeline.push(`skip ${s.step}`);
-        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) { lines.push(s.ui.dialogue); timeline.push(`line ${s.ui.dialogue}`); }
+      each: async (_label, s) => {
+        if (s.ui.dialogue && lines[lines.length - 1] !== s.ui.dialogue) lines.push(s.ui.dialogue);
         onScreen = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('[data-testid]')].map((e) => e.dataset.testid ?? ''));
         if (visible('profile')) await snap('hub-nhap-ten');
         else if (visible('panel-box')) await snap(s.days['d.g06.01'] === 'completed' ? 'hub-hop-ky-vat-ngay-2' : 'hub-hop-ky-vat');
@@ -144,12 +157,31 @@ test.describe('phần khung game', () => {
     const all = lines.join('\n');
     expect(all).toContain(NAME);
     // B2: Châu nói với Đức → luôn "ông", kể cả Player nữ. Câu nằm trong `lines` của bước minigame s04 (lau bảng).
-    // Chủ dự án chốt 24/11: thoại bước minigame phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") → bấm "Bỏ qua" ở s04 rồi mới nghe câu này.
+    // Chủ dự án chốt 24/11 + 25/11 (N-01b): `intro_lines` của bước minigame phát TRƯỚC trò, `lines` phát SAU khi chơi xong
+    // (thắng, thua hay "Bỏ qua"); ba câu về ảnh tự sướng nằm ở bước s08, sau bước ảnh s07.
     expect(all, 'thoại của bước minigame (lines) phải được phát').toContain('Mới quen một bữa mà ông mày tao rồi hả?');
-    const skipAt = timeline.indexOf('skip q_m1_main_01.s04');
-    const lineAt = timeline.indexOf('line Mới quen một bữa mà ông mày tao rồi hả?');
-    expect(skipAt, 'bot phải bấm "Bỏ qua" ở trò lau bảng (q_m1_main_01.s04)').toBeGreaterThanOrEqual(0);
-    expect(lineAt, 'thoại s04 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skipAt);
+    const timeline = await page.evaluate(() => (window as unknown as { __tl: string[] }).__tl);
+    const at = (entry: string, what: string) => { const i = timeline.indexOf(entry); expect(i, what).toBeGreaterThanOrEqual(0); return i; };
+    // s04 (lau bảng, không có intro_lines): bấm "Bỏ qua" rồi mới nghe câu của Châu
+    const skip04 = at('skip q_m1_main_01.s04', 'bot phải bấm "Bỏ qua" ở trò lau bảng (q_m1_main_01.s04)');
+    expect(at('line Mới quen một bữa mà ông mày tao rồi hả?', 'câu s04 phải được phát'), 'thoại s04 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip04);
+    // s02 (mật lệnh): 6 câu đầu (intro_lines) TRƯỚC khi bấm "Bỏ qua"; câu của Châu (lines) SAU
+    const skip02 = at('skip q_m1_main_01.s02', 'bot phải bấm "Bỏ qua" ở trò mật lệnh (q_m1_main_01.s02)');
+    expect(at('line Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.', 'câu mở đầu s02 phải được phát'), 'intro_lines s02 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip02);
+    expect(at('line Ơ… dạ, Châu Tổng.', 'câu cuối intro_lines s02 phải được phát'), 'câu cuối intro_lines s02 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip02);
+    expect(at('line Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.', 'câu kết s02 phải được phát'), 'lines s02 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip02);
+    // s06 (mì tôm): lời rủ mua mì TRƯỚC khi bấm "Bỏ qua"; "Quay ngược máy lại tự sướng đi!" SAU
+    const skip06 = at('skip q_m1_main_01.s06', 'bot phải bấm "Bỏ qua" ở trò mì tôm (q_m1_main_01.s06)');
+    expect(at('line Chia đều. Không bàn cãi nữa.', 'câu s06 phải được phát'), 'intro_lines s06 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip06);
+    expect(timeline.findIndex((t) => t.startsWith('line ') && t.includes('có máy ảnh mà! Quay ngược máy lại tự sướng đi!')), 'câu dẫn sang bước chụp (lines s06) phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip06);
+    // s08: ba câu bàn về tấm tự sướng chỉ hiện SAU bước ảnh s07 (không còn nằm trước ảnh như bản N-01)
+    const step07 = at('step q_m1_main_01.s07', 'bot phải tới bước ảnh s07');
+    const step08 = at('step q_m1_main_01.s08', 'bot phải tới bước s08 (cảnh sau ảnh)');
+    expect(step08, 's08 sau s07').toBeGreaterThan(step07);
+    for (const l of ['Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.', 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.', 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!']) {
+      const i = at(`line ${l}`, `câu "${l}" phải được phát`);
+      expect(i, `"${l}" phải hiện SAU bước ảnh s07 (trong s08)`).toBeGreaterThan(step08);
+    }
     expect(all).toContain('Bà tiện đường qua cột cờ');                   // {g:Ông|Bà} khi Châu gọi Player (q_m1_ai_side_01), Player nữ
     expect(all).not.toContain('Ông tiện đường qua cột cờ');
     expect(all).not.toMatch(/\{player_name\}|\{g:/);

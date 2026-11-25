@@ -36,7 +36,7 @@ describe('gói nội dung trong repo', () => {
     expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
-    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(7);
+    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(8);   // N-01b: thêm s08 (3 câu bàn về ảnh tự sướng, sau ảnh s07)
     expect(d1.side_quests).toEqual(['q_m1_ai_side_01']);
     expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
 
@@ -61,6 +61,49 @@ describe('gói nội dung trong repo', () => {
     expect(photos[0] && photos[0].kind === 'photo' && photos[0].subjects).toHaveLength(5);
     expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
     expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
+  });
+  it('thoại bước minigame tách trước/sau trò (N-01b): intro_lines phát trước, lines phát sau; ba câu về ảnh tự sướng ở s08 sau ảnh s07', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const text = (ls?: { text: string }[]) => (ls ?? []).map((l) => l.text);
+    const mg = (qid: string, sid: string) => {
+      const s = idx.quests.get(qid)!.steps.find((x) => x.id === sid)!;
+      if (s.kind !== 'minigame') throw new Error(`${sid} không phải minigame`);
+      return s;
+    };
+    const cipher = mg('q_m1_main_01', 'q_m1_main_01.s02');
+    expect(text(cipher.intro_lines)).toHaveLength(6);
+    expect(text(cipher.intro_lines)[0]).toBe('Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.');
+    expect(text(cipher.intro_lines)[5]).toBe('Ơ… dạ, Châu Tổng.');
+    expect(text(cipher.lines)).toEqual(['Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.']);
+    const footbag = mg('q_m1_main_01', 'q_m1_main_01.s03');
+    expect(text(footbag.intro_lines)).toEqual(['Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!']);
+    expect(text(footbag.lines)).toEqual(['Ừ, giỏi dữ chưa. Đá hụt cầu bay vô bụi rồi kìa, để tui đi lượm.']);
+    const wipe = mg('q_m1_main_01', 'q_m1_main_01.s04');
+    expect(wipe.intro_lines).toBeUndefined();                      // đúng kịch bản: cả 4 câu sau trò
+    expect(text(wipe.lines)).toHaveLength(4);
+    const noodle = mg('q_m1_main_01', 'q_m1_main_01.s06');
+    expect(text(noodle.intro_lines)).toEqual(['Ra tiệm tạp hóa đi! Còn đúng một gói mì nè, mua lẹ chia ba!', 'Chia đều. Không bàn cãi nữa.']);
+    expect(text(noodle.lines)).toEqual(['{player_name} có máy ảnh mà! Quay ngược máy lại tự sướng đi!']);
+    const steps = idx.quests.get('q_m1_main_01')!.steps;
+    expect(steps.map((s) => s.id)).toEqual(['s01', 's02', 's03', 's04', 's05', 's06', 's07', 's08'].map((n) => `q_m1_main_01.${n}`));
+    expect(steps[6].kind).toBe('photo');
+    const after = steps[7];
+    expect(after.kind).toBe('cutscene');
+    expect(after.kind === 'cutscene' && text(after.lines)).toEqual([
+      'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.',
+      'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.',
+      'Chốt! Sau này chụp đủ một bộ sưu tập luôn!',
+    ]);
+    const rules = mg('q_m1_main_03', 'q_m1_main_03.s05');
+    expect(text(rules.intro_lines)).toHaveLength(5);
+    expect(text(rules.intro_lines)[0]).toBe('Phải có luật. Điều 1: không tự lấy đồ của người khác.');
+    expect(text(rules.intro_lines)[3]).toBe('Nếu có ai buồn thì… mọi người đừng bỏ bạn đó ở lại một mình nha.');   // chữ "ở lại" đã chốt ở 2bbf275
+    expect(text(rules.intro_lines)[4]).toBe('Điều 5: chụp ảnh thì phải đủ người.');
+    expect(text(rules.lines)).toEqual(['Chốt! Ai vô căn cứ cũng phải tuân thủ!', 'Ông nói như có cả trăm người muốn vô.', 'Biết đâu sau này nổi tiếng!']);
+    // không câu nào bị mất hay thêm: Trang 1 trước đây có 7 + 2 + 4 + 6 = 19 câu trong 4 bước minigame; nay s02 7, s03 2, s04 4, s06 3, s08 3
+    const total = (q: string) => idx.quests.get(q)!.steps.reduce((n, s) => n + (s.kind === 'minigame' ? (s.intro_lines?.length ?? 0) + (s.lines?.length ?? 0) : s.kind === 'cutscene' && s.id.endsWith('.s08') ? s.lines.length : 0), 0);
+    expect(total('q_m1_main_01')).toBe(19);
+    expect(total('q_m1_main_03')).toBe(8);
   });
   it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));

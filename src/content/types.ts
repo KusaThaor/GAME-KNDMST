@@ -69,7 +69,7 @@ export type Step =
   | (StepBase & { kind: 'collect'; item: string; targets: string[]; count: number })
   | (StepBase & { kind: 'place'; item: string; target: string })
   | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone; /** handheld: số lần chụp rồi chọn 1 (mặc định 1) */ shots?: number })
-  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; lines?: DialogueLine[]; opponent?: string })
+  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; /** phát TRƯỚC khi mở trò */ intro_lines?: DialogueLine[]; /** phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") */ lines?: DialogueLine[]; opponent?: string })
   | (StepBase & { kind: 'cutscene'; lines: DialogueLine[] })
   | (StepBase & { kind: 'free'; prompt?: string })
   | (StepBase & { kind: 'setFlag'; flag: string; value: FlagValue })
