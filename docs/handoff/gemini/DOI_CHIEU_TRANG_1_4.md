@@ -1,5 +1,5 @@
 # BẢNG ĐỐI CHIẾU SỐ HÓA KỊCH BẢN TRANG 1–4 (MỐC 1: LỚP 6–7)
-> **Dự án:** Hành Trình Thanh Xuân (KNĐMST)  
+> **Dự án:** Vùng Ký Ức (KNĐMST)  
 > **Nhiệm vụ:** N-01 — Sửa dữ liệu Mốc 1 theo quyết định B/C/D đã chốt  
 > **Agent thực hiện:** Antigravity (Gemini 3.8)  
 > **Tài liệu nguồn:** `docs/gdd/scripts/KICH_BAN_DEMO_M1_M2_v1.md` (v1.4 APPROVED), `docs/gdd/01_NARRATIVE_AND_SCENES.md` (v1.0 APPROVED), `docs/PAGE_DATA_GUIDE.md`, `docs/NEXT_SPRINT_TASK_BOARD.md` (thẻ N-01)  

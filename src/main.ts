@@ -50,7 +50,7 @@ async function startGame() {
 function renderHome() {
   app.innerHTML = `
     <main class="home">
-      <h1>Hành Trình Thanh Xuân</h1>
+      <h1>Vùng Ký Ức</h1>
       <p class="sub">Những ngày mình còn nhỏ — game 3D trên trình duyệt. Bản đang xây dựng.</p>
       <p class="build">build ${__BUILD_VERSION__} · môi trường ${__APP_ENV__}</p>
       ${HAS_GAME ? `<p><a class="play" href="?play=1">▶ Chơi bản khung</a></p>` : ''}

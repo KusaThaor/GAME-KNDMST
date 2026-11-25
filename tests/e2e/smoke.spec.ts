@@ -10,7 +10,7 @@ const collectErrors = (page: Page) => {
 test('trang chủ hiện build và môi trường test', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('/');
-  await expect(page.locator('h1')).toHaveText('Hành Trình Thanh Xuân');
+  await expect(page.locator('h1')).toHaveText('Vùng Ký Ức');
   await expect(page.locator('.build')).toContainText('môi trường test');
   expect(errors).toEqual([]);
 });

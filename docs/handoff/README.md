@@ -1,4 +1,4 @@
-# Bàn giao — Hành Trình Thanh Xuân (cập nhật 22/11/2026)
+# Bàn giao — Vùng Ký Ức (cập nhật 22/11/2026)
 
 File này mở đầu. Đọc hết trong 2 phút rồi sang [`../NEXT_SPRINT_TASK_BOARD.md`](../NEXT_SPRINT_TASK_BOARD.md) — **bảng việc duy nhất** (đã gộp `SPRINT_TASKS.md` cũ).
 
