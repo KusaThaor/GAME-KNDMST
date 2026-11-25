@@ -217,10 +217,11 @@ export class World {
     this.root.traverse((o) => {
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
-      m.geometry.dispose();
+      if (m.geometry && !m.geometry.userData?.shared) m.geometry.dispose();
       for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
+        if (!mat) continue;
         const map = (mat as THREE.MeshStandardMaterial).map;
-        if (map) { map.dispose(); mat.dispose(); }
+        if (map && !map.userData?.shared) { map.dispose(); mat.dispose(); }
       }
     });
     for (const f of this.floors) { f.geometry.dispose(); (f.material as THREE.Material).dispose(); }
