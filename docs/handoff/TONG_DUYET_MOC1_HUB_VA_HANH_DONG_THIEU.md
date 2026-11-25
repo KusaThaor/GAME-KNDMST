@@ -657,6 +657,7 @@
 | **10** | **Mặt giấy ướt lúc ký tên (Trang 2)** | Chốt theo đề xuất A: giữ nguyên thoại cũ, đẩy thẳng vào cảnh viết và ký trên buồm |
 | **11** | **Tiếng trống vào lớp tạm (Trang 2)** | Chốt theo đề xuất A: tạm hiện dòng dẫn *"Tùng… tùng… tùng…"* trước khi Châu quay đi (trình bày theo kiểu dẫn chuyện hệ thống) |
 | **UI** | **Trình bày Narrative bối cảnh hệ thống** | **Quy chuẩn mới:** Đưa toàn bộ câu dẫn bối cảnh/chuyển cảnh vào code chạy thật, nhưng **trình bày khác hẳn khung thoại nhân vật** (dải dẫn chuyện / phụ đề bối cảnh riêng) |
+| **DATA** | **Số hóa riêng Narrative & Tả cảnh** | Đã tách riêng thành file độc lập: **docs/handoff/SO_HOA_NARRATIVE_TA_CANH_MOC1.md** phân loại rõ 5 kênh hiển thị (TitleCard, NarratorOverlay, MinigameCard, HUDObjective, WorldEvent) kèm từ điển code TypeScript |
 
 ---
 

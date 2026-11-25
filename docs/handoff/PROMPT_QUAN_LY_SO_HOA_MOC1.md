@@ -1,7 +1,10 @@
 # PROMPT ĐIỀU PHỐI QUẢN LÝ & SỐ HÓA TOÀN BỘ MỐC 1 (HUB 2026 + TRANG 1–4)
 
 > **Dùng khi:** Bắt đầu đợt triển khai chính thức sau khi Chủ dự án đã **CHỐT 100%** toàn bộ kịch bản và các quyết định thiết kế ngày 25/11/2026.
-> **Nguồn chân lý:** `docs/handoff/TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md` (trên nhánh `docs/tong-duyet-moc1-4-trang`) và `docs/handoff/TONG_HOP_4_TRANG_VA_KE_HOACH_REFACTOR.md` (trên nhánh `task/R-B0-tong-hop-refactor`).
+> **Nguồn chân lý:** 
+> 1. Kịch bản tổng duyệt: `docs/handoff/TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md` (nhánh `docs/tong-duyet-moc1-4-trang`)
+> 2. **Số hóa riêng Narrative & Tả cảnh:** `docs/handoff/SO_HOA_NARRATIVE_TA_CANH_MOC1.md` (toàn bộ thẻ chữ, dải dẫn chuyện hệ thống, luật minigame, HUD bối cảnh Mốc 1)
+> 3. Kế hoạch refactor: `docs/handoff/TONG_HOP_4_TRANG_VA_KE_HOACH_REFACTOR.md` (nhánh `task/R-B0-tong-hop-refactor`)
 
 ---
 
@@ -28,7 +31,7 @@ NHIỆM VỤ CỦA BẠN (LÀM ĐÚNG THỨ TỰ):
    - **Đợt 1 (Mở khóa nền):** `R-P1` + `R-D0` (mở rộng `types.ts`/`validate.ts`, cập nhật marker `MAP-1`/`MAP-2` trong `map_thcs.extras.ts`, gỡ `[PLACEHOLDER]` ở `chapters.ts`/`hub.ts`/`hubRoom.ts`/`FeedbackForm.tsx`, gắn cơ chế mở Form phản hồi khi bấm Thoát). Gộp Đợt 1 vào `feat/sprint-0412` trước khi chạy Đợt 2–3.
    - **Đợt 2 (5 nhánh Engine & Minigame chạy song song):**
      + `R-B1`: Đạo diễn NPC (`stageRunner.ts`, `dayScene.ts` — đi/chạy tới marker, quay mặt, đổi motion, ẩn hiện Châu rời cảnh P1-5, dịch chuyển cụm cảnh P1-5→P1-6).
-     + `R-B2`: Chuyển cảnh & UI (`TitleCardOverlay`, `KeyHintCard`, **dải hiển thị Narrative bối cảnh tách biệt thoại**, `CameraManager.dollyTo`, `zone_name_overrides` "Góc sân sau" → "Căn cứ bí mật", dẫn đường không khóa chân, đổi mưa trong cảnh).
+     + `R-B2`: Chuyển cảnh & UI (`TitleCardOverlay`, `KeyHintCard`, **dải hiển thị Narrative bối cảnh tách biệt thoại** theo chuẩn SO_HOA_NARRATIVE_TA_CANH_MOC1.md, `CameraManager.dollyTo`, `zone_name_overrides` "Góc sân sau" → "Căn cứ bí mật", dẫn đường không khóa chân, đổi mưa trong cảnh).
      + `R-B3`: Chụp ảnh & Đạo cụ cầm tay (`photoRunner.ts`, `PhotoOverlay.tsx`, `actors/character/props.ts` — bỏ hardcode `MULTI_SHOT`, `shot_prompts` 3 lần Trang 1, thoại chen đếm ngược & phản ứng theo kiểu ảnh Trang 4, `hide_pose`, `setActorProp` cầm/trao vở, cầu, thuyền, sổ, bút đỏ, biển tên, máy ảnh, ảnh chính Trang 2 & 3 lấy từ người chơi chụp).
      + `R-B4`: Biến đổi 3D tại chỗ & Âm thanh (`m1_*.ts`, `dayController.ts`, `sfx.ts` — `lines_by_target` + `0/3` khảo sát Trang 3, hiện đồ trang trí ngay lúc chọn, tách 5 thuyền mép rãnh → 1 thuyền mắc cuối rãnh Trang 2, âm thanh cơ bản).
      + `R-B5`: Minigame gấp thuyền giấy + thao tác tự ghi điều ước lên cánh buồm ở Trang 2 Cảnh 3 (dùng `src/game/minigames/shared/`).
