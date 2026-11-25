@@ -48,7 +48,66 @@ export interface ChoiceOption {
   tone?: Tone;
   text: string;
   set_flags?: Record<string, FlagValue>;
+  /** R-D0: câu phản ứng phát NGAY sau khi chọn lựa chọn này (vd. Trang 3 chọn kiểu trang trí). */
+  lines?: DialogueLine[];
 }
+
+// ---------- Trình bày hệ thống (R-D0, chốt 25/11: lời dẫn bối cảnh tách hẳn khỏi khung thoại nhân vật) ----------
+/**
+ * Kênh của lời dẫn hệ thống (docs/handoff/SO_HOA_NARRATIVE_TA_CANH_MOC1.md mục I):
+ * 'narrator' = dải dẫn chuyện / phụ đề bối cảnh (không tên người nói, không bong bóng); 'world_event' = mô tả đổi cảnh / môi trường.
+ * Thẻ chữ dùng `TitleCard`, mục tiêu HUD dùng `objective`, luật minigame thuộc minigame — không đi qua kênh này.
+ */
+export type NarrativeChannel = 'narrator' | 'world_event';
+export interface NarrativeLine {
+  /** ID tra bảng số hóa (vd. `narr_p1_c1_drop`). Không bắt buộc. */
+  id?: string;
+  /** Mặc định 'narrator'. */
+  channel?: NarrativeChannel;
+  /** Có thể chứa `{player_name}` và `{g:<nam>|<nữ>}`. */
+  text: string;
+  /** Mã âm thanh gợi ý (sfx.ts); chưa có âm thì bỏ qua, không lỗi. */
+  sfx?: string;
+  /** Giữ trên màn hình ít nhất bao lâu (ms) trước khi cho qua / tự qua. */
+  duration_ms?: number;
+  when?: Condition;
+  fallback?: string;
+}
+/** Thẻ chữ 2 dòng giữa màn hình (THẺ): mở màn, chuyển thời gian, đổi tên khu. */
+export interface TitleCard {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  /** Tổng thời gian hiện (ms), mặc định do UI quyết (~3000). */
+  duration_ms?: number;
+}
+
+/** Mốc kích hoạt một cue đạo diễn: đầu bước, cuối bước (sau thoại), hoặc khi dòng thoại thứ `line` (đếm từ 0) của bước hiện ra. */
+export type StageAt = 'start' | 'end' | { line: number };
+interface StageCueBase {
+  /** Mặc định 'start'. */
+  at?: StageAt;
+  /** true = chờ cue xong (vd. NPC đi tới nơi) rồi mới phát tiếp; mặc định không chờ. */
+  wait?: boolean;
+}
+/**
+ * Đạo diễn theo bước (R-B1/R-B2/R-B3 thực thi). Vị trí luôn là ID marker (`spot.*`, `itr.*`), không ghi số.
+ * `actor` là vai (NPC_A…) hoặc 'player'.
+ */
+export type StageCue = StageCueBase & (
+  | { cue: 'move'; actor: ActorRef; to: string; pace?: 'walk' | 'run' }
+  | { cue: 'teleport'; actor: ActorRef; to: string }
+  | { cue: 'face'; actor: ActorRef; /** vai khác hoặc ID marker */ toward: string }
+  | { cue: 'motion'; actor: ActorRef; /** idle, talk, pose_peace, pose_wave, pose_tada, cheer… */ motion: string }
+  | { cue: 'visible'; actor: ActorRef; visible: boolean }
+  | { cue: 'prop'; actor: ActorRef; /** ID đạo cụ cầm tay; null = bỏ tay không */ prop: string | null }
+  | { cue: 'camera'; /** ID máy ảnh của Ngày (`day.cameras`); null = trả máy về người chơi */ camera_id: string | null; dolly_ms?: number }
+  | { cue: 'weather'; preset: string; tween_s?: number }
+  | { cue: 'sfx'; sfx: string }
+);
+export type StageCueKind = StageCue['cue'];
+/** Dòng thoại chen lúc đếm ngược hẹn giờ chụp; `at_s` = giây còn lại khi hiện (bỏ trống = UI tự rải). */
+export type CountdownLine = DialogueLine & { at_s?: number };
 
 // ---------- Bước quest ----------
 interface StepBase {
@@ -57,6 +116,12 @@ interface StepBase {
   /** Dòng mục tiêu trên HUD. */
   objective?: string;
   hint?: string;
+  /** R-D0: thẻ chữ hiện TRƯỚC khi bước bắt đầu. */
+  title_card?: TitleCard;
+  /** R-D0: lời dẫn hệ thống — `before` phát trước nội dung bước, `after` phát khi bước xong. */
+  narrative?: { before?: NarrativeLine[]; after?: NarrativeLine[] };
+  /** R-D0: cue đạo diễn NPC / máy quay / thời tiết trong bước. */
+  stage?: StageCue[];
 }
 export type PhotoMode = 'timer' | 'handheld' | 'auto';
 export type PhoneScreen = 'contacts' | 'group_chat' | 'photos';
@@ -66,9 +131,25 @@ export type Step =
   | (StepBase & { kind: 'goto'; target: string })
   | (StepBase & { kind: 'interact'; target: string; lines?: DialogueLine[] })
   | (StepBase & { kind: 'choice'; choice_id: string; prompt?: DialogueLine; options: ChoiceOption[]; about?: ActorRef[]; measured?: boolean })
-  | (StepBase & { kind: 'collect'; item: string; targets: string[]; count: number })
+  | (StepBase & { kind: 'collect'; item: string; targets: string[]; count: number;
+      /** R-D0: phản ứng khi gom được từng điểm (✓ + câu gắn điểm); khóa = ID trong `targets`. */
+      lines_by_target?: Record<string, DialogueLine[]>;
+      /** R-D0: hiện bộ đếm "đã gom/count" trên HUD (mặc định true khi có lines_by_target). */
+      show_counter?: boolean })
   | (StepBase & { kind: 'place'; item: string; target: string })
-  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone; /** handheld: số lần chụp rồi chọn 1 (mặc định 1) */ shots?: number })
+  | (StepBase & { kind: 'photo'; mode: PhotoMode; camera_id: string; subjects: ActorRef[]; album_entry_id: string; stand_zone?: StandZone; /** handheld: số lần chụp rồi chọn 1 (mặc định 1) */ shots?: number;
+      /** R-D0: câu mở đầu trước lần bấm đầu tiên. */
+      first_line?: DialogueLine;
+      /** R-D0: lời nhắc riêng cho từng lần bấm (phần tử i = lần i+1); độ dài ≤ `shots`. */
+      shot_prompts?: string[];
+      /** R-D0: lời nhắc khung ngắm (thay câu mặc định của photoRunner). */
+      prompt?: string;
+      /** R-D0: hẹn giờ mà KHÔNG giục chạy/tạo dáng (ảnh cầu vồng Trang 4). */
+      hide_pose?: boolean;
+      /** R-D0: thoại chen lúc đếm ngược (không chặn); lọc theo `when` (vd. flag m1.group_photo_style). */
+      countdown_lines?: CountdownLine[];
+      /** R-D0: thoại sau khi giữ ảnh; lọc theo `when`. */
+      after_lines?: DialogueLine[] })
   | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; /** phát TRƯỚC khi mở trò */ intro_lines?: DialogueLine[]; /** phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") */ lines?: DialogueLine[]; opponent?: string })
   | (StepBase & { kind: 'cutscene'; lines: DialogueLine[] })
   | (StepBase & { kind: 'free'; prompt?: string })
@@ -134,8 +215,16 @@ export interface CameraPoint { id: string; marker?: string; position?: [number, 
 /** Vòng đứng khi chụp ảnh: tâm lấy từ marker chỗ đứng (spot.*) hoặc ghi số. */
 export interface StandZone { marker?: string; center?: [number, number]; radius: number }
 
+/**
+ * R-D0: tên khu hiện trên màn hình (toast khi đi qua khu) bị thay tạm trong Ngày này.
+ * Áp dụng khi `when` đúng (bỏ trống = luôn) VÀ bước `until_step` chưa xong (bỏ trống = suốt Ngày).
+ * Vd. Trang 3: zone.thcs.base hiện "Góc sân sau" cho tới khi xong bước Đức đặt tên Căn cứ.
+ */
+export interface ZoneNameOverride { zone_id: string; name: string; until_step?: string; when?: Condition }
+
 export interface MemoryDay {
   weather_by_step?: Record<string, string>;
+  zone_name_overrides?: ZoneNameOverride[];
   id: string;                         // d.gNN.KK
   title: string;
   school_year_id: string;

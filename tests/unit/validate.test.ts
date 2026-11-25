@@ -252,3 +252,109 @@ describe('N-10 · mã trò và nội dung phát hành', () => {
     expect(blocked().map(e => e.id)).toEqual([p.quests[0].id]);
   });
 });
+
+describe('R-D0 — hợp đồng trình bày (thẻ chữ, lời dẫn, đạo diễn, ảnh, gom, chọn, tên khu)', () => {
+  const P = '[PLACEHOLDER]';
+  const errs = (p: ReturnType<typeof makePack>) => validateContent(p, makeConfig()).errors;
+  const main = (p: ReturnType<typeof makePack>) => p.quests.find((q) => q.id === 'q_m1_main_01')!;
+
+  it('dữ liệu mới hợp lệ (marker thật của map_thcs, máy ảnh của Ngày, preset thời tiết có thật) → không lỗi', () => {
+    const p = makePack();
+    const s0 = main(p).steps[0];
+    Object.assign(s0, {
+      title_card: { title: `${P} Ngày đầu lớp 6`, subtitle: `${P} Một buổi sáng tháng Chín, năm 2014` },
+      narrative: { before: [{ id: 'narr_x', text: `${P} Một tiếng "bịch" vang lên phía sau.`, sfx: 'sfx_book_drop' }], after: [{ channel: 'world_event', text: `${P} Nắng chuyển vàng.` }] },
+      stage: [
+        { cue: 'move', actor: 'NPC_A', to: 'spot.thcs.yard_group_1', pace: 'run', wait: true },
+        { cue: 'face', actor: 'NPC_A', toward: 'player', at: { line: 0 } },
+        { cue: 'face', actor: 'NPC_B', toward: 'itr.thcs.flagpole' },
+        { cue: 'motion', actor: 'NPC_A', motion: 'pose_tada', at: 'end' },
+        { cue: 'visible', actor: 'NPC_B', visible: false },
+        { cue: 'prop', actor: 'player', prop: 'prop.notebook' },
+        { cue: 'camera', camera_id: 'cam.d0601.desk', dolly_ms: 900 },
+        { cue: 'camera', camera_id: null },
+        { cue: 'weather', preset: 'rain_shower', tween_s: 2 },
+        { cue: 'sfx', sfx: 'sfx_book_drop' },
+      ],
+    });
+    p.days[0].zone_name_overrides = [{ zone_id: 'zone.thcs.yard', name: `${P} Góc sân sau`, until_step: 'q_m1_main_01.s02' }];
+    expect(errs(p)).toEqual([]);
+  });
+
+  it('cue sai: marker không có, máy ảnh không có, vai chưa đặt, dòng vượt số thoại, preset lạ, ẩn người chơi', () => {
+    const p = makePack();
+    main(p).steps[0].stage = [
+      { cue: 'move', actor: 'NPC_A', to: 'spot.thcs.khong_co' },
+      { cue: 'face', actor: 'NPC_A', toward: 'spot.thcs.cung_khong_co' },
+      { cue: 'camera', camera_id: 'cam.d0601.khong_co' },
+      { cue: 'motion', actor: 'NPC_D', motion: 'cheer' },
+      { cue: 'motion', actor: 'NPC_A', motion: 'talk', at: { line: 5 } },
+      { cue: 'weather', preset: 'bao_tuyet' },
+      { cue: 'visible', actor: 'player', visible: false },
+    ];
+    const c = codes(validateContent(p, makeConfig()));
+    expect(c).toEqual(expect.arrayContaining([
+      'missing_marker:spot.thcs.khong_co', 'missing_marker:spot.thcs.cung_khong_co', 'missing_ref:cam.d0601.khong_co',
+      'actor_not_placed:NPC_D', 'stage_bad_line:q_m1_main_01.s01', 'missing_ref:bao_tuyet', 'stage_bad_cue:q_m1_main_01.s01',
+    ]));
+  });
+
+  it('ảnh: lời nhắc nhiều hơn số lần chụp, thoại đếm ngược ở ảnh không hẹn giờ → lỗi', () => {
+    const p = makePack();
+    const q = main(p);
+    q.steps.push({ id: 'q_m1_main_01.s09', kind: 'photo', mode: 'handheld', camera_id: 'cam.d0601.desk', subjects: ['NPC_A'], album_entry_id: p.album_entries[0].id, shots: 2,
+      shot_prompts: [`${P} 1`, `${P} 2`, `${P} 3`], countdown_lines: [{ speaker: 'NPC_A', text: `${P} Ba… hai…` }] });
+    const c = codes(validateContent(p, makeConfig()));
+    expect(c.filter((x) => x === 'bad_photo:q_m1_main_01.s09')).toHaveLength(2);
+  });
+
+  it('thoại đếm ngược / sau ảnh lọc theo flag phải có fallback (rỗng = bỏ dòng)', () => {
+    const p = makePack();
+    const q = main(p);
+    const when = { flag: 'm1.group_photo_style', equals: 'playful' } as const;
+    q.steps.push({ id: 'q_m1_main_01.s09', kind: 'photo', mode: 'timer', camera_id: 'cam.d0601.desk', subjects: ['NPC_A'], album_entry_id: p.album_entries[0].id,
+      countdown_lines: [{ speaker: 'NPC_A', text: `${P} Làm mặt hề!`, when }], after_lines: [{ speaker: 'NPC_A', text: `${P} Khoan!`, when, fallback: '' }] });
+    expect(codes(validateContent(p, makeConfig()))).toContain('callback_without_fallback:q_m1_main_01.s09');
+    (q.steps.at(-1) as Extract<Step, { kind: 'photo' }>).countdown_lines![0].fallback = '';
+    expect(codes(validateContent(p, makeConfig()))).not.toContain('callback_without_fallback:q_m1_main_01.s09');
+  });
+
+  it('gom: lines_by_target chỉ nhận điểm có trong targets; chọn: phản ứng theo lựa chọn kiểm người nói', () => {
+    const p = makePack();
+    const q = main(p);
+    q.steps.push({ id: 'q_m1_main_01.s09', kind: 'collect', item: 'survey', targets: ['itr.thcs.desk', 'itr.thcs.board'], count: 2,
+      lines_by_target: { 'itr.thcs.desk': [{ speaker: 'NPC_A', text: `${P} ✓` }], 'itr.thcs.la': [{ speaker: 'NPC_A', text: `${P} ?` }] } });
+    const choice = q.steps.find((s) => s.kind === 'choice') as Extract<Step, { kind: 'choice' }>;
+    choice.options[0].lines = [{ speaker: 'NPC_Z', text: `${P} ồ` }];
+    const c = codes(validateContent(p, makeConfig()));
+    expect(c).toContain('missing_ref:itr.thcs.la');
+    expect(c).toContain('missing_ref:NPC_Z');
+  });
+
+  it('AI_PROPOSED: chữ ở thẻ chữ / lời dẫn / lời nhắc chụp cũng phải ghi [PLACEHOLDER]', () => {
+    const p = makePack();
+    main(p).steps[0].title_card = { title: 'Ngày đầu lớp 6' };
+    expect(codes(validateContent(p, makeConfig()))).toContain('missing_placeholder_tag:q_m1_main_01.s01');
+    main(p).steps[0].title_card = { title: `${P} Ngày đầu lớp 6` };
+    main(p).steps[0].narrative = { before: [{ text: 'Tùng… tùng… tùng…' }] };
+    expect(codes(validateContent(p, makeConfig()))).toContain('missing_placeholder_tag:q_m1_main_01.s01');
+  });
+
+  it('tên khu thay tạm: khu phải có trong bản đồ, until_step phải là bước của chính Ngày đó', () => {
+    const p = makePack();
+    p.days[0].zone_name_overrides = [
+      { zone_id: 'zone.thcs.khong_co', name: 'X' },
+      { zone_id: 'zone.thcs.yard', name: 'Y', until_step: 'q_m1_main_05.s01' },
+      { zone_id: 'zone.thcs.yard', name: 'Z', until_step: 'q_m1_main_01.s99' },
+    ];
+    const c = codes(validateContent(p, makeConfig()));
+    expect(c).toEqual(expect.arrayContaining(['missing_ref:zone.thcs.khong_co', 'bad_zone_override:q_m1_main_05.s01', 'missing_ref:q_m1_main_01.s99']));
+  });
+
+  it('mã minigame gấp thuyền mg_fold_boat (R-B5) được nhận cả ở production', () => {
+    const p = makePack();
+    main(p).steps[0] = { id: 'q_m1_main_01.s01', kind: 'minigame', game: 'mg_fold_boat' };
+    const r = validateContent(p, makeConfig({ environment: 'production' }));
+    expect(r.errors.map((e) => e.code)).not.toContain('minigame_unknown_id');
+  });
+});
