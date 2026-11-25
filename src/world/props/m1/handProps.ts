@@ -3,6 +3,7 @@ import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
 import { illegibleLine, safeCanvasTexture } from './texHelper';
 import { mergeStatic } from '../../../render/merge';
+import { enableShadows, groundAtZero } from '../common/helpers';
 
 /**
  * PX-11 · Vở bài tập học sinh (rơi trên sân / cầm tay).
@@ -64,7 +65,7 @@ export function makeNotebook(): THREE.Group {
   label.position.set(0.02, totalH + 0.001, 0.02);
   root.add(label);
 
-  return mergeStatic(root);
+  return enableShadows(mergeStatic(root), { cast: false });
 }
 
 /**
@@ -118,10 +119,9 @@ export function makeCipherPaper(): THREE.Group {
   const geo = new THREE.BoxGeometry(w, h, d);
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(0, h / 2, 0);
-  mesh.receiveShadow = true;
   root.add(mesh);
 
-  return root;
+  return enableShadows(root, { cast: false });
 }
 
 /**
@@ -156,10 +156,7 @@ export function makeRedPen(): THREE.Group {
   tip.position.set(-len * 0.35 - 0.0075, radius, 0);
   root.add(tip);
 
-  const merged = mergeStatic(root);
-  const b = new THREE.Box3().setFromObject(merged);
-  merged.position.y = -b.min.y;
-  return merged;
+  return groundAtZero(enableShadows(mergeStatic(root), { cast: false }));
 }
 
 /**
@@ -179,7 +176,6 @@ export function makeCompactCamera(): THREE.Group {
   const bodyMat = toon('#344e41'); // xanh rêu kim loại hoài niệm
   const body = new THREE.Mesh(bodyGeo, bodyMat);
   body.position.set(0, bodyH / 2, 0);
-  body.receiveShadow = true;
   root.add(body);
 
   // Vành ống kính tròn nhô ra phía trước (+z)
@@ -219,5 +215,5 @@ export function makeCompactCamera(): THREE.Group {
   screen.position.set(-bodyW * 0.08, bodyH * 0.5, -bodyD / 2 - 0.001);
   root.add(screen);
 
-  return mergeStatic(root);
+  return groundAtZero(enableShadows(mergeStatic(root), { cast: false }));
 }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { groundAtZero } from '../common/helpers';
 import { safeCanvasTexture } from './texHelper';
 
 export interface RainbowOpts {
@@ -8,6 +9,8 @@ export interface RainbowOpts {
 
 /**
  * PX-41 · Cung cầu vồng sau mưa (Trang 4).
+ * Trong game, cầu vồng được bật thống nhất từ một nguồn duy nhất (`sky.ts` `rainbowArc()` + `atmosphere.ts`
+ * theo preset `after_rain_rainbow`). Hàm này giữ lại để tương thích test/catalog prop.
  * Vòm bán nguyệt nửa vòng tròn, gốc min.y = 0, ngân sách ≤ 300 tam giác.
  */
 export function makeRainbow(opts: RainbowOpts = {}): THREE.Group {
@@ -48,8 +51,5 @@ export function makeRainbow(opts: RainbowOpts = {}): THREE.Group {
   mesh.position.set(0, 0, 0);
   root.add(mesh);
 
-  const b = new THREE.Box3().setFromObject(root);
-  root.position.y = -b.min.y;
-
-  return root;
+  return groundAtZero(root);
 }

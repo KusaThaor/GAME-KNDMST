@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
 import { mergeStatic } from '../../../render/merge';
+import { enableShadows, groundAtZero } from '../common/helpers';
 
 /**
  * Điểm 1: Mái che phụ / tấm bạt rách nghiêng tựa cọc gỗ mục.
@@ -21,7 +22,6 @@ export function makeSurveyRoof(): THREE.Group {
     const post = new THREE.Mesh(postGeo, postMat);
     post.position.set(sx, postH / 2, 0);
     post.rotation.z = -sx * 0.1;
-    post.castShadow = true;
     root.add(post);
   }
 
@@ -33,14 +33,9 @@ export function makeSurveyRoof(): THREE.Group {
   const roof = new THREE.Mesh(roofGeo, roofMat);
   roof.position.set(0, postH * 0.65, roofL * 0.35);
   roof.rotation.x = -0.55;
-  roof.castShadow = true;
-  roof.receiveShadow = true;
   root.add(roof);
 
-  const merged = mergeStatic(root);
-  const b = new THREE.Box3().setFromObject(merged);
-  merged.position.y = -b.min.y;
-  return merged;
+  return groundAtZero(enableShadows(mergeStatic(root)));
 }
 
 /**
@@ -60,8 +55,6 @@ export function makeSurveyStump(): THREE.Group {
   const stumpMat = toon(PAL.trunk);
   const stump = new THREE.Mesh(stumpGeo, stumpMat);
   stump.position.set(0, stumpH / 2, 0);
-  stump.castShadow = true;
-  stump.receiveShadow = true;
   root.add(stump);
 
   // Mặt cắt gốc cây phía trên
@@ -83,10 +76,7 @@ export function makeSurveyStump(): THREE.Group {
     root.add(rootMesh);
   }
 
-  const merged = mergeStatic(root);
-  const b = new THREE.Box3().setFromObject(merged);
-  merged.position.y = -b.min.y;
-  return merged;
+  return groundAtZero(enableShadows(mergeStatic(root)));
 }
 
 /**
@@ -105,8 +95,6 @@ export function makeSurveyBoxes(): THREE.Group {
   const b1Geo = new THREE.BoxGeometry(0.55, 0.42, 0.48);
   const b1 = new THREE.Mesh(b1Geo, boxMat);
   b1.position.set(0, 0.21, 0);
-  b1.castShadow = true;
-  b1.receiveShadow = true;
   root.add(b1);
 
   // Thùng nhỏ trên thùng to
@@ -114,7 +102,6 @@ export function makeSurveyBoxes(): THREE.Group {
   const b2 = new THREE.Mesh(b2Geo, boxMat);
   b2.position.set(0.05, 0.42 + 0.16, -0.02);
   b2.rotation.y = 0.25;
-  b2.castShadow = true;
   root.add(b2);
 
   // Thùng bên cạnh tựa vào
@@ -122,7 +109,6 @@ export function makeSurveyBoxes(): THREE.Group {
   const b3 = new THREE.Mesh(b3Geo, boxMat);
   b3.position.set(0.42, 0.19, 0.08);
   b3.rotation.y = -0.15;
-  b3.castShadow = true;
   root.add(b3);
 
   // Dải băng dính dán nắp thùng
@@ -131,10 +117,7 @@ export function makeSurveyBoxes(): THREE.Group {
   tape.position.set(0, 0.423, 0);
   root.add(tape);
 
-  const merged = mergeStatic(root);
-  const b = new THREE.Box3().setFromObject(merged);
-  merged.position.y = -b.min.y;
-  return merged;
+  return groundAtZero(enableShadows(mergeStatic(root)));
 }
 
 /**
@@ -158,8 +141,5 @@ export function makeSurveySpots(): THREE.Group {
   boxes.position.set(2.2, 0, 0.5);
   root.add(boxes);
 
-  const b = new THREE.Box3().setFromObject(root);
-  root.position.y = -b.min.y;
-
-  return root;
+  return groundAtZero(root);
 }
