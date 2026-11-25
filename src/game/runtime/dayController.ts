@@ -91,7 +91,8 @@ export function createDayController(deps: DayControllerDeps) {
       if (r.action === 'present') {
         const s = r.ref.step;
         const lines = s.kind === 'talk' ? s.lines : s.kind === 'interact' ? s.lines ?? [] : [];
-        if (await queue.playLines(lines)) engine.complete(s.id);
+        const ep = queue.getEpoch();
+        await queue.runStep(s, () => ep === queue.getEpoch(), () => queue.playLines(lines, s), () => engine.complete(s.id));
       }
       await queue.drain();
     });
