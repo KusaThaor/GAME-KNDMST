@@ -7,7 +7,6 @@
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g07.02',
@@ -128,8 +127,11 @@ export const quests: Quest[] = [
       },
     ],
   },
+];
+
+export const sideQuests: Quest[] = [
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_side_04',
     type: 'side',
     scope: 'm1',
@@ -175,6 +177,9 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g07.02.01', memory_day_id: 'd.g07.02', kind: 'photo', source_quest_id: 'q_m1_main_03', media_spec: 'B' },
   { id: 'frag.d.g07.02.02', memory_day_id: 'd.g07.02', kind: 'note', source_quest_id: 'q_m1_main_03', text: 'Góc sân sau trở thành Căn cứ Bí mật của năm đứa.' },
   { id: 'frag.d.g07.02.03', memory_day_id: 'd.g07.02', kind: 'artifact' },
+];
+
+export const sideFragments: MemoryFragment[] = [
   { id: 'frag.d.g07.02.04', memory_day_id: 'd.g07.02', kind: 'sticker', source_quest_id: 'q_m1_ai_side_04', text: 'Viên bi mắt mèo' },
 ];
 
@@ -182,5 +187,8 @@ export const entries: AlbumEntry[] = [
   { id: 'alb.d.g07.02.01', page_id: 'page.d.g07.02', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.02.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0702.base', at_step_id: 'q_m1_main_03.s06' } },
   { id: 'alb.d.g07.02.02', page_id: 'page.d.g07.02', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g07.02.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.02.03', page_id: 'page.d.g07.02', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.02.03', source: 'sticker_art', required_for_restore: true },
+];
+
+export const sideEntries: AlbumEntry[] = [
   { id: 'alb.d.g07.02.04', page_id: 'page.d.g07.02', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g07.02.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_04', replayable: true },
 ];

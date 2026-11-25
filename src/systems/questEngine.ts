@@ -58,7 +58,11 @@ export class QuestEngine {
 
   readonly conditions: ConditionContext = {
     flag: (n) => this.flag(n),
-    questCompleted: (id) => this.records[id]?.state === 'completed' || this.save.quests[id]?.state === 'completed',
+    questCompleted: (id) => {
+      const keys = this.dayId ? [id, `${id}@${this.dayId}`] : [id];
+      if (keys.some((k) => this.records[k]?.state === 'completed' || this.save.quests[k]?.state === 'completed')) return true;
+      return !this.dayId && Object.entries(this.save.quests).some(([k, r]) => k.startsWith(`${id}@`) && r.state === 'completed');
+    },
     dayCompleted: (id) => this.save.days[id]?.state === 'completed',
   };
 

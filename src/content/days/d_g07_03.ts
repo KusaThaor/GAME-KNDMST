@@ -7,7 +7,6 @@
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g07.03',
@@ -147,8 +146,11 @@ export const quests: Quest[] = [
       },
     ],
   },
+];
+
+export const sideQuests: Quest[] = [
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_side_02',
     type: 'side',
     scope: 'm1',
@@ -184,16 +186,22 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g07.03.01', memory_day_id: 'd.g07.03', kind: 'photo', source_quest_id: 'q_m1_main_05', media_spec: 'A' },
   { id: 'frag.d.g07.03.02', memory_day_id: 'd.g07.03', kind: 'back_note', text: 'Cuối năm lớp 7, dưới gốc phượng chớm nở: "Đủ năm đứa".' },
   { id: 'frag.d.g07.03.03', memory_day_id: 'd.g07.03', kind: 'artifact' },
+  { id: 'frag.d.g07.03.06', memory_day_id: 'd.g07.03', kind: 'photo', source_quest_id: 'q_m1_main_05', media_spec: 'A' },
+];
+
+export const sideFragments: MemoryFragment[] = [
   { id: 'frag.d.g07.03.04', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_ai_daily_01', text: '[PLACEHOLDER] Dấu trực nhật cuối năm' },
   { id: 'frag.d.g07.03.05', memory_day_id: 'd.g07.03', kind: 'sticker', source_quest_id: 'q_m1_ai_side_02', text: '[PLACEHOLDER] Ký ức khắp sân trường' },
-  { id: 'frag.d.g07.03.06', memory_day_id: 'd.g07.03', kind: 'photo', source_quest_id: 'q_m1_main_05', media_spec: 'A' },
 ];
 
 export const entries: AlbumEntry[] = [
   { id: 'alb.d.g07.03.01', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.03.01', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.group', at_step_id: 'q_m1_main_05.s05' }, replayable: true },
   { id: 'alb.d.g07.03.02', page_id: 'page.d.g07.03', slot_type: 'back_note', slot_index: 1, fragment_id: 'frag.d.g07.03.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.03.03', page_id: 'page.d.g07.03', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.03.03', source: 'sticker_art', required_for_restore: true },
+  { id: 'alb.d.g07.03.cover', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 5, fragment_id: 'frag.d.g07.03.06', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.rainbow', at_step_id: 'q_m1_main_05.s07' }, replayable: true },
+];
+
+export const sideEntries: AlbumEntry[] = [
   { id: 'alb.d.g07.03.04', page_id: 'page.d.g07.03', slot_type: 'quest_record', slot_index: 3, fragment_id: 'frag.d.g07.03.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_daily_01', replayable: true },
   { id: 'alb.d.g07.03.05', page_id: 'page.d.g07.03', slot_type: 'sticker', slot_index: 4, fragment_id: 'frag.d.g07.03.05', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_02', replayable: true },
-  { id: 'alb.d.g07.03.cover', page_id: 'page.d.g07.03', slot_type: 'main_photo', slot_index: 5, fragment_id: 'frag.d.g07.03.06', source: 'gameplay_photo', required_for_restore: true, snapshot: { camera_id: 'cam.d0703.rainbow', at_step_id: 'q_m1_main_05.s07' }, replayable: true },
 ];

@@ -7,6 +7,10 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import * as d0601 from '../../src/content/days/d_g06_01';
+import * as d0701 from '../../src/content/days/d_g07_01';
+import * as d0702 from '../../src/content/days/d_g07_02';
+import * as d0703 from '../../src/content/days/d_g07_03';
 import { ALBUM_CONFIG } from '../../src/config/album';
 import { HUB_CONFIG } from '../../src/config/hub';
 import { HUB_BOX_LINES, HUB_DECOR } from '../../src/config/hubRoom';
@@ -125,6 +129,17 @@ describe('người chơi production không thấy nội dung giả', () => {
     expect([...reachable].filter((id) => idx.quests.get(id)?.ownership_label !== 'HUMAN_CANON')).toEqual([]);
     expect(pack.quests.filter((q) => q.ownership_label !== 'HUMAN_CANON').map((q) => q.id)).toEqual([]);
     expect(JSON.stringify(pack)).not.toContain('AI_PROPOSED');
+  });
+
+  it('RF-4: export Main của các file Trang không chứa AI_PROPOSED hay [PLACEHOLDER]; side* tách riêng', () => {
+    for (const d of [d0601, d0701, d0702, d0703]) {
+      const mainText = JSON.stringify({ quests: d.quests, fragments: d.fragments, entries: d.entries });
+      expect(mainText, d.day.id).not.toContain('AI_PROPOSED');
+      expect(mainText, d.day.id).not.toContain(PLACEHOLDER_TAG);
+      expect(d.sideQuests.length, d.day.id).toBeGreaterThan(0);
+      expect(d.sideFragments.length, d.day.id).toBeGreaterThan(0);
+      expect(d.sideEntries.length, d.day.id).toBeGreaterThan(0);
+    }
   });
 
   it(`(c) không chữ ${PLACEHOLDER_TAG} nào trong gói nội dung production`, () => {

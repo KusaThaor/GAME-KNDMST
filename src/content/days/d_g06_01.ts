@@ -7,7 +7,6 @@
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g06.01',
@@ -155,8 +154,11 @@ export const quests: Quest[] = [
       },
     ],
   },
+];
+
+export const sideQuests: Quest[] = [
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_side_01',
     type: 'side',
     scope: 'm1',
@@ -182,7 +184,7 @@ export const quests: Quest[] = [
     ],
   },
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_daily_01',
     type: 'daily',
     scope: 'm1',
@@ -218,6 +220,9 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g06.01.01', memory_day_id: 'd.g06.01', kind: 'photo', source_quest_id: 'q_m1_main_01', media_spec: 'B' },
   { id: 'frag.d.g06.01.02', memory_day_id: 'd.g06.01', kind: 'note', source_quest_id: 'q_m1_main_01', text: 'Ngày đầu lớp 6, bắt đầu từ một mẩu giấy mật lệnh vẽ linh tinh.' },
   { id: 'frag.d.g06.01.03', memory_day_id: 'd.g06.01', kind: 'artifact' },
+];
+
+export const sideFragments: MemoryFragment[] = [
   { id: 'frag.d.g06.01.04', memory_day_id: 'd.g06.01', kind: 'sticker', source_quest_id: 'q_m1_ai_side_01', text: 'Danh sách trực nhật của Châu' },
   { id: 'frag.d.g06.01.05', memory_day_id: 'd.g06.01', kind: 'sticker', source_quest_id: 'q_m1_ai_daily_01', text: 'Dấu trực nhật đầu năm' },
 ];
@@ -226,6 +231,9 @@ export const entries: AlbumEntry[] = [
   { id: 'alb.d.g06.01.01', page_id: 'page.d.g06.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g06.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0601.grocery', at_step_id: 'q_m1_main_01.s07' } },
   { id: 'alb.d.g06.01.02', page_id: 'page.d.g06.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g06.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g06.01.03', page_id: 'page.d.g06.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g06.01.03', source: 'sticker_art', required_for_restore: true },
+];
+
+export const sideEntries: AlbumEntry[] = [
   { id: 'alb.d.g06.01.04', page_id: 'page.d.g06.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g06.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_01', replayable: true },
   { id: 'alb.d.g06.01.05', page_id: 'page.d.g06.01', slot_type: 'quest_record', slot_index: 4, fragment_id: 'frag.d.g06.01.05', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_daily_01', replayable: true },
 ];
