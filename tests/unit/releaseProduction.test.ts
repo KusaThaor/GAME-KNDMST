@@ -13,7 +13,8 @@ import * as d0702 from '../../src/content/days/d_g07_02';
 import * as d0703 from '../../src/content/days/d_g07_03';
 import { ALBUM_CONFIG } from '../../src/config/album';
 import { HUB_CONFIG } from '../../src/config/hub';
-import { HUB_BOX_LINES, HUB_DECOR } from '../../src/config/hubRoom';
+import { HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../../src/config/hubRoom';
+import { CHAPTERS } from '../../src/content/chapters';
 import { indexContent } from '../../src/content/indexContent';
 import { CONTENT, contentConfig, filterPackForRelease } from '../../src/content/pack';
 import { RELEASES } from '../../src/content/release';
@@ -149,26 +150,26 @@ describe('người chơi production không thấy nội dung giả', () => {
   });
 
   /**
-   * NỢ ĐÃ BIẾT (ngoài phạm vi N-22a — các file này không thuộc danh sách file chủ): bốn chỗ dưới đây vẫn hiện [PLACEHOLDER]
-   * cho người chơi production. Test chỉ chặn chỗ MỚI; khi ai sửa xong một chỗ thì xóa khỏi danh sách.
+   * R-P1 (25/11): chữ người chơi thấy NGOÀI gói nội dung — tên app nhắn tin, đồ nền + lời mở Hộp Kỷ Vật, Form phản hồi,
+   * và nhãn Mốc (đi vào analytics `chapter_label`) — đã chốt chữ thật, không còn [PLACEHOLDER] / AI_PROPOSED.
    */
-  const KNOWN_OUTSIDE_PACK = [
-    'config/hub.ts › app_chat_name',
-    'config/hubRoom.ts › HUB_DECOR',
-    'config/hubRoom.ts › HUB_BOX_LINES',
-    'ui/game/FeedbackForm.tsx',
-  ];
-  it(`${PLACEHOLDER_TAG} ngoài gói nội dung: không có chỗ mới ngoài danh sách nợ đã biết`, () => {
+  it(`${PLACEHOLDER_TAG} ngoài gói nội dung: 0 chỗ (R-P1 đã gỡ hết)`, () => {
     const sources: Record<string, string> = {
+      'content/chapters.ts': CHAPTERS.map((c) => c.label).join('\n'),
       'config/hub.ts › app_chat_name': HUB_CONFIG.app_chat_name,
       'config/hubRoom.ts › HUB_DECOR': HUB_DECOR.flatMap((d) => [d.name, ...d.lines.map((l) => l.text)]).join('\n'),
       'config/hubRoom.ts › HUB_BOX_LINES': stringsOf(HUB_BOX_LINES).map((s) => s.text).join('\n'),
+      'config/hubRoom.ts › HUB_BOX_HINTS': stringsOf(HUB_BOX_HINTS).map((s) => s.text).join('\n'),
       'ui/game/FeedbackForm.tsx': readFileSync(new URL('../../src/ui/game/FeedbackForm.tsx', import.meta.url), 'utf8'),
     };
-    const leaking = Object.entries(sources).filter(([, text]) => text.includes(PLACEHOLDER_TAG)).map(([name]) => name);
-    expect(leaking.filter((name) => !KNOWN_OUTSIDE_PACK.includes(name))).toEqual([]);
+    expect(Object.entries(sources).filter(([, text]) => text.includes(PLACEHOLDER_TAG)).map(([name]) => name)).toEqual([]);
+    expect(HUB_DECOR.filter((d) => d.ownership_label !== 'HUMAN_CANON').map((d) => d.id)).toEqual([]);
   });
-  it.todo(`gỡ ${PLACEHOLDER_TAG} ở 4 chỗ ngoài gói nội dung (KNOWN_OUTSIDE_PACK) trước khi gộp main`);
+  it('R-P1: đúng chữ chủ dự án chốt (tên Mốc 1, tên app, đủ 6 món đồ nền)', () => {
+    expect(CHAPTERS.find((c) => c.id === 'ch_m1')?.label).toBe('Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)');
+    expect(HUB_CONFIG.app_chat_name).toBe('AloNhau');
+    expect(HUB_DECOR.map((d) => d.shape)).toEqual(['notebooks', 'scarf', 'class_photo', 'pencil_case', 'eraser', 'ruler']);
+  });
 });
 
 describe('chơi thử bản production bằng engine', () => {

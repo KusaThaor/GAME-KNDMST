@@ -26,7 +26,7 @@ import { mountGameUi } from '../ui/game/GameUi';
 import { createUiStore, type UiActions, type UiState, type UiStore } from '../ui/game/store';
 import { createInput, type GameInput } from './input';
 import { createDayController } from './runtime/dayController';
-import { createHubController } from './runtime/hubController';
+import { createHubController, FEEDBACK_SENT_FLAG } from './runtime/hubController';
 import { createMinigameRunner } from './runtime/minigameRunner';
 import { createPhotoRunner } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
@@ -122,6 +122,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   }
   const interact = () => { if (engine.context?.kind === 'hub') hubCtrl.interact(actions.openPanel); else dayCtrl.interact(); };
 
+  /** Rời game = về trang chủ (bỏ `?play=1`). Tiến trình đã lưu ở `save_requested`; analytics tự gửi nốt khi `pagehide`. */
+  const leaveGame = () => { location.href = location.pathname; };
+
   const actions: GameHandle['actions'] = {
     consent: (granted) => { tracker.setConsent(granted ? 'granted' : 'denied'); ui.set({ consentAsk: false }); queue.signal('consent'); },
     next: () => queue.signal('next'),
@@ -152,8 +155,32 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },
-    feedbackSubmitted: () => { if (ui.get().feedback) { ui.set({ feedback: false }); bus.emit('feedback_submitted', { feedback_id: crypto.randomUUID() }); } },
-    feedbackSkip: () => { ui.set({ feedback: false }); bus.emit('feedback_skipped', { placement: 'demo_end' }); },
+    menuExit: () => {
+      // R-P1: bấm Thoát ở bất kỳ đâu → lưu, hiện Form phản hồi (một lần mỗi bản lưu), xong form thì rời game.
+      const s = ui.get();
+      if (s.feedback || s.fade.on) return;
+      if (s.panel) actions.closePanel();
+      bus.emit('save_requested', { reason: 'exit' });
+      if (save.flags[FEEDBACK_SENT_FLAG]) { leaveGame(); return; }
+      ui.set({ feedback: 'exit' });
+      bus.emit('feedback_shown', { placement: 'exit' });
+    },
+    feedbackSubmitted: () => {
+      const placement = ui.get().feedback;
+      if (!placement) return;
+      ui.set({ feedback: false });
+      save.flags[FEEDBACK_SENT_FLAG] = true; bus.emit('save_requested', { reason: 'feedback_sent' });
+      bus.emit('feedback_submitted', { feedback_id: crypto.randomUUID() });
+      if (placement === 'exit') leaveGame();
+    },
+    feedbackSkip: () => {
+      const placement = ui.get().feedback;
+      if (!placement) return;
+      ui.set({ feedback: false });
+      bus.emit('feedback_skipped', { placement });
+      if (placement === 'exit') leaveGame();
+    },
+    feedbackCancel: () => { if (ui.get().feedback === 'exit') ui.set({ feedback: false }); },
     toggleCameraMode: dayCtrl.toggleCameraMode, toggleFreeLook: dayCtrl.toggleFreeLook, stick: (v) => input.setStick(v),
   };
 

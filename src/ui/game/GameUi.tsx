@@ -35,7 +35,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.endPrompt && <EndPromptModal endPrompt={s.endPrompt} a={a} />}
       {s.dayEnd && <DayEndModal dayEnd={s.dayEnd} a={a} />}
       {s.photo && <PhotoOverlay photo={s.photo} touch={touch} a={a} />}
-      {s.minigame && <MinigameFrame host={s.minigame} />}
+      {s.minigame && <MinigameFrame host={s.minigame} onExit={a.menuExit} />}
       {s.free && !blocking && (
         <div class="g-free" data-testid="free"><span>{s.free.text}</span><button class="primary" data-act="free-continue" onClick={a.freeContinue}>Đi tiếp</button></div>
       )}
@@ -45,7 +45,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.panel === 'phone' && <PhonePanel s={s} a={a} />}
       {s.panel === 'journal' && <JournalPanel s={s} a={a} />}
       {s.panel === 'menu' && <MenuModal s={s} a={a} />}
-      {s.feedback && <FeedbackModal a={a} />}
+      {s.feedback && <FeedbackModal a={a} placement={s.feedback} />}
       {s.consentAsk && <ConsentModal a={a} />}
       <div class={`g-fade ${s.fade.on ? 'on' : ''}`} data-testid="fade" data-on={String(s.fade.on)}><span>{s.fade.label}</span></div>
     </div>

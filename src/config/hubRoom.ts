@@ -1,18 +1,16 @@
 /**
  * Phòng 2026 (hub) đi lại được bằng góc nhìn thứ nhất — bố trí, điều khiển, đồ trong Hộp Kỷ Vật và câu "lục đồ".
  *
- * CHƯA CHỐT: mọi câu thoại ở đây là AI_PROPOSED, ghi [PLACEHOLDER]; đổi lời = sửa file này, không sửa engine.
- * Tên các món đồ linh tinh lấy theo kịch bản v1.4 "MỞ ĐẦU — PHÒNG 2026" (vở cũ, khăn quàng đỏ, ảnh lớp đã phai);
- * hộp bút, cục gôm, thước kẻ là đồ AI thêm cho thùng đỡ trống (AI_PROPOSED).
+ * ĐÃ CHỐT 25/11 (R-P1): lời mở hộp + 6 món đồ nền theo docs/handoff/TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md Phần 2
+ * (Chương mở đầu, Về phòng sau Trang 1/2) và Phần 3 mục 3 — giữ đủ 6 món, câu chữ tự nhiên. Đổi lời = sửa file này, không sửa engine.
  * Xưng hô: Player 23 tuổi nói một mình → "mình", gọi nhóm "tụi mình" (GDD 01 §2.3: Player theo người đối diện).
  */
-import type { DialogueLine } from '../content/types';
+import type { DialogueLine, OwnershipLabel } from '../content/types';
 
 export type HubDecorShape = 'notebooks' | 'scarf' | 'class_photo' | 'pencil_case' | 'eraser' | 'ruler';
-export interface HubDecor { id: string; name: string; shape: HubDecorShape; ownership_label: 'AI_PROPOSED'; lines: DialogueLine[] }
+export interface HubDecor { id: string; name: string; shape: HubDecorShape; ownership_label: OwnershipLabel; lines: DialogueLine[] }
 
-const P = '[PLACEHOLDER]';
-const me = (text: string): DialogueLine => ({ speaker: 'player', text: `${P} ${text}` });
+const me = (text: string): DialogueLine => ({ speaker: 'player', text });
 
 export const HUB_ROOM = {
   /** Phòng: x ∈ [-w/2, w/2], z ∈ [-d/2, d/2] (z âm = tường có cửa sổ). Đơn vị mét. */
@@ -78,10 +76,10 @@ export const HUB_ROOM = {
 
 /** Câu khi mở Hộp Kỷ Vật: lần đầu (2 dòng) và các lần sau (1 dòng). */
 export const HUB_BOX_LINES = {
-  open_first: [me('Toàn đồ hồi cấp 2… vở, khăn quàng, ảnh lớp.'), me('Còn mẩu giấy gấp tư này là gì đây ta?')],
-  open_again: [me('Lục tiếp coi còn gì nữa nè.')],
+  open_first: [me('Toàn đồ hồi cấp hai… Vở cũ, khăn quàng đỏ, cả tấm ảnh lớp.'), me('Ủa, mẩu giấy gấp tư góc này… là cái gì đây ta?')],
+  open_again: [me('Lục tiếp coi trong thùng còn giữ món nào nữa.')],
   /** Bấm vào kỷ vật chưa tới lượt (còn mờ). */
-  locked: [me('Món này… để từ từ mình nhớ ra.')],
+  locked: [me('Món này còn mờ quá… để mình nhớ lại từ từ đã.')],
 };
 
 /** Dòng hướng dẫn trên màn hình (không phải thoại). */
@@ -92,10 +90,10 @@ export const HUB_BOX_HINTS = {
 
 /** Đồ linh tinh trong hộp: bấm chỉ nói một câu, không chuyển cảnh. */
 export const HUB_DECOR: HubDecor[] = [
-  { id: 'deco.notebooks', name: 'Mấy cuốn vở cũ', shape: 'notebooks', ownership_label: 'AI_PROPOSED', lines: [me('Vở Toán lớp 6. Chữ mình hồi đó xấu dữ thần.')] },
-  { id: 'deco.scarf', name: 'Khăn quàng đỏ', shape: 'scarf', ownership_label: 'AI_PROPOSED', lines: [me('Khăn quàng đỏ… sáng nào quên đeo là bị ghi tên.')] },
-  { id: 'deco.class_photo', name: 'Tấm ảnh lớp đã phai', shape: 'class_photo', ownership_label: 'AI_PROPOSED', lines: [me('Ảnh cả lớp. Mặt ai cũng mờ hết rồi.')] },
-  { id: 'deco.pencil_case', name: 'Hộp bút sắt', shape: 'pencil_case', ownership_label: 'AI_PROPOSED', lines: [me('Hộp bút sắt, lắc lên còn kêu lạch cạch.')] },
-  { id: 'deco.eraser', name: 'Cục gôm mòn', shape: 'eraser', ownership_label: 'AI_PROPOSED', lines: [me('Cục gôm mòn còn có một nửa.')] },
-  { id: 'deco.ruler', name: 'Cây thước kẻ', shape: 'ruler', ownership_label: 'AI_PROPOSED', lines: [me('Thước kẻ ai khắc tên lên đây vậy ta?'), me('Chắc của mình thiệt.')] },
+  { id: 'deco.notebooks', name: 'Mấy cuốn vở cũ', shape: 'notebooks', ownership_label: 'HUMAN_CANON', lines: [me('Vở bài tập lớp 6… Chữ mình hồi đó viết nghệch ngoạc ghê.')] },
+  { id: 'deco.scarf', name: 'Khăn quàng đỏ', shape: 'scarf', ownership_label: 'HUMAN_CANON', lines: [me('Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là bị sao đỏ ghi tên.')] },
+  { id: 'deco.class_photo', name: 'Tấm ảnh lớp đã phai', shape: 'class_photo', ownership_label: 'HUMAN_CANON', lines: [me('Tấm ảnh lớp hồi đó… màu phai gần hết, nhìn hồi lâu mới nhận ra từng đứa.')] },
+  { id: 'deco.pencil_case', name: 'Hộp bút sắt', shape: 'pencil_case', ownership_label: 'HUMAN_CANON', lines: [me('Hộp bút cũ lắc lên còn kêu lạch cạch. Nắp hộp vẫn còn mấy vết xước hồi đi học.')] },
+  { id: 'deco.eraser', name: 'Cục gôm mòn', shape: 'eraser', ownership_label: 'HUMAN_CANON', lines: [me('Cục gôm mòn vẹt một góc, hồi đó đứa nào cũng hay mượn rồi quên trả.')] },
+  { id: 'deco.ruler', name: 'Cây thước kẻ', shape: 'ruler', ownership_label: 'HUMAN_CANON', lines: [me('Cây thước nhựa tróc hết vạch số, trên mép còn khắc mấy chữ mờ tịt.')] },
 ];
