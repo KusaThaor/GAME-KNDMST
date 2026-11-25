@@ -8,7 +8,12 @@
 
 ## I. NGUYÊN TẮC HIỂN THỊ TRỰC QUAN (5 KÊNH UI)
 
-Theo chỉ đạo của Chủ dự án: *"Các narrative bối cảnh hệ thống để đưa vào code luôn nhưng mà các câu dẫn đó sẽ trình bày khác thoại"*. Để đội ngũ lập trình (`dev`, `engine`, `ui`) không nhầm lẫn với bong bóng thoại nhân vật (`SpeechBubble` có avatar và tên), hệ thống narrative Mốc 1 được phân hóa thành 5 kênh hiển thị:
+Theo chỉ đạo của Chủ dự án và quyết định số 3:
+1. **Quy tắc phối hợp Song Hành (Pairing):** Khi tương tác đồ vật hoặc sự kiện Hub, **kết hợp cả 2 lớp**:
+   - Dải dẫn chuyện hệ thống (`narrator_overlay`): Miêu tả cảm quan trực quan món đồ (không avatar, chữ nghiêng).
+   - Thoại độc thoại của người chơi (`speaker: 'player'`): Bật ngay sau đó để bộc lộ cảm xúc hoài niệm cá nhân.
+   - *Trường hợp engine chỉ nhận 1 dòng text:* Ưu tiên chạy dòng độc thoại của người chơi đã duyệt ở `TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md`.
+2. **Hệ thống 5 kênh hiển thị trực quan:**
 
 ```
 +-----------------------------------------------------------------------------------+
@@ -32,10 +37,10 @@ Theo chỉ đạo của Chủ dự án: *"Các narrative bối cảnh hệ thố
 | `narr_hub_intro_02` | Mở đầu game | `NARRATOR_OVERLAY` | 2.5 giây sau dòng 01 | *Trên sàn có một chiếc thùng carton cũ dán băng keo ngả vàng: "Đồ cũ – đừng vứt."* | Tiếng cựa mình, tiếng giấy carton sột soạt |
 | `hud_hub_move_to_box` | Khám phá phòng | `HUD_OBJECTIVE` | Sau khi dứt 2 dòng mở đầu | `Kéo chuột quan sát · WASD bước tới chiếc thùng cũ góc phòng` | (Im lặng) |
 | `hud_hub_open_box` | Đứng cạnh thùng | `HUD_OBJECTIVE` | Bước vào bán kính 1.5m quanh thùng | `Nhấn [E] để mở Hộp Kỷ Vật` | Tiếng sột soạt nhẹ |
-| `narr_box_open_first` | Mở nắp thùng | `NARRATOR_OVERLAY` | Người chơi tương tác mở nắp thùng lần đầu | *Chiếc thùng carton cũ phủ một lớp bụi mỏng. Mở nắp ra, mùi giấy cũ và năm tháng ùa về...* | Tiếng bóc băng keo/mở nắp bìa carton |
-| `narr_decor_notebook` | Đồ nền thùng | `NARRATOR_OVERLAY` | Bấm vào "Mấy cuốn vở cũ" | *Mấy cuốn vở ô ly từ hồi cấp hai, mép quăn queo, trang bìa dán nhãn nắn nót tên lớp.* | Tiếng sột soạt lật trang giấy cũ |
-| `narr_decor_scarf` | Đồ nền thùng | `NARRATOR_OVERLAY` | Bấm vào "Chiếc khăn quàng đỏ" | *Chiếc khăn quàng đỏ đã bạc màu viền, vải nhăn nhúm nằm cuộn tròn dưới đáy thùng.* | Tiếng vải miết nhẹ |
-| `narr_hub_hook_p1` | Cầm kỷ vật 1 | `NARRATOR_OVERLAY` | Bấm vào Mẩu giấy mật lệnh số 01 | *Mẩu giấy ô ly gấp làm tư, nét bút mực tím nguệch ngoạc: "Mật lệnh số 01 – Cấm mở trước giờ ra chơi."* | Tiếng giấy gập mở |
+| `narr_box_open_first` | Mở nắp thùng | `NARRATOR` + `PLAYER` | Người chơi tương tác mở nắp thùng lần đầu | • Narrator: *Chiếc thùng carton cũ phủ một lớp bụi mỏng. Mở nắp ra, mùi giấy cũ và năm tháng ùa về...*<br>• Player độc thoại: *"Toàn đồ hồi cấp hai… Vở cũ, khăn quàng đỏ, cả tấm ảnh lớp. Ủa, mẩu giấy gấp tư góc này… là cái gì đây ta?"* | Tiếng bóc băng keo/mở nắp bìa carton |
+| `narr_decor_notebook` | Đồ nền thùng | `NARRATOR` + `PLAYER` | Bấm vào "Mấy cuốn vở cũ" | • Narrator: *Mấy cuốn vở ô ly từ hồi cấp hai, mép quăn queo, dán nhãn nắn nót tên lớp.*<br>• Player độc thoại: *"Vở bài tập lớp 6… Chữ mình hồi đó viết nghệch ngoạc ghê."* | Tiếng sột soạt lật trang giấy cũ |
+| `narr_decor_scarf` | Đồ nền thùng | `NARRATOR` + `PLAYER` | Bấm vào "Chiếc khăn quàng đỏ" | • Narrator: *Chiếc khăn quàng đỏ đã bạc màu viền, vải nhăn nhúm nằm cuộn tròn dưới đáy thùng.*<br>• Player độc thoại: *"Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là bị sao đỏ ghi tên."* | Tiếng vải miết nhẹ |
+| `narr_hub_hook_p1` | Cầm kỷ vật 1 | `NARRATOR` + `PLAYER` | Bấm vào Mẩu giấy mật lệnh số 01 | • Narrator: *Mẩu giấy gấp tư đầy hình vẽ mũi tên, nét mực tím nguệch ngoạc kèm dòng mực đỏ nắn nót: "Mật lệnh số 01 – Chỉ dành cho người đủ can đảm tham gia!"*<br>• Player độc thoại: *"Mật lệnh số 01… Mực đỏ này nhìn quen ghê, là chữ ai ta? Không biết ngày đó… tụi mình bắt đầu chơi chung từ lúc nào nhỉ?"* | Tiếng giấy gập mở |
 | `narr_hub_trans_p1` | Chuyển cảnh Trang 1 | `WORLD_EVENT` | Người chơi bấm "Hồi tưởng" mẩu giấy 1 | *Tiếng ve hè xao xác và tiếng trống trường từ xa bỗng vọng lại. Ánh đèn bàn mờ dần, căn phòng tan vào nắng sớm rực rỡ của sân trường cấp 2...* | SFX tiếng ve hè + 3 tiếng trống trường rộn rã `tùng... tùng... tùng` -> Fade out trắng |
 
 ---
