@@ -291,8 +291,18 @@
 
 ## Ghi chú cho dev (R-D4) — không phải việc của người viết
 
-- **Chỗ chụp ảnh 1 lệch gốc phượng thật:** dữ liệu đặt ghế máy `itr.thcs.tripod_spot` (4; 8,4) và chỗ đứng `spot.thcs.yard_group` (4; 2) ở giữa sân, nhưng gốc phượng `spot.thcs.phuong_root` ở (−10,2; −5) và ghế đá thật `itr.thcs.stone_bench` ở (−14,4; −2,2). Thoại nói "gốc phượng", "ghế đá". Cần chọn: giữ chỗ cũ (chấp nhận lệch) hay dời ảnh 1 về gốc phượng (cần camera mới, N-04). Chưa hỏi chủ dự án.
-- **Ảnh cầu vồng ở khúc gỗ** sẽ trùng bố cục ảnh lửa trại Trang 8 (cùng khúc gỗ). Camera `cam.d0703.rainbow` hiện trỏ `cam.thcs.rainbow` ở sân → phải đổi.
+> Hai mục đầu chủ dự án giao Claude tự chỉnh (25/11) → **đã chốt**, không cần hỏi lại.
+
+- **Ảnh 1 — ĐÃ CHỐT 25/11 (chủ dự án giao Claude tự chỉnh): dời về gốc phượng thật.** Dữ liệu cũ đặt ghế máy `itr.thcs.tripod_spot` (4; 8,4) và chỗ đứng `spot.thcs.yard_group` (4; 2) giữa sân, cách gốc phượng `spot.thcs.phuong_root` (−10,2; −5) khoảng 14 m, trong khi thoại nói "gốc phượng", "ghế đá". Cách làm (R-D4 + N-04):
+  - **Giữ mã**, chỉ dời vị trí: `spot.thcs.yard_group` về ngay trước thân phượng (nhóm đứng quay lưng về gốc cây, tán phượng lọt khung); `itr.thcs.tripod_spot` về ghế đá thật gần đó (`itr.thcs.stone_bench`, −14,4; −2,2) hoặc ghế đặt mới cách nhóm ~3–4 m.
+  - Đặt camera mới cho `cam.thcs.yard_group` từ phía ghế đá nhìn về nhóm. Đứng **khác phía** với `cam.thcs.m2_final_five` (ảnh Trang 9 nhìn gốc phượng từ phía sân) để hai ảnh không trùng bố cục.
+  - Dời máy ảnh đặt sẵn trong `src/world/dressing/sets/m1_trang4.ts` theo ghế mới. Số đo cụ thể do dev chỉnh khi xem trong game.
+  - Dọc đường từ giữa sân ra gốc phượng (~14 m) chính là đoạn Hạ dẫn ở cuối P4-1: giữ.
+  - **Dự phòng nếu không kịp 04/12:** giữ chỗ cũ; Claude sửa 2 câu có chữ "gốc phượng" (P4-1) thành "giữa sân" khi soát bản hoàn thiện.
+- **Ảnh cầu vồng — ĐÃ CHỐT 25/11 (Claude tự chỉnh):** giữ khúc gỗ bãi đất `spot.thcs.field_log` (45; 9,6) như chủ dự án chọn, nhưng **khác bố cục** ảnh lửa trại Trang 8 (`cam.thcs.m2_campfire_group` đặt máy trên khúc gỗ nhìn về chỗ đốt lửa):
+  - Máy đặt ở đầu kia khúc gỗ, quay ra phía **trời trống, không thấy chỗ đốt lửa**; ngẩng máy để bầu trời + cầu vồng chiếm khoảng nửa trên khung, nhóm đứng nửa dưới. Trang 4 là ban ngày sau mưa, Trang 8 là ban đêm có lửa.
+  - Thêm camera mới (vd. `cam.thcs.field_rainbow`), cho `cam.d0703.rainbow` trỏ sang. Biến thể thời tiết `after_rain_rainbow` (`src/world/variants.ts`) đang lấy `cam.thcs.rainbow` ở sân → đổi theo. Dời mô hình cầu vồng trong `m1_trang4.ts` ra sau lưng nhóm theo hướng máy mới.
+  - `stand_zone` của ảnh 2 (đang dùng chung `spot.thcs.yard_group`) đổi sang chỗ đứng trước khúc gỗ (marker mới, đã có trong E7).
 - Chia bước: lời trước bảng chọn (P4-2 ô 1–5), lời sau trò (P4-4), lời trước ảnh 2 (P4-7 ô 1–5) có thể cần thêm bước cảnh. Không đổi mã cũ; mã mới do R-D4 đặt.
 
 ## [KIỂM NĂM]
@@ -307,5 +317,6 @@
 - Bỏ: "Máy ảnh của {player_name} đâu? Đừng để ướt!", "Tớ ôm rồi. Yên tâm.", "{player_name} coi pin máy chưa?", "Thì hôm nào chụp."
 
 ## Thay đổi
+- v0.2.1 (25/11/2026): chủ dự án giao Claude tự chỉnh chỗ chụp → chốt dời ảnh 1 về gốc phượng, ảnh cầu vồng ở khúc gỗ nhưng khác bố cục Trang 8 (mục "Ghi chú cho dev"). Chữ thoại không đổi.
 - v0.2 (25/11/2026): chủ dự án duyệt khung + chọn A cho 4 câu hỏi. Đối chiếu dữ liệu thật: ghi đúng mã lựa chọn `c_m1_05_tone` / `playful` · `gentle` · `deep`, mã bước, camera; xưng hô theo Phụ lục E (Hạ gọi chung "mọi người"); thêm ghi chú lệch chỗ chụp cho dev. File thành **khung** cho bản viết hoàn thiện.
 - v0.1 (25/11/2026): bản đầu (`claude/THOAI_TRANG4_R-A4_v0.1.md` trong Project).
