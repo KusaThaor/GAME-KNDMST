@@ -180,6 +180,7 @@
 | E9 | Thuyền của Hạ phải là chiếc **mắc lại** sau khi đua (cảnh 3D, sau R-B4 mục e) | P2-5 → P2-6 | Đặt sẵn một thuyền ở cuối rãnh khi bắt đầu P2-6 |
 
 ## Thay đổi
+- v0.2.1 (25/11): chốt QĐ-5 (dời câu Hạ ra sau phần giới thiệu tên). Chữ không đổi.
 - v0.2 (25/11): chốt QĐ-1…4; điền mã thật từ dữ liệu; đổi chuông → trống; file thành outline chính để Antigravity viết hoàn thiện.
 - v0.1 (25/11): bản đầu.
 
