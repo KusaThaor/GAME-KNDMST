@@ -15,3 +15,12 @@
 
 ## Đoạn Gemini đề xuất chuẩn hóa kỹ thuật chờ chủ dự án xem xét
 1. Bổ sung 3 sắc thái lựa chọn cho `c_m1_02_wish` (Trang 2: `friendship` [gentle], `fun` [playful], `secret` [deep]) và `c_m1_03_decor` (Trang 3: `paper` [playful], `flowers` [gentle], `photos` [deep]) để khớp cơ chế 3 sắc thái của hệ thống Analytics F8.
+
+## 25/11/2026 — Trang 2 viết lại (R-A2), chủ dự án chốt "theo đề xuất" — CONFIRMED
+| # | Câu hỏi | Quyết định |
+|---|---|---|
+| 1 | Trang 2 "sau giờ học" hay kết bằng trống vào lớp? | Giờ ra chơi buổi chiều, kết bằng trống vào lớp |
+| 2 | Trống hay chuông (năm 2015)? | **Trống trường cho cả 4 Trang Mốc 1** |
+| 3 | Minigame chọn kiểu thuyền sau khi đã chụp 5 thuyền? | Giữ nguyên bước chọn kiểu, chấp nhận lệch nhỏ; xét dời lên trước sau 15/12 |
+| 4 | Ghi chú ảnh Album Trang 2? | "Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xếp hàng chờ thả." |
+Chi tiết: `R-A2_TRANG2_THOAI_PROPOSED.md` (outline), việc tiếp: `PROMPT_R-A2_TRANG2_HOAN_THIEN.md`.
