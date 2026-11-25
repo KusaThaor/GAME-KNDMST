@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { DressingCtx, DressingSet } from '../index';
+import { placeAtMarker } from '../place';
 import { makePaperBoats } from '../../props/m1/paperBoats';
 import { makeGutterFlow } from '../../props/m1/gutterFlow';
 
@@ -13,8 +14,10 @@ const m1Trang2Set: DressingSet = {
     root.name = 'dressing:m1_trang2';
 
     // 1. Dòng nước chảy trong rãnh mái hiên (có cập nhật UV mỗi khung hình)
-    const gutter = makeGutterFlow({ length: 48, width: 0.35 });
-    gutter.position.set(-4, 0, -18.1);
+    const gutter = placeAtMarker(makeGutterFlow({ length: 48, width: 0.35 }), ctx.world, 'interact', 'itr.thcs.gutter', {
+      offset: [10, 0, 0],
+      fallback: [-14, 0, -18.1],
+    });
     root.add(gutter);
 
     if (gutter.flowControl) {
@@ -24,9 +27,9 @@ const m1Trang2Set: DressingSet = {
     }
 
     // 2. 5 chiếc thuyền giấy đua rãnh nước
-    // Marker: itr.thcs.gutter [-14, 0, -18.1]
-    const boats = makePaperBoats();
-    boats.position.set(-14, 0, -18.1);
+    const boats = placeAtMarker(makePaperBoats(), ctx.world, 'interact', 'itr.thcs.gutter', {
+      fallback: [-14, 0, -18.1],
+    });
     root.add(boats);
 
     return root;
