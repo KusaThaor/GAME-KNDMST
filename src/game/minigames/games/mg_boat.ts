@@ -185,6 +185,9 @@ export default {
     };
     renderFolds();
 
+    const rawWish = ctx.save.get('wish_text');
+    const wishText = typeof rawWish === 'string' && rawWish.trim() ? rawWish.trim() : '';
+
     let charging = false, chargeT = 0, endT = -1;
     let pointerSteer: number | null = null;
     const keys = new Set<string>();
@@ -201,11 +204,15 @@ export default {
       logic.launch(powerAt(loop.elapsed - chargeT));
     };
 
-    const drawBoat = (x: number, y: number, color: string, tilt: number, scale = 1) => {
+    const drawBoat = (x: number, y: number, color: string, tilt: number, scale = 1, hasWish = false) => {
       g.save(); g.translate(x, y); g.rotate(tilt); g.scale(scale, scale);
       g.fillStyle = color; g.strokeStyle = MG_INK; g.lineWidth = 2;
       g.beginPath(); g.moveTo(-16, 0); g.lineTo(16, 0); g.lineTo(10, 10); g.lineTo(-10, 10); g.closePath(); g.fill(); g.stroke();
       g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -20); g.lineTo(11, -2); g.closePath(); g.fill(); g.stroke();
+      if (hasWish) {
+        g.strokeStyle = '#233f6b'; g.lineWidth = 1.2;
+        g.beginPath(); g.moveTo(2, -12); g.lineTo(6, -10); g.moveTo(2, -7); g.lineTo(8, -5); g.stroke();
+      }
       g.restore();
     };
 
@@ -240,7 +247,7 @@ export default {
       }
       const fold = logic.fold ?? 'sail';
       const tilt = logic.phase === 'capsized' ? Math.min(Math.PI / 2, (t - endT + BOAT.endHoldMs) / 300) : logic.spinning ? t / 120 : logic.zone === 'red' && logic.stall > 0 ? 0.5 : 0;
-      drawBoat(sx(logic.x), BOAT_Y, COLORS[fold], tilt);
+      drawBoat(sx(logic.x), BOAT_Y, COLORS[fold], tilt, 1, Boolean(wishText));
       // cột tiến độ bên phải: Quân, Châu, Hạ chạy theo giờ; Đức lật ở vạch xuất phát
       const TX = 340, TTOP = 40, TBOT = 290;
       g.strokeStyle = MG_INK; g.lineWidth = 2; g.beginPath(); g.moveTo(TX, TTOP); g.lineTo(TX, TBOT); g.stroke();
@@ -259,6 +266,12 @@ export default {
       g.fillStyle = MG_INK; g.font = mgFont(15); g.textAlign = 'left';
       g.fillText(`${logic.pos.toFixed(1)}/${BOAT.lengthM} m`, 12, 22);
       g.fillText(`Va chạm: ${logic.hits}/${BOAT.maxHits}`, 12, 42);
+      if (wishText) {
+        g.fillStyle = 'rgba(255,250,238,0.84)'; g.fillRect(GX - 86, H - 26, 172, 20);
+        g.strokeStyle = 'rgba(58,44,38,0.4)'; g.lineWidth = 1; g.strokeRect(GX - 86, H - 26, 172, 20);
+        g.fillStyle = '#233f6b'; g.font = mgFont(11, 700); g.textAlign = 'center';
+        g.fillText(`“${wishText}”`, GX, H - 12, 164);
+      }
       if (logic.phase === 'launch') {
         // thanh lực
         const BX = 22, BTOP = 80, BH = 180, p = charging ? powerAt(t - chargeT) : 0;
