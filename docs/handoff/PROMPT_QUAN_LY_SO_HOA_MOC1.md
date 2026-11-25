@@ -40,12 +40,6 @@ NHIỆM VỤ CỦA BẠN (LÀM ĐÚNG THỨ TỰ):
 3. Sau mỗi lượt gộp vào `feat/sprint-0412`, bắt buộc chạy đủ 5 lệnh kiểm chứng:
    `npx tsc --noEmit`, `npm test`, `npm run validate:world`, `VERCEL_ENV=production npm run build`, `npx playwright test --workers=1`.
 4. Trình bày báo cáo cho chủ dự án: ngắn gọn bằng tiếng Việt, ghi rõ task nào đã gộp, kết quả chạy lệnh thật, và không tự ý gộp vào `main`.
-5. QUY TẮC KHI CHỦ DỰ ÁN NHẮN "CHỐT PHIÊN":
-   - Dừng các nhánh, chạy lại toàn bộ 5 lệnh kiểm tra bảo vệ chất lượng repo.
-   - Tổng hợp toàn bộ trạng thái tiến độ các nhánh Đợt 1, Đợt 2 (R-B1..R-B5), Đợt 3 (R-D1..R-D4).
-   - Commit toàn bộ code/docs sạch sẽ và push lên git (origin). Không bao giờ dùng git push --force.
-   - Gửi báo cáo chốt phiên rõ ràng: đã xong gì, pass bao nhiêu test, commit SHA nào, việc kế tiếp.
-   - Chi tiết phân công Sprint Tasks, Model, Tier & Prompts con xem tại: `docs/handoff/SPRINT_TASKS_CHUYEN_GIAO_VA_PROMPT_CHI_TIET.md`.
 ```
 
 ---
