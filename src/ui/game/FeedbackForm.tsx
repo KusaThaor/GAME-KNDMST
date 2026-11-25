@@ -35,24 +35,24 @@ export function FeedbackForm({ skip, submitted }: { skip(): void; submitted(): v
     <h2>Phản hồi sau khi chơi</h2>
     <fieldset disabled={busy} style={{ display: 'grid', gap: '0.75rem', border: 0, margin: 0, padding: 0 }}>
       {([['nostalgia', 'Bạn thấy hoài niệm thế nào?'], ['play_again', 'Bạn muốn chơi tiếp phần sau đến mức nào?']] as const)
-        .map(([name, label]) => <label key={name}>[PLACEHOLDER] {label}{' '}
+        .map(([name, label]) => <label key={name}>{label}{' '}
           <select required name={name} defaultValue="">
             <option value="" disabled>Chọn mức 1–5</option>
             {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
           </select>
         </label>)}
-      <label>[PLACEHOLDER] Bạn thích Trang nào nhất?{' '}
+      <label>Bạn thích Trang nào nhất?{' '}
         <select required name="favorite_page" defaultValue="">
           <option value="" disabled>Chọn Trang</option>
           {pages.map((id, i) => <option key={id} value={id}>Trang {i + 1}</option>)}
         </select>
       </label>
-      <label>[PLACEHOLDER] Bạn sẽ giới thiệu game cho bạn bè chứ?{' '}
+      <label>Bạn sẽ giới thiệu game cho bạn bè chứ?{' '}
         <select required name="recommend" defaultValue=""><option value="" disabled>Chọn câu trả lời</option>
           <option value="yes">Có</option><option value="no">Không</option>
         </select>
       </label>
-      <label>[PLACEHOLDER] Ý kiến khác (không bắt buộc, tối đa 300 ký tự)
+      <label>Ý kiến khác (không bắt buộc, tối đa 300 ký tự)
         <textarea name="comment" maxLength={COMMENT_LIMIT} placeholder="Vui lòng bỏ tên và thông tin liên hệ." />
       </label>
       {error && <p role="alert">{error}</p>}

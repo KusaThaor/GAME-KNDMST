@@ -34,7 +34,7 @@ export interface HubConfig {
 }
 
 export const HUB_CONFIG: HubConfig = {
-  app_chat_name: '[PLACEHOLDER] Ứng dụng nhắn tin',
+  app_chat_name: 'AloNhau',                            // chủ dự án chốt 25/11 (TONG_DUYET Phần 3 mục 2)
   show_adult_player: false,
   old_chat_last_label: 'tin cuối cùng đã từ rất lâu',
   caro_series_default: { quan: 3, duc: 3 },
