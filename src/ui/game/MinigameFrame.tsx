@@ -3,7 +3,7 @@ import type { MinigameHost } from '../../game/minigames/host';
 
 const labels = { win: 'Thắng', lose: 'Thua', draw: 'Hòa', complete: 'Hoàn thành', quit: 'Thua' };
 
-export function MinigameFrame({ host }: { host: MinigameHost }) {
+export function MinigameFrame({ host, onExit }: { host: MinigameHost; onExit?: () => void }) {
   const root = useRef<HTMLDivElement>(null);
   const play = () => { if (root.current) host.play(root.current); };
   useLayoutEffect(() => {
@@ -22,6 +22,7 @@ export function MinigameFrame({ host }: { host: MinigameHost }) {
         <h3>{host.overlay === 'menu' ? 'Tạm dừng' : 'Luật chơi'}</h3>
         <button onClick={() => host.toggleOverlay(host.overlay!)}>Quay lại</button>
         {host.phase !== 'result' && <button onClick={() => host.quit()}>{host.overlay === 'menu' ? 'Bỏ ván' : 'Bỏ qua'}</button>}
+        {host.overlay === 'menu' && onExit && <button data-act="menu-exit" onClick={onExit}>Thoát game</button>}
       </> : <>
         {host.phase === 'rules' && <button class="primary" data-act="minigame-done" onClick={play}>Bắt đầu</button>}
         {host.phase === 'playing' && <div class="g-row">

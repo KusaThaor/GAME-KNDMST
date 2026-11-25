@@ -2,7 +2,7 @@ import { useRef, useState } from 'preact/hooks';
 import { cleanComment, COMMENT_LIMIT } from '../../../api/feedback';
 import { RELEASES } from '../../content/release';
 
-export function FeedbackForm({ skip, submitted }: { skip(): void; submitted(): void }) {
+export function FeedbackForm({ skip, submitted, cancel }: { skip(): void; submitted(): void; cancel?: () => void }) {
   const [attemptId] = useState(() => crypto.randomUUID());
   const [busy, setBusy] = useState(false);
   const posting = useRef(false);
@@ -57,7 +57,8 @@ export function FeedbackForm({ skip, submitted }: { skip(): void; submitted(): v
       </label>
       {error && <p role="alert">{error}</p>}
       <div class="g-row"><button class="primary" type="submit">{busy ? 'Đang gửi…' : 'Gửi phản hồi'}</button>
-        <button type="button" data-act="feedback-skip" onClick={skip}>Bỏ qua</button></div>
+        <button type="button" data-act="feedback-skip" onClick={skip}>Bỏ qua</button>
+        {cancel && <button type="button" data-act="feedback-cancel" onClick={cancel}>Quay lại chơi</button>}</div>
     </fieldset>
   </form>;
 }

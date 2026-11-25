@@ -42,10 +42,10 @@ export function DayEndModal({ dayEnd, a }: { dayEnd: NonNullable<UiState['dayEnd
   );
 }
 
-export function FeedbackModal({ a }: { a: UiActions }) {
+export function FeedbackModal({ a, placement }: { a: UiActions; placement: 'demo_end' | 'exit' }) {
   return (
     <Pop class="g-card" testid="feedback">
-      <FeedbackForm skip={a.feedbackSkip} submitted={a.feedbackSubmitted} />
+      <FeedbackForm skip={a.feedbackSkip} submitted={a.feedbackSubmitted} cancel={placement === 'exit' ? a.feedbackCancel : undefined} />
     </Pop>
   );
 }

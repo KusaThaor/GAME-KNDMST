@@ -20,6 +20,7 @@ export function MenuModal({ s, a }: { s: UiState; a: UiActions }) {
         </button>
       )}
       {s.mode === 'day' && s.inReplay && <button data-act="leave-day" onClick={a.menuLeaveDay}>Về phòng (thôi xem lại)</button>}
+      <button data-act="menu-exit" onClick={a.menuExit}>Thoát</button>
       <button class="danger" data-act="wipe" onClick={a.menuWipe}>{s.wipeArmed ? 'Bấm lần nữa để xóa hết' : 'Xóa tiến trình'}</button>
       <p class="g-hint">Tiến trình và ảnh lưu trong trình duyệt này. Xóa dữ liệu trình duyệt sẽ mất cả hai.</p>
     </Pop>

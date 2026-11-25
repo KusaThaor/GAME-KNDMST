@@ -71,7 +71,8 @@ export interface UiState {
   boxView: { hint: string; hover: string | null; first: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
-  feedback: boolean;
+  /** Form phản hồi đang mở: 'demo_end' = sau màn kết bản thử; 'exit' = người chơi bấm Thoát (xong form thì rời game). */
+  feedback: false | 'demo_end' | 'exit';
   canEndDay: boolean;
   inReplay: boolean;
   wipeArmed: boolean;
@@ -107,6 +108,10 @@ export interface UiActions {
   phoneOpenThread(id: string | null): void;
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
+  /** Nút Thoát (Menu tạm dừng, cả phòng 2026, Ngày ký ức lẫn lúc đang chơi minigame): hiện Form phản hồi rồi rời game. */
+  menuExit(): void;
+  /** Đóng Form phản hồi mở từ nút Thoát, quay lại chơi tiếp (không gửi, không rời game). */
+  feedbackCancel(): void;
   feedbackSkip(): void;
   feedbackSubmitted(): void;
   toggleCameraMode(): void;

@@ -19,6 +19,9 @@ import { buildHubScene, type BoxItemView, type HubScene } from '../scenes/hubSce
 import type { GameView } from '../view';
 import type { PhotoRunner } from './photoRunner';
 import type { PresentationQueue } from './presentationQueue';
+
+/** Cờ trong bản lưu: đã gửi Form phản hồi (ở màn kết hoặc khi bấm Thoát) → không hiện form lần nữa. */
+export const FEEDBACK_SENT_FLAG = 'hub.feedback_sent';
 import { albumView, boxView, phoneView } from './uiAdapters';
 
 export interface HubControllerDeps {
@@ -159,8 +162,10 @@ export function createHubController(deps: HubControllerDeps) {
       if (!(await queue.playLines(idx.pack.hub.demo_end_lines)) || ep !== queue.getEpoch()) return;
       save.flags['hub.demo_end_seen'] = true;
       bus.emit('save_requested', { reason: 'demo_end_seen' });
-      ui.set({ feedback: true });
-      bus.emit('feedback_shown', { placement: 'demo_end' });
+      if (!save.flags[FEEDBACK_SENT_FLAG]) {                 // đã gửi form lúc bấm Thoát trước đó → không hỏi lại
+        ui.set({ feedback: 'demo_end' });
+        bus.emit('feedback_shown', { placement: 'demo_end' });
+      }
     }
   }
 
