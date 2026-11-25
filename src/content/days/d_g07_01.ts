@@ -7,7 +7,6 @@
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g07.01',
@@ -124,8 +123,11 @@ export const quests: Quest[] = [
       },
     ],
   },
+];
+
+export const sideQuests: Quest[] = [
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_side_03',
     type: 'side',
     scope: 'm1',
@@ -171,6 +173,9 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g07.01.01', memory_day_id: 'd.g07.01', kind: 'photo', source_quest_id: 'q_m1_main_02', media_spec: 'B' },
   { id: 'frag.d.g07.01.02', memory_day_id: 'd.g07.01', kind: 'note', source_quest_id: 'q_m1_main_02', text: 'Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xuôi dòng rãnh nước.' },
   { id: 'frag.d.g07.01.03', memory_day_id: 'd.g07.01', kind: 'artifact' },
+];
+
+export const sideFragments: MemoryFragment[] = [
   { id: 'frag.d.g07.01.04', memory_day_id: 'd.g07.01', kind: 'sticker', source_quest_id: 'q_m1_ai_side_03', text: 'Mẹo gấp thuyền của Quân' },
 ];
 
@@ -178,5 +183,8 @@ export const entries: AlbumEntry[] = [
   { id: 'alb.d.g07.01.01', page_id: 'page.d.g07.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g07.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0701.boats', at_step_id: 'q_m1_main_02.s05' } },
   { id: 'alb.d.g07.01.02', page_id: 'page.d.g07.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g07.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g07.01.03', page_id: 'page.d.g07.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g07.01.03', source: 'sticker_art', required_for_restore: true },
+];
+
+export const sideEntries: AlbumEntry[] = [
   { id: 'alb.d.g07.01.04', page_id: 'page.d.g07.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g07.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_03', replayable: true },
 ];
