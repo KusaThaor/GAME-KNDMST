@@ -9,6 +9,7 @@ import { resolveLines, speakerName, type PlayerProfile } from '../../systems/dia
 import type { QuestEngine } from '../../systems/questEngine';
 import type { UiStore } from '../../ui/game/store';
 import type { DayScene } from '../scenes/dayScene';
+import { createStepHooks, type StepHooks } from './stepHooks';
 
 export const CANCEL = Symbol('cancel');
 const PRESENT = new Set<Step['kind']>(['cutscene', 'choice', 'photo', 'minigame', 'free', 'album_restore']);
@@ -25,10 +26,13 @@ export interface PresentationQueueDeps {
   refreshHud: () => void;
   runPhoto: (step: Extract<Step, { kind: 'photo' }>, alive: () => boolean) => Promise<void>;
   runMinigame: (step: Extract<Step, { kind: 'minigame' }>, alive: () => boolean) => Promise<void>;
+  /** Điểm nối Đợt 2 (stepHooks.ts). Bỏ trống = không có phần nào cắm (hành vi như trước). */
+  hooks?: StepHooks;
 }
 
 export function createPresentationQueue(deps: PresentationQueueDeps) {
   const { idx, save, engine, ui, introId, profile, fmt, getDayScene, refreshHud, runPhoto, runMinigame } = deps;
+  const hooks = deps.hooks ?? createStepHooks();
   let epoch = 0;
   let chain: Promise<void> = Promise.resolve();
   const presented = new Set<string>();
@@ -60,9 +64,13 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
       || (s.photo && (s.photo.phase !== 'countdown' || s.photo.posed)));
   };
 
-  async function playLines(lines: DialogueLine[]): Promise<boolean> {
+  /** Phát thoại. Có `step` → gọi `hooks.stage(step, { line: i })` trước dòng thứ i (chỉ số theo mảng gốc). */
+  async function playLines(lines: DialogueLine[], step?: Step): Promise<boolean> {
     const ep = epoch;
-    for (const l of resolveLines(lines, engine.conditions)) {
+    for (let i = 0; i < lines.length; i++) {
+      if (step?.stage?.length) { await hooks.stage(step, { line: i }); if (ep !== epoch) return false; }
+      const l = resolveLines([lines[i]], engine.conditions)[0];
+      if (!l) continue;
       const chr = idx.resolveActor(l.speaker);
       ui.set({ dialogue: { who: speakerName(l.speaker, idx, profile()), color: chr?.ui_color ?? '#3a2c26', text: fmt(l.text) } });
       if ((await wait('next')) === CANCEL || ep !== epoch) return false;
@@ -80,20 +88,38 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
     return true;
   }
 
+  /**
+   * Bọc một bước bằng điểm nối Đợt 2: before → stage('start') → body → stage('end') → after → complete().
+   * `body` trả false = bị hủy giữa chừng (không gọi after/complete). Dùng cho cả bước "tự hiện" và talk/interact ở dayController.
+   */
+  async function runStep(s: Step, alive: () => boolean, body: () => Promise<boolean>, complete: () => void): Promise<boolean> {
+    if (!(await hooks.before(s, alive))) return false;
+    if (s.stage?.length) { await hooks.stage(s, 'start'); if (!alive()) return false; }
+    if (!(await body()) || !alive()) return false;
+    if (s.stage?.length) { await hooks.stage(s, 'end'); if (!alive()) return false; }
+    if (!(await hooks.after(s, alive))) return false;
+    complete();
+    return true;
+  }
+
   async function presentStep(ref: StepRef): Promise<void> {
     const ep = epoch, s = ref.step;
     const alive = () => ep === epoch;
     if (s.kind === 'cutscene') {
       const dayScene = getDayScene();
       const weatherShot = dayScene?.lockWeatherCamera(s.id);
-      if (!(await playLines(s.lines))) return; // cancelAll đã nhả camera
-      if (weatherShot) getDayScene()?.lockCamera(null);
-      if (ref.quest.id === introId && !save.profile_done) {
-        ui.set({ profile: true });
-        if ((await wait('profile')) === CANCEL || !alive()) return;
-      }
-      engine.complete(s.id);
+      await runStep(s, alive, async () => {
+        if (!(await playLines(s.lines, s))) return false; // cancelAll đã nhả camera
+        if (weatherShot) getDayScene()?.lockCamera(null);
+        if (ref.quest.id === introId && !save.profile_done) {
+          ui.set({ profile: true });
+          if ((await wait('profile')) === CANCEL || !alive()) return false;
+        }
+        return true;
+      }, () => engine.complete(s.id));
     } else if (s.kind === 'choice') {
+      if (!(await hooks.before(s, alive))) return;
+      if (s.stage?.length) { await hooks.stage(s, 'start'); if (!alive()) return; }
       const p = s.prompt ? resolveLines([s.prompt], engine.conditions)[0] : undefined;
       ui.set({
         choice: {
@@ -105,19 +131,30 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
       const pick = await wait<string>('choice');
       if (pick === CANCEL || !alive()) return;
       ui.set({ choice: null });
+      // R-D0: câu phản ứng theo lựa chọn (ChoiceOption.lines) — phát trước khi báo xong bước.
+      const reaction = s.options.find((o) => o.id === pick)?.lines;
+      if (reaction?.length && !(await playLines(reaction))) return;
+      if (s.stage?.length) { await hooks.stage(s, 'end'); if (!alive()) return; }
+      if (!(await hooks.after(s, alive))) return;
       engine.complete(s.id, { option_id: pick });
     } else if (s.kind === 'photo') {
+      // photoRunner tự gọi engine.complete; điểm nối chỉ bọc trước/sau (R-B3 có thể chuyển hẳn vào photoRunner).
+      if (!(await hooks.before(s, alive))) return;
+      if (s.stage?.length) { await hooks.stage(s, 'start'); if (!alive()) return; }
       await runPhoto(s, alive);
     } else if (s.kind === 'minigame') {
+      if (!(await hooks.before(s, alive))) return;
+      if (s.stage?.length) { await hooks.stage(s, 'start'); if (!alive()) return; }
       await runMinigame(s, alive);
     } else if (s.kind === 'free') {
-      ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });
-      if ((await wait('free')) === CANCEL || !alive()) return;
-      ui.set({ free: null });
-      engine.complete(s.id);
+      await runStep(s, alive, async () => {
+        ui.set({ free: { text: fmt(s.prompt ?? 'Dạo quanh một chút rồi đi tiếp.') } });
+        if ((await wait('free')) === CANCEL || !alive()) return false;
+        ui.set({ free: null });
+        return true;
+      }, () => engine.complete(s.id));
     } else if (s.kind === 'album_restore') {
-      if (!(await notice('Album', 'Một trang Album hiện rõ trở lại.', 'album_restore'))) return;
-      engine.complete(s.id);
+      await runStep(s, alive, () => notice('Album', 'Một trang Album hiện rõ trở lại.', 'album_restore'), () => engine.complete(s.id));
     }
   }
 
@@ -142,6 +179,8 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
     playLines,
     notice,
     drain,
+    runStep,
+    hooks,
     addTicker: (fn: (dt: number) => void) => { tickers.add(fn); },
     deleteTicker: (fn: (dt: number) => void) => { tickers.delete(fn); },
     clearTickers: () => { tickers.clear(); },

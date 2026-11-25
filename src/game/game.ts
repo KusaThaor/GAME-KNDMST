@@ -30,6 +30,7 @@ import { createHubController } from './runtime/hubController';
 import { createMinigameRunner } from './runtime/minigameRunner';
 import { createPhotoRunner } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
+import { createStepHooks } from './runtime/stepHooks';
 import { formatGameText } from './runtime/uiAdapters';
 import type { DayScene } from './scenes/dayScene';
 import type { BoxItemView, HubPlayer } from './scenes/hubScene';
@@ -99,9 +100,14 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const dayCtrl = createDayController({ idx, save, bus, engine, flow, ui, input, view, getQueue: () => queue, style, camOpts, fmt, setPrompt, goHub });
   const runMinigame = createMinigameRunner({ save, bus, engine, ui, getQueue: () => queue });
   let photo!: ReturnType<typeof createPhotoRunner>;
+  /**
+   * Điểm nối Đợt 2 (runtime/stepHooks.ts). Mỗi nhánh R-B* chỉ THÊM một dòng `stepHooks.register(...)` ngay dưới đây,
+   * không sửa dòng khác của game.ts.
+   */
+  const stepHooks = createStepHooks();
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,
-    runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame,
+    runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
   });
   photo = createPhotoRunner({ idx, save, bus, engine, album, photos, view, ui, queue, style, getDayScene: dayCtrl.scene, getCurrentDay: dayCtrl.currentDay });
   const hubCtrl = createHubController({
