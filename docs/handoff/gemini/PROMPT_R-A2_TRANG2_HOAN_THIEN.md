@@ -51,6 +51,7 @@ Không cần đọc thêm file nào khác. Không đọc lại cả GDD.
 4. Minigame vẫn có bước chọn kiểu thuyền (buồm/mui/đôi); chấp nhận lệch nhỏ với ảnh.
 5. Ghi chú ảnh Album: "Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xếp hàng chờ thả."
 6. Một máy ảnh nhỏ cho mọi cảnh chụp. Không điện thoại.
+7. P2-6: câu Hạ "Thuyền của {player_name} trôi mất rồi…" đứng **sau** phần giới thiệu tên (Hạ chưa biết tên Player trước đó). Giữ thứ tự này.
 
 **Điểm neo — giữ nghĩa:**
 - Lựa chọn điều ước `c_m1_02_wish`: giữ **nguyên chữ, tông, mã** 3 phương án (`friendship` "Mai mốt vẫn chơi chung vầy." · `fun` "Lớp 7 vui hơn lớp 6." · `secret` "Bí mật không nói ra."). Chữ này hiện trên cánh buồm.

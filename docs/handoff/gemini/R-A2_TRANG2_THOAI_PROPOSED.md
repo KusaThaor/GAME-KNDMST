@@ -143,7 +143,7 @@
 | Thoại 9 | **Châu** — "Nhớ đúng giờ nha. Đừng để người khác chờ." — *nói, vừa đi* |
 | Câu dẫn ra | Không thêm câu (câu cuối của Châu làm câu dẫn). Châu đi trước, cả nhóm theo vào lớp; Player đi theo → hết Trang (mờ ra như hiện có) |
 | Gợi ý góc màn hình | Lúc vào: **Vớt thuyền ở cuối rãnh** · Lúc ra: **Đi theo Châu vào lớp** |
-| So với bản cũ | Vẫn 9 ô thoại (giữ nguyên chữ gốc), nay xen 5 nhịp hành động; đổi chỗ câu Hạ "Thuyền của {player_name} trôi mất rồi…" ra **sau** phần giới thiệu tên (kịch bản gốc đặt trước), vì trước đó Hạ chưa biết tên Player. Ý giữ nguyên: cả nhóm cùng ký lên một chiếc thuyền; thuyền vớt được là thuyền của Hạ (đúng kịch bản) |
+| So với bản cũ | Vẫn 9 ô thoại (giữ nguyên chữ gốc), nay xen 5 nhịp hành động; đổi chỗ câu Hạ "Thuyền của {player_name} trôi mất rồi…" ra **sau** phần giới thiệu tên (kịch bản gốc đặt trước), vì trước đó Hạ chưa biết tên Player — **chủ dự án đã chốt dời (QĐ-5, 25/11)**. Ý giữ nguyên: cả nhóm cùng ký lên một chiếc thuyền; thuyền vớt được là thuyền của Hạ (đúng kịch bản) |
 
 ---
 
@@ -155,7 +155,7 @@
 
 ---
 
-## Quyết định chủ dự án 25/11/2026 — CONFIRMED (trước là HỎI 1–4)
+## Quyết định chủ dự án 25/11/2026 — CONFIRMED (trước là HỎI 1–4, thêm QĐ-5)
 
 | # | Nội dung đã chốt | Áp dụng |
 |---|---|---|
@@ -163,6 +163,7 @@
 | QĐ-2 | [KIỂM NĂM] Dùng **trống trường** cho **cả 4 Trang** Mốc 1 | Trang 2: "trống vào lớp". Trang 1/3/4: chỗ nào ghi "chuông" đổi thành "trống" khi viết lại |
 | QĐ-3 | Minigame **giữ bước chọn kiểu thuyền**; chấp nhận lệch nhỏ với ảnh 5 thuyền (thuyền trong ảnh là kiểu mặc định). Dời bước chọn kiểu lên trước khi chụp: xét sau 15/12 | Không đổi luật `mg_boat` |
 | QĐ-4 | Ghi chú ảnh Album đổi thành "Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xếp hàng chờ thả." | `frag.d.g07.01.02` (R-D2 đổ khi đã duyệt chữ) |
+| QĐ-5 | (25/11, sau v0.2) **Dời** câu Hạ "Thuyền của {player_name} trôi mất rồi…" ra **sau** phần giới thiệu tên, như P2-6 đang viết | Lệch thứ tự kịch bản gốc là có chủ đích; kịch bản và `01` ghi chú khi R-F1 đồng bộ |
 
 ## [CẦN ENGINE]
 

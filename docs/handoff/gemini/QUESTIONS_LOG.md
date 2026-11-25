@@ -23,4 +23,5 @@
 | 2 | Trống hay chuông (năm 2015)? | **Trống trường cho cả 4 Trang Mốc 1** |
 | 3 | Minigame chọn kiểu thuyền sau khi đã chụp 5 thuyền? | Giữ nguyên bước chọn kiểu, chấp nhận lệch nhỏ; xét dời lên trước sau 15/12 |
 | 4 | Ghi chú ảnh Album Trang 2? | "Chiều mưa đầu lớp 7, năm chiếc thuyền giấy xếp hàng chờ thả." |
+| 5 | Câu Hạ "Thuyền của {player_name} trôi mất rồi…" để trước hay sau phần giới thiệu tên? | **Sau** (dời so với kịch bản gốc) |
 Chi tiết: `R-A2_TRANG2_THOAI_PROPOSED.md` (outline), việc tiếp: `PROMPT_R-A2_TRANG2_HOAN_THIEN.md`.
