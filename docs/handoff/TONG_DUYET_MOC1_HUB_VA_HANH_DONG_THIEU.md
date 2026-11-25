@@ -5,7 +5,7 @@
 | **Ngày tổng hợp** | 25/11/2026 (cập nhật theo quyết định chủ dự án tối 25/11) |
 | **Mục đích** | Bản đọc duyệt & bàn giao cho **Chủ dự án** và đội phát triển: ghi nhận các quyết định đã chốt, cập nhật kịch bản liền mạch Mốc 1 và danh sách việc kỹ thuật cần làm trước bản đo 05/12 |
 | **Nhánh làm việc** | `docs/tong-duyet-moc1-4-trang` (xuất phát từ `origin/feat/sprint-0412` @ `85d9371`) |
-| **Trạng thái chữ thoại** | **Đã chốt 9/11 mục**; chỉ còn **2 điểm chờ chốt cuối** (câu thoại sửa mới của Châu ở Trang 1 & bộ câu hỏi Form phản hồi đang soạn) |
+| **Trạng thái chữ thoại** | **CONFIRMED 100% (25/11/2026)** — Chủ dự án đã duyệt toàn bộ kịch bản Phần 2 và chốt đủ **11/11 mục** (không còn câu hỏi mở), sẵn sàng chuyển sang số hóa & triển khai kỹ thuật |
 
 ---
 
@@ -32,7 +32,7 @@
 - **Các điểm đã rà soát & chốt cập nhật ngày 25/11:**
   1. **Nhịp chuyển từ Trang 3 về phòng sang Trang 4:** Đã chốt bổ sung câu tự nhủ quay lại thùng đồ tìm tấm ảnh cuối cùng + dòng gợi ý góc màn hình.
   2. **Tên gọi 1 món đồ nền trong thùng:** Thống nhất tên hiển thị là **"Hộp bút sắt"** (câu thoại giữ tự nhiên, không ép cắt ngắn).
-  3. **Từ lóng & câu thoại Trang 1–2:** Đã chốt **giữ nguyên** chữ *"hư cấu"* (Trang 1, Trang 2) và *"Chốt!"* (Trang 1). Riêng câu 7 của Châu ở Trang 1 (cảnh giải mật lệnh) được yêu cầu **viết lại cho hợp ngữ cảnh giờ học** (đưa vào mục chờ duyệt mới ở Phần 3).
+  3. **Từ lóng & câu thoại Trang 1–2:** Đã chốt **giữ nguyên** chữ *"hư cấu"* (Trang 1, Trang 2) và *"Chốt!"* (Trang 1). Câu 7 của Châu ở Trang 1 (cảnh giải mật lệnh) đã chốt thay bằng *"Lo chép bài đi, chút ra chơi rồi tính tiếp."* cho khớp ngữ cảnh tiết học.
   4. **Quy ước hiển thị hệ thống & gameplay mới chốt:**
      - **Narrative bối cảnh hệ thống** đưa hết vào code để chạy thật, nhưng **trình bày giao diện khác hẳn thoại nhân vật** (dải dẫn chuyện / phụ đề bối cảnh tách biệt).
      - **Trang 2 cảnh viết điều ước** bắt buộc có đủ: **minigame gấp thuyền → chọn điều ước → tự ghi điều ước lên buồm**.
@@ -137,7 +137,7 @@
 - **Đức**: "Ơ… dạ, Châu Tổng."
 - **Châu**: "Gọi vậy nữa là tui khỏi sửa."
 - **Đức** *(tạo dáng "tada")*: "Dạ, Châu Tổng."
-- **Châu**: "Lo chép bài đi, chút ra chơi rồi tính tiếp." *(MỚI — thay câu cũ chưa hợp ngữ cảnh, chờ chốt ở Phần 3)*
+- **Châu**: "Lo chép bài đi, chút ra chơi rồi tính tiếp."
 
 #### Cảnh 4 · Ra chơi: Đá cầu sân trường
 *Tiếng trống ra chơi vang lên. Đức bật người chạy ngay ra cửa lớp; Châu tay cầm quả cầu đá đi theo sau; người chơi theo hai bạn ra hành lang rồi xuống sân.*
@@ -635,20 +635,21 @@
 > **Người dẫn chuyện:** "Đã gửi."
 > **Người dẫn chuyện:** "(còn tiếp)"
 
-*(Hoàn thành Mốc 1. Lưu ý: **Form phản hồi** sẽ bật lên ngay bất cứ lúc nào người chơi **bấm Thoát** khỏi game, không bắt buộc phải chơi hết Mốc. Bộ câu hỏi Form đang được nhóm chủ dự án hoàn thiện.)*
+*(Hoàn thành Mốc 1. Lưu ý: **Form phản hồi** sẽ bật lên ngay bất cứ lúc nào người chơi **bấm Thoát** khỏi game — không bắt buộc phải chơi hết Mốc — giữ 4 câu hỏi & 1 ô góp ý hiện có, đã xóa nhãn `[PLACEHOLDER]`.)*
 
 ---
 
-## Phần 3. Tổng hợp quyết định ĐÃ CHỐT & 2 điểm CÒN CHỜ CHỐT CUỐI
+## Phần 3. Tổng hợp toàn bộ quyết định ĐÃ CHỐT (CONFIRMED 25/11 — 11/11 mục)
 
-### 3.1 Các quyết định ĐÃ CHỐT từ chủ dự án (25/11)
+> **Toàn bộ câu hỏi đã chốt xong 100% theo phương án đề xuất và chỉ đạo bổ sung của chủ dự án. Không còn điểm mở.**
 
 | # | Hạng mục | Quyết định đã chốt (CONFIRMED) |
 |---|---|---|
 | **1** | **Tên chính thức chương Mốc 1 (`R-P1`)** | Chốt theo đề xuất & bổ sung sạch `[PLACEHOLDER]`: **`Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)`** |
 | **2** | **Tên app nhắn tin 2026 (`R-P1`)** | Chốt theo đề xuất & bổ sung sạch `[PLACEHOLDER]`: **`AloNhau`** |
 | **3** | **6 món đồ nền & lời mở Hộp Kỷ Vật (`R-P1`)** | Chốt giữ đủ cả 6 món (vở cũ, khăn quàng đỏ, ảnh lớp phai, hộp bút sắt, cục gôm mòn, thước kẻ) + lời mở hộp theo bản viết ở Phần 2, **xóa hết `[PLACEHOLDER]`**, câu chữ để tự nhiên (dài thêm chút không sao) |
-| **4b** | **Cách mở Form phản hồi** | **Mới:** Không cần chơi hết Mốc — **chỉ cần người chơi bấm Thoát là hiện Form phản hồi** |
+| **4** | **Form phản hồi (`R-P1` + luồng Thoát)** | **Chốt chữ theo đề xuất:** Giữ nguyên 4 câu hỏi + ô góp ý 300 ký tự hiện tại, **xóa bỏ toàn bộ `[PLACEHOLDER]`**. **Quy tắc mới:** Không cần chơi hết Mốc — **chỉ cần người chơi bấm Thoát ở bất kỳ đâu là hiện Form phản hồi** |
+| **5** | **Câu thoại sửa mới của Châu (Trang 1 Cảnh 3)** | **Chốt theo đề xuất A (10 từ):** *"Lo chép bài đi, chút ra chơi rồi tính tiếp."* (thay câu cũ chưa hợp ngữ cảnh, khớp tiết học & nối thẳng qua giờ ra chơi) |
 | **6** | **Kiểm tra từ lóng Trang 1–2** | **Giữ nguyên** chữ *"hư cấu"* (Trang 1, Trang 2) và *"Chốt!"* (Trang 1) theo kịch bản gốc |
 | **7** | **Câu dẫn Hub sau Trang 3 → Trang 4** | Chốt theo đề xuất A: thêm câu tự nhủ *"Để quay lại thùng coi còn món nào nữa không — chắc vẫn còn ảnh tụi mình."* + dòng gợi ý góc màn hình |
 | **8** | **Câu móc cầm thuyền giấy (Trang 2)** | Chốt theo đề xuất A: *"Cánh buồm vẫn còn dòng chữ nhòe… hồi đó mình ước gì vậy ta?"* |
@@ -656,19 +657,6 @@
 | **10** | **Mặt giấy ướt lúc ký tên (Trang 2)** | Chốt theo đề xuất A: giữ nguyên thoại cũ, đẩy thẳng vào cảnh viết và ký trên buồm |
 | **11** | **Tiếng trống vào lớp tạm (Trang 2)** | Chốt theo đề xuất A: tạm hiện dòng dẫn *"Tùng… tùng… tùng…"* trước khi Châu quay đi (trình bày theo kiểu dẫn chuyện hệ thống) |
 | **UI** | **Trình bày Narrative bối cảnh hệ thống** | **Quy chuẩn mới:** Đưa toàn bộ câu dẫn bối cảnh/chuyển cảnh vào code chạy thật, nhưng **trình bày khác hẳn khung thoại nhân vật** (dải dẫn chuyện / phụ đề bối cảnh riêng) |
-
----
-
-### 3.2 Chỉ còn 2 điểm CÒN MỞ chờ chủ dự án chốt cuối
-
-**Mục A · Câu thoại sửa mới của Châu ở Trang 1 (Cảnh 3 — ngay sau khi sửa mật lệnh "RA CHƠI"):**
-*Lý do sửa:* Câu cũ (*"Tui chỉ không muốn hai người làm mất thời gian cả lớp thôi."*) chưa hợp ngữ cảnh hai bạn đang lén giải giấy ở bàn riêng. Đề xuất 3 phương án mới để chủ dự án chọn 1 câu (trả lời `A`, `B`, hoặc `C`):
-- **A (đề xuất, 10 từ):** *"Lo chép bài đi, chút ra chơi rồi tính tiếp."* — vừa nhắc học đúng cảnh trong tiết, vừa móc khéo sang chữ "RA CHƠI" và cảnh trống ra chơi ngay sau đó.
-- **B (10 từ):** *"Đọc xong rồi thì cất đi, coi chừng cô thấy."* — đúng tâm lý học sinh cấp 2 lén chuyền giấy sợ cô giáo phát hiện.
-- **C (12 từ):** *"Cất giấy đi, còn ngồi đó thì thầm nữa là tui mách cô."* — nghiêm và đanh đá hơn đúng nét Châu Tổng.
-
-**Mục B · Nội dung Form phản hồi cuối/khi Thoát (Câu 4 cũ):**
-- Nhóm chủ dự án đang tự soạn bộ câu hỏi Form phản hồi chính thức → **chờ gửi chữ Form** để đội dev đổ vào thay thế 4 dòng `[PLACEHOLDER]` hiện tại (cơ chế hiện khi bấm Thoát đã chốt ở bảng 3.1).
 
 ---
 
@@ -688,11 +676,11 @@
 #### Nhóm A · BẮT BUỘC cho bản đo 05/12
 | Hạng mục | Hiện đang thiếu gì? | Người chơi sẽ thấy gì sau khi làm xong? | Cần chủ dự án duyệt? |
 |---|---|---|---|
-| **1. Gỡ chữ giả & Đổ thoại mới (`R-P1` + `R-D1…D4`)** | Game hiện vẫn chạy thoại cũ; còn nhãn `[PLACEHOLDER]` ở tên chương Mốc 1 (đã chốt: **`Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)`**), tên app nhắn tin (đã chốt: **`AloNhau`**), 6 đồ nền trong thùng (đã chốt giữ tự nhiên), và Form phản hồi; chưa có thoại về phòng 2026 sau mỗi Trang; Trang 3 trong code vẫn đang xếp bước trang trí trước bước dọn bàn ghế. | Toàn bộ chữ hiển thị sạch sẽ, giàu cảm xúc và liền mạch từ đầu tới cuối; Trang 3 đi đúng thứ tự dọn bàn ghế rồi mới trang trí; ảnh chính Trang 2 & Trang 3 lấy từ chính bức ảnh người chơi tự bấm chụp. | **Còn 2 mục:** câu sửa mới của Châu (Trang 1) & chữ Form phản hồi mới từ chủ dự án |
+| **1. Gỡ chữ giả & Đổ thoại mới (`R-P1` + `R-D1…D4`)** | Game hiện vẫn chạy thoại cũ; còn nhãn `[PLACEHOLDER]` ở tên chương Mốc 1 (đã chốt: **`Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)`**), tên app nhắn tin (đã chốt: **`AloNhau`**), 6 đồ nền trong thùng (đã chốt giữ tự nhiên), và 4 câu Form phản hồi (đã chốt giữ chữ hiện có, bỏ `[PLACEHOLDER]`); chưa có thoại về phòng 2026 sau mỗi Trang; Trang 3 trong code vẫn đang xếp bước trang trí trước bước dọn bàn ghế. | Toàn bộ chữ hiển thị sạch sẽ, giàu cảm xúc và liền mạch từ đầu tới cuối; Trang 3 đi đúng thứ tự dọn bàn ghế rồi mới trang trí; ảnh chính Trang 2 & Trang 3 lấy từ chính bức ảnh người chơi tự bấm chụp. | **Đã chốt 100%** — sẵn sàng làm ngay |
 | **2. Đạo diễn nhân vật đi lại & biểu cảm (`R-B1`)** | Nhân vật hiện đứng yên một chỗ suốt cảnh, chưa tự đi lại/chạy theo nhịp thoại, chưa giơ tay chữ V / vẫy tay / reo mừng khớp câu nói, chưa tự ẩn khi rời cảnh (Châu về trước cuối Trang 1), hay tự bước vào chỗ sau khi xếp đội hình Trang 4. | Các bạn sống động như phim: Đức chạy hớt hải nhặt vở, đi trước dẫn đường, Châu vẫy tay ở cửa lớp rồi đi khuất, cả nhóm tự di chuyển vào đúng vị trí đã xếp để chụp ảnh. | Đã chốt |
 | **3. Nhịp chuyển cảnh mượt, Thẻ chữ, Máy quay & Giao diện Narrative (`R-B2` + UI)** | Thiếu màn **Thẻ chữ 2 dòng**; thiếu bảng hướng dẫn phím tự tắt cho người mới; **thiếu kiểu hiển thị riêng cho Narrative bối cảnh hệ thống** (đưa các câu dẫn chuyện/bối cảnh vào code nhưng trình bày tách biệt hoàn toàn với khung thoại nhân vật); máy quay chuyển cảnh bị cắt cứng; lộ tên *"Căn cứ bí mật"* trước khi Đức đặt tên; lời dẫn đường khóa chân người chơi; mưa Trang 4 chưa đổi mượt giữa cảnh. | Người chơi đọc lời dẫn bối cảnh tách biệt rõ ràng với lời thoại nhân vật, đọc thẻ thời gian êm dịu, tự do chạy theo Đức vừa đi vừa nói, chỉ thấy tên *"Căn cứ bí mật"* sau khi dựng xong chỗ, và thấy trời đổ mưa rào tự nhiên giữa cảnh. | Đã chốt |
 | **4. Minigame gấp thuyền + tự ghi điều ước, Chụp ảnh nâng cao & Biến đổi 3D (`R-B3`, `R-B4`)** | **Mới (Trang 2):** Thiếu **minigame/cảnh gấp thuyền giấy** và thao tác **tự ghi điều ước lên cánh buồm** ở Cảnh 3. Ngoài ra còn thiếu: lời nhắc riêng từng lần chụp Trang 1; thoại đếm ngược & phản ứng theo 3 kiểu ảnh Trang 4; đạo cụ cầm/trao trên tay (vở, quả cầu, thuyền giấy, sổ, bút đỏ, biển tên, máy ảnh); Trang 3 chưa hiện đồ trang trí ngay lúc chọn và bộ đếm khảo sát `0/3`. | Ở Trang 2 được tự tay gấp chiếc thuyền giấy, chọn điều ước rồi tự viết lên buồm; thấy đồ vật cầm/trao thật trên tay nhân vật; giấy màu/hoa/khung ảnh hiện lên tức thì ngay khi vừa chọn; bình luận sau chụp khớp đúng lựa chọn của mình. | Đã chốt |
-| **5. Mở Form phản hồi khi bấm Thoát (UI / luồng game)** | **Mới:** Hiện Form phản hồi chỉ mở sau khi chơi hết toàn bộ bản test cuối Mốc. Cần sửa thành: **chỉ cần người chơi bấm Thoát ở bất kỳ đâu là hiện Form phản hồi**. | Người chơi dừng chơi sớm hay chơi hết đều nhận được Form phản hồi gọn gàng trước khi rời phiên chơi, giúp thu đủ phản hồi cho đợt đo 05/12. | Đã chốt cơ chế; chờ chữ Form từ chủ dự án |
+| **5. Mở Form phản hồi khi bấm Thoát (UI / luồng game)** | **Mới:** Hiện Form phản hồi chỉ mở sau khi chơi hết toàn bộ bản test cuối Mốc. Cần sửa thành: **chỉ cần người chơi bấm Thoát ở bất kỳ đâu là hiện Form phản hồi** (giữ 4 câu hiện có, xóa `[PLACEHOLDER]`). | Người chơi dừng chơi sớm hay chơi hết đều nhận được Form phản hồi gọn gàng trước khi rời phiên chơi, giúp thu đủ phản hồi cho đợt đo 05/12. | Đã chốt |
 | **6. Sửa vị trí bản đồ & Tách module điều phối (`MAP-1`, `MAP-2`, `RF-3`)** | Chỗ chụp ảnh Trang 4 hiện còn đặt giữa sân thay vì dưới gốc phượng và khúc gỗ bãi đất; thiếu vài điểm đứng ở bảng phân lớp, bụi cây đá cầu, cuối rãnh nước (thuyền Hạ mắc lại), tường dán ảnh Căn cứ. Trong code còn chờ gộp bước tách bộ điều phối chính (`RF-3`) để nhiều người cùng làm các phần trên mà không đụng nhau. | Góc chụp Trang 4 đứng đúng dưới tán phượng và nhìn ra cầu vồng ở bãi đất; thuyền giấy của Hạ mắc lại rõ ràng ở cuối rãnh để người chơi đi tới vớt lên ký tên. | Đã chốt |
 
 #### Nhóm B · CÓ THÌ TỐT HƠN (tối ưu trải nghiệm & làm tiếp cho Mốc 2 / sau 05/12)
@@ -705,8 +693,13 @@
 ---
 
 ### 4.3 Thứ tự thực hiện đề xuất ngay sau khi gộp `RF-3`
-1. **Gộp xong nhánh `RF-3`** (tách gọn phần điều phối game) vào nhánh phát triển chính để mở khóa làm việc song song an toàn.
-2. **Chốt 2 mục cuối ở Phần 3.2:** Chủ dự án chọn phương án `A/B/C` cho câu thoại sửa của Châu ở Trang 1 và gửi bộ chữ Form phản hồi mới.
-3. **Làm `R-P1` + `R-D`:** Gỡ sạch 100% chữ giả `[PLACEHOLDER]` (dùng tên chương, app `AloNhau`, 6 đồ nền đã chốt), sửa vị trí điểm đứng trên bản đồ sân trường, đổi thứ tự Trang 3, gắn cơ chế mở Form phản hồi khi bấm Thoát và đổ toàn bộ chữ thoại + narrative đã duyệt vào game.
-4. **Làm song song `R-B1`, `R-B2`, `R-B3`, `R-B4` (+ minigame gấp thuyền & tự ghi điều ước Trang 2 + âm thanh cơ bản):** Nâng cấp đạo diễn nhân vật, giao diện Narrative tách biệt thoại, thẻ chữ/chuyển cảnh mượt, chụp ảnh/đạo cụ cầm tay và phản ứng 3D tại chỗ.
-5. **Kiểm thử trọn vòng Mốc 1** từ Phòng 2026 → Trang 1–4 → Thoát/Kết Mốc 1 & Form phản hồi để chốt bản đo **05/12**.
+1. **Gộp xong nhánh `RF-3` và `docs/tong-duyet-moc1-4-trang`** vào `feat/sprint-0412` để mở khóa làm việc song song an toàn với bản kịch bản đã chốt 100%.
+2. **Làm `R-P1` + `R-D0` (Hợp đồng dữ liệu & Bản đồ):** Mở rộng kiểu dữ liệu (`title_card`, `stage`, `narrative`, `photo`, `ChoiceOption.lines`, `collect.lines_by_target`), cập nhật marker còn thiếu (`MAP-1`, `MAP-2`), gỡ sạch 100% `[PLACEHOLDER]` (`Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)`, `AloNhau`, 6 đồ nền, 4 câu Form phản hồi) và gắn cơ chế mở Form phản hồi khi bấm Thoát.
+3. **Làm song song `R-B1`, `R-B2`, `R-B3`, `R-B4` (+ `R-B5` Minigame gấp thuyền & tự ghi điều ước Trang 2 + `SFX-1`):**
+   - `R-B1`: Đạo diễn nhân vật đi/chạy/biểu cảm/ẩn-hiện.
+   - `R-B2`: Thẻ chữ 2 dòng, bảng gợi ý phím lần đầu, dải hiển thị **Narrative bối cảnh hệ thống** tách biệt thoại, camera đẩy/lùi mượt, tên khu động, dẫn đường không khóa chân.
+   - `R-B3`: Chụp ảnh nhiều lần có lời nhắc riêng, thoại chen đếm ngược & phản ứng theo kiểu ảnh, đạo cụ cầm/trao trên tay, ảnh Trang 2 & Trang 3 lấy từ người chơi chụp.
+   - `R-B4`: Đổi cảnh 3D tức thì khi chọn/khảo sát, 5 thuyền mép rãnh → 1 thuyền mắc cuối rãnh, âm thanh đời thường (`SFX-1`).
+   - `R-B5` *(mới)*: Minigame gấp thuyền giấy + thao tác tự ghi điều ước lên buồm ở Trang 2 Cảnh 3.
+4. **Làm `R-D1…D4` (Số hóa 100% dữ liệu Trang 1–4 + Hub 2026):** Đổ toàn bộ chữ thoại + narrative + stage từ bản đã chốt vào code (kèm đổi thứ tự `s04` trước `s03` ở Trang 3).
+5. **Kiểm thử trọn vòng Mốc 1** (`tsc`, `vitest`, `validate:world`, `production build`, `playwright`, chơi tay thực tế) từ Phòng 2026 → Trang 1–4 → Thoát/Kết Mốc 1 & Form phản hồi để chốt bản đo **05/12**.
