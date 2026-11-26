@@ -156,8 +156,10 @@ export const quests: Quest[] = [
         album_entry_id: 'alb.d.g07.03.01',
         stand_zone: { marker: 'spot.thcs.phuong_group', radius: 1.1 },
         objective: 'Có 10 giây! Chạy nhanh vào vòng sáng dưới gốc cây tạo dáng',
-        first_line: { speaker: 'NPC_A', text: 'Có mười giây thôi, chạy lẹ {player_name}!' },
+        // Câu của Đức nói NGAY khi bấm hẹn giờ (TONG_DUYET Trang 4 Cảnh 5). Không dùng `first_line`:
+        // `first_line` phát SAU lần chụp đầu → Đức sẽ giục "chạy lẹ" khi ảnh đã chụp xong, và còn chặn màn xem ảnh.
         countdown_lines: [
+          { speaker: 'NPC_A', text: 'Có mười giây thôi, chạy lẹ {player_name}!', at_s: 10 },
           { speaker: 'NPC_A', text: 'Làm mặt hề hết nha tụi mày! Ba… hai…', at_s: 5, when: { flag: 'm1.group_photo_style', equals: 'playful' }, fallback: '' },
           { speaker: 'NPC_C', text: 'Cười tự nhiên nha, đừng nhìn máy cứng đơ đó.', at_s: 5, when: { flag: 'm1.group_photo_style', equals: 'gentle' }, fallback: '' },
           { speaker: 'NPC_B', text: 'Đứng ngay ngắn. Nhìn thẳng máy. Không ai được cười.', at_s: 5, when: { flag: 'm1.group_photo_style', equals: 'deep' }, fallback: '' },
