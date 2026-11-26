@@ -93,7 +93,7 @@ export function createAtmosphere(scene: THREE.Scene, deps: AtmosphereDeps, initi
     set,
     update(dt) {
       if (tween && elapsed < tween.duration()) {
-        elapsed += dt;
+        elapsed = Math.min(tween.duration(), elapsed + dt);
         tween.time(elapsed);
       }
       if (rain?.root.visible) {

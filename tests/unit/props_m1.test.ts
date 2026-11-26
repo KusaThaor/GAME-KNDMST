@@ -99,6 +99,9 @@ import m1Trang2Set from '../../src/world/dressing/sets/m1_trang2';
 import m1BaseSet from '../../src/world/dressing/sets/m1_base';
 import m1Trang4Set from '../../src/world/dressing/sets/m1_trang4';
 import type { DressingCtx } from '../../src/world/dressing';
+import { placeAtMarker } from '../../src/world/dressing/place';
+import { enableShadows, groundAtZero } from '../../src/world/props/common/helpers';
+import type { Marker, MarkerKind } from '../../src/world/types';
 
 /**
  * Đếm tổng số tam giác của một Object3D (tính cả instancing).
@@ -431,10 +434,54 @@ describe('Bộ gắn đồ trang trí cảnh Mốc 1 (Dressing Sets)', () => {
       expect(m1Trang4Set.appliesTo(makeMockCtx('d.g06.01'))).toBe(false);
     });
 
-    it('build chứa máy ảnh compact và cầu vồng', async () => {
+    it('build chỉ chứa máy ảnh compact (cầu vồng do sky/atmosphere bật theo thời tiết)', async () => {
       const obj = (await m1Trang4Set.build(makeMockCtx('d.g07.03'))) as THREE.Group;
       expect(obj).toBeInstanceOf(THREE.Object3D);
-      expect(obj.children.length).toBe(2);
+      expect(obj.children.length).toBe(1);
+      expect(obj.getObjectByName('rainbow')).toBeUndefined();
+    });
+
+    it('dời marker itr.thcs.tripod_spot thì máy ảnh tự đi theo', async () => {
+      const ctx = makeMockCtx('d.g07.03');
+      const moved: Marker = { id: 'itr.thcs.tripod_spot', kind: 'interact', zone: 'zone.thcs.yard', position: [-10.2, 0, -5], facing: 0, props: {} };
+      ctx.world = {
+        marker: (kind: MarkerKind, id: string) => (kind === 'interact' && id === 'itr.thcs.tripod_spot' ? moved : null),
+      } as unknown as DressingCtx['world'];
+      const obj = (await m1Trang4Set.build(ctx)) as THREE.Group;
+      const cam = obj.children[0];
+      expect(cam.position.x).toBeCloseTo(-10.2, 5);
+      expect(cam.position.y).toBeCloseTo(0.43, 5);
+      expect(cam.position.z).toBeCloseTo(-5, 5);
+    });
+  });
+
+  describe('Tiện ích dùng chung (helpers & placeAtMarker)', () => {
+    it('groundAtZero đẩy min.y về 0 và giữ gốc obj.position tại (0, 0, 0)', () => {
+      const g = new THREE.Group();
+      const m = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), new THREE.MeshBasicMaterial());
+      m.position.y = 3.5;
+      g.add(m);
+      groundAtZero(g);
+      expect(g.position.y).toBe(0);
+      expect(new THREE.Box3().setFromObject(g).min.y).toBeCloseTo(0, 6);
+    });
+
+    it('enableShadows tự tắt castShadow cho vật liệu trong suốt', () => {
+      const g = new THREE.Group();
+      const opaque = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial());
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.3 }));
+      g.add(opaque, glass);
+      enableShadows(g);
+      expect(opaque.castShadow).toBe(true);
+      expect(opaque.receiveShadow).toBe(true);
+      expect(glass.castShadow).toBe(false);
+      expect(glass.receiveShadow).toBe(true);
+    });
+
+    it('placeAtMarker lấy tọa độ marker và rơi về fallback khi thiếu marker', () => {
+      const obj = new THREE.Group();
+      placeAtMarker(obj, null, 'interact', 'itr.thcs.missing', { fallback: [1, 2, 3], offset: [0.5, 0.25, -1] });
+      expect(obj.position.toArray()).toEqual([1.5, 2.25, 2]);
     });
   });
 });

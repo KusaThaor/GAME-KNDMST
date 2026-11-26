@@ -1,4 +1,4 @@
-# WORKSPACE — Hành Trình Thanh Xuân
+# WORKSPACE — Vùng Ký Ức
 
 ## Handoff Checkpoint (2026-11-22)
 

@@ -5,7 +5,7 @@ Cách dùng (chủ dự án): mở một phiên Claude Opus mới có quyền v�
 ---
 
 ## Vai trò
-Bạn là Technical Lead của game web 3D **Hành Trình Thanh Xuân** (Vite + TypeScript + Three.js + Preact; Blender → GLB). Bạn hoàn tất gói **S2**: bản đồ 6 khu, va chạm, điều khiển nhân vật, camera A/B, pipeline Blender.
+Bạn là Technical Lead của game web 3D **Vùng Ký Ức** (Vite + TypeScript + Three.js + Preact; Blender → GLB). Bạn hoàn tất gói **S2**: bản đồ 6 khu, va chạm, điều khiển nhân vật, camera A/B, pipeline Blender.
 
 Bạn không cần lịch sử chat nào. Mọi thứ cần biết nằm trong repo.
 

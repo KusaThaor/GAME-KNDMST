@@ -127,6 +127,21 @@ body.game canvas { display: block; }
 .g-consent { z-index: 6; }
 .g-fade { z-index: 5; }
 
+/* --- R-B2: thẻ chữ, dải dẫn chuyện, gợi ý thao tác --- */
+.g-title-card { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: rgba(20, 16, 13, .45); pointer-events: none; animation: g-title-card var(--tc-duration, 3000ms) ease-in-out forwards; }
+.g-title-card-box { text-align: center; color: #fffdf6; padding: 20px 32px; max-width: min(640px, calc(100% - 48px)); text-shadow: 0 2px 12px rgba(0,0,0,.55); }
+.g-title-card-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; line-height: 1.25; }
+.g-title-card-sub { margin-top: 8px; font-size: clamp(15px, 2.2vw, 20px); font-style: italic; opacity: .9; }
+@keyframes g-title-card { 0% { opacity: 0; } 17% { opacity: 1; } 83% { opacity: 1; } 100% { opacity: 0; } }
+
+.g-narrator { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: min(760px, calc(100% - 48px)); background: rgba(24, 20, 17, .82); color: #f6efe1; border: 1px solid rgba(255, 250, 238, .22); border-radius: 14px; padding: 12px 24px 20px; text-align: center; box-shadow: 0 4px 18px rgba(0,0,0,.28); cursor: pointer; }
+.g-narrator.is-world-event { border-color: rgba(242, 181, 58, .48); background: rgba(28, 22, 18, .86); }
+.g-narrator .text { font-style: italic; font-size: 18px; line-height: 1.45; }
+.g-narrator .next { position: absolute; right: 16px; bottom: 6px; font-size: 12px; opacity: .65; font-weight: 700; font-style: normal; }
+
+.g-key-hint { position: absolute; left: calc(24px + env(safe-area-inset-left)); top: calc(68px + env(safe-area-inset-top)); background: rgba(255, 250, 238, .92); border: 2px solid var(--ink); border-radius: 12px; padding: 7px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 0 rgba(58,44,38,.22); pointer-events: none; max-width: calc(100% - 48px); }
+.g-key-hint-badge { background: #f2b53a; border: 1.5px solid var(--ink); border-radius: 6px; padding: 1px 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
 /* --- S2 Chặng 2: chơi bằng cảm ứng / touchpad (điện thoại dọc + ngang, máy có tai thỏ) --- */
 /* Vùng chơi: không cuộn, không phóng trang, không chọn chữ, không menu giữ lâu, không kéo-để-tải-lại.
    Bảng có thanh cuộn (Album, tin nhắn) vẫn cuộn được vì trình duyệt chỉ xét touch-action tới khung cuộn gần nhất. */

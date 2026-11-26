@@ -1,4 +1,4 @@
-# Hành Trình Thanh Xuân — game 3D trên web (dự án KNĐMST)
+# Vùng Ký Ức — game 3D trên web (dự án KNĐMST)
 
 Vite + TypeScript + Three.js + Preact · Vercel (web + Functions) · Firebase Firestore gói Spark (dữ liệu đo lường).
 Thiết kế (chuẩn, v1.0 APPROVED): [`docs/gdd/00_MASTER_GDD.md`](docs/gdd/00_MASTER_GDD.md) · Bản đồ nhánh và nguồn chân lý: [`WORKSPACE.md`](WORKSPACE.md). Repo này chỉ chứa mã và nội dung đã chuyển thành dữ liệu.

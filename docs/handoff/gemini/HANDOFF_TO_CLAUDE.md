@@ -1,6 +1,6 @@
 # BIÊN BẢN BÀN GIAO NHIỆM VỤ T-06 (GEMINI PRO -> CLAUDE CODE)
 
-> **Dự án:** Hành Trình Thanh Xuân (KNĐMST)  
+> **Dự án:** Vùng Ký Ức (KNĐMST)  
 > **Người bàn giao:** Gemini Pro (Antigravity)  
 > **Người nhận:** Claude Code  
 > **Thời gian bàn giao:** 21/11/2026, 20:35 UTC+7  

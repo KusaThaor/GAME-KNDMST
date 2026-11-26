@@ -53,13 +53,16 @@ function playAll(t: ReturnType<typeof setup>) {
   bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
   bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
   e.complete('q_m1_main_01.s07');
+  e.complete('q_m1_main_01.s08');
   e.enterHub(); hub.refresh(); hub.runPdes();
 
   hub.openArtifact('art_m1_02');
   e.startDay('d.g07.01');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_02.s01');
   e.trigger('interact', 'NPC_C'); e.complete('q_m1_main_02.s02');
-  e.complete('q_m1_main_02.s03', { option_id: 'friendship' });
+  e.recordMinigameChoice('q_m1_main_02.s06', 'friendship');   // R-D5: điều ước chọn trong trò gấp thuyền
+  e.complete('q_m1_main_02.s06');
+  e.complete('q_m1_main_02.s07');
   e.trigger('interact', 'itr.thcs.gutter'); e.complete('q_m1_main_02.s04');
   e.complete('q_m1_main_02.s05');
   e.answerEndPrompt('leave');
@@ -69,10 +72,11 @@ function playAll(t: ReturnType<typeof setup>) {
   e.startDay('d.g07.02');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_03.s01');
   e.trigger('interact', 'itr.thcs.base_survey_roof'); e.trigger('interact', 'itr.thcs.base_survey_stump'); e.trigger('interact', 'itr.thcs.base_survey_boxes');
-  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
   e.complete('q_m1_main_03.s04');
+  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
   e.complete('q_m1_main_03.s05');
   e.complete('q_m1_main_03.s06');
+  e.complete('q_m1_main_03.s07');
   e.answerEndPrompt('leave');
   e.enterHub(); hub.refresh(); hub.runPdes();
 
@@ -116,7 +120,7 @@ describe('cầu nối analytics (F8)', () => {
 
   it('memory_day_* mang milestone_id, school_year, memory_day_id, chapter_label, is_replay', () => {
     const t = setup(); playAll(t);
-    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: '[PLACEHOLDER] Mốc 1 · lớp 6–7', is_replay: false });
+    expect(t.of('page_started')[0]).toEqual({ milestone_id: 'm1', school_year: 'g06', page_id: 'd.g06.01', chapter_label: 'Mốc 1 · Căn cứ đầu tiên (Lớp 6–7)', is_replay: false });
     expect(t.of('page_completed').map((p) => p.page_id)).toEqual(['d.g06.01', 'd.g07.01', 'd.g07.02', 'd.g07.03']);
     expect(t.of('milestone_completed')).toEqual([{ milestone_id: 'm1' }]);
   });
@@ -173,6 +177,7 @@ describe('cầu nối analytics (F8)', () => {
     t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.engine.complete('q_m1_main_01.s07');
+    t.engine.complete('q_m1_main_01.s08');
     for (const n of ['artifact_opened', 'page_started', 'page_completed', 'quest_started', 'quest_step_completed', 'quest_completed'] as const) {
       expect(t.of(n).length, n).toBeGreaterThan(0);
       expect(t.of(n).every((p) => p.is_replay === true), n).toBe(true);
@@ -194,6 +199,7 @@ describe('cầu nối analytics (F8)', () => {
     t.bus.emit('photo_attempt', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.bus.emit('photo_kept', { step_id: 'q_m1_main_01.s07', mode: 'handheld', retry_index: 0, all_in_frame: true, player_in_zone: false, posed_in_time: true });
     t.engine.complete('q_m1_main_01.s07');
+    t.engine.complete('q_m1_main_01.s08');
     t.engine.answerEndPrompt('leave');
     expect(t.of('skip_prompt_answered')).toEqual([{ answer: 'leave', open_side_quests: 1 }]);
   });

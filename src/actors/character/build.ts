@@ -1,7 +1,9 @@
 import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { flat, toon } from '../../render/materials';
-import { CHARACTERS, UNIFORM, type CharacterDef, type CharacterId, type Grade, type GradeLook, type PropId } from './presets';
+import { cached, capsule, cyl, mesh, onSphere, rbox, shade, sphere } from './geometry';
+import { buildHair } from './hair';
+import { CHARACTERS, UNIFORM, type CharacterDef, type CharacterId, type Grade, type GradeLook } from './presets';
+import { buildProps, setDynamicProp } from './props';
 
 /**
  * Nhà máy nhân vật chibi dựng hoàn toàn bằng khối cơ bản (GDD 10.1).
@@ -21,6 +23,8 @@ export interface CharacterRig {
   legL: THREE.Group; legR: THREE.Group;
   armL: THREE.Group; armR: THREE.Group;
   handL: THREE.Group; handR: THREE.Group;
+  /** Slot gắn/gỡ đạo cụ cầm tay động (R-B3). */
+  handPropSlot: THREE.Group;
   eyes: { open: THREE.Object3D[]; happy: THREE.Object3D[] };
   mouth: { smile: THREE.Object3D; open: THREE.Object3D; flat: THREE.Object3D };
   ponytail?: THREE.Object3D;
@@ -28,6 +32,7 @@ export interface CharacterRig {
   setExpression(e: Expression): void;
   setBlink(amount: number): void;        // 0 = mở, 1 = nhắm
   setMouthOpen(amount: number): void;
+  setProp(propId: string | null): THREE.Object3D | null;
 }
 
 interface Dims {
@@ -51,244 +56,6 @@ function dimsFor(grade: Grade, look: GradeLook): Dims {
   d.hipW = d.torsoW * 0.94;
   d.height = d.legLen + d.torsoH + 0.06 + d.headR * 1.9;
   return d;
-}
-
-// ---------- hình khối dùng chung ----------
-const geoCache = new Map<string, THREE.BufferGeometry>();
-function cached<T extends THREE.BufferGeometry>(key: string, make: () => T): T {
-  let g = geoCache.get(key) as T | undefined;
-  if (!g) { g = make(); geoCache.set(key, g); }
-  return g;
-}
-const r3 = (n: number) => Math.round(n * 1000) / 1000;
-const rbox = (w: number, h: number, d: number, r: number) =>
-  cached(`rb${r3(w)},${r3(h)},${r3(d)},${r3(r)}`, () => new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2, h / 2, d / 2) * 0.999));
-const capsule = (rad: number, len: number) => cached(`cap${r3(rad)},${r3(len)}`, () => new THREE.CapsuleGeometry(rad, Math.max(0.001, len), 5, 12));
-const sphere = (rad: number, ws = 20, hs = 14) => cached(`sp${r3(rad)},${ws}`, () => new THREE.SphereGeometry(rad, ws, hs));
-const cone = (rad: number, h: number) => cached(`co${r3(rad)},${r3(h)}`, () => new THREE.ConeGeometry(rad, h, 7));
-const cyl = (rt: number, rb: number, h: number, seg = 12) => cached(`cy${r3(rt)},${r3(rb)},${r3(h)},${seg}`, () => new THREE.CylinderGeometry(rt, rb, h, seg));
-
-function mesh(geo: THREE.BufferGeometry, mat: THREE.Material, pos?: [number, number, number], parent?: THREE.Object3D): THREE.Mesh {
-  const m = new THREE.Mesh(geo, mat);
-  m.castShadow = true;
-  if (pos) m.position.set(...pos);
-  parent?.add(m);
-  return m;
-}
-
-/** Đặt vật lên mặt cầu bán kính r tại góc ngang yaw (0 = chính diện, + về bên trái nhân vật) và góc dọc pitch. */
-function onSphere(obj: THREE.Object3D, r: number, yaw: number, pitch: number, lift = 0) {
-  const n = new THREE.Vector3(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
-  obj.position.copy(n).multiplyScalar(r + lift);
-  obj.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), n);
-  return obj;
-}
-
-// ---------- tóc ----------
-function hairCap(R: number, mat: THREE.Material, thetaLen: number, tilt: number, scale = 1.05): THREE.Mesh {
-  const g = cached(`cap-hair${r3(R)},${r3(thetaLen)},${r3(scale)}`, () => new THREE.SphereGeometry(R * scale, 28, 16, 0, Math.PI * 2, 0, thetaLen));
-  const m = new THREE.Mesh(g, mat);
-  m.castShadow = true;
-  m.rotation.x = -tilt;            // nghiêng đỉnh tóc ra sau → trán lộ, gáy được phủ
-  return m;
-}
-
-function buildHair(face: THREE.Group, R: number, def: CharacterDef, look: GradeLook, grade: Grade, rig: Partial<CharacterRig>) {
-  const hm = toon(def.hairColor);
-  const accent = toon(def.accent);
-  const L = look.hairLength;
-  const add = (o: THREE.Object3D) => { face.add(o); return o; };
-
-  switch (look.hair) {
-    case 'spiky': {
-      add(hairCap(R, hm, Math.PI * 0.5, 0.38));
-      const n = grade === 6 ? 10 : 8;
-      for (let i = 0; i < n; i++) {
-        const a = (i / n) * Math.PI * 2;
-        const ring = i % 2 === 0 ? 0.62 : 0.95;
-        const spike = mesh(cone(0.075 * R / 0.3, 0.2 * L * R / 0.3), hm);
-        const yaw = a, pitch = ring + (i % 3) * 0.06;
-        onSphere(spike, R * 0.98, yaw * 0.9 + (grade === 9 ? 0.5 : 0), pitch);
-        spike.rotateX(Math.PI / 2);   // nón hướng ra ngoài
-        spike.rotateZ(grade === 9 ? -0.5 : 0);
-        spike.position.z -= 0.03;
-        add(spike);
-      }
-      // mái lởm chởm phía trước
-      for (const x of [-0.5, -0.18, 0.14, 0.45]) {
-        const s = mesh(cone(0.06 * R / 0.3, 0.13 * R / 0.3), hm);
-        onSphere(s, R * 1.0, x, 0.42);
-        s.rotateX(Math.PI / 2 + 1.0);
-        add(s);
-      }
-      break;
-    }
-    case 'buzz': {
-      add(hairCap(R, toon(shade(def.hairColor, 1.25)), Math.PI * 0.47, 0.22, 1.025));
-      if (grade === 9) {
-        const q = mesh(sphere(R * 0.42), hm); q.scale.set(1.2, 0.35, 0.8); onSphere(q, R * 0.98, 0, 0.72); add(q);
-      }
-      break;
-    }
-    case 'ponytail_high': {
-      add(hairCap(R, hm, Math.PI * 0.52, 0.3));
-      const bang = mesh(sphere(R * 0.5), hm); bang.scale.set(1.1, 0.4, 0.42); onSphere(bang, R * 0.98, -0.3, 0.42); bang.rotateZ(-0.4); add(bang);
-      const tie = new THREE.Mesh(cached('tie', () => new THREE.TorusGeometry(0.05, 0.022, 8, 16)), accent);
-      onSphere(tie, R * 1.02, Math.PI, 0.55); add(tie);
-      const tail = new THREE.Group();
-      onSphere(tail, R * 1.0, Math.PI, 0.62); tail.quaternion.identity(); add(tail);
-      const sway = new THREE.Group(); tail.add(sway);
-      // đuôi tóc cong: vểnh ra sau rồi rủ xuống → nhìn nghiêng/3/4 vẫn thấy
-      const segs: [number, number, number][] = [[0.03, -0.06, 0.088], [-0.03, -0.15, 0.084], [-0.13, -0.21, 0.074], [-0.24, -0.22, 0.06], [-0.33 * L, -0.2, 0.045]];
-      for (const [y, z, rad] of segs) { const b = mesh(sphere(rad * R / 0.3, 14, 10), hm, [0, y * R / 0.3, z * R / 0.3]); b.scale.set(0.95, 1.15, 0.9); sway.add(b); }
-      rig.ponytail = sway;
-      break;
-    }
-    case 'long_clip': {
-      add(hairCap(R, hm, Math.PI * 0.56, 0.3, 1.06));
-      // tóc sau lưng
-      const backLen = R * (1.0 + 0.6 * (L - 1));
-      const back = mesh(capsule(R * 0.92, backLen), hm, [0, -backLen / 2 - R * 0.05, -R * 0.42]);
-      back.scale.set(1.04, 1, 0.62);
-      add(back);
-      // hai lọn hai bên má
-      for (const s of [-1, 1]) {
-        const lock = mesh(capsule(0.05 * R / 0.3, R * 0.65 * L), hm, [s * R * 0.93, -R * 0.35, R * 0.08]);
-        lock.rotation.z = s * 0.06;
-        add(lock);
-      }
-      // mái thẳng
-      for (const y of [-0.42, -0.14, 0.14, 0.42]) {
-        const b = mesh(sphere(R * 0.3), hm); b.scale.set(1.05, 0.62, 0.42); onSphere(b, R * 1.0, y, 0.34); add(b);
-      }
-      // kẹp tóc (bên trái nhân vật)
-      for (const s2 of [-1, 1]) { const wing = mesh(sphere(0.045 * R / 0.3, 12, 8), toon('#f48fb1')); onSphere(wing, R * 1.07, 0.7 + s2 * 0.09, 0.5 + s2 * 0.05); wing.scale.set(1, 0.75, 0.45); add(wing); }
-      const clip2 = mesh(sphere(0.022 * R / 0.3, 10, 8), toon('#ffe08a')); onSphere(clip2, R * 1.1, 0.7, 0.5); add(clip2);
-      break;
-    }
-    case 'short_fringe': {
-      add(hairCap(R, hm, Math.PI * 0.5, 0.36));
-      const pcs: [number, number, number][] = [[-0.52, 0.36, 0.3], [-0.2, 0.31, -0.12], [0.12, 0.33, 0.18], [0.44, 0.37, -0.28]];
-      for (const [yaw, pitch, rz] of pcs) {
-        const f = mesh(sphere(R * 0.3), hm); f.scale.set(1.0 * L, 0.62, 0.42); onSphere(f, R * 1.01, yaw, pitch); f.rotateZ(rz); add(f);
-      }
-      const tuft = mesh(cone(0.05, 0.12), hm); onSphere(tuft, R * 1.02, 0.1, 1.25); tuft.rotateX(Math.PI / 2 - 0.6); add(tuft);
-      if (grade === 9) for (const s of [-1, 1]) {
-        const side = mesh(sphere(R * 0.3), hm); side.scale.set(0.45, 0.9, 0.6); onSphere(side, R * 0.97, s * 1.25, 0.05); add(side);
-      }
-      break;
-    }
-    case 'ponytail_low': {
-      add(hairCap(R, hm, Math.PI * 0.54, 0.32, 1.055));
-      const sweep = mesh(sphere(R * 0.55), hm); sweep.scale.set(1.15, 0.42, 0.42); onSphere(sweep, R * 0.98, 0.28, 0.4); sweep.rotateZ(0.42); add(sweep);
-      const lock = mesh(capsule(0.045 * R / 0.3, R * 0.6), hm, [-R * 0.92, -R * 0.3, R * 0.12]); add(lock);
-      const tie = new THREE.Mesh(cached('tie', () => new THREE.TorusGeometry(0.05, 0.022, 8, 16)), accent);
-      onSphere(tie, R * 0.98, Math.PI, -0.35); add(tie);
-      const tail = new THREE.Group(); onSphere(tail, R * 1.02, Math.PI, -0.3); tail.quaternion.identity(); add(tail);
-      const len = 0.3 * L * R / 0.3;
-      const sway = new THREE.Group(); tail.add(sway);
-      const pt = mesh(capsule(0.075 * R / 0.3, len), hm, [0, -len / 2 + 0.02, 0]); sway.add(pt);
-      tail.rotation.x = 0.3;
-      rig.ponytail = sway;
-      break;
-    }
-  }
-}
-
-function shade(hex: string, k: number): string {
-  const c = new THREE.Color(hex);
-  c.r = Math.min(1, c.r * k); c.g = Math.min(1, c.g * k); c.b = Math.min(1, c.b * k);
-  return `#${c.getHexString()}`;
-}
-
-// ---------- đạo cụ ----------
-function footballGeometry(): THREE.BufferGeometry {
-  return cached('football', () => {
-    const g = new THREE.IcosahedronGeometry(0.11, 1).toNonIndexed();
-    const pos = g.getAttribute('position');
-    const colors = new Float32Array(pos.count * 3);
-    const base = new THREE.IcosahedronGeometry(1, 0);
-    const bp = base.getAttribute('position');
-    const corners: THREE.Vector3[] = [];
-    for (let i = 0; i < bp.count; i++) {
-      const v = new THREE.Vector3().fromBufferAttribute(bp, i).normalize();
-      if (!corners.some((c) => c.distanceTo(v) < 1e-3)) corners.push(v);
-    }
-    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
-    for (let i = 0; i < pos.count; i += 3) {
-      a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
-      const cen = a.add(b).add(c).normalize();
-      const dark = corners.some((k) => k.dot(cen) > 0.93);
-      const col = dark ? [0.16, 0.16, 0.18] : [0.96, 0.95, 0.92];
-      for (let j = 0; j < 3; j++) colors.set(col, (i + j) * 3);
-    }
-    g.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    g.computeVertexNormals();
-    return g;
-  });
-}
-
-function buildProps(rig: CharacterRig) {
-  const { def, look, dims: d } = rig;
-  const accent = toon(def.accent);
-  for (const p of look.props) {
-    switch (p as PropId) {
-      case 'marble_pouch': {
-        const pouch = mesh(sphere(0.05), toon('#5b8fd6'), [d.hipW * 0.55, -0.02, 0.06], rig.hips);
-        pouch.scale.set(1, 1.15, 0.85);
-        mesh(cyl(0.022, 0.03, 0.03), toon('#4a74b0'), [d.hipW * 0.55, 0.035, 0.06], rig.hips);
-        break;
-      }
-      case 'pen': {
-        const pen = mesh(cyl(0.011, 0.011, 0.14, 8), toon('#2e5fd0'), [0, -0.01, 0.03], rig.handR);
-        pen.rotation.x = Math.PI / 2.4;
-        mesh(cyl(0.012, 0.004, 0.03, 8), toon('#f0f0f0'), [0, -0.035, 0.088], rig.handR).rotation.x = Math.PI / 2.4;
-        break;
-      }
-      case 'football': {
-        const ball = new THREE.Mesh(footballGeometry(), toon('#ffffff', { vertexColors: true }));
-        ball.castShadow = true;
-        ball.position.set(0.05, -0.06, 0.04);
-        rig.handL.add(ball);
-        rig.armL.userData.holdOut = 0.35;     // dang tay ôm bóng
-        break;
-      }
-      case 'water_bottle': {
-        const b = mesh(cyl(0.035, 0.035, 0.14, 12), toon('#4fb3e8'), [-d.hipW * 0.58, 0.0, -0.02], rig.hips);
-        mesh(cyl(0.025, 0.03, 0.03, 10), toon('#2b6fa0'), [0, 0.085, 0], b);
-        break;
-      }
-      case 'watch': {
-        const w = new THREE.Mesh(cached(`watch${r3(d.armR)}`, () => new THREE.TorusGeometry(d.armR * 1.05, 0.012, 6, 14)), toon('#3b3b45'));
-        w.rotation.x = Math.PI / 2; w.position.y = -d.armLen * 0.78; rig.armL.add(w);
-        mesh(rbox(0.035, 0.012, 0.035, 0.005), toon('#e9e4d4'), [0, -d.armLen * 0.78, d.armR * 1.05], rig.armL);
-        break;
-      }
-      case 'planner': {
-        const book = mesh(rbox(0.13, 0.17, 0.03, 0.01), toon('#7c5cc4'), [0.02, -0.02, 0.07], rig.handR);
-        book.rotation.set(0.15, -0.3, 0.1);
-        for (const [i, c] of ['#f26d6d', '#f2c14e', '#53b87a'].entries()) mesh(rbox(0.02, 0.03, 0.032, 0.004), toon(c), [0.07, 0.05 - i * 0.035, 0], book);
-        rig.armR.userData.holdIn = 0.5;
-        break;
-      }
-      case 'sketchbook': {
-        const book = mesh(rbox(0.16, 0.2, 0.025, 0.01), toon('#9ccfd8'), [-0.02, 0.0, 0.08], rig.handL);
-        book.rotation.set(0.25, 0.4, -0.1);
-        mesh(rbox(0.1, 0.07, 0.027, 0.005), toon('#fff6e0'), [0, 0.02, 0], book);
-        rig.armL.userData.holdIn = 0.55;
-        break;
-      }
-      case 'backpack': {
-        const bag = mesh(rbox(d.torsoW * 0.82, d.torsoH * 0.82, 0.14, 0.05), accent, [0, d.torsoH * 0.52, -d.torsoD / 2 - 0.06], rig.torso);
-        mesh(rbox(d.torsoW * 0.6, d.torsoH * 0.3, 0.05, 0.03), toon(shade(def.accent, 0.8)), [0, -d.torsoH * 0.18, -0.08], bag);
-        for (const s of [-1, 1]) {
-          mesh(rbox(0.04, 0.05, d.torsoD * 1.02, 0.015), toon(shade(def.accent, 0.7)), [s * d.torsoW * 0.27, d.torsoH - 0.01, 0], rig.torso);
-          mesh(rbox(0.032, d.torsoH * 0.32, 0.016, 0.008), toon(shade(def.accent, 0.7)), [s * d.torsoW * 0.29, d.torsoH * 0.8, d.torsoD / 2 + 0.004], rig.torso);
-        }
-        break;
-      }
-    }
-  }
 }
 
 // ---------- dựng nhân vật ----------
@@ -349,6 +116,9 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
     return { g, hand };
   };
   const aL = mkArm(1), aR = mkArm(-1);
+  const handPropSlot = new THREE.Group();
+  handPropSlot.name = 'handPropSlot';
+  aR.hand.add(handPropSlot);
 
   // đầu
   const head = new THREE.Group(); head.position.y = d.torsoH + 0.015; torso.add(head);
@@ -388,6 +158,7 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
 
   const rig: CharacterRig = {
     def, grade, look, root, hips, torso, head, legL, legR, armL: aL.g, armR: aR.g, handL: aL.hand, handR: aR.hand,
+    handPropSlot,
     eyes: { open: eyesOpen, happy: eyesHappy }, mouth: { smile, open, flat: flatMouth }, dims: d,
     setExpression(e) {
       const happyEyes = e === 'happy';
@@ -403,6 +174,7 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
       if (!open.visible && a > 0.05) { open.visible = true; smile.visible = false; }
       open.scale.y = 0.03 * k * (0.25 + a);
     },
+    setProp(propId) { return setDynamicProp(rig, propId); },
   };
   buildHair(face, R, def, look, grade, rig);
   buildProps(rig);

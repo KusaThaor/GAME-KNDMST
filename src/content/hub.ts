@@ -48,15 +48,15 @@ export const HUB_QUESTS: Quest[] = [
         id: 'q_hub_pd_01.s01',
         kind: 'cutscene',
         lines: [
-          { speaker: 'narrator', text: 'Phòng trọ năm 2026. Buổi tối, ánh đèn bàn hắt lên một góc phòng.' },
-          { speaker: 'narrator', text: 'Trên sàn có một thùng carton cũ dán băng keo vàng: "Đồ cũ – đừng vứt."' },
+          { speaker: 'narrator', text: 'Phòng trọ năm 2026. Buổi tối, ánh đèn bàn hắt lên một góc phòng tĩnh lặng.' },
+          { speaker: 'narrator', text: 'Trên sàn có một chiếc thùng carton cũ dán băng keo ngả vàng: "Đồ cũ – đừng vứt."' },
         ],
       },
       {
         id: 'q_hub_pd_01.s02',
         kind: 'interact',
         target: 'itr.hub.memory_box',
-        objective: 'Mở chiếc thùng carton cũ',
+        objective: 'Bước tới chiếc thùng cũ góc phòng, nhấn E để mở Hộp Kỷ Vật',
       },
     ],
   },
@@ -71,8 +71,9 @@ export const HUB_QUESTS: Quest[] = [
         id: 'q_hub_pd_04.s01',
         kind: 'cutscene',
         lines: [
-          { speaker: 'player', text: 'Mật lệnh này… ai viết mà nhìn chẳng hiểu gì hết vậy?' },
-          { speaker: 'player', text: 'Không biết ngày đó tụi mình bắt đầu chơi với nhau từ lúc nào nhỉ?' },
+          { speaker: 'narrator', text: 'Mẩu giấy gấp tư đầy hình vẽ mũi tên, nét mực tím nguệch ngoạc kèm dòng mực đỏ nắn nót: "Mật lệnh số 01 – Chỉ dành cho người đủ can đảm tham gia!"' },
+          { speaker: 'player', text: 'Mật lệnh số 01… Mực đỏ này nhìn quen ghê, là chữ ai ta?' },
+          { speaker: 'player', text: 'Không biết ngày đó… tụi mình bắt đầu chơi chung từ lúc nào nhỉ?' },
         ],
       },
     ],
@@ -87,7 +88,7 @@ export const HUB_QUESTS: Quest[] = [
         kind: 'phone_ui',
         screen: 'group_chat',
         thread_id: 'thread.old_group',
-        objective: 'Mở điện thoại, tìm nhóm chat cũ',
+        objective: 'Tiến lại bàn làm việc, mở chiếc Điện thoại tìm lại nhóm chat cũ',
       },
     ],
   },
@@ -101,7 +102,7 @@ export const HUB_QUESTS: Quest[] = [
         id: 'q_hub_pd_03.s01',
         kind: 'compose_message',
         thread_id: 'thread.old_group',
-        objective: 'Soạn và gửi một tin nhắn cho nhóm bạn',
+        objective: 'Soạn và bấm gửi một tin nhắn mở lời gửi tới những người bạn cũ',
         // B9 (nguyên văn kịch bản, §KẾT DEMO Bước 2). `{quan}`/`{duc}` = `caro.series` (mặc định 3–3) — thay bằng `fillCaroScore` (config/hub.ts).
         openers: [
           { id: 'playful', tone: 'playful', text: 'Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?' },

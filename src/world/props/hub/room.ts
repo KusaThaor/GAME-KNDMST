@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { flat, toon } from '../../../render/materials';
 import { PAL, box } from '../../school/props';
+import { makeRuleBook } from '../m1/ruleBook';
 
 export const lift = <T extends THREE.Object3D>(o: T, y: number): T => { o.position.y += y; return o; };
 
@@ -119,17 +120,7 @@ export function makeNightWindow(w = 1.5, h = 1.1): NightWindow {
   return { frame, pane, sky };
 }
 
-/** Cuốn sổ luật Căn cứ: đứng, gáy quay ra +z, bìa xanh đậm, có dải tiêu đề. Cao 0,30 m. */
+/** Cuốn sổ luật Căn cứ: đứng, gáy quay ra +z, bìa xanh đậm, có dải tiêu đề. Cao 0,30 m (tái dùng `props/m1/ruleBook`). */
 export function makeRulebook(): THREE.Group {
-  const g = new THREE.Group();
-  const H = 0.3, T = 0.06, D = 0.2;
-  const parts: [THREE.Mesh, number, number, number][] = [
-    [box(T - 0.012, H - 0.01, D - 0.012, PAL.trim), 0, H / 2, 0],                 // ruột sách
-    [box(0.008, H, D, PAL.frameDark), -(T / 2 - 0.004), H / 2, 0],                // bìa sau
-    [box(0.008, H, D, PAL.frameDark), T / 2 - 0.004, H / 2, 0],                   // bìa trước
-    [box(T, H, 0.01, PAL.frame), 0, H / 2, D / 2 - 0.005],                        // gáy
-    [box(T + 0.004, 0.05, 0.012, PAL.wallYellow), 0, H * 0.72, D / 2 - 0.004],    // dải tiêu đề
-  ];
-  for (const [m, x, y, z] of parts) { m.position.set(x, y, z); g.add(m); }
-  return g;
+  return makeRuleBook({ variant: 'standing', textured: false });
 }

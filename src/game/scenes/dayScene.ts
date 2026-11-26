@@ -26,6 +26,7 @@ import { mountDressing } from '../../world/dressing';
 import { WORLD_MANIFESTS } from '../../world/maps';
 import { clouds, skyDome } from '../../world/sky';
 import { ZoneTracker, type TravelEvent } from '../../world/travel';
+import { CollisionWorld } from '../../world/collision';
 import type { ColliderShape, WorldManifest, WorldProblem } from '../../world/types';
 import { DECOR_SETS, DEFAULT_DECOR, DEFAULT_LIGHTING, LIGHTING_PRESETS, assetDecorSet, applySchoolDecor } from '../../world/variants';
 import { loadWorld, World, WORLD_EXTRAS, WorldLoadError } from '../../world/world';
@@ -35,6 +36,17 @@ export interface DayTarget { id: string; label: string; position: THREE.Vector3;
 /** Ý định của người chơi trong một khung hình. `null` = đang khóa (thoại, bảng, ảnh xem trước…). */
 export interface DayControl { move: MoveIntent | null; look: LookInput | null }
 export interface StandSpot { center: [number, number]; y: number; radius: number }
+export interface MarkerSpot { x: number; y: number; z: number; facing: number }
+export interface MoveActorOptions {
+  /** Dẫn đường: tạm dừng chờ nếu người chơi tụt lại quá ngưỡng (không khóa điều khiển player, có timeout an toàn). */
+  leadPlayer?: boolean;
+  /** Khoảng cách tối đa (m) trước khi NPC tạm dừng chờ người chơi (mặc định 6 m). */
+  leadDistance?: number;
+  /** Thời gian chờ tối đa (s) cho mỗi lượt chờ người chơi (mặc định 6 s) để bot/E2E không kẹt. */
+  leadTimeout?: number;
+  /** Giới hạn thời gian di chuyển tối đa (s) khi gặp vật cản (mặc định 20 s). */
+  maxDuration?: number;
+}
 
 export interface DaySceneOptions extends Pick<AtmosphereDeps, 'bus' | 'stepId'> {
   /** Phong cách hình ảnh (mặc định: DEFAULT_ART_STYLE trong render/style.ts). */
@@ -78,15 +90,33 @@ export interface DayScene {
   cameraFor(point: CameraPoint): THREE.PerspectiveCamera | null;
   /** Giữ camera của người chơi ở khung của một máy ảnh đặt sẵn (khung ngắm, cutscene); null = trả lại camera bám theo. */
   lockCamera(point: CameraPoint | null): void;
+  /** Lướt mượt camera tới máy ảnh đặt sẵn trong `durationMs` ms; null = trả về người chơi. */
+  dollyCamera(point: CameraPoint | null, durationMs?: number): void;
   lockWeatherCamera(stepId: string): boolean;
   /** Mọi nhân vật trong danh sách có nằm trong khung của máy ảnh không. */
   allInFrame(cam: THREE.PerspectiveCamera, actors: string[]): boolean;
   /** Ẩn/hiện các thứ không được dính vào ảnh (vòng đánh dấu, mũi tên). */
   setGizmosVisible(v: boolean): void;
+  /** Đọc tọa độ marker (`spot.*`, `itr.*`, `spawn.*`, …) theo ID từ bản đồ. */
+  markerSpot(id: string): MarkerSpot | null;
+  /** Di chuyển actor ('player' hoặc 'NPC_*') mượt tới marker, tránh vật cản đơn giản. */
+  moveActor(actor: string, toMarkerId: string, pace?: 'walk' | 'run', opts?: MoveActorOptions): Promise<void>;
+  /** Dịch chuyển tức thời actor tới marker, cập nhật collider & hướng mặt. */
+  teleportActor(actor: string, toMarkerId: string): boolean;
+  /** Quay mặt actor về phía actor khác ('player' / 'NPC_*') hoặc marker ID. */
+  faceActor(actor: string, toward: string): void;
+  /** Đặt motion cho actor ('idle' trả player về điều khiển tự do). */
+  setActorMotion(actor: string, motion: string): void;
+  /** Ẩn/hiện actor; nếu là NPC thì đồng thời vô hiệu hóa/kích hoạt lại tương tác & collider. */
+  setActorVisible(actor: string, visible: boolean): void;
   /** Trạng thái camera/điều khiển — cho công cụ test. */
   debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number };
+  setActorProp(actor: string, propId: string | null): void;
   dispose(): void;
 }
+
+const VALID_MOTIONS = new Set<Motion>(['idle', 'walk', 'run', 'talk', 'pose_peace', 'pose_wave', 'pose_tada', 'cheer']);
+const turnToward = (cur: number, want: number, k: number) => cur + Math.atan2(Math.sin(want - cur), Math.cos(want - cur)) * Math.min(1, k);
 
 const GRADE_FOR_VARIANT = { AGE_G6_7: 6, AGE_G8_9: 9 } as const;
 const emptyManifest = (mapId: string, spawn: string): WorldManifest => ({ schema: 1, map_id: mapId, title: '', asset_root: '/', default_spawn: spawn, camera_preset: DEFAULT_CAMERA_PRESET, zones: [] });
@@ -145,7 +175,15 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   };
   const actors = new Map<string, Avatar>();
   const targets: DayTarget[] = [];
-  const npcColliders: ColliderShape[] = [];
+  const baseColliders = [...world.collision.shapes];
+  const npcTargets = new Map<string, DayTarget>();
+  const npcCollidersMap = new Map<string, ColliderShape>();
+  const npcVisible = new Map<string, boolean>();
+  const syncNpcColliders = () => {
+    const active: ColliderShape[] = [];
+    for (const [id, col] of npcCollidersMap) if (npcVisible.get(id) !== false) active.push(col);
+    world.collision = new CollisionWorld([...baseColliders, ...active]);
+  };
   bound.npcs.forEach((n, i) => {
     const avatar = rigAdapter.create({ id: rigOf(n.actor), grade, scarf: decor.scarf, seed: i + 1 });
     const y = groundAt(n);
@@ -154,14 +192,18 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     avatar.setMotion(n.motion as Motion, 0);
     scene.add(avatar.root);
     actors.set(n.actor, avatar);
-    targets.push({ id: n.actor, label: idx.resolveActor(n.actor)?.display_name ?? n.actor, position: avatar.root.position, kind: 'npc', radius: GAME_CONFIG.move.interact_radius, zone: world.zoneAt(n.x, n.z) });
+    const tgt: DayTarget = { id: n.actor, label: idx.resolveActor(n.actor)?.display_name ?? n.actor, position: avatar.root.position, kind: 'npc', radius: GAME_CONFIG.move.interact_radius, zone: world.zoneAt(n.x, n.z) };
+    targets.push(tgt);
+    npcTargets.set(n.actor, tgt);
+    npcVisible.set(n.actor, true);
     // Nhân vật đứng yên cũng là vật cản (không chắn camera).
-    npcColliders.push({ id: `npc:${n.actor}`, zone: '', type: 'circle', r: 0.3, cx: n.x, cz: n.z, hx: 0.3, hz: 0.3, rot: 0, y0: y, y1: y + avatar.height, blocksCamera: false });
+    npcCollidersMap.set(n.actor, { id: `npc:${n.actor}`, zone: '', type: 'circle', r: 0.3, cx: n.x, cz: n.z, hx: 0.3, hz: 0.3, rot: 0, y0: y, y1: y + avatar.height, blocksCamera: false });
   });
-  world.addColliders(npcColliders);
+  syncNpcColliders();
 
   // ---- điểm tương tác: vòng trên mặt đất + chóp nổi ----
   const marks = new Map<string, { gem: THREE.Mesh; baseY: number }>();
+  const fallbackSpots = new Map<string, MarkerSpot>();
   for (const it of bound.targets) {
     const y = groundAt(it);
     const pos = new THREE.Vector3(it.x, y, it.z);
@@ -171,6 +213,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     gem.position.copy(pos).setY(y + 1.9); gem.visible = false;
     gizmos.add(ring, gem);
     marks.set(it.id, { gem, baseY: y + 1.9 });
+    fallbackSpots.set(it.id, { x: it.x, y, z: it.z, facing: it.facing });
     targets.push({ id: it.id, label: it.label, position: pos, kind: it.kind, zone: it.zone, radius: it.radius ?? (it.kind === 'marker' ? GAME_CONFIG.move.area_radius : GAME_CONFIG.move.interact_radius) });
   }
   const standRing = new THREE.Mesh(new THREE.RingGeometry(0.85, 1, 40), flat('#ffe27a', { transparent: true, opacity: 0.9 }));
@@ -223,6 +266,192 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   };
   followSun();
 
+  // ---- Đạo diễn actor (R-B1): đọc marker, di chuyển mượt tránh vật cản, quay mặt, ẩn/hiện ----
+  const markerSpot = (id: string): MarkerSpot | null => {
+    const m = world.find(id);
+    if (m) return { x: m.position[0], y: groundAt({ x: m.position[0], y: m.position[1], z: m.position[2] }), z: m.position[2], facing: m.facing };
+    return fallbackSpots.get(id) ?? null;
+  };
+  const resolveForActor = (actor: string, tx: number, tz: number, y: number) => {
+    const col = actor === 'player' ? undefined : npcCollidersMap.get(actor);
+    const prevY1 = col ? col.y1 : 0;
+    if (col) col.y1 = -1e9;
+    try { return world.resolve(tx, tz, y, move.body); } finally { if (col) col.y1 = prevY1; }
+  };
+  const updateNpcState = (actor: string, x: number, y: number, z: number, facing: number, syncCol: boolean) => {
+    const av = actors.get(actor);
+    if (!av) return;
+    av.root.position.set(x, y, z);
+    av.root.rotation.y = facing;
+    const tgt = npcTargets.get(actor);
+    if (tgt) tgt.zone = world.zoneAt(x, z);
+    const col = npcCollidersMap.get(actor);
+    if (col) {
+      col.cx = x; col.cz = z; col.y0 = y; col.y1 = y + av.height;
+      if (syncCol) syncNpcColliders();
+    }
+  };
+
+  interface ActiveMove {
+    actor: string;
+    to: MarkerSpot;
+    pace: 'walk' | 'run';
+    opts: MoveActorOptions;
+    steerSign: 0 | 1 | -1;
+    elapsed: number;
+    stuckTime: number;
+    waitTime: number;
+    waitTimedOut: boolean;
+    lastSyncX: number;
+    lastSyncZ: number;
+    resolve: () => void;
+  }
+  const activeMoves = new Map<string, ActiveMove>();
+  let disposed = false;
+
+  const finishMove = (m: ActiveMove) => {
+    if (activeMoves.get(m.actor) !== m) return;
+    activeMoves.delete(m.actor);
+    const av = actors.get(m.actor);
+    if (m.actor === 'player') { ctl.state = 'idle'; ctl.speed = 0; sync(); }
+    else if (av) {
+      av.setMotion('idle', 0);
+      updateNpcState(m.actor, av.root.position.x, av.root.position.y, av.root.position.z, av.root.rotation.y, true);
+    }
+    m.resolve();
+  };
+
+  const stepActorMoves = (dt: number) => {
+    if (disposed || dt <= 0 || activeMoves.size === 0) return;
+    const STEER_ANGLES = [0.65, 1.15, 1.65];
+    for (const m of [...activeMoves.values()]) {
+      const av = actors.get(m.actor);
+      if (!av) { finishMove(m); continue; }
+      const isPlayer = m.actor === 'player';
+      let cx = isPlayer ? ctl.x : av.root.position.x;
+      let cy = isPlayer ? ctl.y : av.root.position.y;
+      let cz = isPlayer ? ctl.z : av.root.position.z;
+      let cf = isPlayer ? ctl.facing : av.root.rotation.y;
+
+      const dx = m.to.x - cx, dz = m.to.z - cz;
+      const dist = Math.hypot(dx, dz);
+      if (dist <= 0.25) {
+        const r = resolveForActor(m.actor, m.to.x, m.to.z, cy);
+        const g = world.ground(r.x, r.z, cy);
+        if (g !== null && g - cy <= move.max_step_up && Math.hypot(r.x - m.to.x, r.z - m.to.z) < 0.2) {
+          if (isPlayer) { ctl.x = r.x; ctl.y = g; ctl.z = r.z; sync(); }
+          else { av.root.position.set(r.x, g, r.z); }
+        }
+        finishMove(m);
+        continue;
+      }
+
+      if (m.opts.leadPlayer && !isPlayer) {
+        const leadDist = m.opts.leadDistance ?? 6;
+        const leadTimeout = m.opts.leadTimeout ?? 6;
+        const pd = Math.hypot(ctl.x - cx, ctl.z - cz);
+        if (m.waitTimedOut && pd <= leadDist * 0.8) { m.waitTimedOut = false; m.waitTime = 0; }
+        if (!m.waitTimedOut && pd > leadDist) {
+          m.waitTime += dt;
+          if (m.waitTime < leadTimeout) {
+            av.setMotion('idle', 0);
+            av.root.rotation.y = turnToward(cf, Math.atan2(ctl.x - cx, ctl.z - cz), dt * move.turn_sharpness);
+            continue;
+          }
+          m.waitTimedOut = true;
+        }
+      }
+
+      const speed = m.pace === 'run' ? move.run : move.walk;
+      m.elapsed += dt;
+      if (m.elapsed >= (m.opts.maxDuration ?? 20)) { finishMove(m); continue; }
+
+      const tryStep = (nx: number, ny: number, nz: number, tx: number, tz: number) => {
+        const r = resolveForActor(m.actor, tx, tz, ny);
+        const g = world.ground(r.x, r.z, ny);
+        if (g === null || g - ny > move.max_step_up) return null;
+        return { x: r.x, y: g, z: r.z, hit: r.hit, moved: Math.hypot(r.x - nx, r.z - nz) };
+      };
+
+      const stepTotal = Math.min(dist, speed * dt);
+      const subCount = Math.max(1, Math.ceil(stepTotal / (move.body.radius * 0.5)));
+      const subLen = stepTotal / subCount;
+      let nx = cx, ny = cy, nz = cz;
+      for (let i = 0; i < subCount; i++) {
+        const sdx = m.to.x - nx, sdz = m.to.z - nz, sdist = Math.hypot(sdx, sdz);
+        if (sdist <= 0.05) break;
+        const ux = sdx / sdist, uz = sdz / sdist;
+        const direct = tryStep(nx, ny, nz, nx + ux * subLen, nz + uz * subLen);
+        const forwardProgress = direct ? (direct.x - nx) * ux + (direct.z - nz) * uz : 0;
+        if (direct && forwardProgress > subLen * 0.35) {
+          nx = direct.x; ny = direct.y; nz = direct.z;
+          if (!direct.hit) m.steerSign = 0;
+          continue;
+        }
+        // Tránh vật cản: chọn phía rẽ có khoảng trống tốt hơn và giữ hướng rẽ tới khi thoáng
+        if (m.steerSign === 0) {
+          const la = Math.max(move.body.radius * 1.5, subLen * 3);
+          const score = (sign: 1 | -1) => {
+            const a = sign * 0.85, c = Math.cos(a), s = Math.sin(a);
+            const rx = ux * c - uz * s, rz = ux * s + uz * c;
+            const p = tryStep(nx, ny, nz, nx + rx * la, nz + rz * la);
+            return p ? p.moved - (p.hit ? la * 0.25 : 0) : -1;
+          };
+          m.steerSign = score(1) >= score(-1) ? 1 : -1;
+        }
+        let stepped = false;
+        for (const sign of [m.steerSign, -m.steerSign as 1 | -1]) {
+          for (const ang of STEER_ANGLES) {
+            const a = sign * ang, c = Math.cos(a), s = Math.sin(a);
+            const rx = ux * c - uz * s, rz = ux * s + uz * c;
+            const cand = tryStep(nx, ny, nz, nx + rx * subLen, nz + rz * subLen);
+            if (cand && cand.moved > subLen * 0.25) {
+              nx = cand.x; ny = cand.y; nz = cand.z;
+              m.steerSign = sign;
+              stepped = true;
+              break;
+            }
+          }
+          if (stepped) break;
+        }
+        if (!stepped && direct && direct.moved > 1e-4) {
+          nx = direct.x; ny = direct.y; nz = direct.z;
+        }
+      }
+
+      const moved = Math.hypot(nx - cx, nz - cz);
+      if (moved < speed * dt * 0.12) {
+        m.stuckTime += dt;
+        if (m.stuckTime >= 1.5) { finishMove(m); continue; }
+      } else {
+        m.stuckTime = 0;
+      }
+
+      if (moved > 1e-4) {
+        cf = turnToward(cf, Math.atan2(nx - cx, nz - cz), dt * move.turn_sharpness);
+      }
+      const actualSpeed = dt > 0 ? moved / dt : speed;
+      if (isPlayer) {
+        ctl.x = nx; ctl.y = ny; ctl.z = nz; ctl.facing = cf;
+        ctl.state = m.pace; ctl.speed = actualSpeed;
+        sync();
+        handle(tracker.update(ctl.x, ctl.z));
+      } else {
+        av.setMotion(m.pace, actualSpeed);
+        const needSync = Math.hypot(nx - m.lastSyncX, nz - m.lastSyncZ) >= 0.35;
+        if (needSync) { m.lastSyncX = nx; m.lastSyncZ = nz; }
+        updateNpcState(m.actor, nx, ny, nz, cf, needSync);
+      }
+    }
+  };
+
+  const cancelMove = (actor: string) => {
+    const prev = activeMoves.get(actor);
+    if (!prev) return;
+    activeMoves.delete(actor);
+    prev.resolve();
+  };
+
   return {
     scene, camera: cam.camera, targets, playerPosition: player.root.position, problems,
     get placeholder() { return world.isPlaceholder; },
@@ -230,9 +459,13 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     get onZoneChange() { return onZoneChange; },
     set onZoneChange(fn) { onZoneChange = fn; },
     update(dt, t, c) {
-      ctl.update(dt, c.move, cam.yaw);
-      if (c.move) handle(tracker.update(ctl.x, ctl.z));
-      sync();
+      const playerAuto = activeMoves.has('player');
+      if (!playerAuto) {
+        ctl.update(dt, c.move, cam.yaw);
+        if (c.move) handle(tracker.update(ctl.x, ctl.z));
+        sync();
+      }
+      stepActorMoves(dt);
       const motion: Motion = forcedMotion ?? ctl.state;
       player.setMotion(motion, motion === 'run' ? move.run : motion === 'walk' ? move.walk : 0);
       for (const a of actors.values()) a.update(dt);
@@ -287,6 +520,10 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       const b = point ? bindCamera(point, world) : null;
       if (b) cam.lock({ position: b.position, look_at: b.look_at, fov: b.fov }); else cam.release();
     },
+    dollyCamera(point, durationMs = 900) {
+      const b = point ? bindCamera(point, world) : null;
+      if (b) cam.dollyTo({ position: b.position, look_at: b.look_at, fov: b.fov }, durationMs); else cam.release();
+    },
     allInFrame(c, refs) {
       c.updateMatrixWorld(true); c.updateProjectionMatrix();
       return refs.every((ref) => {
@@ -299,7 +536,101 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       });
     },
     setGizmosVisible(v) { gizmos.visible = v; },
+    markerSpot,
+    moveActor(actor, toMarkerId, pace = 'walk', opts = {}) {
+      if (disposed) return Promise.resolve();
+      const av = actors.get(actor);
+      const to = markerSpot(toMarkerId);
+      if (!av || !to) {
+        if (!to) console.warn(`[dayScene] moveActor: không thấy marker "${toMarkerId}"`);
+        return Promise.resolve();
+      }
+      cancelMove(actor);
+      if (actor === 'player') forcedMotion = null;
+      const cx = actor === 'player' ? ctl.x : av.root.position.x;
+      const cz = actor === 'player' ? ctl.z : av.root.position.z;
+      if (Math.hypot(to.x - cx, to.z - cz) <= 0.1) {
+        if (actor === 'player') { ctl.state = 'idle'; ctl.speed = 0; }
+        else av.setMotion('idle', 0);
+        return Promise.resolve();
+      }
+      return new Promise<void>((resolve) => {
+        activeMoves.set(actor, {
+          actor, to, pace, opts, steerSign: 0, elapsed: 0, stuckTime: 0, waitTime: 0, waitTimedOut: false,
+          lastSyncX: cx, lastSyncZ: cz, resolve,
+        });
+      });
+    },
+    teleportActor(actor, toMarkerId) {
+      const av = actors.get(actor);
+      const spot = markerSpot(toMarkerId);
+      if (!av || !spot) {
+        if (!spot) console.warn(`[dayScene] teleportActor: không thấy marker "${toMarkerId}"`);
+        return false;
+      }
+      cancelMove(actor);
+      if (actor === 'player') {
+        forcedMotion = null;
+        place({ x: spot.x, y: spot.y, z: spot.z, facing: spot.facing }, true);
+      } else {
+        const r = resolveForActor(actor, spot.x, spot.z, spot.y);
+        const g = world.ground(r.x, r.z, spot.y);
+        const rx = g !== null ? r.x : spot.x, rz = g !== null ? r.z : spot.z, ry = g ?? spot.y;
+        av.setMotion('idle', 0);
+        updateNpcState(actor, rx, ry, rz, spot.facing, true);
+      }
+      return true;
+    },
+    faceActor(actor, toward) {
+      const av = actors.get(actor);
+      if (!av) return;
+      const other = actors.get(toward);
+      const spot = other ? null : markerSpot(toward);
+      const tx = other ? (toward === 'player' ? ctl.x : other.root.position.x) : spot?.x;
+      const tz = other ? (toward === 'player' ? ctl.z : other.root.position.z) : spot?.z;
+      if (tx === undefined || tz === undefined) return;
+      const sx = actor === 'player' ? ctl.x : av.root.position.x;
+      const sz = actor === 'player' ? ctl.z : av.root.position.z;
+      const dx = tx - sx, dz = tz - sz;
+      if (Math.hypot(dx, dz) < 1e-4) return;
+      const yaw = Math.atan2(dx, dz);
+      if (actor === 'player') { ctl.facing = yaw; sync(); }
+      else av.root.rotation.y = yaw;
+    },
+    setActorMotion(actor, motion) {
+      if (!VALID_MOTIONS.has(motion as Motion)) {
+        console.warn(`[dayScene] setActorMotion: motion không hợp lệ "${motion}"`);
+        return;
+      }
+      const m = motion as Motion;
+      if (actor === 'player') {
+        forcedMotion = m === 'idle' ? null : m;
+        player.setMotion(m, 0);
+      } else {
+        actors.get(actor)?.setMotion(m, 0);
+      }
+    },
+    setActorVisible(actor, visible) {
+      const av = actors.get(actor);
+      if (!av) return;
+      av.root.visible = visible;
+      if (actor !== 'player') {
+        npcVisible.set(actor, visible);
+        const tgt = npcTargets.get(actor);
+        if (tgt) {
+          const idxInTargets = targets.indexOf(tgt);
+          if (visible && idxInTargets < 0) targets.push(tgt);
+          else if (!visible && idxInTargets >= 0) targets.splice(idxInTargets, 1);
+        }
+        syncNpcColliders();
+      }
+    },
     debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing }),
-    dispose() { dressing.dispose(); atmosphere.dispose(); dome.material.dispose(); fx.dispose(); updaters.length = 0; disposeScene(scene); world.dispose(); },
+    setActorProp(actor, propId) { actors.get(actor)?.setProp?.(propId); },
+    dispose() {
+      disposed = true;
+      for (const m of [...activeMoves.values()]) { activeMoves.delete(m.actor); m.resolve(); }
+      dressing.dispose(); atmosphere.dispose(); dome.material.dispose(); fx.dispose(); updaters.length = 0; disposeScene(scene); world.dispose();
+    },
   };
 }

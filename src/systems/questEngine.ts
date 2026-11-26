@@ -58,7 +58,11 @@ export class QuestEngine {
 
   readonly conditions: ConditionContext = {
     flag: (n) => this.flag(n),
-    questCompleted: (id) => this.records[id]?.state === 'completed' || this.save.quests[id]?.state === 'completed',
+    questCompleted: (id) => {
+      const keys = this.dayId ? [id, `${id}@${this.dayId}`] : [id];
+      if (keys.some((k) => this.records[k]?.state === 'completed' || this.save.quests[k]?.state === 'completed')) return true;
+      return !this.dayId && Object.entries(this.save.quests).some(([k, r]) => k.startsWith(`${id}@`) && r.state === 'completed');
+    },
     dayCompleted: (id) => this.save.days[id]?.state === 'completed',
   };
 
@@ -244,8 +248,8 @@ export class QuestEngine {
     if (s.kind === 'collect') {
       const r = this.rec(q);
       r.progress.push(target);
+      this.bus.emit('step_progress', { quest_id: q.id, step_id: s.id, done: r.progress.length, total: s.count, target });
       if (r.progress.length < s.count) {
-        this.bus.emit('step_progress', { quest_id: q.id, step_id: s.id, done: r.progress.length, total: s.count });
         return { ref, action: 'progress' };
       }
     }
@@ -279,6 +283,25 @@ export class QuestEngine {
     this.presenting.delete(stepId);
     this.finishStep(q, s);
     this.checkpoint('step_boundary');
+    return true;
+  }
+
+  /**
+   * R-D5: lựa chọn chọn TRONG minigame (`step.choice`) — áp cờ + sắc thái quan hệ và phát `choice_made` y như bước `choice`.
+   * Chỉ nhận khi bước minigame đó đang hoạt động; gọi trước `complete(stepId)`.
+   */
+  recordMinigameChoice(stepId: string, optionId: string): boolean {
+    const ref = this.idx.steps.get(stepId);
+    if (!ref || !this.ctx || ref.step.kind !== 'minigame' || !ref.step.choice) return false;
+    const { quest: q, step: s } = ref;
+    if (!this.contextQuests().includes(q)) return false;
+    const r = this.rec(q);
+    if (r.state !== 'active' || r.step_id !== stepId) return false;
+    const c = s.choice!;
+    const opt = c.options.find((o) => o.id === optionId);
+    if (!opt) return false;
+    this.applyChoice(opt, c.about ?? []);
+    this.bus.emit('choice_made', { step_id: s.id, choice_id: c.choice_id, option_id: opt.id, tone: opt.tone ?? null, measured: !!c.measured, is_replay: this.isReplay });
     return true;
   }
 

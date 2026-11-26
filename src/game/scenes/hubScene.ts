@@ -15,8 +15,12 @@ import type { Artifact, HubContent } from '../../content/types';
 import { toon } from '../../render/materials';
 import { mergeStatic } from '../../render/merge';
 import { PAL, box } from '../../world/school/props';
+import { enableShadows } from '../../world/props/common/helpers';
 import { buildHubDecor } from '../../world/props/hub';
 import { lift, makeCurtain, makeDeskLamp, makeGlassFrame, makeNightWindow, makeRug, makeRulebook, makeWallFrame } from '../../world/props/hub/room';
+import { makeCompactCamera } from '../../world/props/m1/handProps';
+import { createPaperBoatGeometry } from '../../world/props/m1/paperBoats';
+import { makeRuleBook } from '../../world/props/m1/ruleBook';
 import { disposeScene } from '../view';
 
 export interface HubMove { forward: number; strafe: number; run: boolean }
@@ -64,12 +68,45 @@ const D2R = Math.PI / 180;
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 interface Rect { x0: number; x1: number; z0: number; z1: number }
 
+function sharedPropMesh(shape: string | undefined): THREE.Object3D | null {
+  switch (shape) {
+    case 'camera': {
+      const cam = makeCompactCamera();
+      cam.scale.setScalar(1.35);
+      cam.rotation.y = 0.35;
+      return cam;
+    }
+    case 'rulebook':
+    case 'ruleBook':
+      return makeRuleBook({ textured: false });
+    default:
+      return null;
+  }
+}
+
 function artifactMesh(shape: string | undefined): THREE.Object3D {
+  const shared = sharedPropMesh(shape);
+  if (shared) return shared;
   switch (shape) {
     case 'paper': { const g = new THREE.Group(); const m = box(0.15, 0.012, 0.2, '#f4ecd2'); m.rotation.y = 0.4; const ink = box(0.08, 0.013, 0.02, '#c0392b'); ink.position.set(0.01, 0.001, 0.03); ink.rotation.y = 0.4; g.add(m, ink); return g; }
     case 'photo': { const g = new THREE.Group(); g.add(box(0.2, 0.01, 0.15, '#f8f4ea')); const p = box(0.16, 0.011, 0.11, '#c9b37a'); p.position.y = 0.001; g.add(p); g.rotation.y = -0.2; return g; }
-    case 'boat': { const g = new THREE.Group(); const hull = box(0.2, 0.04, 0.07, '#e9e1c6'); const sail = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 3), toon('#f1e9d0')); sail.position.y = 0.07; g.add(hull, sail); g.rotation.y = 0.5; return g; }
-    case 'sign': { const g = new THREE.Group(); g.add(box(0.22, 0.02, 0.1, '#b98a5a')); const book = box(0.11, 0.025, 0.15, '#3f6fa0'); book.position.set(0.02, 0.022, 0.02); book.rotation.y = -0.3; g.add(book); return g; }
+    case 'boat': {
+      const m = new THREE.Mesh(createPaperBoatGeometry(), toon('#e9e1c6', { side: THREE.DoubleSide }));
+      m.scale.setScalar(1.25);
+      m.rotation.y = 0.5;
+      return m;
+    }
+    case 'sign': {
+      const g = new THREE.Group();
+      const plank = box(0.22, 0.02, 0.1, '#b98a5a');
+      plank.position.y = 0.01;
+      const book = makeRuleBook({ textured: false });
+      book.scale.setScalar(0.62);
+      book.position.set(0.02, 0.02, 0.01);
+      book.rotation.y = -0.3;
+      g.add(plank, book);
+      return g;
+    }
     case 'box': {                                         // hộp phấn giấy đã móp (N-08): thân + nắp lệch
       const g = new THREE.Group();
       g.add(lift(box(0.16, 0.065, 0.1, PAL.trim, 0.01), 0.0325));
@@ -80,6 +117,8 @@ function artifactMesh(shape: string | undefined): THREE.Object3D {
   }
 }
 function decorMesh(shape: string): THREE.Object3D {
+  const shared = sharedPropMesh(shape);
+  if (shared) return shared;
   const g = new THREE.Group();
   switch (shape) {
     case 'notebooks': { const a = box(0.3, 0.022, 0.22, '#5a7fb5'); const b = box(0.29, 0.022, 0.21, '#6f9b6a'); b.position.set(0.02, 0.022, -0.01); b.rotation.y = 0.12; g.add(a, b); break; }
@@ -115,17 +154,12 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   // khác (vd. PointLight) làm Three.js phải biên dịch lại mọi shader lúc chuyển cảnh → khựng gần 1 giây khi vào Trang.
   scene.add(ambient, key);
 
-  // Kính trong suốt không đổ bóng.
-  const shadowed = (m: THREE.Object3D) => m.traverse((c) => {
-    const mesh = c as THREE.Mesh;
-    if (mesh.isMesh) { mesh.castShadow = !(mesh.material as THREE.Material).transparent; mesh.receiveShadow = true; }
-  });
   const room = new THREE.Group(); scene.add(room);
   /** Vật tương tác / vật động: đặt thẳng vào `room` để còn bắt chuột và phóng to khi rê. */
-  const put = (m: THREE.Object3D, x: number, y: number, z: number) => { m.position.set(x, y, z); room.add(m); shadowed(m); return m; };
+  const put = (m: THREE.Object3D, x: number, y: number, z: number) => { m.position.set(x, y, z); room.add(m); return enableShadows(m); };
   /** Đồ tĩnh: gom vào `decor`, cuối hàm gộp một lần bằng `mergeStatic` (ít lượt vẽ). */
   const decor = new THREE.Group();
-  const fix = (m: THREE.Object3D, x: number, y: number, z: number, rotY = 0, rotZ = 0) => { m.position.set(x, y, z); m.rotation.y = rotY; m.rotation.z = rotZ; decor.add(m); shadowed(m); return m; };
+  const fix = (m: THREE.Object3D, x: number, y: number, z: number, rotY = 0, rotZ = 0) => { m.position.set(x, y, z); m.rotation.y = rotY; m.rotation.z = rotZ; decor.add(m); return enableShadows(m); };
   const C = R.colors;
   // Vỏ phòng chỉ NHẬN bóng: nếu trần/tường đổ bóng thì đèn hướng (đặt trên cao) bị trần che hết → cả phòng nằm trong bóng,
   // chỉ còn đèn bán cầu → tối và ngả màu (một nguyên nhân của ám vàng trước K2).
@@ -200,7 +234,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   shelf.add(box(1.8, 0.05, 0.3, C.shelf));
   const plank2 = box(1.8, 0.05, 0.3, C.shelf); plank2.position.y = 0.55; shelf.add(plank2);
   items.set('itr.hub.shelf', put(shelf, L.shelf.x, 1.45, -Dz + 0.16)); spots.set('itr.hub.shelf', L.shelf);
-  shelf.traverse((c) => { c.castShadow = false; });                                  // ván treo mỏng: bóng của nó phủ tối cả mảng tường sau bàn
+  enableShadows(shelf, { cast: false });                                             // ván treo mỏng: bóng của nó phủ tối cả mảng tường sau bàn
   // Sổ luật Căn cứ (N-08, Kết demo Bước 1): đứng ở đầu phải tấm ván dưới, hơi xoay và nhô ra phía trước.
   const rulebook = put(makeRulebook(), L.rulebook.x, 1.45 + 0.025, -Dz + 0.18);
   rulebook.rotation.y = 0.3;
@@ -260,7 +294,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   interface BoxItem { obj: THREE.Object3D; mats: THREE.MeshToonMaterial[]; state: BoxItemView['state']; baseY: number }
   const boxItems = new Map<string, BoxItem>();
   function clearBoxItems() {
-    for (const it of boxItems.values()) { contents.remove(it.obj); it.obj.traverse((o) => (o as THREE.Mesh).geometry?.dispose()); it.mats.forEach((m) => m.dispose()); }
+    for (const it of boxItems.values()) { contents.remove(it.obj); it.obj.traverse((o) => (o as THREE.Mesh).geometry?.dispose()); it.mats.forEach((m) => { m.map?.dispose(); m.dispose(); }); }
     boxItems.clear();
   }
 

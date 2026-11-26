@@ -245,8 +245,9 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
     const s = h.ui.get();
     if (!s.ready) return 'wait';
     if (s.consentAsk) return click('consent-yes') ? 'consent' : 'wait';   // hỏi đồng ý hiện trên nền tối lúc mở game
-    if (s.fade.on) return 'wait';
+    if (s.fade.on || s.titleCard) return 'wait';
     if (s.dialogue) { key('Space'); return 'dialogue'; }
+    if (s.narrator) { key('Space'); return 'narrator'; }
     if (s.notice) return click('next') ? `notice:${s.notice.effect}` : 'wait';
     if (s.choice) return click(`choice-${s.choice.options[choiceTurn++ % s.choice.options.length].id}`) ? 'choice' : 'wait';
     if (s.profile) {
@@ -307,7 +308,7 @@ export function attachGameTools(h: GameHandle, params: URLSearchParams): GameToo
       listeners: h.input.listenerCount,
       toast: h.ui.get().toast,
       hub: h.hubView(),
-      ui: { panel: h.ui.get().panel, dialogue: h.ui.get().dialogue?.text ?? null, who: h.ui.get().dialogue?.who ?? null, objective: h.ui.get().objective, feedback: h.ui.get().feedback, prompt: h.ui.get().prompt?.text ?? null },
+      ui: { panel: h.ui.get().panel, dialogue: h.ui.get().dialogue?.text ?? null, narrator: h.ui.get().narrator?.text ?? null, titleCard: h.ui.get().titleCard?.title ?? null, who: h.ui.get().dialogue?.who ?? null, objective: h.ui.get().objective, feedback: h.ui.get().feedback, prompt: h.ui.get().prompt?.text ?? null },
     }),
     stats: () => {
       const mem = (performance as unknown as { memory?: { usedJSHeapSize: number } }).memory;

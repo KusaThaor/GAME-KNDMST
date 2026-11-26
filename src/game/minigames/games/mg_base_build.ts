@@ -4,6 +4,8 @@
  * làm ghế cho năm đứa. Đặt đủ là xong, không có thua. Kiểu trang trí do bước `choice` ngay trước của quest chọn
  * (`m1.base_decor`), trò này không hỏi lại.
  */
+import { createHiDpiCanvas, MG_INK, MG_RED, mgFont } from '../shared/canvasStage';
+import { createMinigameLoop } from '../shared/loopLifecycle';
 import type { MinigameModule, MinigameResult } from '../types';
 
 export type ItemType = 'table' | 'box';
@@ -53,7 +55,7 @@ export class BaseBuildLogic {
   result(): MinigameResult { return { result: 'complete' }; }
 }
 
-const W = 480, H = 340, TRAY_Y = 298, INK = '#3a2c26';
+const W = 480, H = 340, TRAY_Y = 298;
 const SIZE: Record<ItemType, { w: number; h: number }> = { table: { w: 120, h: 72 }, box: { w: 50, h: 44 } };
 
 export default {
@@ -66,34 +68,20 @@ export default {
     'Bàn phím: ←/→ chọn món, phím 1–6 đặt vào chỗ có số đó.',
   ] },
   mount(el, ctx) {
-    const canvas = document.createElement('canvas');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.dataset.testid = 'mg-base-build';
-    canvas.style.cssText = `display:block;width:100%;max-width:${W}px;aspect-ratio:${W}/${H};margin:0 auto;border:2px solid ${INK};border-radius:12px;touch-action:none;cursor:grab;user-select:none`;
-    el.append(canvas);
-    const g = canvas.getContext('2d')!;
-    g.scale(dpr, dpr);
+    const { canvas, ctx: g, toLocal } = createHiDpiCanvas(el, { width: W, height: H, testId: 'mg-base-build', cursor: 'grab' });
 
     const logic = new BaseBuildLogic();
     const items = BASE_BUILD.items;
     const home = new Map(items.map((it, i) => [it.id, { x: i === 0 ? 76 : 172 + (i - 1) * 62, y: TRAY_Y }]));
     const pos = new Map([...home].map(([k, v]) => [k, { ...v }]));
-    let paused = false, finished = false, pending = false, timer = 0, raf = 0;
     let drag: { id: string; dx: number; dy: number } | null = null;
     let sel = 0, flash: { spot: string; until: number } | null = null;
 
-    const finish = () => {
-      if (finished) return;
-      if (paused) { pending = true; return; }
-      finished = true;
-      ctx.onFinish(logic.result());
-    };
     const settle = (id: string) => {
       const spot = logic.placed.get(id);
       const s = BASE_BUILD.spots.find(p => p.id === spot);
       pos.set(id, s ? { x: s.x, y: s.y } : { ...home.get(id)! });
-      if (logic.done && !timer) timer = window.setTimeout(finish, BASE_BUILD.finishDelayMs);
+      if (logic.done) loop.scheduleFinish(BASE_BUILD.finishDelayMs, () => logic.result());
     };
     const tryPlace = (id: string, spotId: string) => {
       const prev = logic.placed.get(id);
@@ -104,10 +92,6 @@ export default {
       settle(id);
     };
 
-    const local = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
-    };
     const hit = (p: { x: number; y: number }) => [...items].reverse().find(it => {
       const q = pos.get(it.id)!, s = SIZE[it.type];
       return Math.abs(p.x - q.x) <= s.w / 2 && Math.abs(p.y - q.y) <= s.h / 2;
@@ -116,7 +100,7 @@ export default {
     const drawItem = (type: ItemType, x: number, y: number, on: boolean) => {
       const s = SIZE[type];
       g.fillStyle = type === 'table' ? '#a8744a' : '#d9b27c';
-      g.strokeStyle = INK; g.lineWidth = on ? 4 : 2;
+      g.strokeStyle = MG_INK; g.lineWidth = on ? 4 : 2;
       g.beginPath(); g.roundRect(x - s.w / 2, y - s.h / 2, s.w, s.h, 6); g.fill(); g.stroke();
       if (type === 'box') { g.lineWidth = 1.5; g.beginPath(); g.moveTo(x - s.w / 2, y); g.lineTo(x + s.w / 2, y); g.stroke(); }
       else { g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(x - s.w / 2 + 6, y - s.h / 2 + 6, s.w - 12, 10); }
@@ -126,28 +110,34 @@ export default {
       g.fillStyle = '#d8c9a3'; g.fillRect(0, 0, W, H);
       g.fillStyle = 'rgba(90,70,50,.18)'; g.fillRect(70, 20, 340, 236); // bóng mái che
       g.fillStyle = '#efe2c4'; g.fillRect(0, TRAY_Y - 34, W, H - TRAY_Y + 34);
-      g.strokeStyle = INK; g.lineWidth = 1; g.beginPath(); g.moveTo(0, TRAY_Y - 34); g.lineTo(W, TRAY_Y - 34); g.stroke();
+      g.strokeStyle = MG_INK; g.lineWidth = 1; g.beginPath(); g.moveTo(0, TRAY_Y - 34); g.lineTo(W, TRAY_Y - 34); g.stroke();
       const now = performance.now();
       BASE_BUILD.spots.forEach((s, i) => {
         const sz = SIZE[s.type];
         g.setLineDash([6, 5]); g.lineWidth = 2;
-        g.strokeStyle = flash && flash.spot === s.id && flash.until > now ? '#d8332a' : INK;
+        g.strokeStyle = flash && flash.spot === s.id && flash.until > now ? MG_RED : MG_INK;
         g.strokeRect(s.x - sz.w / 2 - 3, s.y - sz.h / 2 - 3, sz.w + 6, sz.h + 6);
         g.setLineDash([]);
-        g.fillStyle = INK; g.font = '800 13px Nunito, sans-serif'; g.textAlign = 'center';
+        g.fillStyle = MG_INK; g.font = mgFont(13); g.textAlign = 'center';
         g.fillText(String(i + 1), s.x - sz.w / 2 + 6, s.y - sz.h / 2 + 10);
       });
       const order = items.filter(it => it.id !== drag?.id);
       for (const it of order) { const p = pos.get(it.id)!; drawItem(it.type, p.x, p.y, items[sel]?.id === it.id); }
       if (drag) { const it = items.find(i => i.id === drag!.id)!; const p = pos.get(it.id)!; drawItem(it.type, p.x, p.y, true); }
-      g.fillStyle = INK; g.textAlign = 'right'; g.font = '800 15px Nunito, sans-serif';
+      g.fillStyle = MG_INK; g.textAlign = 'right'; g.font = mgFont(15);
       g.fillText(`${logic.placed.size}/${BASE_BUILD.spots.length}`, W - 12, TRAY_Y - 40);
     };
-    const frame = () => { draw(); raf = requestAnimationFrame(frame); };
+
+    const loop = createMinigameLoop({
+      onFinish: ctx.onFinish,
+      onDraw: draw,
+      onPause() { if (drag) { const id = drag.id; drag = null; settle(id); } },
+      onDispose: () => canvas.remove(),
+    });
 
     const onDown = (e: PointerEvent) => {
-      if (e.button !== 0 || paused || logic.done) return;
-      const p = local(e), it = hit(p);
+      if (e.button !== 0 || loop.paused || logic.done) return;
+      const p = toLocal(e), it = hit(p);
       if (!it) return;
       e.preventDefault();
       const q = pos.get(it.id)!;
@@ -156,8 +146,8 @@ export default {
       try { canvas.setPointerCapture(e.pointerId); } catch { /* bỏ qua */ }
     };
     const onMove = (e: PointerEvent) => {
-      if (!drag || paused) return;
-      const p = local(e);
+      if (!drag || loop.paused) return;
+      const p = toLocal(e);
       pos.set(drag.id, { x: p.x + drag.dx, y: p.y + drag.dy });
     };
     const onUp = () => {
@@ -172,7 +162,7 @@ export default {
       else { logic.lift(id); settle(id); }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (paused || logic.done || drag) return;
+      if (loop.paused || logic.done || drag) return;
       if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
         e.preventDefault();
         sel = (sel + (e.code === 'ArrowLeft' ? -1 : 1) + items.length) % items.length;
@@ -183,17 +173,12 @@ export default {
         if (next >= 0 && logic.placed.has(items[sel].id)) sel = next;
       }
     };
-    canvas.addEventListener('pointerdown', onDown);
-    canvas.addEventListener('pointermove', onMove);
-    canvas.addEventListener('pointerup', onUp);
-    canvas.addEventListener('pointercancel', onUp);
-    window.addEventListener('keydown', onKey);
-    raf = requestAnimationFrame(frame);
+    loop.on(canvas, 'pointerdown', onDown);
+    loop.on(canvas, 'pointermove', onMove);
+    loop.on(canvas, 'pointerup', onUp);
+    loop.on(canvas, 'pointercancel', onUp);
+    loop.on(window, 'keydown', onKey);
 
-    return {
-      pause() { paused = true; if (drag) { const id = drag.id; drag = null; settle(id); } },
-      resume() { paused = false; if (pending) { pending = false; finish(); } },
-      dispose() { cancelAnimationFrame(raf); clearTimeout(timer); window.removeEventListener('keydown', onKey); canvas.remove(); },
-    };
+    return loop.instance;
   },
 } satisfies MinigameModule;

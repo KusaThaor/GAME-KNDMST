@@ -59,6 +59,18 @@ async function freeInDay(page: Page) {
   }
 }
 const cam = async (page: Page) => (await state(page)).camera!;
+/**
+ * R-D (Đợt 3): nhiều bước có thoại sau lựa chọn / sau khi tương tác (vd. Trang 4 s02 câu của Quân, s03 ba câu sau khi đặt máy).
+ * Đọc hết thoại đang mở (Space, hoặc chạm nếu `touch`) trước khi kiểm bước kế tiếp.
+ */
+async function readThrough(page: Page, touch = false, ms = 20_000) {
+  const box = page.locator('[data-testid="dialogue"]');
+  await expect(box).toBeVisible({ timeout: ms });                                     // chờ thoại mở hẳn, tránh qua bước khi thoại chưa kịp hiện
+  await expect.poll(async () => {
+    if (await box.count()) { if (touch) await box.tap(); else await page.keyboard.press('Space'); }
+    return box.count();
+  }, { timeout: ms, intervals: [250] }).toBe(0);
+}
 /** Bước minigame mở trò thật (N-11a/N-11b): chờ khung trò hiện rồi bấm "Bỏ qua" ở màn luật. */
 async function skipMinigame(page: Page) {
   await page.locator('[data-testid="minigame"]').getByRole('button', { name: 'Bỏ qua', exact: true }).click({ timeout: 20_000 });
@@ -397,6 +409,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     const choice = page.locator('[data-act^="choice-"]').first();
     await expect(choice).toBeVisible({ timeout: 20_000 });
     await choice.tap();
+    await readThrough(page, true);                                                     // R-D: câu của Quân sau khi chọn kiểu ảnh
     await expect.poll(async () => (await state(page)).step, { timeout: 20_000 }).toBe('q_m1_main_05.s03');
 
     // Sổ tay, Menu (thay J, Esc), đổi kiểu camera trong menu (thay V)
@@ -414,8 +427,10 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await page.evaluate(() => window.__game!.teleportTo('itr.thcs.tripod_spot'));
     await expect(e).toBeVisible({ timeout: 20_000 });
     await e.tap();
+    await readThrough(page, true);                                                     // R-D: Hạ/Châu/Đức dặn sau khi đặt máy
     // N-01: s04 xếp đội hình là trò thật (mg_lineup) → chạm "Bỏ qua"; ảnh hẹn giờ giờ là s05
     await page.locator('[data-testid="minigame"]').getByRole('button', { name: 'Bỏ qua', exact: true }).tap();
+    await readThrough(page, true);                                                     // R-D: câu của Đức sau khi xếp đội hình
     await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
     expect((await state(page)).step).toBe('q_m1_main_05.s05');
     await page.locator('[data-act="photo-start"]').tap();
@@ -427,6 +442,7 @@ test.describe('S2 Chặng 2 — cảm ứng mô phỏng (điện thoại)', () =
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 120_000 });
     await page.screenshot({ path: `${SHOTS}/11-anh-hen-gio.png` });
     await page.locator('[data-act="photo-keep"]').tap();
+    await readThrough(page, true);                                                     // R-D: after_lines theo kiểu ảnh đã chọn
     await expect.poll(async () => (await state(page)).step, { timeout: 30_000 }).not.toBe('q_m1_main_05.s05');
     expect(await pageStill(page)).toEqual({ scrollX: 0, scrollY: 0, scale: 1, docScroll: 0 });
     expect(errors).toEqual([]);
@@ -703,6 +719,7 @@ test.describe('HOTFIX touchpad — kéo xoay (Chuẩn) và Nhìn tự do (Nhìn 
     for (let i = 0; i < 10 && (await page.locator('[data-testid="dialogue"]').count()); i++) { await page.keyboard.press('Space'); await page.waitForTimeout(150); }
     await expect(page.locator('[data-act^="choice-"]').first()).toBeVisible({ timeout: 20_000 });
     await page.keyboard.press('Digit1');
+    await readThrough(page);                                                           // R-D: câu của Quân sau khi chọn kiểu ảnh
     await expect.poll(async () => (await state(page)).step, { timeout: 20_000 }).toBe('q_m1_main_05.s03');
     await freeInDay(page);
     await page.keyboard.press('KeyW');
@@ -900,8 +917,10 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     const before = await cam(page);
     await expect(page.locator('[data-testid="prompt"]')).toBeVisible({ timeout: 20_000 });
     await page.keyboard.press('KeyE');
+    await readThrough(page);                                                           // R-D: Hạ/Châu/Đức dặn sau khi đặt máy
     // N-01: s04 xếp đội hình là trò thật (mg_lineup) → bấm "Bỏ qua"; ảnh hẹn giờ giờ là s05
     await skipMinigame(page);
+    await readThrough(page);                                                           // R-D: câu của Đức sau khi xếp đội hình
     await expect(page.locator('[data-act="photo-start"]')).toBeVisible({ timeout: 20_000 });
     expect((await state(page)).step).toBe('q_m1_main_05.s05');
     expect((await cam(page)).locked).toBe(true);
@@ -920,8 +939,13 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     // hẹn giờ 8 giây theo đồng hồ game; Chrome headless vẽ chậm nên chờ lâu hơn máy thật
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
     await page.locator('[data-act="photo-keep"]').click();
-    // Giữ ảnh mở ngay cutscene mưa rào s06 (weather_by_step: s06 rain_shower — không có máy cutscene nên camera không khóa).
-    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_05.s06');
+    // R-D: after_lines theo kiểu ảnh đã chọn → đọc hết (chỉ khi còn ở s05, để không lướt qua thoại của s06)
+    // rồi mới tới cutscene mưa rào s06 (weather_by_step: s06 rain_shower — không có máy cutscene nên camera không khóa).
+    await expect.poll(async () => {
+      const s = await state(page);
+      if (s.step === 'q_m1_main_05.s05' && (await page.getByTestId('dialogue').count())) await page.keyboard.press('Space');
+      return s.step;
+    }, { timeout: 30_000, intervals: [300] }).toBe('q_m1_main_05.s06');
     const dialogue = page.getByTestId('dialogue');
     await expect(dialogue).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/08-s06-mua-rao.png` });
@@ -940,7 +964,12 @@ test.describe('S2 Chặng 2 — đi lại, va chạm, khu, camera bị che, ản
     await page.keyboard.press('Space');
     await expect(page.locator('[data-act="photo-keep"]')).toBeVisible({ timeout: 150_000 });
     await page.locator('[data-act="photo-keep"]').click();
-    await expect.poll(async () => (await state(page)).step).toBe('q_m1_main_05.s08');
+    // R-D: after_lines của ảnh cầu vồng (Quân, Đức) → đọc hết rồi mới sang s08
+    await expect.poll(async () => {
+      const s = await state(page);
+      if (s.step === 'q_m1_main_05.s07' && (await page.getByTestId('dialogue').count())) await page.keyboard.press('Space');
+      return s.step;
+    }, { timeout: 30_000, intervals: [300] }).toBe('q_m1_main_05.s08');
     expect((await cam(page)).locked).toBe(false);
     expect(errors).toEqual([]);
   });

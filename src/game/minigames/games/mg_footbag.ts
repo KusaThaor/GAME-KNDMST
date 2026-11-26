@@ -4,6 +4,8 @@
  * Thắng: 10 lượt chuyền liên tiếp không hụt · Thua: hụt 3 lần. Dù thắng hay thua, lượt cuối Đức đá hụt,
  * cầu bay vào bụi cây (kịch bản Trang 1 bước 3) — trò diễn cảnh đó rồi mới báo kết quả.
  */
+import { createHiDpiCanvas, MG_INK, MG_RED, mgFont } from '../shared/canvasStage';
+import { createMinigameLoop } from '../shared/loopLifecycle';
 import type { MinigameModule, MinigameResult } from '../types';
 
 export const FOOTBAG = {
@@ -85,7 +87,6 @@ export class FootbagLogic {
 }
 
 const W = 480, H = 280;
-const INK = '#3a2c26', RED = '#d8332a';
 const ME = { x: 120, y: 214 }, DUC = { x: 380, y: 170 }, BUSH = { x: 40, y: 70 };
 const RING = 16;
 const JUDGE_TEXT: Record<Judge, string> = { perfect: 'Hoàn hảo', good: 'Được', miss: 'Hụt' };
@@ -104,21 +105,9 @@ export default {
     'Chuyền 10 lượt liên tiếp là thắng; hụt 3 lần là thua.',
   ] },
   mount(el, ctx) {
-    const canvas = document.createElement('canvas');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.dataset.testid = 'mg-footbag';
-    canvas.style.cssText = `display:block;width:100%;max-width:${W}px;aspect-ratio:${W}/${H};margin:0 auto;border:2px solid ${INK};border-radius:12px;touch-action:none;cursor:pointer`;
-    el.append(canvas);
-    const g = canvas.getContext('2d')!;
-    g.scale(dpr, dpr);
-
+    const { canvas, ctx: g } = createHiDpiCanvas(el, { width: W, height: H, testId: 'mg-footbag', cursor: 'pointer' });
     const logic = new FootbagLogic(0);
-    let t = 0, lastReal = performance.now(), raf = 0;
-    let paused = false, done = false, endAt = 0;
-
-    const now = () => t + (paused ? 0 : Math.min(performance.now() - lastReal, 100));
-    const hit = () => { if (!paused && !done) logic.press(now()); };
+    let done = false, endAt = 0;
 
     const draw = () => {
       g.fillStyle = '#e8dcc0'; g.fillRect(0, 0, W, H);
@@ -127,16 +116,16 @@ export default {
       for (const [dx, dy, r] of [[0, 0, 30], [28, 6, 24], [-24, 10, 22]]) { g.beginPath(); g.arc(BUSH.x + dx, BUSH.y + dy, r, 0, Math.PI * 2); g.fill(); }
       // hai người
       for (const [p, name] of [[ME, ''], [DUC, 'Đức']] as const) {
-        g.fillStyle = '#fff7e2'; g.strokeStyle = INK; g.lineWidth = 2;
+        g.fillStyle = '#fff7e2'; g.strokeStyle = MG_INK; g.lineWidth = 2;
         g.beginPath(); g.arc(p.x, p.y - 46, 12, 0, Math.PI * 2); g.fill(); g.stroke();
         g.beginPath(); g.moveTo(p.x, p.y - 34); g.lineTo(p.x, p.y - 8); g.lineTo(p.x - 10, p.y + 10); g.moveTo(p.x, p.y - 8); g.lineTo(p.x + 10, p.y + 10); g.stroke();
-        if (name) { g.fillStyle = INK; g.font = '700 14px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(name, p.x, p.y + 28); }
+        if (name) { g.fillStyle = MG_INK; g.font = mgFont(14, 700); g.textAlign = 'center'; g.fillText(name, p.x, p.y + 28); }
       }
-      const tt = now();
+      const tt = loop.now();
       const land = { x: ME.x + 18, y: ME.y + 4 };
       // vòng đích + vòng thu nhỏ
       if (!done) {
-        g.strokeStyle = INK; g.lineWidth = 3; g.setLineDash([5, 4]);
+        g.strokeStyle = MG_INK; g.lineWidth = 3; g.setLineDash([5, 4]);
         g.beginPath(); g.arc(land.x, land.y, RING, 0, Math.PI * 2); g.stroke(); g.setLineDash([]);
         const left = logic.target - tt;
         const span = (logic.target - logic.prevTarget) / 2;
@@ -153,54 +142,40 @@ export default {
         const k = (tt - logic.prevTarget) / (logic.target - logic.prevTarget);
         ball = k < 0.5 ? arc(land, DUC, Math.max(0, k * 2), 110) : arc(DUC, land, Math.min(1.2, (k - 0.5) * 2), 110);
       }
-      g.fillStyle = RED; g.strokeStyle = INK; g.lineWidth = 2;
+      g.fillStyle = MG_RED; g.strokeStyle = MG_INK; g.lineWidth = 2;
       g.beginPath(); g.arc(ball.x, ball.y, 6, 0, Math.PI * 2); g.fill(); g.stroke();
       g.beginPath(); g.moveTo(ball.x - 6, ball.y - 4); g.lineTo(ball.x, ball.y - 18); g.lineTo(ball.x + 6, ball.y - 4); g.stroke();
       // bảng số
-      g.fillStyle = INK; g.textAlign = 'left'; g.font = '800 16px Nunito, sans-serif';
+      g.fillStyle = MG_INK; g.textAlign = 'left'; g.font = mgFont(16);
       g.fillText(`Chuyền liên tiếp: ${logic.streak}/${FOOTBAG.winStreak}`, 14, 24);
       g.textAlign = 'right';
       g.fillText(`Hụt: ${logic.misses}/${FOOTBAG.maxMisses}`, W - 14, 24);
       if (logic.last && tt - logic.last.at < 600) {
-        g.textAlign = 'center'; g.font = '800 22px Nunito, sans-serif';
-        g.fillStyle = logic.last.judge === 'miss' ? RED : '#2f8f3a';
+        g.textAlign = 'center'; g.font = mgFont(22);
+        g.fillStyle = logic.last.judge === 'miss' ? MG_RED : '#2f8f3a';
         g.fillText(JUDGE_TEXT[logic.last.judge], W / 2, 70);
       }
     };
 
-    const frame = (real: number) => {
-      const dt = Math.min(real - lastReal, 100);
-      lastReal = real;
-      if (!paused) {
-        t += dt;
-        if (!done) {
-          logic.update(t);
-          if (logic.state !== 'playing') { done = true; endAt = t + FOOTBAG.outroMs; }
-        } else if (t >= endAt) {
-          cancelAnimationFrame(raf); raf = 0;
-          draw();
-          ctx.onFinish(logic.result());
-          return;
+    const loop = createMinigameLoop({
+      onFinish: ctx.onFinish,
+      onTick(_dt, t) {
+        if (done) return;
+        logic.update(t);
+        if (logic.state !== 'playing') {
+          done = true;
+          endAt = t + FOOTBAG.outroMs;
+          loop.startOutro(FOOTBAG.outroMs, () => logic.result());
         }
-      }
-      draw();
-      raf = requestAnimationFrame(frame);
-    };
-
-    const onKey = (e: KeyboardEvent) => { if (e.code === 'Space' && !e.repeat) { e.preventDefault(); hit(); } };
-    const onDown = (e: PointerEvent) => { if (e.button === 0) { e.preventDefault(); hit(); } };
-    window.addEventListener('keydown', onKey);
-    canvas.addEventListener('pointerdown', onDown);
-    raf = requestAnimationFrame(frame);
-
-    return {
-      pause() { paused = true; },
-      resume() { paused = false; lastReal = performance.now(); },
-      dispose() {
-        cancelAnimationFrame(raf);
-        window.removeEventListener('keydown', onKey);
-        canvas.remove();
       },
-    };
+      onDraw: draw,
+      onDispose: () => canvas.remove(),
+    });
+
+    const hit = () => { if (!loop.paused && !done) logic.press(loop.now()); };
+    loop.on(window, 'keydown', e => { if (e.code === 'Space' && !e.repeat) { e.preventDefault(); hit(); } });
+    loop.on(canvas, 'pointerdown', e => { if (e.button === 0) { e.preventDefault(); hit(); } });
+
+    return loop.instance;
   },
 } satisfies MinigameModule;

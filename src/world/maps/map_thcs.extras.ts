@@ -44,6 +44,50 @@ export const M2_MARKERS = [
   ...cameraPair('cam.thcs.m2_final_five', Z.yard, [-4.0, 1.3, -4.6], [-10.6, 2.6, -5.8]),         // nhìn về gốc phượng (tán cây lọt khung), hoàng hôn
 ];
 
+/**
+ * R-D0 — marker Trang 1–4 Mốc 1 (MAP-1, MAP-2; kịch bản chốt 25/11 TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md).
+ * KHÔNG dời marker có sẵn trong GLB (tripod_spot, yard_group…; sửa GLB = Blender, trái D3): thêm mã MỚI, nội dung Trang 4
+ * chuyển sang mã mới ở R-D4. `cam.thcs.rainbow` (giữa sân) giữ nguyên tới khi R-D4 đổi xong rồi mới gỡ.
+ * Chỗ đứng nhóm: `<…>_group` = vòng sáng của người chơi (giữa), `_1…_4` = 4 bạn (hai đầu lùi 0,25 m thành vòng cung), mặt nhìn máy.
+ */
+export const M1_MARKERS = [
+  // Trang 1 — Cảnh 2: bảng phân lớp + cửa lớp
+  marker('spot', 'spot.thcs.class_list_1', Z.corridor, [-5.0, CORRIDOR_Y, -20.5], PI),            // Đức đứng cạnh người chơi trước bảng (itr.thcs.class_list)
+  marker('spot', 'spot.thcs.class_door', Z.corridor, [-1.0, CORRIDOR_Y, -20.9], -PI / 2),         // Châu đứng trước cửa lớp (khe tường x −1,6…−0,4) ngoái về phía bảng
+  // Trang 1 — Cảnh 3: ba bạn đứng quanh bàn r2c1 (cạnh tường sau, có cửa sổ); mảnh giấy mật lệnh trên mặt bàn
+  marker('interact', 'itr.thcs.desk3', Z.classroom, [-6.9, CORRIDOR_Y, -28.4], PI / 2),           // người chơi, phía tây bàn, nhìn về bảng đen
+  marker('spot', 'spot.thcs.desk3_1', Z.classroom, [-6.05, CORRIDOR_Y, -29.4], 0),                // Đức, khe giữa bàn và tường sau
+  marker('spot', 'spot.thcs.desk3_2', Z.classroom, [-5.2, CORRIDOR_Y, -28.4], -PI / 2),           // Châu, khe giữa dãy bàn 2 và 3
+  ...cameraPair('cam.thcs.desk3', Z.classroom, [-7.6, 1.45, -27.4], [-6.05, 0.86, -28.4]),        // ĐẨY-MÁY vào mặt bàn (mảnh giấy)
+  // Trang 1 — Cảnh 4: bụi cây ven vòng đá cầu (cầu rơi vào); R-B4 dời cụm makeFootbagSpot về itr này
+  marker('interact', 'itr.thcs.shuttle_bush', Z.yard, [14.6, 0, 9.2], 0.86),
+  marker('spot', 'spot.thcs.shuttle_bush', Z.yard, [13.9, 0, 8.6], 0.86),                         // Châu tới lượm cầu
+  // Trang 2 — Cảnh 4: đứng lùi 2,7 m chụp 5 thuyền ở mép rãnh; Cảnh 5–6: cuối rãnh (thuyền Hạ mắc lại)
+  marker('spot', 'spot.thcs.gutter_photo', Z.yard, [-14, 0, -15.4], PI),
+  marker('interact', 'itr.thcs.gutter_end', Z.yard, [-6.0, 0, -17.6], PI),                         // vớt thuyền, ký tên lên buồm
+  marker('spot', 'spot.thcs.gutter_end_ref', Z.yard, [-5.0, 0, -17.4], -PI / 2),                  // Châu làm trọng tài, nhìn ngược về chỗ thả
+  // Trang 4 — Cảnh 2–5: ảnh 1 dưới gốc phượng; máy đặt trên ghế đá (COLLIDER_bench_phuong), nhóm đứng mép tán phượng
+  // chỗ đứng đặt máy = itr.thcs.stone_bench có sẵn trong GLB (−14,4; −2,2), không thêm mã trùng
+  ...cameraPair('cam.thcs.phuong_group', Z.yard, [-14.5, 0.62, -2.6], [-10.0, 1.1, -5.3]),
+  marker('spot', 'spot.thcs.phuong_group_1', Z.yard, [-10.42, 0, -6.33], -0.83),
+  marker('spot', 'spot.thcs.phuong_group_2', Z.yard, [-9.92, 0, -5.69], -0.98),
+  marker('spot', 'spot.thcs.phuong_group', Z.yard, [-9.5, 0, -5.0], -1.12),
+  marker('spot', 'spot.thcs.phuong_group_3', Z.yard, [-9.23, 0, -4.24], -1.27),
+  marker('spot', 'spot.thcs.phuong_group_4', Z.yard, [-9.03, 0, -3.45], -1.42),
+  // Trang 4 — Cảnh 7: ảnh cầu vồng ở khúc gỗ bãi đất (COLLIDER_log). Cầu vồng ở sky.ts luôn nằm phía bắc máy (theo máy) →
+  // máy nhìn bắc lệch đông 6°, ngửa 8° (khác ảnh Trang 8: cam.thcs.m2_campfire_group nhìn thẳng bắc, ngang tầm lửa trại).
+  marker('interact', 'itr.thcs.field_log_cam', Z.field, [46.3, 0, 12.1], PI),                    // đứng phía nam khúc gỗ đặt máy
+  ...cameraPair('cam.thcs.rainbow_log', Z.field, [46, 0.62, 11], [46.48, 1.27, 6.43]),          // R-D4 khai fov 44
+  marker('spot', 'spot.thcs.rainbow_group_1', Z.field, [44.86, 0, 6.51], 0.25),
+  marker('spot', 'spot.thcs.rainbow_group_2', Z.field, [45.68, 0, 6.42], 0.07),
+  marker('spot', 'spot.thcs.rainbow_group', Z.field, [46.48, 0, 6.43], -0.1),
+  marker('spot', 'spot.thcs.rainbow_group_3', Z.field, [47.27, 0, 6.59], -0.28),
+  marker('spot', 'spot.thcs.rainbow_group_4', Z.field, [48.05, 0, 6.84], -0.46),
+  // Trang 4 — Cảnh 8: tường dán ảnh trong chòi Căn cứ (vách sau COLLIDER_hut_back)
+  marker('interact', 'itr.thcs.base_photo_wall', Z.base, [47.6, 0, -31.9], PI),
+  ...cameraPair('cam.thcs.base_photo_wall', Z.base, [47.6, 1.5, -30.4], [47.6, 1.35, -32.85]),
+];
+
 /** Một đoạn tường thẳng theo trục x hoặc z, từ (x0, z0) tới (x1, z1). */
 export interface WallSeg { id: string; zone: string; x0: number; z0: number; x1: number; z1: number }
 
@@ -102,6 +146,7 @@ export const EXTRAS: WorldExtras = {
     ...cameraPair('cam.thcs.rainbow', Z.yard, [4, 1.3, 10.5], [4, 3.5, -10]),                         // ảnh cầu vồng (gốc phượng)
     // BG-1: vào sân sau từ sân, nhìn về phía đông
     marker('spawn', 'spawn.thcs.backyard', Z.field, [30, 0, -12], Math.PI / 2),
+    ...M1_MARKERS,
     ...M2_MARKERS,
   ],
   disableColliders: ['wall_fence_east'],

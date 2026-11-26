@@ -1,5 +1,7 @@
 # NEXT_SPRINT_TASK_BOARD — BẢNG VIỆC DUY NHẤT tới 04/12/2026 (bản gộp)
 
+> **Cập nhật 26/11/2026:** bảng việc tới bản đo 05/12 nay là `docs/handoff/SPRINT_TASKS_2026-11-26.md` (sau Audit Đợt 1–3). Bảng dưới đây giữ làm lịch sử và tham chiếu thẻ N-xx.
+
 | Trường | Giá trị |
 |---|---|
 | Ngày lập | 22/11/2026 (UTC+7) · gộp lần 2 cùng ngày, sau khi chủ dự án đồng ý các điểm cần xác nhận |
@@ -473,51 +475,65 @@ Chạy 4 lệnh kiểm, dán kết quả thật, mở PR.
 
 ---
 
-## Mục 5 — Tình hình tiến độ (Integrator cập nhật 24/11/2026, 14:00 UTC+7)
+## Mục 5 — Tình hình tiến độ (Integrator cập nhật 25/11/2026, sáng, UTC+7)
 
-Nhánh `feat/sprint-0412` @ `eeb09c2` (trước commit tài liệu). Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã gộp · ⛔ bị chặn.
-"Kiểm thật" = Integrator tự chạy trên bản gộp thử. vitest: mốc nền 22/11 266/1 → 391/2 hiện tại. Gói giao việc mới: `docs/handoff/NEXT_BATCH_2026-11-23_N14-N23.md`.
+`feat/sprint-0412` @ `303bd09` (sau N-01 #8) · `dev` @ `d5f1a09` (gộp #18, cây mã trùng `303bd09`) · `main` @ `4adf991` (scaffold, chưa đụng).
+Ký hiệu: ❌ chưa nhận · 🔄 đang làm · 🔍 chờ sửa · ✅ đã gộp · ⛔ bị chặn. "Kiểm thật" = Integrator tự chạy trên bản gộp thử. vitest: mốc nền 22/11 266/1 → **522/2** hiện tại. Đợt việc mới: `docs/handoff/NEXT_BATCH_2026-11-25.md`.
 
 | Mã | Trạng thái | Kiểm thật | Ghi chú |
 |---|---|---|---|
 | N-00 | ✅ 22/11 | — | — |
-| N-01 | 🔍 PR #8 — chờ sửa lần 2 | 4 lệnh ✓ (vitest 413/2) · e2e **37/1 đỏ/1 bỏ qua** (21,6 phút) | Đã giải xung đột + sửa thoại/thời tiết; còn 1 ca đỏ: `game.ts` không phát `lines` của bước minigame → chủ dự án cho N-01 sửa đúng chỗ đó (24/11), `expect.soft` → `expect`, mục tiêu e2e 38/0/1 |
+| N-01 | ✅ PR #8, `303bd09` | tsc ✓ · vitest 522/2 ✓ · validate ✓ · build ✓ · e2e **45/0/1 ✓** (22,0 phút) | Câu Hạ "…bỏ bạn đó **ở lại**…" đã sửa (`2bbf275`). Tồn: thoại trước/sau trò → **N-01b** |
+| N-24 | ❌ → giao 25/11 | — | Đổi tên game "Vùng Ký Ức" (chủ dự án chốt 25/11). `docs/gdd/` + `CLAUDE.md` do chủ dự án sửa. Gộp trước N-18 (cùng `src/main.ts`) |
+| N-01b | ❌ → giao 25/11 | — | Tách thoại trước/sau minigame Trang 1 + Luật Căn cứ Trang 3 (Mốc 1, P0) |
 | N-02 | ✅ PR #4, `f5fb467` | e2e 38/1 | — |
-| N-02b | ✅ PR #7, `c637b5b` | tsc ✓ · vitest 339/2 ✓ · validate ✓ · build ✓ · e2e 38/1 ✓ (27,9 phút) | `recordMg`, `opponent`, `flag` đã nối |
+| N-02b | ✅ PR #7, `c637b5b` | e2e 38/1 | — |
 | N-03 | ✅ PR #1, `a9758c2` | — | — |
-| N-04 | ✅ PR #2, `203982f` | e2e 37/1 | Marker Mốc 2 → N-04b |
-| N-05 | ✅ PR #5, `8257863` | tsc ✓ · vitest 412/2 ✓ · validate ✓ · build ✓ · e2e **38/1 ✓** (17,8 phút) | Đã mở khóa N-01, N-13, N-15 |
-| N-06 | ✅ PR #9, `628bc5a` | tsc ✓ · vitest 472/2 ✓ · validate ✓ · build ✓ · e2e **38/0/1 ✓** (17,9 phút) | Đã bỏ họ tên tự đặt, `{player_name}`, "TUỔI TRẺ" |
-| N-07 | ✅ PR #10, `bd0d535` | tsc ✓ · vitest 347/2 ✓ · validate ✓ · build ✓ | 5.796 tam giác / 12 lượt vẽ; thiếu ảnh 4 hướng (nhắc) |
-| N-08 | ✅ gộp qua PR #17 (K2), `2a987b6` — PR #11 đã đóng | xem dòng K2 | Ca e2e 304 đã sửa trong K2 |
-| K2 | ✅ PR #17, `2a987b6` | tsc ✓ · vitest 521/2 ✓ · validate ✓ · build ✓ · e2e **45/0/1 ✓** (20,4 phút) | Phòng 2026 đi lại tự do (chủ dự án chốt 24/11) + N-08 + khử ám vàng. **GDD 00 dòng 35/158/239 còn ghi "góc cố định" — chủ dự án cập nhật** |
-| N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | — |
-| N-10 | ✅ PR #6, `b66528b` | — | Bổ sung mã màn 2D → N-10b |
-| N-11a | ✅ PR #12, `c25dd06` | tsc ✓ · vitest 369/2 ✓ · validate ✓ · build ✓ | Lời giải mật lệnh "RA CHƠI" |
-| N-11b | ✅ PR #13, `eeb09c2` | tsc ✓ · vitest 391/2 ✓ · validate ✓ · build ✓ · e2e nhánh thật sau đợt 38/1 ✓ (29,5 phút) | 5 điều luật khớp nguyên văn |
-| N-04b | ❌ → giao sóng 1 | — | Hợp đồng 16 mã marker Mốc 2 |
-| N-10b | ❌ → giao sóng 1 | — | 4 mã `mg_screen_*` |
-| N-12 | ❌ → giao sóng 1 | — | — |
-| N-13 | ❌ sóng 1b (chờ N-05) | — | — |
-| N-14 | ❌ → giao sóng 1 (sẵn sàng: N-02b ✅) | — | Kèm thay `{quan}–{duc}` trong `fmt` |
-| N-15a, b, c, e | ❌ → giao sóng 1 (viết ngay, gộp sau N-04b + N-05) | — | b là Trang lớn nhất (Valentine) → Opus |
-| N-15d | ❌ sóng 1b (chờ N-05: đêm Hội trại) | — | — |
-| N-15f | ❌ sóng 2 | — | — |
-| N-16, N-17, N-23, N-20 | ❌ → giao sóng 1 | — | N-20 sửa `docs/gdd/` → Integrator hỏi chủ dự án trước khi gộp |
-| N-18, N-21 | ❌ sóng 2 | — | — |
-| N-19, N-22 | ❌ sóng 3 (cổng cuối) | — | — |
+| N-04 | ✅ PR #2, `203982f` | e2e 37/1 | — |
+| N-04b | ✅ PR #15, `01edf2a` | gộp 24/11; nằm trong lần kiểm #18 (522/2, e2e 45/0/1) | Marker Mốc 2 |
+| N-05 | ✅ PR #5, `8257863` | e2e 38/1 | — |
+| N-06 | ✅ PR #9, `628bc5a` | e2e 38/0/1 | — |
+| N-07 | ✅ PR #10, `bd0d535` | — | Thiếu ảnh 4 hướng (nhắc) |
+| N-08 + K2 | ✅ PR #17, `2a987b6` | e2e 45/0/1 | GDD 00 đã sửa "đi lại tự do" (`2fe845a`, 25/11) |
+| N-09 | ✅ PR #3, `dfc156e` | e2e 38/1 | Firestore thật chưa kiểm |
+| N-10 | ✅ PR #6, `b66528b` | — | — |
+| N-10b | ✅ PR #14, `9ca9b96` | gộp 24/11; nằm trong lần kiểm #18 | — |
+| N-11a / N-11b | ✅ PR #12 `c25dd06` / #13 `eeb09c2` | nhánh thật sau đợt 23/11: e2e 38/1 | Nay chạy thật trong luồng Trang 1–4 (sau N-01) |
+| N-14 | ✅ PR #16, `48677c5` | gộp 24/11; nằm trong lần kiểm #18 | Ảnh 3 lần lấy mặc định theo camera `cam.d0601.grocery` (dữ liệu Trang chưa khai `shots: 3` — không lỗi) |
+| N-12 | ❌ → giao lại 25/11 | — | Giao 23/11 nhưng chưa thấy nhánh |
+| N-13 | ❌ | — | Mốc 2 |
+| N-15a, N-15c | 🔄 nhánh `task/N-15a-trang5`, `task/N-15c-trang7` (24/11), chưa PR | — | Mốc 2 |
+| N-15b, N-15d, N-15e | ❌ (giao 23/11, chưa thấy nhánh) | — | Mốc 2 |
+| N-15f | ❌ sóng 2 | — | **Phần `filterPackForRelease` chuyển sang N-22a**; gộp sau N-22a, N-01b |
+| N-16, N-17 | ❌ (giao 23/11, chưa thấy nhánh) | — | Mốc 2 |
+| N-18 | ❌ → giao 25/11 | — | Cần trước kỳ đo 05/12; gộp sau N-24; Codex không dùng nữa → giao Sonnet/Opus |
+| N-19a | ❌ → giao 25/11 (người) | — | Chơi tay Mốc 1 + FPS trên Preview `dev` |
+| N-19 | ❌ cổng cuối | — | e2e 9 Trang |
+| N-20, N-21, N-23 | ❌ P2 | — | N-20 sửa `docs/gdd/` → hỏi chủ dự án trước khi gộp |
+| N-22a | ❌ → giao 25/11 | — | Khai 4 Trang cho Production + tắt Side/Daily AI + test chặn |
+| N-22 | ❌ cổng cuối | — | Mở rộng thành 9 Trang khi Mốc 2 xong |
 
-### 5.1 So với lịch Mục 1.1
-- Chưa task nào trễ. N-11a/N-11b gộp sớm hơn điểm kiểm 30/11 (module trò đã có; chưa chơi được trong luồng vì N-01 chưa gộp).
-- **Điểm kiểm 26/11 (chơi tay trọn 4 Trang):** phụ thuộc N-01 + N-05 + N-06 + N-08 — cả 4 đang ở vòng sửa. Kịp nếu các PR quay lại trong 24/11.
-- **N-15 bắt đầu sớm 3–4 ngày so với lịch** (lịch 27–30/11) vì mã marker và mã trò đã chốt.
+### 5.1 Mốc 1 — sẵn sàng Production chưa? **Chưa** (kiểm 25/11)
+Đã có: 4 Trang đúng kịch bản, 8 trò chạy trong luồng, ảnh 3 lần + bìa cầu vồng, phòng 2026 + kết, form phản hồi; build production sạch công cụ test; Vercel build `dev` thành công.
+**Bắt buộc trước khi gộp `main`:**
+1. **N-22a** — khối `production` của `release.ts` đang **0 Trang** (Production hiện chỉ có trang chủ, không có nút chơi). Khai ngay thì 5 quest Side/Daily `AI_PROPOSED` lọt vào game vì validator production **chỉ in lỗi ra console, không chặn**.
+2. **N-01b** — thoại trước/sau trò đang ngược ở Trang 1 (mật lệnh, đá cầu, bóp mì, 3 câu tấm tự sướng) và Trang 3 (5 điều luật).
+3. **N-19a** — chưa ai chơi tay trọn Mốc 1, chưa đo FPS laptop thật.
+4. ~~Q1~~ — chủ dự án chốt phương án A (25/11): giữ màn kết như bản test tới khi Mốc 2 lên.
+5. ~~Firebase trên Vercel~~ — chủ dự án kiểm 25/11: `/api/health` → `firebase: configured`. (Chưa ghi rõ kiểm bản Production hay chỉ Preview — hỏi lại.)
+**Nên có (không chặn):** N-12 (người lớn, học sinh nền), N-18 (event trang chủ — cần trước 05/12).
 
-### 5.2 Đường găng
-N-05 → (N-04b) → N-15a…e → N-15f → N-19 → N-22. Và N-05 → N-01 → điểm kiểm 26/11.
+### 5.2 So với lịch Mục 1.1
+- N-01 gộp 25/11 (chậm ~2 ngày so với 22–23/11). Điểm kiểm **26/11 (chơi tay 4 Trang)** vẫn làm được ngay trên Preview `dev` → N-19a.
+- Mốc 2: mới 2/5 Trang có nhánh; N-16/N-17 chưa thấy nhánh → rủi ro cho điểm cắt 02/12.
 
-### 5.3 Rủi ro
-1. ~~N-05 là nút cổ chai~~ — **đã gộp 24/11**. Nút cổ chai mới: **N-01 (#8)** — chặn điểm kiểm 26/11 và N-22.
-2. **e2e là lưới an toàn duy nhất cho luồng chơi** — 2 PR (N-01, N-08) đổi luồng mà chưa chạy e2e; đã quyết: PR nào đổi luồng thì tự cập nhật ca e2e bị ảnh hưởng (ngoại lệ `tests/e2e`).
-3. **Lệch kịch bản ↔ GDD ở Trang 5:** kịch bản v1.5 vẫn ghi "chọn ô 2 lần", GDD `02` §2.1 (duyệt 20/11) ghi rõ thay bằng Caro chơi thật → làm theo GDD; câu thoại theo kết quả Caro vẫn PROPOSED nên chưa vào game.
-4. Chữ tự viết lọt vào PR (N-01 thoại Trang 2, N-06 họ tên) — Integrator đối chiếu từng câu với kịch bản trước khi gộp.
-5. Gói `game` ~1,08 MB; chưa đo FPS laptop thật. Chưa kiểm: Vercel Preview, Firestore thật, ca Emulator, chơi tay.
+### 5.3 Đường găng
+Mốc 1 Production: N-01b + N-22a → N-19a (chơi tay lại) → `dev` → chủ dự án gộp `main`.
+Bản đo 9 Trang: N-15a…e → N-15f → N-19 → N-22.
+
+### 5.4 Rủi ro
+1. Validator production không chặn (chỉ `console.error`) → test của N-22a là lưới an toàn duy nhất.
+2. Dữ liệu Side/Daily `[PLACEHOLDER]` vẫn nằm trong gói JS production (33 chỗ) dù người chơi không tới được — xử lý sau (cần tách export trong file Trang).
+3. Đưa Production sớm trước 05/12: event ghi `release_stage: 'prototype'` (src/config/game.ts) — đổi sang `public` đúng 05/12 và ghi nhật ký (N-22).
+4. e2e là lưới an toàn duy nhất cho luồng chơi; PR đổi luồng phải tự chạy e2e đầy đủ.
+5. Gói `game` ~1,2 MB; chưa đo FPS/tải trên máy thật. Chưa kiểm: Vercel Preview chơi tay, Firestore thật, ca Emulator.
