@@ -165,15 +165,15 @@ test.describe('phần khung game', () => {
     // s04 (lau bảng, không có intro_lines): bấm "Bỏ qua" rồi mới nghe câu của Châu
     const skip04 = at('skip q_m1_main_01.s04', 'bot phải bấm "Bỏ qua" ở trò lau bảng (q_m1_main_01.s04)');
     expect(at('line Mới quen một bữa mà ông mày tao rồi hả?', 'câu s04 phải được phát'), 'thoại s04 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip04);
-    // s02 (mật lệnh): 6 câu đầu (intro_lines) TRƯỚC khi bấm "Bỏ qua"; câu của Châu (lines) SAU
+    // s02 (mật lệnh): intro_lines TRƯỚC khi bấm "Bỏ qua"; câu của Đức & Châu (lines) SAU
     const skip02 = at('skip q_m1_main_01.s02', 'bot phải bấm "Bỏ qua" ở trò mật lệnh (q_m1_main_01.s02)');
-    expect(at('line Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.', 'câu mở đầu s02 phải được phát'), 'intro_lines s02 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip02);
-    expect(at('line Ơ… dạ, Châu Tổng.', 'câu cuối intro_lines s02 phải được phát'), 'câu cuối intro_lines s02 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip02);
-    expect(at('line Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.', 'câu kết s02 phải được phát'), 'lines s02 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip02);
-    // s06 (mì tôm): lời rủ mua mì TRƯỚC khi bấm "Bỏ qua"; "Quay ngược máy lại tự sướng đi!" SAU
+    expect(at('line Ê, đọc đi! Mật lệnh tuyệt mật đó.', 'câu mở đầu s02 phải được phát'), 'intro_lines s02 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip02);
+    expect(at('line Ơ… dạ, Châu Tổng.', 'câu giữa lines s02 phải được phát'), 'lines s02 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip02);
+    expect(at('line Lo chép bài đi, chút ra chơi rồi tính tiếp.', 'câu kết s02 phải được phát'), 'lines s02 phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip02);
+    // s06 (mì tôm): lời rủ mì TRƯỚC khi bấm "Bỏ qua"; "Quay ngược máy lại, tự sướng!" SAU
     const skip06 = at('skip q_m1_main_01.s06', 'bot phải bấm "Bỏ qua" ở trò mì tôm (q_m1_main_01.s06)');
-    expect(at('line Chia đều. Không bàn cãi nữa.', 'câu s06 phải được phát'), 'intro_lines s06 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip06);
-    expect(timeline.findIndex((t) => t.startsWith('line ') && t.includes('có máy ảnh mà! Quay ngược máy lại tự sướng đi!')), 'câu dẫn sang bước chụp (lines s06) phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip06);
+    expect(at('line Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!', 'câu intro s06 phải được phát'), 'intro_lines s06 phải hiện TRƯỚC khi bấm "Bỏ qua"').toBeLessThan(skip06);
+    expect(timeline.findIndex((t) => t.startsWith('line ') && t.includes('có máy ảnh mà! Quay ngược máy lại, tự sướng!')), 'câu dẫn sang bước chụp (lines s06) phải hiện SAU khi bấm "Bỏ qua"').toBeGreaterThan(skip06);
     // s08: ba câu bàn về tấm tự sướng chỉ hiện SAU bước ảnh s07 (không còn nằm trước ảnh như bản N-01)
     const step07 = at('step q_m1_main_01.s07', 'bot phải tới bước ảnh s07');
     const step08 = at('step q_m1_main_01.s08', 'bot phải tới bước s08 (cảnh sau ảnh)');
@@ -289,7 +289,7 @@ test.describe('phần khung game', () => {
     s = await state(page);
     expect(s).toMatchObject({ mode: 'day', day: 'd.g06.01', step: 'q_m1_main_01.s02', attempt_id: before.attempt_id });
     expect(s.quests).toEqual(before.quests);
-    expect(s.ui.objective).toContain('Giải mật lệnh cùng Đức và Châu');   // mục tiêu của q_m1_main_01.s02
+    expect(s.ui.objective).toContain('Ghép ký hiệu giải mật lệnh của Đức');   // mục tiêu của q_m1_main_01.s02
 
     // chơi tiếp được tới hết Ngày và về phòng
     await drive(page, { optional: false }, (_l, x) => x.mode === 'hub' && x.days['d.g06.01'] === 'completed' && x.artifacts['art_m1_01'] === 'on_shelf');
@@ -349,7 +349,7 @@ test.describe('phần khung game', () => {
     await page.screenshot({ path: `${SHOTS}/70-hub-re-chuot.png` });
     await page.mouse.click(640, 700);                                         // bấm chuột = tương tác với vật đang gợi ý
     await expect(page.locator('[data-testid="panel-box3d"]')).toBeVisible();
-    await drive(page, {}, (_l, s) => !s.ui.dialogue);                         // câu "lục đồ" khi mở hộp
+    await drive(page, {}, (_l, s) => !s.ui.dialogue && !(s.ui as { narrator?: unknown }).narrator); // câu "lục đồ" khi mở hộp (narrator + player)
     await expect.poll(() => page.evaluate(() => (window.__game!.hubView() as { boxBlend: number }).boxBlend)).toBe(1);
     const items = await page.evaluate(() => (window.__game!.hubView() as { items: { id: string; state: string; clickable: boolean }[] }).items);
     expect(items.find((i) => i.id === 'art_m1_01')).toMatchObject({ state: 'glow', clickable: true });
@@ -360,8 +360,9 @@ test.describe('phần khung game', () => {
     // B10 (N-08): mở thùng xong là độc thoại của Player, chờ Space — bấm Space qua hết thoại rồi mới chờ vào Ngày
     await expect.poll(async () => {
       const s = await state(page);
-      if (s.ui.dialogue) await page.keyboard.press('Space');
-      return s.mode === 'day' && !s.ui.dialogue && (await page.evaluate(() => window.__game!.ready()));
+      const hasOverlay = await page.evaluate(() => !!document.querySelector('[data-testid="dialogue"], [data-testid="narrator-banner"], [data-testid="title-card"]'));
+      if (hasOverlay) await page.keyboard.press('Space');
+      return s.mode === 'day' && !hasOverlay && (await page.evaluate(() => window.__game!.ready()));
     }, { timeout: 60_000, intervals: [250] }).toBe(true);
 
     // Giữ W tới khi đi được hơn 0,5 m. Không chờ cứng 1,2 giây: ngay sau khi vào Trang, Chrome headless (vẽ bằng CPU)
