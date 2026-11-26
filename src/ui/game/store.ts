@@ -43,6 +43,7 @@ export interface UiState {
   fade: { on: boolean; label: string };
   mode: 'hub' | 'day' | null;
   objective: string | null;
+  collectProgress?: { done: number; total: number } | null;
   quests: { title: string; type: string; state: string }[];
   prompt: { key: string; text: string } | null;
   toast: string | null;
@@ -80,7 +81,7 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, collectProgress: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
   dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };

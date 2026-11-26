@@ -27,9 +27,8 @@ const m1CommonSet: DressingSet = {
     root.add(grocery);
 
     // 3. Cụm quả cầu rơi cạnh bụi cây ở sân đá cầu
-    const footbagSpot = placeAtMarker(makeFootbagSpot(), ctx.world, 'interact', 'itr.thcs.shuttle_ring', {
-      offset: [0.5, 0, 0.5],
-      fallback: [12, 0, 7],
+    const footbagSpot = placeAtMarker(makeFootbagSpot(), ctx.world, 'interact', 'itr.thcs.shuttle_bush', {
+      fallback: [14.6, 0, 9.2],
     });
     root.add(footbagSpot);
 
