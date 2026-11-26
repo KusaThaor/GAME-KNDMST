@@ -3,14 +3,17 @@ import { Pop } from './NoticeModal';
 
 export function PhotoOverlay({ photo, touch, a }: { photo: NonNullable<UiState['photo']>; touch: boolean; a: UiActions }) {
   if (photo.phase === 'ready') {
+    const readyPrompt = photo.prompt ?? (photo.mode === 'timer'
+      ? (photo.hidePose
+        ? `Bấm hẹn giờ rồi thong thả đi vào vòng sáng (${photo.seconds} giây).`
+        : `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm ${touch ? 'nút Tạo dáng' : 'Space'} để tạo dáng (${photo.seconds} giây).`)
+      : photo.shot
+        ? `Máy quay ngược, không thấy khung — cứ đoán rồi bấm. Chụp đủ ${photo.shot.total} lần rồi chọn một tấm để giữ.`
+        : 'Bấm để chụp.');
     return (
       <Pop class="g-card g-photo-ready" testid="photo-ready">
         <h2>{photo.shot ? `Tự sướng — lần ${photo.shot.index}/${photo.shot.total}` : 'Máy ảnh đã đặt'}</h2>
-        <p>{photo.mode === 'timer'
-          ? `Bấm hẹn giờ, chạy vào vòng sáng rồi bấm ${touch ? 'nút Tạo dáng' : 'Space'} để tạo dáng (${photo.seconds} giây).`
-          : photo.shot
-            ? `Máy quay ngược, không thấy khung — cứ đoán rồi bấm. Chụp đủ ${photo.shot.total} lần rồi chọn một tấm để giữ.`
-            : 'Bấm để chụp.'}</p>
+        <p>{readyPrompt}</p>
         <button class="primary" data-act="photo-start" data-shot={photo.shot?.index} onClick={a.photoStart}>
           {photo.mode === 'timer' ? 'Hẹn giờ' : 'Chụp'}
         </button>
@@ -45,7 +48,18 @@ export function PhotoOverlay({ photo, touch, a }: { photo: NonNullable<UiState['
     return (
       <div class="g-countdown" data-testid="photo-countdown">
         <b>{Math.max(0, Math.ceil(photo.seconds))}</b>
-        {photo.posed ? <span>Giữ nguyên nha!</span> : <button class="primary" data-act="photo-pose" onClick={a.photoPose}>Tạo dáng{!touch && <> <kbd>Space</kbd></>}</button>}
+        {!photo.hidePose && (photo.posed ? <span>Giữ nguyên nha!</span> : <button class="primary" data-act="photo-pose" onClick={a.photoPose}>Tạo dáng{!touch && <> <kbd>Space</kbd></>}</button>)}
+        {photo.countdownLine && (
+          <div class="g-countdown-line" data-testid="photo-countdown-line" style={{
+            marginTop: '10px', padding: '6px 14px', borderRadius: '12px',
+            background: 'rgba(255, 250, 238, 0.94)', color: '#3a2c26',
+            border: '2px solid #3a2c26', textShadow: 'none', fontSize: '16px',
+            maxWidth: 'min(480px, 85vw)', pointerEvents: 'none',
+          }}>
+            {photo.countdownLine.who && <strong style={{ color: photo.countdownLine.color }}>{photo.countdownLine.who}: </strong>}
+            <span>{photo.countdownLine.text}</span>
+          </div>
+        )}
       </div>
     );
   }

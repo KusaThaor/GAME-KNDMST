@@ -32,6 +32,12 @@ export interface PhotoView {
   url: string | null; marks: { label: string; ok: boolean }[]; score: number; display: 'marks' | 'score';
   /** Chụp nhiều lần (N-14): lần đang chụp (đếm từ 1) / tổng số lần. */
   shot?: { index: number; total: number };
+  /** Lời nhắc riêng của khung ngắm (lấy từ `shot_prompts[n]` hoặc `step.prompt`). */
+  prompt?: string;
+  /** Ẩn nút/nhắc tạo dáng ở chế độ hẹn giờ (ảnh cầu vồng Trang 4). */
+  hidePose?: boolean;
+  /** Thoại chen không chặn lúc đếm ngược (chỉ hiện trong phase 'countdown'). */
+  countdownLine?: { who: string; color: string; text: string } | null;
   /** Màn chọn 1 tấm (phase 'pick'): các tấm vừa chụp và tấm đang chọn. */
   picks?: { url: string; marks: { label: string; ok: boolean }[]; score: number }[];
   picked?: number;
