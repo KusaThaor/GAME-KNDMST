@@ -11,6 +11,7 @@ export type HubDecorShape = 'notebooks' | 'scarf' | 'class_photo' | 'pencil_case
 export interface HubDecor { id: string; name: string; shape: HubDecorShape; ownership_label: OwnershipLabel; lines: DialogueLine[] }
 
 const me = (text: string): DialogueLine => ({ speaker: 'player', text });
+const narr = (text: string): DialogueLine => ({ speaker: 'narrator', text });
 
 export const HUB_ROOM = {
   /** Phòng: x ∈ [-w/2, w/2], z ∈ [-d/2, d/2] (z âm = tường có cửa sổ). Đơn vị mét. */
@@ -76,7 +77,11 @@ export const HUB_ROOM = {
 
 /** Câu khi mở Hộp Kỷ Vật: lần đầu (2 dòng) và các lần sau (1 dòng). */
 export const HUB_BOX_LINES = {
-  open_first: [me('Toàn đồ hồi cấp hai… Vở cũ, khăn quàng đỏ, cả tấm ảnh lớp.'), me('Ủa, mẩu giấy gấp tư góc này… là cái gì đây ta?')],
+  open_first: [
+    narr('Chiếc thùng carton cũ phủ một lớp bụi mỏng. Mở nắp ra, mùi giấy cũ và năm tháng ùa về...'),
+    me('Toàn đồ hồi cấp hai… Vở cũ, khăn quàng đỏ, cả tấm ảnh lớp.'),
+    me('Ủa, mẩu giấy gấp tư góc này… là cái gì đây ta?'),
+  ],
   open_again: [me('Lục tiếp coi trong thùng còn giữ món nào nữa.')],
   /** Bấm vào kỷ vật chưa tới lượt (còn mờ). */
   locked: [me('Món này còn mờ quá… để mình nhớ lại từ từ đã.')],
@@ -90,8 +95,8 @@ export const HUB_BOX_HINTS = {
 
 /** Đồ linh tinh trong hộp: bấm chỉ nói một câu, không chuyển cảnh. */
 export const HUB_DECOR: HubDecor[] = [
-  { id: 'deco.notebooks', name: 'Mấy cuốn vở cũ', shape: 'notebooks', ownership_label: 'HUMAN_CANON', lines: [me('Vở bài tập lớp 6… Chữ mình hồi đó viết nghệch ngoạc ghê.')] },
-  { id: 'deco.scarf', name: 'Khăn quàng đỏ', shape: 'scarf', ownership_label: 'HUMAN_CANON', lines: [me('Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là bị sao đỏ ghi tên.')] },
+  { id: 'deco.notebooks', name: 'Mấy cuốn vở cũ', shape: 'notebooks', ownership_label: 'HUMAN_CANON', lines: [narr('Mấy cuốn vở ô ly từ hồi cấp hai, mép quăn queo, trang bìa dán nhãn nắn nót tên lớp.'), me('Vở bài tập lớp 6… Chữ mình hồi đó viết nghệch ngoạc ghê.')] },
+  { id: 'deco.scarf', name: 'Khăn quàng đỏ', shape: 'scarf', ownership_label: 'HUMAN_CANON', lines: [narr('Chiếc khăn quàng đỏ đã bạc màu viền, vải nhăn nhúm nằm cuộn tròn dưới đáy thùng.'), me('Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là bị sao đỏ ghi tên.')] },
   { id: 'deco.class_photo', name: 'Tấm ảnh lớp đã phai', shape: 'class_photo', ownership_label: 'HUMAN_CANON', lines: [me('Tấm ảnh lớp hồi đó… màu phai gần hết, nhìn hồi lâu mới nhận ra từng đứa.')] },
   { id: 'deco.pencil_case', name: 'Hộp bút sắt', shape: 'pencil_case', ownership_label: 'HUMAN_CANON', lines: [me('Hộp bút cũ lắc lên còn kêu lạch cạch. Nắp hộp vẫn còn mấy vết xước hồi đi học.')] },
   { id: 'deco.eraser', name: 'Cục gôm mòn', shape: 'eraser', ownership_label: 'HUMAN_CANON', lines: [me('Cục gôm mòn vẹt một góc, hồi đó đứa nào cũng hay mượn rồi quên trả.')] },
