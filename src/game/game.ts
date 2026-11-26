@@ -31,6 +31,7 @@ import { createMinigameRunner } from './runtime/minigameRunner';
 import { createPhotoRunner, createPropHook } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
 import { createStepHooks } from './runtime/stepHooks';
+import { createStageRunner } from './runtime/stageRunner';
 import { createStepReactions } from './runtime/stepReactions';
 import { formatGameText } from './runtime/uiAdapters';
 import type { DayScene } from './scenes/dayScene';
@@ -108,6 +109,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const stepHooks = createStepHooks();
   stepHooks.register(createStepReactions({ idx, bus, engine, ui, getQueue: () => queue, getDayScene: dayCtrl.scene }));
   stepHooks.register(createPropHook(dayCtrl.scene));
+  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene }));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,
     runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
