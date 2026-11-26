@@ -60,7 +60,9 @@ function playAll(t: ReturnType<typeof setup>) {
   e.startDay('d.g07.01');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_02.s01');
   e.trigger('interact', 'NPC_C'); e.complete('q_m1_main_02.s02');
+  e.complete('q_m1_main_02.s06');
   e.complete('q_m1_main_02.s03', { option_id: 'friendship' });
+  e.complete('q_m1_main_02.s07');
   e.trigger('interact', 'itr.thcs.gutter'); e.complete('q_m1_main_02.s04');
   e.complete('q_m1_main_02.s05');
   e.answerEndPrompt('leave');
@@ -70,10 +72,11 @@ function playAll(t: ReturnType<typeof setup>) {
   e.startDay('d.g07.02');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_03.s01');
   e.trigger('interact', 'itr.thcs.base_survey_roof'); e.trigger('interact', 'itr.thcs.base_survey_stump'); e.trigger('interact', 'itr.thcs.base_survey_boxes');
-  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
   e.complete('q_m1_main_03.s04');
+  e.complete('q_m1_main_03.s03', { option_id: 'photos' });
   e.complete('q_m1_main_03.s05');
   e.complete('q_m1_main_03.s06');
+  e.complete('q_m1_main_03.s07');
   e.answerEndPrompt('leave');
   e.enterHub(); hub.refresh(); hub.runPdes();
 

@@ -1,0 +1,290 @@
+{
+  "HAIR_001": {
+    "hair_id": "HAIR_001",
+    "name": "Classic Bowl Cut",
+    "glb_file": "character_hair_001_v11.glb",
+    "file_size_kb": "427.8",
+    "total_triangles": 8158,
+    "hair_triangles": 8158,
+    "hair_vertices": 4492,
+    "head_bone_bound": true,
+    "head_mesh_present": true,
+    "morph_targets": 0,
+    "animations_count": 16,
+    "hair_materials": [
+      {
+        "name": "M_Hair_v11_hair_001",
+        "roughness": 0.6800000071525574,
+        "metalness": 0,
+        "colorHex": "#2b201c"
+      },
+      {
+        "name": "M_Top_v11_hair_001",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Top_Collar_v11_hair_001",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Bottom_v11_hair_001",
+        "roughness": 0.6499999761581421,
+        "metalness": 0,
+        "colorHex": "#15233f"
+      },
+      {
+        "name": "M_Shoe_v11_hair_001",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f5f3ed"
+      },
+      {
+        "name": "M_Sole_v11_hair_001",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#b9ada1"
+      },
+      {
+        "name": "M_Socks_v11_hair_001",
+        "roughness": 0.6000000238418579,
+        "metalness": 0,
+        "colorHex": "#f8fafc"
+      },
+      {
+        "name": "M_Skin_v11_hair_001",
+        "roughness": 0.6200000047683716,
+        "metalness": 0,
+        "colorHex": "#f4d0af"
+      },
+      {
+        "name": "M_Acc_Glasses_v11_hair_001",
+        "roughness": 0.3499999940395355,
+        "metalness": 0,
+        "colorHex": "#1c1c21"
+      },
+      {
+        "name": "M_Eye_Black_v11_hair_001",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#0a0a0e"
+      },
+      {
+        "name": "M_Eye_Highlight_v11_hair_001",
+        "roughness": 0.20000000298023224,
+        "metalness": 0,
+        "colorHex": "#ffffff"
+      },
+      {
+        "name": "M_Mouth_v11_hair_001",
+        "roughness": 0.4000000059604645,
+        "metalness": 0,
+        "colorHex": "#832c2c"
+      },
+      {
+        "name": "M_Blush_v11_hair_001",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#f58998"
+      }
+    ],
+    "status": "PASS"
+  },
+  "HAIR_004": {
+    "hair_id": "HAIR_004",
+    "name": "Side-Parted Short",
+    "glb_file": "character_hair_004_v11.glb",
+    "file_size_kb": "475.0",
+    "total_triangles": 9878,
+    "hair_triangles": 9878,
+    "hair_vertices": 5354,
+    "head_bone_bound": true,
+    "head_mesh_present": true,
+    "morph_targets": 0,
+    "animations_count": 16,
+    "hair_materials": [
+      {
+        "name": "M_Hair_v11_hair_004",
+        "roughness": 0.6800000071525574,
+        "metalness": 0,
+        "colorHex": "#241c19"
+      },
+      {
+        "name": "M_Top_v11_hair_004",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Top_Collar_v11_hair_004",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Bottom_v11_hair_004",
+        "roughness": 0.6499999761581421,
+        "metalness": 0,
+        "colorHex": "#15233f"
+      },
+      {
+        "name": "M_Shoe_v11_hair_004",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f5f3ed"
+      },
+      {
+        "name": "M_Sole_v11_hair_004",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#b9ada1"
+      },
+      {
+        "name": "M_Socks_v11_hair_004",
+        "roughness": 0.6000000238418579,
+        "metalness": 0,
+        "colorHex": "#f8fafc"
+      },
+      {
+        "name": "M_Skin_v11_hair_004",
+        "roughness": 0.6200000047683716,
+        "metalness": 0,
+        "colorHex": "#f4d0af"
+      },
+      {
+        "name": "M_Acc_Glasses_v11_hair_004",
+        "roughness": 0.3499999940395355,
+        "metalness": 0,
+        "colorHex": "#1c1c21"
+      },
+      {
+        "name": "M_Eye_Black_v11_hair_004",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#0a0a0e"
+      },
+      {
+        "name": "M_Eye_Highlight_v11_hair_004",
+        "roughness": 0.20000000298023224,
+        "metalness": 0,
+        "colorHex": "#ffffff"
+      },
+      {
+        "name": "M_Mouth_v11_hair_004",
+        "roughness": 0.4000000059604645,
+        "metalness": 0,
+        "colorHex": "#832c2c"
+      },
+      {
+        "name": "M_Blush_v11_hair_004",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#f58998"
+      }
+    ],
+    "status": "PASS"
+  },
+  "HAIR_008": {
+    "hair_id": "HAIR_008",
+    "name": "Twin Pigtails",
+    "glb_file": "character_hair_008_v11.glb",
+    "file_size_kb": "693.1",
+    "total_triangles": 17798,
+    "hair_triangles": 17798,
+    "hair_vertices": 9324,
+    "head_bone_bound": true,
+    "head_mesh_present": true,
+    "morph_targets": 0,
+    "animations_count": 16,
+    "hair_materials": [
+      {
+        "name": "M_Hair_v11_hair_008",
+        "roughness": 0.6800000071525574,
+        "metalness": 0,
+        "colorHex": "#2b201c"
+      },
+      {
+        "name": "M_Tie_v11_hair_008",
+        "roughness": 0.44999998807907104,
+        "metalness": 0,
+        "colorHex": "#f5b82e"
+      },
+      {
+        "name": "M_Top_v11_hair_008",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Top_Collar_v11_hair_008",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f7f5ef"
+      },
+      {
+        "name": "M_Bottom_v11_hair_008",
+        "roughness": 0.6499999761581421,
+        "metalness": 0,
+        "colorHex": "#15233f"
+      },
+      {
+        "name": "M_Shoe_v11_hair_008",
+        "roughness": 0.550000011920929,
+        "metalness": 0,
+        "colorHex": "#f5f3ed"
+      },
+      {
+        "name": "M_Sole_v11_hair_008",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#b9ada1"
+      },
+      {
+        "name": "M_Socks_v11_hair_008",
+        "roughness": 0.6000000238418579,
+        "metalness": 0,
+        "colorHex": "#f8fafc"
+      },
+      {
+        "name": "M_Skin_v11_hair_008",
+        "roughness": 0.6200000047683716,
+        "metalness": 0,
+        "colorHex": "#f4d0af"
+      },
+      {
+        "name": "M_Acc_Glasses_v11_hair_008",
+        "roughness": 0.3499999940395355,
+        "metalness": 0,
+        "colorHex": "#1c1c21"
+      },
+      {
+        "name": "M_Eye_Black_v11_hair_008",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#0a0a0e"
+      },
+      {
+        "name": "M_Eye_Highlight_v11_hair_008",
+        "roughness": 0.20000000298023224,
+        "metalness": 0,
+        "colorHex": "#ffffff"
+      },
+      {
+        "name": "M_Mouth_v11_hair_008",
+        "roughness": 0.4000000059604645,
+        "metalness": 0,
+        "colorHex": "#832c2c"
+      },
+      {
+        "name": "M_Blush_v11_hair_008",
+        "roughness": 0.699999988079071,
+        "metalness": 0,
+        "colorHex": "#f58998"
+      }
+    ],
+    "status": "PASS"
+  }
+}

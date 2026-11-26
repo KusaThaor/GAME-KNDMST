@@ -42,12 +42,12 @@ describe('gói nội dung trong repo', () => {
     expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
 
     const d2 = idx.days.get('d.g07.01')!;
-    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(5);
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(7);
     expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
     expect(d2.daily_pool).toHaveLength(0);
 
     const d3 = idx.days.get('d.g07.02')!;
-    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(6);
+    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(7);
     expect(d3.side_quests).toHaveLength(0);
     expect(d3.daily_pool).toHaveLength(0);
 
@@ -72,25 +72,25 @@ describe('gói nội dung trong repo', () => {
       return s;
     };
     const cipher = mg('q_m1_main_01', 'q_m1_main_01.s02');
-    expect(text(cipher.intro_lines)).toHaveLength(6);
-    expect(text(cipher.intro_lines)[0]).toBe('Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.');
-    expect(text(cipher.intro_lines)[5]).toBe('Ơ… dạ, Châu Tổng.');
-    expect(text(cipher.lines)).toEqual(['Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.']);
+    expect(text(cipher.intro_lines)).toEqual(['Ê, đọc đi! Mật lệnh tuyệt mật đó.']);
+    expect(text(cipher.lines)).toHaveLength(7);
+    expect(text(cipher.lines)[6]).toBe('Lo chép bài đi, chút ra chơi rồi tính tiếp.');
     const footbag = mg('q_m1_main_01', 'q_m1_main_01.s03');
     expect(text(footbag.intro_lines)).toEqual(['Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!']);
-    expect(text(footbag.lines)).toEqual(['Ừ, giỏi dữ chưa. Đá hụt cầu bay vô bụi rồi kìa, để tui đi lượm.']);
+    expect(text(footbag.lines)).toHaveLength(3);
     const wipe = mg('q_m1_main_01', 'q_m1_main_01.s04');
-    expect(wipe.intro_lines).toBeUndefined();                      // đúng kịch bản: cả 4 câu sau trò
-    expect(text(wipe.lines)).toHaveLength(4);
+    expect(text(wipe.intro_lines)).toEqual(['Ghế tui xếp xong rồi. Bảng là phần hai người nha.']);
+    expect(text(wipe.lines)).toHaveLength(6);
     const noodle = mg('q_m1_main_01', 'q_m1_main_01.s06');
-    expect(text(noodle.intro_lines)).toEqual(['Ra tiệm tạp hóa đi! Còn đúng một gói mì nè, mua lẹ chia ba!', 'Chia đều. Không bàn cãi nữa.']);
-    expect(text(noodle.lines)).toEqual(['{player_name} có máy ảnh mà! Quay ngược máy lại tự sướng đi!']);
+    expect(text(noodle.intro_lines)).toEqual(['Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!']);
+    expect(text(noodle.lines)).toHaveLength(6);
     const steps = idx.quests.get('q_m1_main_01')!.steps;
     expect(steps.map((s) => s.id)).toEqual(['s01', 's02', 's03', 's04', 's05', 's06', 's07', 's08'].map((n) => `q_m1_main_01.${n}`));
     expect(steps[6].kind).toBe('photo');
     const after = steps[7];
     expect(after.kind).toBe('cutscene');
     expect(after.kind === 'cutscene' && text(after.lines)).toEqual([
+      'Tấm này hư cấu quá! Chụp lại đi!',
       'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.',
       'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.',
       'Chốt! Sau này chụp đủ một bộ sưu tập luôn!',
@@ -100,11 +100,14 @@ describe('gói nội dung trong repo', () => {
     expect(text(rules.intro_lines)[0]).toBe('Phải có luật. Điều 1: không tự lấy đồ của người khác.');
     expect(text(rules.intro_lines)[3]).toBe('Nếu có ai buồn thì… mọi người đừng bỏ bạn đó ở lại một mình nha.');   // chữ "ở lại" đã chốt ở 2bbf275
     expect(text(rules.intro_lines)[4]).toBe('Điều 5: chụp ảnh thì phải đủ người.');
-    expect(text(rules.lines)).toEqual(['Chốt! Ai vô căn cứ cũng phải tuân thủ!', 'Ông nói như có cả trăm người muốn vô.', 'Biết đâu sau này nổi tiếng!']);
-    // không câu nào bị mất hay thêm: Trang 1 trước đây có 7 + 2 + 4 + 6 = 19 câu trong 4 bước minigame; nay s02 7, s03 2, s04 4, s06 3, s08 3
+    expect(text(rules.lines)).toEqual([
+      'Chốt! Sổ luật viết xong rồi, ai vô Căn cứ cũng phải tuân thủ!',
+      'Ông nói như có cả trăm người muốn vô vậy.',
+      'Biết đâu sau này tụi mình nổi tiếng thiệt!',
+    ]);
     const total = (q: string) => idx.quests.get(q)!.steps.reduce((n, s) => n + (s.kind === 'minigame' ? (s.intro_lines?.length ?? 0) + (s.lines?.length ?? 0) : s.kind === 'cutscene' && s.id.endsWith('.s08') ? s.lines.length : 0), 0);
-    expect(total('q_m1_main_01')).toBe(19);
-    expect(total('q_m1_main_03')).toBe(8);
+    expect(total('q_m1_main_01')).toBe(30);
+    expect(total('q_m1_main_03')).toBe(11);
   });
   it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));
