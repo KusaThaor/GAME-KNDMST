@@ -225,6 +225,8 @@ export const quests: Quest[] = [
           'Lần 3: Lần cuối: Cố canh đủ ba người',
         ],
         prompt: 'Chọn một tấm ưng ý nhất để lưu vào cuốn Album',
+        // TONG_DUYET Trang 1 Cảnh 8, lần bấm 1. Câu này từng nằm cứng trong game.ts (N-14), bị rơi khi R-B3 chuyển sang dữ liệu.
+        first_line: { speaker: 'NPC_B', text: 'Khoan! Đức, tóc ông dựng lọt hết vô khung kìa!' },
         stage: [
           { cue: 'prop', actor: 'player', prop: 'camera', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'start' },
