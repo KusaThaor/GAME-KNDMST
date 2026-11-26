@@ -1,5 +1,7 @@
 # NEXT_SPRINT_TASK_BOARD — BẢNG VIỆC DUY NHẤT tới 04/12/2026 (bản gộp)
 
+> **Cập nhật 26/11/2026:** bảng việc tới bản đo 05/12 nay là `docs/handoff/SPRINT_TASKS_2026-11-26.md` (sau Audit Đợt 1–3). Bảng dưới đây giữ làm lịch sử và tham chiếu thẻ N-xx.
+
 | Trường | Giá trị |
 |---|---|
 | Ngày lập | 22/11/2026 (UTC+7) · gộp lần 2 cùng ngày, sau khi chủ dự án đồng ý các điểm cần xác nhận |

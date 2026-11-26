@@ -1,5 +1,17 @@
 # DEV_SESSION_HANDOFF
 
+## Audit Đợt 1–3 + R-D5 — 26/11/2026, tối (ĐỌC TRƯỚC)
+- **Chủ dự án duyệt 26/11:** (1) gộp bản vá audit · (2) Trang 2 chỉ chọn điều ước một lần · (3) dọn 15 nhánh cũ · (4) đưa lên `dev` (Preview). **Chưa** duyệt `main`.
+- **Đã làm & gộp vào `feat/sprint-0412`:**
+  - `task/R-D-audit-fix`: Trang 4 câu Đức "Có mười giây thôi…" chuyển vào `countdown_lines` (trước đây phát SAU khi chụp và chặn màn xem ảnh); Trang 1 trả câu Châu sau lần chụp 1 (rơi khi R-B3 chuyển cấu hình); 4 spec E2E cập nhật theo thoại R-D.
+  - `task/R-D5-dieu-uoc-mot-lan`: bỏ bước choice `q_m1_main_02.s03` (hỏi điều ước lần 2). Bước minigame có trường mới `choice` (`MinigameChoice`); `QuestEngine.recordMinigameChoice` áp cờ `m1.wish`, sắc thái với Hạ và phát `choice_made c_m1_02_wish` khi ván xong (Bỏ qua thì không). Câu mời của Hạ thành `intro_lines`.
+- **Đã kiểm thật (Linux, Node 22, Chrome headless) trên cây mã = đầu `feat/sprint-0412`:** tsc ✓ · vitest **609 đạt / 2 bỏ qua** · validate:world 0 lỗi · build production ✓ · E2E `--workers=1` **46 đạt / 0 hỏng / 1 bỏ qua** (28,9 phút; bỏ qua = smoke cần Emulator). Bundle production: 0 `[PLACEHOLDER]` người chơi thấy, không có `window.__game`.
+- **Chưa kiểm:** chơi tay · FPS laptop thật · Firestore thật · link Preview Vercel (phiên không mở được Vercel).
+- **GIT-1 dở dang:** đã tạo `archive/nhanh-cu-2026-11-26` giữ đầu 15 nhánh; **xóa nhánh bị proxy phiên chặn** → chủ dự án chạy lệnh ở thẻ GIT-1 (`docs/handoff/SPRINT_TASKS_2026-11-26.md`).
+- **⚠ Cần chủ dự án xác nhận:** phạm vi bản đo = Mốc 1 (theo phiếu 26/11) hay "Mốc 1 + Main Trang 5–9" (quyết định A1 22/11 trong `CLAUDE.md`). Xác nhận xong sửa `CLAUDE.md` §3.
+- **Lỗi còn mở:** Trang 2 câu Hạ "Chụp lại năm chiếc…" phát sau khi chụp, thiếu câu Đức → thẻ R-D6. `types.ts` mô tả `first_line` "trước lần bấm" nhưng runtime phát sau lần 1.
+- **Việc tiếp:** `docs/handoff/SPRINT_TASKS_2026-11-26.md` — DEP-1 (env + checklist Preview) → R-D6 → QA-1 (chơi tay, FPS) → DEP-2 khi được duyệt.
+
 ## Integrator — 25/11/2026, sáng (ĐỌC TRƯỚC)
 - **Đã gộp:** N-01 #8 → `feat/sprint-0412` @ `303bd09` (merge commit) · #18 `feat/sprint-0412` → `dev` @ `d5f1a09` (chủ dự án duyệt chủ trương; cây mã `dev` trùng `303bd09`). `main` chưa đụng (`4adf991`).
 - **Đã kiểm thật:** bản gộp thử #8: tsc ✓ · vitest 521/2 → **522/2** · validate 0 lỗi · build production ✓ · e2e `--workers=1` **45 đạt / 0 đỏ / 1 bỏ qua** (22,0 phút). Sau gộp, trên `303bd09` và trên `dev` `d5f1a09`: tsc ✓ · vitest 522/2 · validate 0 lỗi · build production ✓, bản build không chứa `tweakpane`, `__game`, `inputdebug`, `camtest`, `bot=release`. Vercel build `d5f1a09`: success.
