@@ -1,7 +1,7 @@
 /**
  * Gấp thuyền giấy & ghi điều ước — Trang 2 Cảnh 3 · 3 nhịp (R-B5, chốt 25/11).
  * Nhịp 1 (`fold`): vuốt dọc các đường nét đứt (hoặc Space/Enter) qua 4 bước để gấp tờ giấy thành thuyền buồm trắng. Không có thua.
- * Nhịp 2 (`wish`): chọn 1 trong 3 điều ước (đọc từ `ctx.save.get('wish_options')`, mặc định 3 câu đã duyệt), hỗ trợ bấm nút hoặc phím 1/2/3.
+ * Nhịp 2 (`wish`): chọn 1 trong 3 điều ước (đọc `choice_options` do runner đưa từ `step.choice`, hoặc `wish_options`; mặc định 3 câu đã duyệt), hỗ trợ bấm nút hoặc phím 1/2/3.
  * Nhịp 3 (`write`): giữ chuột/chạm kéo tô (hoặc giữ Space) trên vùng cánh buồm để chữ điều ước hiện rõ nét mực (≥ 85% điểm hướng dẫn).
  * Lưu `wish` và `wish_text` vào `ctx.save`, hoàn thành với `{ result: 'complete', stars: 3 }`.
  */
@@ -269,7 +269,7 @@ export default {
     ],
   },
   mount(el, ctx) {
-    const logic = new FoldBoatLogic(ctx.save.get('wish_options'));
+    const logic = new FoldBoatLogic(ctx.save.get('choice_options') ?? ctx.save.get('wish_options')); // R-D5: lựa chọn lấy từ step.choice nếu có
     const W = FOLD_BOAT.width;
     const H = FOLD_BOAT.height;
 
@@ -528,6 +528,7 @@ export default {
         outroStarted = true;
         if (logic.selectedWish) {
           ctx.save.set('wish', logic.selectedWish.id);
+          ctx.save.set('choice', logic.selectedWish.id);                 // R-D5: runner áp lựa chọn đo lường từ khóa này
           ctx.save.set('wish_text', logic.selectedWish.text);
         }
         loop.startOutro(FOLD_BOAT.outroMs, () => logic.result());

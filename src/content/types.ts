@@ -52,6 +52,12 @@ export interface ChoiceOption {
   lines?: DialogueLine[];
 }
 
+/**
+ * R-D5: lựa chọn nằm trong một minigame. Runner đưa `options` (id + text) vào trò qua dữ liệu `choice_options`;
+ * trò lưu id đã chọn vào dữ liệu `choice`; xong ván (không phải "Bỏ qua") thì engine áp lựa chọn như bước `choice`.
+ */
+export interface MinigameChoice { choice_id: string; options: ChoiceOption[]; about?: ActorRef[]; measured?: boolean }
+
 // ---------- Trình bày hệ thống (R-D0, chốt 25/11: lời dẫn bối cảnh tách hẳn khỏi khung thoại nhân vật) ----------
 /**
  * Kênh của lời dẫn hệ thống (docs/handoff/SO_HOA_NARRATIVE_TA_CANH_MOC1.md mục I):
@@ -150,7 +156,9 @@ export type Step =
       countdown_lines?: CountdownLine[];
       /** R-D0: thoại sau khi giữ ảnh; lọc theo `when`. */
       after_lines?: DialogueLine[] })
-  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; /** phát TRƯỚC khi mở trò */ intro_lines?: DialogueLine[]; /** phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") */ lines?: DialogueLine[]; opponent?: string })
+  | (StepBase & { kind: 'minigame'; game: string; level?: 'min'; /** phát TRƯỚC khi mở trò */ intro_lines?: DialogueLine[]; /** phát SAU khi chơi xong (thắng, thua hay "Bỏ qua") */ lines?: DialogueLine[]; opponent?: string;
+      /** R-D5: lựa chọn diễn ra TRONG trò (vd. điều ước Trang 2) — áp cờ/sắc thái và phát `choice_made` như bước `choice`. */
+      choice?: MinigameChoice })
   | (StepBase & { kind: 'cutscene'; lines: DialogueLine[] })
   | (StepBase & { kind: 'free'; prompt?: string })
   | (StepBase & { kind: 'setFlag'; flag: string; value: FlagValue })

@@ -286,6 +286,25 @@ export class QuestEngine {
     return true;
   }
 
+  /**
+   * R-D5: lựa chọn chọn TRONG minigame (`step.choice`) — áp cờ + sắc thái quan hệ và phát `choice_made` y như bước `choice`.
+   * Chỉ nhận khi bước minigame đó đang hoạt động; gọi trước `complete(stepId)`.
+   */
+  recordMinigameChoice(stepId: string, optionId: string): boolean {
+    const ref = this.idx.steps.get(stepId);
+    if (!ref || !this.ctx || ref.step.kind !== 'minigame' || !ref.step.choice) return false;
+    const { quest: q, step: s } = ref;
+    if (!this.contextQuests().includes(q)) return false;
+    const r = this.rec(q);
+    if (r.state !== 'active' || r.step_id !== stepId) return false;
+    const c = s.choice!;
+    const opt = c.options.find((o) => o.id === optionId);
+    if (!opt) return false;
+    this.applyChoice(opt, c.about ?? []);
+    this.bus.emit('choice_made', { step_id: s.id, choice_id: c.choice_id, option_id: opt.id, tone: opt.tone ?? null, measured: !!c.measured, is_replay: this.isReplay });
+    return true;
+  }
+
   private applyChoice(opt: ChoiceOption, about: string[]) {
     for (const [f, v] of Object.entries(opt.set_flags ?? {})) this.setFlag(f, v);
     if (!opt.tone || this.isReplay) return;

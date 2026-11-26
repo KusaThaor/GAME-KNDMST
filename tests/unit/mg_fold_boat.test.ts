@@ -129,11 +129,13 @@ describe('minigameRunner — nối stage/after và điều ước giữa mg_fold
     const ui = createUiStore();
     const idx = indexContent(makePack(), makeConfig());
     const complete = vi.fn();
+    const recordMinigameChoice = vi.fn(() => true);
     const engine = {
       dayId: 'd.g07.01',
       flag: (n: string) => save.flags[n],
       conditions: { flag: (n: string) => save.flags[n], questCompleted: () => false, dayCompleted: () => false },
       complete,
+      recordMinigameChoice,
     } as unknown as QuestEngine;
 
     const hooks = createStepHooks([
@@ -164,7 +166,7 @@ describe('minigameRunner — nối stage/after và điều ước giữa mg_fold
       hooks,
     });
 
-    return { save, bus, ui, complete, queue, runMinigame };
+    return { save, bus, ui, complete, recordMinigameChoice, queue, runMinigame };
   }
 
   it('gọi hooks.stage(s, "end") và hooks.after(s, alive) trước engine.complete; after=false thì dừng', async () => {
@@ -227,6 +229,49 @@ describe('minigameRunner — nối stage/after và điều ước giữa mg_fold
     expect(save.flags['mg.mg_boat.data.wish_text']).toBe(JSON.stringify('Lớp 7 vui hơn lớp 6'));
     ui.get().minigame!.quit();
     await pBoat;
+  });
+
+  it('R-D5: step.choice → đưa choice_options vào trò, xóa lựa chọn cũ; xong ván thì engine.recordMinigameChoice với id đã chọn', async () => {
+    const { save, ui, runMinigame, recordMinigameChoice, complete } = makeRunnerDeps();
+    save.flags['mg.mg_fold_boat.data.choice'] = JSON.stringify('secret');   // lựa chọn cũ của lần chơi trước
+    const step: Extract<Step, { kind: 'minigame' }> = {
+      id: 'q_m1_main_02.s06',
+      kind: 'minigame',
+      game: 'mg_fold_boat',
+      choice: {
+        choice_id: 'c_m1_02_wish',
+        measured: true,
+        options: [
+          { id: 'friendship', tone: 'gentle', text: 'Mai mốt vẫn chơi chung vầy.' },
+          { id: 'fun', tone: 'playful', text: 'Lớp 7 vui hơn lớp 6.' },
+        ],
+      },
+    };
+    const p = runMinigame(step, () => true);
+    await Promise.resolve();
+    expect(JSON.parse(save.flags['mg.mg_fold_boat.data.choice_options'] as string)).toEqual([
+      { id: 'friendship', text: 'Mai mốt vẫn chơi chung vầy.' },
+      { id: 'fun', text: 'Lớp 7 vui hơn lớp 6.' },
+    ]);
+    expect(save.flags['mg.mg_fold_boat.data.choice']).toBeUndefined();     // không mang lựa chọn cũ sang lần này
+
+    // "Bỏ qua"/thoát (result quit) → không ghi lựa chọn
+    ui.get().minigame!.quit();
+    await p;
+    expect(recordMinigameChoice).not.toHaveBeenCalled();
+    expect(complete).toHaveBeenCalledExactlyOnceWith(step.id);
+
+    // Chơi xong có chọn → ghi đúng 1 lần, TRƯỚC engine.complete
+    const d2 = makeRunnerDeps();
+    const p2 = d2.runMinigame(step, () => true);
+    await Promise.resolve();
+    d2.save.flags['mg.mg_fold_boat.data.choice'] = JSON.stringify('fun');
+    const host = d2.ui.get().minigame! as unknown as { finish(r: { result: 'complete'; stars: number }): void };
+    host.finish({ result: 'complete', stars: 3 });
+    d2.ui.get().minigame!.quit();
+    await p2;
+    expect(d2.recordMinigameChoice).toHaveBeenCalledExactlyOnceWith('q_m1_main_02.s06', 'fun');
+    expect(d2.recordMinigameChoice.mock.invocationCallOrder[0]).toBeLessThan(d2.complete.mock.invocationCallOrder[0]);
   });
 
   it('mg_boat đọc được điều ước từ flag m1.boat_wish / m1.wish khi chưa có dữ liệu mg_fold_boat', async () => {

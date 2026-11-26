@@ -91,6 +91,20 @@ export const quests: Quest[] = [
         game: 'mg_fold_boat',
         level: 'min',
         objective: 'Gấp thuyền giấy và tự tay ghi điều ước lên cánh buồm',
+        // R-D5: chỉ chọn điều ước MỘT lần, ngay trong trò (gấp → chọn → ghi, TONG_DUYET mục 9). Trước đây còn bước choice s03 hỏi lại lần 2.
+        intro_lines: [
+          { speaker: 'NPC_C', text: 'Viết một điều ước lên buồm đi. Thuyền chạy tới đâu, điều ước theo tới đó.' },
+        ],
+        choice: {
+          choice_id: 'c_m1_02_wish',
+          measured: true,
+          about: ['NPC_C'],
+          options: [
+            { id: 'friendship', tone: 'gentle', text: 'Mai mốt vẫn chơi chung vầy.', set_flags: { 'm1.wish': 'friendship' } },
+            { id: 'fun', tone: 'playful', text: 'Lớp 7 vui hơn lớp 6.', set_flags: { 'm1.wish': 'fun' } },
+            { id: 'secret', tone: 'deep', text: 'Bí mật không nói ra.', set_flags: { 'm1.wish': 'secret' } },
+          ],
+        },
         stage: [
           { cue: 'sfx', sfx: 'sfx_paper_fold', at: 'start' },
           { cue: 'prop', actor: 'player', prop: 'boat', at: 'end' },
@@ -100,23 +114,6 @@ export const quests: Quest[] = [
           { speaker: 'NPC_A', text: 'Tớ ước… thuyền tớ đừng lật!' },
           { speaker: 'NPC_B', text: 'Ước gì kỳ vậy.' },
           { speaker: 'NPC_C', text: 'Xếp năm chiếc ở mép rãnh trước đã.' },
-        ],
-      },
-      {
-        id: 'q_m1_main_02.s03',
-        kind: 'choice',
-        choice_id: 'c_m1_02_wish',
-        measured: true,
-        about: ['NPC_C'],
-        objective: 'Chọn một điều ước ý nghĩa để viết lên cánh buồm',
-        prompt: {
-          speaker: 'NPC_C',
-          text: 'Viết một điều ước lên buồm đi. Thuyền chạy tới đâu, điều ước theo tới đó.',
-        },
-        options: [
-          { id: 'friendship', tone: 'gentle', text: 'Mai mốt vẫn chơi chung vầy.', set_flags: { 'm1.wish': 'friendship' } },
-          { id: 'fun', tone: 'playful', text: 'Lớp 7 vui hơn lớp 6.', set_flags: { 'm1.wish': 'fun' } },
-          { id: 'secret', tone: 'deep', text: 'Bí mật không nói ra.', set_flags: { 'm1.wish': 'secret' } },
         ],
       },
       {

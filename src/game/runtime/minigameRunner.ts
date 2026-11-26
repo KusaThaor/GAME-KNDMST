@@ -64,6 +64,11 @@ export function createMinigameRunner(deps: MinigameRunnerDeps) {
     const queue = getQueue();
     if (s.intro_lines?.length && !(await queue.playLines(s.intro_lines))) return; // thoại TRƯỚC khi mở trò; bị hủy (chơi lại Ngày…) thì không mở trò [N-01b]
     if (s.game === 'mg_boat') prepareBoatWish(save, engine);
+    if (s.choice) {
+      // R-D5: lựa chọn nằm trong trò — đưa danh sách vào trò, xóa lựa chọn cũ (chơi lại) để "Bỏ qua" không tính lại lựa chọn trước
+      writeMgData(save, s.game, 'choice_options', s.choice.options.map((o) => ({ id: o.id, text: o.text })));
+      writeMgData(save, s.game, 'choice', undefined);
+    }
     const mg = { game_id: s.game, context: 'story' as const, page_id: engine.dayId, opponent_id: s.opponent ?? null, difficulty: null };
     const host = new MinigameHost(getMinigame(s.game), save.minigames_story[s.game] !== undefined, {
       opponentId: mg.opponent_id,
@@ -81,6 +86,10 @@ export function createMinigameRunner(deps: MinigameRunnerDeps) {
       changed: () => ui.set({ minigame: host }),
       started: () => bus.emit('minigame_started', mg),
       finished(round, duration_s) {
+        if (s.choice && round.result !== 'quit') {
+          const picked = readMgData(save, s.game, 'choice');
+          if (typeof picked === 'string') engine.recordMinigameChoice(s.id, picked);
+        }
         if (s.game === 'mg_fold_boat') syncFoldBoatWish(save);
         recordMg(save, s.game, round, mg.opponent_id, mg.context);
         bus.emit('minigame_finished', {

@@ -42,7 +42,8 @@ describe('gói nội dung trong repo', () => {
     expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
 
     const d2 = idx.days.get('d.g07.01')!;
-    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(7);
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(6);   // R-D5: bỏ bước choice s03 trùng — điều ước chọn trong trò gấp thuyền s06
+    expect(idx.quests.get(d2.main_chain[0])!.steps.some((s) => s.kind === 'choice')).toBe(false);
     expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
     expect(d2.daily_pool).toHaveLength(0);
 

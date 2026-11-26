@@ -76,7 +76,7 @@ const m1Trang2Set: DressingSet = {
         }
       } else if (name === 'step_activated') {
         const sid = payload.step_id;
-        if (sid === 'q_m1_main_02.s01' || sid === 'q_m1_main_02.s02' || sid === 'q_m1_main_02.s03') {
+        if (sid === 'q_m1_main_02.s01' || sid === 'q_m1_main_02.s02' || sid === 'q_m1_main_02.s06') { // R-D5: bỏ s03 (lựa chọn trùng), s06 là trò gấp thuyền
           setPhase('before_race');
         } else if (sid === 'q_m1_main_02.s04' && payload.kind === 'minigame') {
           setPhase('before_race');
