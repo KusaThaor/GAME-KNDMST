@@ -4,32 +4,107 @@
  */
 import { CRITERIA_LABELS, PHOTO_CONFIG, photoQuality } from '../../config/photo';
 import type { ContentIndex } from '../../content/indexContent';
-import type { AlbumEntry, DialogueLine, MemoryDay, Step } from '../../content/types';
+import type { AlbumEntry, CountdownLine, MemoryDay, StageAt, Step } from '../../content/types';
 import type { EventBus, PhotoCriteria } from '../../core/eventBus';
 import type { PhotoStore, SaveState } from '../../core/save';
 import type { ArtStyle } from '../../render/style';
 import { AlbumModel, autoPhotoKey } from '../../systems/album';
+import { resolveLines, speakerName } from '../../systems/dialogue';
 import type { QuestEngine } from '../../systems/questEngine';
 import type { UiStore } from '../../ui/game/store';
 import { buildDayScene, type DayScene } from '../scenes/dayScene';
 import type { GameView } from '../view';
 import { CANCEL, type PresentationQueue } from './presentationQueue';
+import type { StepHookPart } from './stepHooks';
+import { formatGameText } from './uiAdapters';
 
-/**
- * Ảnh cầm tay chụp nhiều lần rồi chọn 1 (N-14 · kịch bản Trang 1 cảnh B Bước 2: "Có ba lần chụp… chọn một tấm để giữ").
- * Bước ảnh khai `shots` thì dùng `shots`; chưa khai thì lấy mặc định theo máy ảnh ở đây (tới khi dữ liệu Trang có `shots: 3` — N-01).
- * `first_line`: câu sau lần chụp đầu (nguyên văn kịch bản; NPC_B = Châu theo cast A).
- */
-const MULTI_SHOT: Record<string, { shots: number; first_line?: DialogueLine }> = {
-  'cam.d0601.grocery': { shots: 3, first_line: { speaker: 'NPC_B', text: 'Khoan! Đức, tóc ông dựng kìa!' } },
-};
-/** Máy quay ngược nên khung lệch: [ngửa lên, xoay ngang] (độ) cho từng lần — lần 1 chỉ thấy trán, lần 2 lệch nhẹ, lần 3 đúng khung. */
-const SELFIE_AIM: [number, number][] = [[14, 9], [5, -4], [0, 0]];
+/** Máy quay ngược nên khung lệch: [ngửa lên, xoay ngang] (độ) cho các lần trước tấm cuối. */
+const SELFIE_OFFSETS: [number, number][] = [[14, 9], [5, -4], [-4, 6], [8, -7]];
+
+export function selfieAimOffset(n: number, total: number): [number, number] {
+  if (total <= 1 || n >= total - 1) return [0, 0];
+  return SELFIE_OFFSETS[n % SELFIE_OFFSETS.length];
+}
 
 export function photoShots(s: Extract<Step, { kind: 'photo' }>): number {
   if (s.mode !== 'handheld') return 1;
-  const n = Math.floor(s.shots ?? MULTI_SHOT[s.camera_id]?.shots ?? 1);
+  const n = Math.floor(s.shots ?? 1);
   return Number.isFinite(n) && n > 1 ? n : 1;
+}
+
+export interface ScheduledCountdownLine {
+  who: string;
+  color: string;
+  text: string;
+  at_s: number;
+}
+
+/** Lọc `countdown_lines` theo điều kiện hiện tại và gán mốc `at_s` (tự rải đều nếu bỏ trống). */
+export function resolveCountdownLines(
+  lines: CountdownLine[] | undefined,
+  timerSeconds: number,
+  deps: { idx: ContentIndex; save: SaveState; engine: QuestEngine },
+): ScheduledCountdownLine[] {
+  if (!lines?.length) return [];
+  const { idx, save, engine } = deps;
+  const profile = { player_name: save.player_name, gender: save.appearance.gender };
+  const resolved: { who: string; color: string; text: string; at_s?: number }[] = [];
+  for (const line of lines) {
+    const r = resolveLines([line], engine.conditions)[0];
+    if (!r) continue;
+    const chr = idx.resolveActor(r.speaker);
+    resolved.push({
+      who: speakerName(r.speaker, idx, profile),
+      color: chr?.ui_color ?? '#3a2c26',
+      text: formatGameText(r.text, save),
+      at_s: line.at_s,
+    });
+  }
+  const unscheduled = resolved.filter((l) => l.at_s === undefined).length;
+  let uIdx = 0;
+  return resolved
+    .map((l, idxOrder) => ({
+      who: l.who,
+      color: l.color,
+      text: l.text,
+      at_s: l.at_s !== undefined ? l.at_s : (timerSeconds * (unscheduled - uIdx++)) / (unscheduled + 1),
+      idxOrder,
+    }))
+    .sort((a, b) => (b.at_s !== a.at_s ? b.at_s - a.at_s : a.idxOrder - b.idxOrder))
+    .map(({ who, color, text, at_s }) => ({ who, color, text, at_s }));
+}
+
+export function activeCountdownLine(
+  scheduled: readonly ScheduledCountdownLine[],
+  leftSeconds: number,
+): { who: string; color: string; text: string } | null {
+  let chosen: ScheduledCountdownLine | null = null;
+  for (const item of scheduled) {
+    if (leftSeconds <= item.at_s) chosen = item;
+  }
+  return chosen ? { who: chosen.who, color: chosen.color, text: chosen.text } : null;
+}
+
+function matchStageAt(cueAt: StageAt | undefined, at: StageAt): boolean {
+  const target = cueAt ?? 'start';
+  if (typeof target === 'string' || typeof at === 'string') return target === at;
+  return target.line === at.line;
+}
+
+/** Điểm nối cue `'prop'` (R-B3): gắn/gỡ đạo cụ cầm tay động cho nhân vật theo `step.stage`. */
+export function createPropHook(getDayScene: () => DayScene | null): StepHookPart {
+  return {
+    id: 'R-B3 prop',
+    stage(step, at) {
+      const scene = getDayScene();
+      if (!scene || !step.stage?.length) return;
+      for (const c of step.stage) {
+        if (c.cue === 'prop' && matchStageAt(c.at, at)) {
+          scene.setActorProp(c.actor, c.prop);
+        }
+      }
+    },
+  };
 }
 
 export interface PhotoRunnerDeps {
@@ -56,17 +131,22 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
   async function runPhoto(s: Extract<Step, { kind: 'photo' }>, alive: () => boolean): Promise<void> {
     const scene = getDayScene(), day = getCurrentDay();
     const point = day?.cameras.find((c) => c.id === s.camera_id);
-    if (!scene || !point) { engine.complete(s.id); return; }
-    const cam = scene.cameraFor(point);
-    if (!cam) { engine.complete(s.id); return; }        // bản đồ thiếu marker máy ảnh: không chặn quest
+    const cam = scene && point ? scene.cameraFor(point) : null;
+    if (!scene || !point || !cam) {
+      if (s.stage?.length) { await queue.hooks.stage(s, 'end'); if (!alive()) return; }
+      if (!(await queue.hooks.after(s, alive))) return;
+      engine.complete(s.id);
+      return;
+    }
     const spot = scene.standSpot(s.stand_zone);
     const base = { mode: s.mode, url: null, marks: [], score: 0, display: PHOTO_CONFIG.quality_display, posed: false } as const;
     const marksOf = (c: PhotoCriteria) => (Object.keys(CRITERIA_LABELS) as (keyof PhotoCriteria)[]).map((k) => ({ label: CRITERIA_LABELS[k], ok: c[k] }));
-    // Chụp nhiều lần (N-14): mỗi lần lệch khung theo SELFIE_AIM, xong cả loạt thì người chơi chọn 1 tấm.
     const total = photoShots(s);
-    const firstLine = total > 1 ? MULTI_SHOT[s.camera_id]?.first_line : undefined;
+    const firstLine = s.first_line;
+    const hidePose = !!s.hide_pose;
+    const stepPrompt = s.prompt ? formatGameText(s.prompt, save) : undefined;
     const aimed = (n: number) => {
-      const [pitch, yaw] = SELFIE_AIM[n] ?? [0, 0];
+      const [pitch, yaw] = selfieAimOffset(n, total);
       if (total === 1 || (!pitch && !yaw)) return cam;
       const c = cam.clone();
       c.rotateY((yaw * Math.PI) / 180); c.rotateX((pitch * Math.PI) / 180); c.updateMatrixWorld(true);
@@ -77,21 +157,35 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
       for (let n = 0; n < total; n++) {
         photoPosed = false;
         const shotNo = total > 1 ? { shot: { index: n + 1, total } } : {};
+        const rawPrompt = s.shot_prompts?.[n];
+        const shotPrompt = rawPrompt ? formatGameText(rawPrompt, save) : stepPrompt;
         if (s.mode !== 'auto') {
           scene.setStandZone(spot);
           scene.lockCamera(point);                          // khung ngắm: nhìn qua máy ảnh đặt sẵn
-          ui.set({ photo: { ...base, ...shotNo, marks: [], phase: 'ready', seconds: s.mode === 'timer' ? PHOTO_CONFIG.timer_seconds : 0 } });
+          ui.set({
+            photo: {
+              ...base, ...shotNo, prompt: shotPrompt, hidePose, countdownLine: null,
+              marks: [], phase: 'ready', seconds: s.mode === 'timer' ? PHOTO_CONFIG.timer_seconds : 0,
+            },
+          });
           const started = await queue.wait('photo_start');
           scene.lockCamera(null);                           // hẹn giờ: về góc thứ ba để chạy vào vòng sáng
           if (started === CANCEL || !alive()) return;
           if (s.mode === 'timer') {
+            const scheduled = resolveCountdownLines(s.countdown_lines, PHOTO_CONFIG.timer_seconds, { idx, save, engine });
             let left = PHOTO_CONFIG.timer_seconds;
-            ui.set({ photo: { ...base, marks: [], phase: 'countdown', seconds: left } });
+            let lastLine = activeCountdownLine(scheduled, left);
+            ui.set({ photo: { ...base, prompt: stepPrompt, hidePose, countdownLine: lastLine, marks: [], phase: 'countdown', seconds: left } });
             const done = queue.wait('photo_shutter');
             const tick = (dt: number) => {
               const before = Math.ceil(left); left -= dt;
+              const nextLine = activeCountdownLine(scheduled, left);
+              const lineChanged = nextLine?.who !== lastLine?.who || nextLine?.text !== lastLine?.text;
+              lastLine = nextLine;
               const cur = ui.get().photo;
-              if (cur && (Math.ceil(left) !== before || cur.posed !== photoPosed)) ui.set({ photo: { ...cur, seconds: left, posed: photoPosed } });
+              if (cur && (Math.ceil(left) !== before || cur.posed !== photoPosed || lineChanged)) {
+                ui.set({ photo: { ...cur, seconds: left, posed: photoPosed, countdownLine: nextLine } });
+              }
               if (left <= 0) { queue.deleteTicker(tick); queue.signal('photo_shutter'); }
             };
             queue.addTicker(tick);
@@ -102,7 +196,7 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
         const criteria: PhotoCriteria = {
           all_in_frame: scene.allInFrame(shotCam, s.subjects),
           player_in_zone: spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true,
-          posed_in_time: s.mode === 'timer' ? photoPosed : true,
+          posed_in_time: s.mode === 'timer' && !hidePose ? photoPosed : true,
         };
         scene.setGizmosVisible(false);
         const shot = view.capture(scene.scene, shotCam, PHOTO_CONFIG.jpeg);
@@ -111,9 +205,9 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
         if (!alive()) return;
         bus.emit('photo_attempt', { step_id: s.id, mode: s.mode, retry_index: retry, ...criteria });
         takes.push({ blob, criteria });
-        if (n === 0 && retry === 0 && firstLine) {         // lần 1 lệch khung → câu của Châu (chỉ ở lượt chụp đầu)
+        if (n === 0 && retry === 0 && firstLine) {         // câu ngay sau lần chụp đầu (chỉ ở lượt chụp đầu)
           ui.set({ photo: null });
-          if (!(await queue.playLines([firstLine]))) return;
+          if (!(await queue.playLines([firstLine])) || !alive()) return;
         }
       }
       let pick = 0;
@@ -150,6 +244,12 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
       revokeUrl(s.album_entry_id);
       bus.emit('photo_kept', { step_id: s.id, mode: s.mode, retry_index: retry, ...takes[pick].criteria });
       ui.set({ photo: null });
+      if (s.after_lines?.length) {
+        scene.setStandZone(null); scene.setPlayerMotion(null);
+        if (!(await queue.playLines(s.after_lines)) || !alive()) return;
+      }
+      if (s.stage?.length) { await queue.hooks.stage(s, 'end'); if (!alive()) return; }
+      if (!(await queue.hooks.after(s, alive))) return;
       engine.complete(s.id);          // ảnh tự chụp dự phòng được chụp trong lúc này (nhân vật còn đang tạo dáng)
       scene.setStandZone(null); scene.setPlayerMotion(null);
       return;
@@ -168,7 +268,9 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
       scene.setGizmosVisible(false);
       const shot = view.capture(scene.scene, cam, PHOTO_CONFIG.jpeg);
       scene.setGizmosVisible(true);
-      void shot.then((blob) => photos.put(autoPhotoKey(entry.id), blob)).then(() => { photoUrls.delete(entry.id); }).catch(() => undefined);
+      void shot.then((blob) => photos.put(autoPhotoKey(entry.id), blob)).then(() => {
+        if (!save.album[entry.id]?.variants.length) revokeUrl(entry.id);
+      }).catch(() => undefined);
     }
   });
 
@@ -209,7 +311,7 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
 
   function pose() {
     const p = ui.get().photo;
-    if (p?.phase === 'countdown' && !photoPosed) {
+    if (p?.phase === 'countdown' && !p.hidePose && !photoPosed) {
       photoPosed = true;
       getDayScene()?.setPlayerMotion('pose_peace');
       ui.set({ photo: { ...p, posed: true } });

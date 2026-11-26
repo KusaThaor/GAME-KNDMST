@@ -3,7 +3,7 @@ import { flat, toon } from '../../render/materials';
 import { cached, capsule, cyl, mesh, onSphere, rbox, shade, sphere } from './geometry';
 import { buildHair } from './hair';
 import { CHARACTERS, UNIFORM, type CharacterDef, type CharacterId, type Grade, type GradeLook } from './presets';
-import { buildProps } from './props';
+import { buildProps, setDynamicProp } from './props';
 
 /**
  * Nhà máy nhân vật chibi dựng hoàn toàn bằng khối cơ bản (GDD 10.1).
@@ -23,6 +23,8 @@ export interface CharacterRig {
   legL: THREE.Group; legR: THREE.Group;
   armL: THREE.Group; armR: THREE.Group;
   handL: THREE.Group; handR: THREE.Group;
+  /** Slot gắn/gỡ đạo cụ cầm tay động (R-B3). */
+  handPropSlot: THREE.Group;
   eyes: { open: THREE.Object3D[]; happy: THREE.Object3D[] };
   mouth: { smile: THREE.Object3D; open: THREE.Object3D; flat: THREE.Object3D };
   ponytail?: THREE.Object3D;
@@ -30,6 +32,7 @@ export interface CharacterRig {
   setExpression(e: Expression): void;
   setBlink(amount: number): void;        // 0 = mở, 1 = nhắm
   setMouthOpen(amount: number): void;
+  setProp(propId: string | null): THREE.Object3D | null;
 }
 
 interface Dims {
@@ -113,6 +116,9 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
     return { g, hand };
   };
   const aL = mkArm(1), aR = mkArm(-1);
+  const handPropSlot = new THREE.Group();
+  handPropSlot.name = 'handPropSlot';
+  aR.hand.add(handPropSlot);
 
   // đầu
   const head = new THREE.Group(); head.position.y = d.torsoH + 0.015; torso.add(head);
@@ -152,6 +158,7 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
 
   const rig: CharacterRig = {
     def, grade, look, root, hips, torso, head, legL, legR, armL: aL.g, armR: aR.g, handL: aL.hand, handR: aR.hand,
+    handPropSlot,
     eyes: { open: eyesOpen, happy: eyesHappy }, mouth: { smile, open, flat: flatMouth }, dims: d,
     setExpression(e) {
       const happyEyes = e === 'happy';
@@ -167,6 +174,7 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
       if (!open.visible && a > 0.05) { open.visible = true; smile.visible = false; }
       open.scale.y = 0.03 * k * (0.25 + a);
     },
+    setProp(propId) { return setDynamicProp(rig, propId); },
   };
   buildHair(face, R, def, look, grade, rig);
   buildProps(rig);

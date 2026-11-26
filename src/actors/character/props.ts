@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 import { toon } from '../../render/materials';
+import { makeBaseSign } from '../../world/props/m1/baseSign';
+import { makeFootbag } from '../../world/props/m1/footbag';
+import { makeCipherPaper, makeCompactCamera, makeNotebook, makeRedPen } from '../../world/props/m1/handProps';
+import { createPaperBoatGeometry } from '../../world/props/m1/paperBoats';
+import { makeRuleBook } from '../../world/props/m1/ruleBook';
 import type { CharacterRig } from './build';
 import { cached, cyl, mesh, r3, rbox, shade, sphere } from './geometry';
 import type { PropId } from './presets';
@@ -102,12 +107,132 @@ const PROP_BUILDERS: Record<PropId, PropBuilder> = {
   },
 };
 
+interface HandPropSpec { obj: THREE.Object3D; holdIn?: number }
+
+const HAND_PROP_BUILDERS: Record<string, () => HandPropSpec> = {
+  'prop.notebook': () => {
+    const obj = makeNotebook();
+    obj.scale.setScalar(0.85);
+    obj.position.set(0.01, -0.01, 0.06);
+    obj.rotation.set(0.2, -0.25, 0.1);
+    return { obj, holdIn: 0.5 };
+  },
+  'prop.shuttle': () => {
+    const obj = makeFootbag();
+    obj.position.set(0, -0.02, 0.045);
+    obj.rotation.set(0.3, 0, -0.2);
+    return { obj, holdIn: 0.4 };
+  },
+  'prop.paper_boat': () => {
+    const obj = new THREE.Mesh(cached('hand:paper_boat', createPaperBoatGeometry), toon('#f7f2e7', { side: THREE.DoubleSide }));
+    obj.position.set(0, 0.01, 0.06);
+    obj.rotation.set(0.1, Math.PI / 4, 0);
+    return { obj, holdIn: 0.5 };
+  },
+  'prop.paper_stack': () => {
+    const obj = new THREE.Group();
+    const sheet = cached('hand:paper_sheet', () => new THREE.BoxGeometry(0.14, 0.005, 0.19));
+    for (let i = 0; i < 3; i++) {
+      const m = new THREE.Mesh(sheet, toon(i === 1 ? '#ebe4d4' : '#fbf7ee'));
+      m.position.set(0, i * 0.006, 0);
+      m.rotation.y = (i - 1) * 0.06;
+      obj.add(m);
+    }
+    obj.position.set(0.01, -0.01, 0.06);
+    obj.rotation.set(0.18, -0.2, 0.08);
+    return { obj, holdIn: 0.5 };
+  },
+  'prop.red_pen': () => {
+    const obj = makeRedPen();
+    obj.scale.setScalar(1.1);
+    obj.position.set(0, -0.01, 0.04);
+    obj.rotation.set(0, Math.PI / 2, -0.35);
+    return { obj, holdIn: 0.35 };
+  },
+  'prop.rulebook': () => {
+    const obj = makeRuleBook({ variant: 'flat' });
+    obj.scale.setScalar(0.8);
+    obj.position.set(0.01, -0.01, 0.06);
+    obj.rotation.set(0.25, -0.2, 0.1);
+    return { obj, holdIn: 0.55 };
+  },
+  'prop.base_sign': () => {
+    const obj = makeBaseSign();
+    obj.scale.setScalar(0.45);
+    obj.position.set(0, -0.04, 0.07);
+    obj.rotation.set(0.1, 0, 0);
+    return { obj, holdIn: 0.6 };
+  },
+  'prop.camera': () => {
+    const obj = makeCompactCamera();
+    obj.scale.setScalar(1.2);
+    obj.position.set(0, -0.02, 0.055);
+    return { obj, holdIn: 0.65 };
+  },
+  'prop.cipher_paper': () => {
+    const obj = makeCipherPaper();
+    obj.scale.setScalar(1.1);
+    obj.position.set(0, 0, 0.05);
+    obj.rotation.set(0.35, 0, 0);
+    return { obj, holdIn: 0.45 };
+  },
+};
+
+export const HAND_PROP_IDS = Object.keys(HAND_PROP_BUILDERS);
+
+function resolveHandProp(propId: string): (() => HandPropSpec) | undefined {
+  return HAND_PROP_BUILDERS[propId] ?? HAND_PROP_BUILDERS[`prop.${propId}`];
+}
+
 /** Gắn một đạo cụ vào rig theo mã (dùng khi spawn hoặc khi R-B3 cầm/trao đồ động). */
 export function attachProp(rig: CharacterRig, propId: PropId | string): THREE.Object3D | null {
   const build = PROP_BUILDERS[propId as PropId];
-  if (!build) return null;
-  const obj = build(rig);
-  if (!obj.name) obj.name = `prop:${propId}`;
+  if (build) {
+    const obj = build(rig);
+    if (!obj.name) obj.name = `prop:${propId}`;
+    return obj;
+  }
+  const handBuild = resolveHandProp(propId);
+  if (!handBuild) return null;
+  const { obj, holdIn } = handBuild();
+  obj.name = `prop:${propId}`;
+  rig.handR.add(obj);
+  if (holdIn !== undefined) rig.armR.userData.holdIn = Math.max((rig.armR.userData.holdIn as number | undefined) ?? 0, holdIn);
+  return obj;
+}
+
+/** Gắn/gỡ động đạo cụ trên slot cầm tay (`handPropSlot`); `null` = gỡ về tay không. */
+export function setDynamicProp(rig: CharacterRig, propId: string | null): THREE.Object3D | null {
+  let slot = rig.handPropSlot;
+  if (!slot) {
+    slot = new THREE.Group();
+    slot.name = 'handPropSlot';
+    rig.handR.add(slot);
+    rig.handPropSlot = slot;
+  }
+  if (rig.armR.userData.baseHoldIn === undefined) {
+    rig.armR.userData.baseHoldIn = (rig.armR.userData.holdIn as number | undefined) ?? 0;
+  }
+  slot.clear();
+  rig.armR.userData.holdIn = rig.armR.userData.baseHoldIn;
+  rig.root.userData.currentProp = propId ?? null;
+  if (!propId) return null;
+
+  const handBuild = resolveHandProp(propId);
+  let obj: THREE.Object3D;
+  if (handBuild) {
+    const spec = handBuild();
+    obj = spec.obj;
+    if (spec.holdIn !== undefined) {
+      rig.armR.userData.holdIn = Math.max(rig.armR.userData.baseHoldIn as number, spec.holdIn);
+    }
+  } else {
+    const built = PROP_BUILDERS[propId as PropId]?.(rig);
+    if (!built) return null;
+    obj = built;
+  }
+  obj.name = `prop:${propId}`;
+  slot.add(obj);
   return obj;
 }
 

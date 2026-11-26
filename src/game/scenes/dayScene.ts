@@ -85,6 +85,7 @@ export interface DayScene {
   setGizmosVisible(v: boolean): void;
   /** Trạng thái camera/điều khiển — cho công cụ test. */
   debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number };
+  setActorProp(actor: string, propId: string | null): void;
   dispose(): void;
 }
 
@@ -300,6 +301,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     },
     setGizmosVisible(v) { gizmos.visible = v; },
     debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing }),
+    setActorProp(actor, propId) { actors.get(actor)?.setProp?.(propId); },
     dispose() { dressing.dispose(); atmosphere.dispose(); dome.material.dispose(); fx.dispose(); updaters.length = 0; disposeScene(scene); world.dispose(); },
   };
 }

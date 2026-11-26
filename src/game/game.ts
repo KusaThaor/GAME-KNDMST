@@ -28,7 +28,7 @@ import { createInput, type GameInput } from './input';
 import { createDayController } from './runtime/dayController';
 import { createHubController, FEEDBACK_SENT_FLAG } from './runtime/hubController';
 import { createMinigameRunner } from './runtime/minigameRunner';
-import { createPhotoRunner } from './runtime/photoRunner';
+import { createPhotoRunner, createPropHook } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
 import { createStepHooks } from './runtime/stepHooks';
 import { createStepReactions } from './runtime/stepReactions';
@@ -107,6 +107,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
    */
   const stepHooks = createStepHooks();
   stepHooks.register(createStepReactions({ idx, bus, engine, ui, getQueue: () => queue, getDayScene: dayCtrl.scene }));
+  stepHooks.register(createPropHook(dayCtrl.scene));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,
     runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
