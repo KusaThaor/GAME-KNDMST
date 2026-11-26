@@ -16,6 +16,7 @@ import type { GameInput } from '../input';
 import { buildDayScene, type DayControl, type DayScene } from '../scenes/dayScene';
 import type { GameView } from '../view';
 import type { PresentationQueue } from './presentationQueue';
+import { resolveZoneName } from './zoneNames';
 
 export interface DayControllerDeps {
   idx: ContentIndex;
@@ -40,11 +41,33 @@ export function createDayController(deps: DayControllerDeps) {
   let dayScene: DayScene | null = null;
   let currentDay: MemoryDay | null = null;
   let toastTimer = 0;
+  let keyHintTimer = 0;
+  let keyHintMoved = false;
+  let keyHintInteracted = false;
+  let lastZoneName: string | null = null;
+  let unsubStepCompleted: (() => void) | null = null;
 
   function toast(text: string | null, ms = 2600) {
     window.clearTimeout(toastTimer);
     ui.set({ toast: text });
     if (text) toastTimer = window.setTimeout(() => ui.set({ toast: null }), ms);
+  }
+
+  function hideKeyHint() {
+    window.clearTimeout(keyHintTimer);
+    keyHintTimer = 0;
+    if (ui.get().keyHint) ui.set({ keyHint: null });
+  }
+
+  function showKeyHint() {
+    window.clearTimeout(keyHintTimer);
+    keyHintMoved = false;
+    keyHintInteracted = false;
+    const text = input.device === 'touch'
+      ? 'Kéo nút tròn để đi · Kéo màn hình để xoay · Chạm E nói chuyện'
+      : 'WASD đi · Shift chạy · Kéo chuột xoay góc nhìn · E nói chuyện';
+    ui.set({ keyHint: { text } });
+    keyHintTimer = window.setTimeout(hideKeyHint, 5000);
   }
 
   function refreshHud() {
@@ -83,6 +106,10 @@ export function createDayController(deps: DayControllerDeps) {
   function interact() {
     const queue = getQueue();
     if (queue.locked() || engine.context?.kind !== 'day') return;
+    if (ui.get().keyHint) {
+      keyHintInteracted = true;
+      if (keyHintMoved) hideKeyHint();
+    }
     const tgt = nearestUseful();
     if (!tgt) { dayScene?.usePortal(); return; }
     const r = engine.trigger('interact', tgt.id);
@@ -137,23 +164,40 @@ export function createDayController(deps: DayControllerDeps) {
     view.setScene(scene.scene, scene.camera);
     input.setLookMode(CAMERA_MODES[save.settings.camera_mode].look);
     // Tên khu hiện thoáng khi bước vào; `zone_entered` ghi một lần cho mỗi khu trong một lượt vào Ngày.
-    const zoneName = (id: string | null) => idx.pack.maps.find((m) => m.id === day.map_id)?.zones.find((z) => z.zone_id === id)?.name ?? null;
+    const zoneName = (id: string | null) => resolveZoneName(day, id, engine, idx);
     const seenZones = new Set<string>();
     const enterZone = (id: string, record: boolean) => {
       save.current.zone_id = id;
-      toast(zoneName(id));
+      const name = zoneName(id);
+      lastZoneName = name;
+      toast(name);
       if (record && !seenZones.has(id)) bus.emit('zone_entered', { memory_day_id: day.id, zone_id: id });
       seenZones.add(id);
     };
+    unsubStepCompleted?.();
+    unsubStepCompleted = bus.on('step_completed', () => {
+      if (!dayScene || currentDay !== day || !dayScene.zone) return;
+      const nextName = zoneName(dayScene.zone);
+      if (nextName !== lastZoneName) {
+        lastZoneName = nextName;
+        toast(nextName);
+      }
+    });
     scene.onZoneChange = (to) => { enterZone(to, true); bus.emit('save_requested', { reason: 'zone' }); };
     ui.set({ mode: 'day', inReplay: replay, panel: null, cameraMode: save.settings.camera_mode, fade: { on: false, label: '' } });
     if (scene.zone) enterZone(scene.zone, !resume);
     if (scene.placeholder) toast('[Bản đồ chưa tải được — đang dùng mặt bằng tạm]', 6000);
     if (flow.state === 'to_day') flow.dispatch('scene_ready');
+    if (day.id === 'd.g06.01' && !replay && !resume && engine.mainStep()?.step.id === 'q_m1_main_01.s01') showKeyHint();
     void queue.enqueue(queue.drain);
   }
 
   function dispose() {
+    unsubStepCompleted?.();
+    unsubStepCompleted = null;
+    window.clearTimeout(toastTimer);
+    window.clearTimeout(keyHintTimer);
+    lastZoneName = null;
     dayScene?.dispose();
     dayScene = null;
     currentDay = null;
@@ -185,9 +229,14 @@ export function createDayController(deps: DayControllerDeps) {
   function tick(dt: number, t: number, moveIntent: () => { forward: number; strafe: number; run: boolean }) {
     if (!dayScene) return;
     const free = !getQueue().locked();
+    const intent = free ? moveIntent() : null;
+    if (intent && (intent.forward || intent.strafe) && ui.get().keyHint) {
+      keyHintMoved = true;
+      if (keyHintInteracted) hideKeyHint();
+    }
     const look = input.takeLook();                    // luôn đọc để chuyển động chuột lúc đang khóa không dồn lại
     const ctl: DayControl = free
-      ? { move: moveIntent(), look }
+      ? { move: intent, look }
       : { move: null, look: null };
     if (!free && input.pointerLocked) input.releasePointer();
     dayScene.update(dt, t, ctl);

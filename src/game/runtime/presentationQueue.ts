@@ -53,7 +53,7 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
     ui.get().minigame?.dispose();
     for (const [slot, w] of [...waiters]) { waiters.delete(slot); w(CANCEL); }
     tickers.clear(); presented.clear();
-    ui.set({ dialogue: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
+    ui.set({ dialogue: null, narrator: null, titleCard: null, keyHint: null, choice: null, photo: null, minigame: null, free: null, notice: null, endPrompt: null, profile: false });
     const dayScene = getDayScene();
     dayScene?.setStandZone(null); dayScene?.setPlayerMotion(null); dayScene?.lockCamera(null);
   };
@@ -71,11 +71,15 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
       if (step?.stage?.length) { await hooks.stage(step, { line: i }); if (ep !== epoch) return false; }
       const l = resolveLines([lines[i]], engine.conditions)[0];
       if (!l) continue;
-      const chr = idx.resolveActor(l.speaker);
-      ui.set({ dialogue: { who: speakerName(l.speaker, idx, profile()), color: chr?.ui_color ?? '#3a2c26', text: fmt(l.text) } });
+      if (l.speaker === 'narrator') {
+        ui.set({ dialogue: null, narrator: { text: fmt(l.text), channel: 'narrator' } });
+      } else {
+        const chr = idx.resolveActor(l.speaker);
+        ui.set({ narrator: null, dialogue: { who: speakerName(l.speaker, idx, profile()), color: chr?.ui_color ?? '#3a2c26', text: fmt(l.text) } });
+      }
       if ((await wait('next')) === CANCEL || ep !== epoch) return false;
     }
-    ui.set({ dialogue: null });
+    ui.set({ dialogue: null, narrator: null });
     return true;
   }
 
@@ -106,11 +110,8 @@ export function createPresentationQueue(deps: PresentationQueueDeps) {
     const ep = epoch, s = ref.step;
     const alive = () => ep === epoch;
     if (s.kind === 'cutscene') {
-      const dayScene = getDayScene();
-      const weatherShot = dayScene?.lockWeatherCamera(s.id);
       await runStep(s, alive, async () => {
         if (!(await playLines(s.lines, s))) return false; // cancelAll đã nhả camera
-        if (weatherShot) getDayScene()?.lockCamera(null);
         if (ref.quest.id === introId && !save.profile_done) {
           ui.set({ profile: true });
           if ((await wait('profile')) === CANCEL || !alive()) return false;
