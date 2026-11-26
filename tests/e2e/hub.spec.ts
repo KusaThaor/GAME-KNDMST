@@ -27,8 +27,8 @@ async function spaceThrough(page: Page, maxMs = 20_000) {
   const t0 = Date.now();
   for (;;) {
     await page.waitForTimeout(250);
-    const busy = await page.evaluate(() => !!document.querySelector('[data-testid="dialogue"], [data-testid="notice"]'));
-    if (!busy) { await page.waitForTimeout(300); if (!(await page.evaluate(() => !!document.querySelector('[data-testid="dialogue"], [data-testid="notice"]')))) return; }
+    const busy = await page.evaluate(() => !!document.querySelector('[data-testid="dialogue"], [data-testid="narrator-banner"], [data-testid="notice"]'));
+    if (!busy) { await page.waitForTimeout(300); if (!(await page.evaluate(() => !!document.querySelector('[data-testid="dialogue"], [data-testid="narrator-banner"], [data-testid="notice"]')))) return; }
     else await page.keyboard.press('Space');
     if (Date.now() - t0 > maxMs) throw new Error('thoại không chịu qua');
   }
@@ -65,7 +65,7 @@ test.describe('phòng 2026 góc nhìn thứ nhất', () => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await open(page);
     await page.locator('[data-act="consent-yes"]').click({ timeout: 30_000 });
-    await expect(page.locator('[data-testid="dialogue"]')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('[data-testid="narrator-banner"], [data-testid="dialogue"]').first()).toBeVisible({ timeout: 30_000 });
     await spaceThrough(page);                                                   // 4 câu mở đầu bằng Space
     await page.locator('[data-act="name"]').fill('Tí');
     await page.locator('[data-act="profile-ok"]').click();

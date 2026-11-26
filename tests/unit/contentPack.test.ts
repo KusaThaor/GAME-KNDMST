@@ -3,7 +3,7 @@
  * Nội dung sai ID/tham chiếu → test này đỏ và in đúng ID bị sai.
  */
 import { describe, expect, it } from 'vitest';
-import { CONTENT, contentConfig } from '../../src/content/pack';
+import { CONTENT, contentConfig, filterPackForRelease } from '../../src/content/pack';
 import { ACTIVE_CAST, CAST_TABLES } from '../../src/content/cast';
 import { RELEASES } from '../../src/content/release';
 import { formatReport, validateContent } from '../../src/content/validate';
@@ -16,9 +16,10 @@ describe('gói nội dung trong repo', () => {
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
   });
   it('hợp lệ ở production (nội dung giả không được lọt vào)', () => {
-    const r = validateContent(CONTENT, contentConfig('production'));
+    // Từ N-22a production có 4 Trang; Side/Daily AI bị tắt bởi filterPackForRelease (kiểm chi tiết ở releaseProduction.test.ts).
+    const r = validateContent(filterPackForRelease(CONTENT, 'production'), contentConfig('production'));
     expect(formatReport({ errors: r.errors, warnings: [] })).toBe('');
-    expect(RELEASES.production.memory_day_ids).toEqual([]);
+    expect(RELEASES.production.memory_day_ids).toHaveLength(4);
   });
   it('mọi bảng vai (D-01) đều chạy được với cùng nội dung', () => {
     expect(Object.keys(CAST_TABLES)).toContain(ACTIVE_CAST);
@@ -36,17 +37,17 @@ describe('gói nội dung trong repo', () => {
     expect(idx.artifactOfDay('d.g07.02')?.id).toBe('art_m1_03');
     expect(idx.artifactOfDay('d.g07.03')?.id).toBe('art_m1_05');
     const d1 = idx.days.get('d.g06.01')!;
-    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(7);
+    expect(idx.quests.get(d1.main_chain[0])!.steps).toHaveLength(8);   // N-01b: thêm s08 (3 câu bàn về ảnh tự sướng, sau ảnh s07)
     expect(d1.side_quests).toEqual(['q_m1_ai_side_01']);
     expect(d1.daily_pool).toEqual(['q_m1_ai_daily_01']);
 
     const d2 = idx.days.get('d.g07.01')!;
-    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(5);
+    expect(idx.quests.get(d2.main_chain[0])!.steps).toHaveLength(7);
     expect(d2.side_quests).toEqual(['q_m1_ai_side_03']);
     expect(d2.daily_pool).toHaveLength(0);
 
     const d3 = idx.days.get('d.g07.02')!;
-    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(6);
+    expect(idx.quests.get(d3.main_chain[0])!.steps).toHaveLength(7);
     expect(d3.side_quests).toHaveLength(0);
     expect(d3.daily_pool).toHaveLength(0);
 
@@ -61,6 +62,52 @@ describe('gói nội dung trong repo', () => {
     expect(photos[0] && photos[0].kind === 'photo' && photos[0].subjects).toHaveLength(5);
     expect(photos[1]).toMatchObject({ mode: 'timer', album_entry_id: 'alb.d.g07.03.cover' });
     expect(photos[1] && photos[1].kind === 'photo' && photos[1].subjects).toHaveLength(5);
+  });
+  it('thoại bước minigame tách trước/sau trò (N-01b): intro_lines phát trước, lines phát sau; ba câu về ảnh tự sướng ở s08 sau ảnh s07', () => {
+    const idx = indexContent(CONTENT, contentConfig('test'));
+    const text = (ls?: { text: string }[]) => (ls ?? []).map((l) => l.text);
+    const mg = (qid: string, sid: string) => {
+      const s = idx.quests.get(qid)!.steps.find((x) => x.id === sid)!;
+      if (s.kind !== 'minigame') throw new Error(`${sid} không phải minigame`);
+      return s;
+    };
+    const cipher = mg('q_m1_main_01', 'q_m1_main_01.s02');
+    expect(text(cipher.intro_lines)).toEqual(['Ê, đọc đi! Mật lệnh tuyệt mật đó.']);
+    expect(text(cipher.lines)).toHaveLength(7);
+    expect(text(cipher.lines)[6]).toBe('Lo chép bài đi, chút ra chơi rồi tính tiếp.');
+    const footbag = mg('q_m1_main_01', 'q_m1_main_01.s03');
+    expect(text(footbag.intro_lines)).toEqual(['Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!']);
+    expect(text(footbag.lines)).toHaveLength(3);
+    const wipe = mg('q_m1_main_01', 'q_m1_main_01.s04');
+    expect(text(wipe.intro_lines)).toEqual(['Ghế tui xếp xong rồi. Bảng là phần hai người nha.']);
+    expect(text(wipe.lines)).toHaveLength(6);
+    const noodle = mg('q_m1_main_01', 'q_m1_main_01.s06');
+    expect(text(noodle.intro_lines)).toEqual(['Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!']);
+    expect(text(noodle.lines)).toHaveLength(6);
+    const steps = idx.quests.get('q_m1_main_01')!.steps;
+    expect(steps.map((s) => s.id)).toEqual(['s01', 's02', 's03', 's04', 's05', 's06', 's07', 's08'].map((n) => `q_m1_main_01.${n}`));
+    expect(steps[6].kind).toBe('photo');
+    const after = steps[7];
+    expect(after.kind).toBe('cutscene');
+    expect(after.kind === 'cutscene' && text(after.lines)).toEqual([
+      'Tấm này hư cấu quá! Chụp lại đi!',
+      'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.',
+      'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.',
+      'Chốt! Sau này chụp đủ một bộ sưu tập luôn!',
+    ]);
+    const rules = mg('q_m1_main_03', 'q_m1_main_03.s05');
+    expect(text(rules.intro_lines)).toHaveLength(5);
+    expect(text(rules.intro_lines)[0]).toBe('Phải có luật. Điều 1: không tự lấy đồ của người khác.');
+    expect(text(rules.intro_lines)[3]).toBe('Nếu có ai buồn thì… mọi người đừng bỏ bạn đó ở lại một mình nha.');   // chữ "ở lại" đã chốt ở 2bbf275
+    expect(text(rules.intro_lines)[4]).toBe('Điều 5: chụp ảnh thì phải đủ người.');
+    expect(text(rules.lines)).toEqual([
+      'Chốt! Sổ luật viết xong rồi, ai vô Căn cứ cũng phải tuân thủ!',
+      'Ông nói như có cả trăm người muốn vô vậy.',
+      'Biết đâu sau này tụi mình nổi tiếng thiệt!',
+    ]);
+    const total = (q: string) => idx.quests.get(q)!.steps.reduce((n, s) => n + (s.kind === 'minigame' ? (s.intro_lines?.length ?? 0) + (s.lines?.length ?? 0) : s.kind === 'cutscene' && s.id.endsWith('.s08') ? s.lines.length : 0), 0);
+    expect(total('q_m1_main_01')).toBe(30);
+    expect(total('q_m1_main_03')).toBe(11);
   });
   it('kỷ vật Mốc 1 sáng lần lượt: món của Trang N chỉ sáng khi xong đúng Trang N-1 (Hộp Kỷ Vật, hub 2026)', () => {
     const idx = indexContent(CONTENT, contentConfig('test'));

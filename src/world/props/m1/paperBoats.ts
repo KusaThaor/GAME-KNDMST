@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { toon } from '../../../render/materials';
+import { groundAtZero } from '../common/helpers';
 import { illegibleLine, safeCanvasTexture } from './texHelper';
 
 /**
@@ -125,4 +126,23 @@ export function makePaperBoats(): THREE.Group {
   root.add(news);
 
   return root;
+}
+
+/**
+ * PX-20b · 1 chiếc thuyền giấy mắc cạn ở cuối rãnh nước (thuyền hồng của Hạ, P2-6).
+ * Gốc min.y = 0, ngân sách ≤ 20 tam giác.
+ */
+export function makeStrandedPaperBoat(color = '#f28482'): THREE.Group {
+  const root = new THREE.Group();
+  root.name = 'strandedPaperBoat';
+
+  const boatGeo = createPaperBoatGeometry();
+  const boatMat = toon(color, { side: THREE.DoubleSide });
+  const boat = new THREE.Mesh(boatGeo, boatMat);
+  boat.name = 'strandedPaperBoat:mesh';
+  boat.rotation.set(0.06, 0.45, 0.22);
+  boat.receiveShadow = true;
+  root.add(boat);
+
+  return groundAtZero(root);
 }

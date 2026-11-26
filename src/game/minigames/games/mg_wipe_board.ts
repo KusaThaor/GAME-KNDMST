@@ -4,6 +4,9 @@
  * Sao theo thời gian (không tính lúc tạm dừng): ≤ 10 giây 3 sao · ≤ 16 giây 2 sao · còn lại 1 sao. Không có thua.
  * Bảng vẽ bằng canvas riêng (texture `chalkSmudge` của N-06 là đạo cụ 3D, chưa gộp).
  */
+import { createRng } from '../../../core/random';
+import { createHiDpiCanvas, MG_FONT, MG_INK } from '../shared/canvasStage';
+import { createMinigameLoop } from '../shared/loopLifecycle';
 import type { MinigameModule, MinigameResult } from '../types';
 
 export const WIPE = {
@@ -65,14 +68,6 @@ export class WipeLogic {
   }
 }
 
-const INK = '#3a2c26';
-const rng = (seed: number) => () => {
-  seed = (seed + 0x6d2b79f5) | 0;
-  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
-
 export default {
   id: 'mg_wipe_board',
   title: 'Lau bảng',
@@ -86,24 +81,18 @@ export default {
     const W = WIPE.width, H = WIPE.height;
     const wrap = document.createElement('div');
     wrap.style.cssText = `display:flex;flex-direction:column;gap:8px;align-items:center;user-select:none`;
-    const canvas = document.createElement('canvas');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.dataset.testid = 'mg-wipe-board';
-    canvas.style.cssText = `display:block;width:100%;max-width:${W}px;aspect-ratio:${W}/${H};border:8px solid #8a5a36;border-radius:6px;touch-action:none;cursor:grab;background:#2f5d46`;
+    const { canvas, ctx: g, toLocal } = createHiDpiCanvas(wrap, {
+      width: W, height: H, testId: 'mg-wipe-board', cursor: 'grab', inset: 8,
+      css: 'margin:0;border:8px solid #8a5a36;border-radius:6px;background:#2f5d46',
+    });
     const bar = document.createElement('div');
-    bar.style.cssText = 'font:800 16px Nunito,sans-serif';
-    wrap.append(canvas, bar);
+    bar.style.cssText = `font:800 16px ${MG_FONT}`;
+    wrap.append(bar);
     el.append(wrap);
-    const g = canvas.getContext('2d')!;
-    g.scale(dpr, dpr);
 
     // lớp phấn: vẽ một lần rồi xóa dần bằng destination-out
-    const chalk = document.createElement('canvas');
-    chalk.width = W * dpr; chalk.height = H * dpr;
-    const cg = chalk.getContext('2d')!;
-    cg.scale(dpr, dpr);
-    const rand = rng(ctx.seed);
+    const { canvas: chalk, ctx: cg } = createHiDpiCanvas(null, { width: W, height: H });
+    const rand = createRng(ctx.seed);
     cg.fillStyle = 'rgba(236,240,232,.28)'; cg.fillRect(0, 0, W, H);
     cg.strokeStyle = 'rgba(245,245,238,.85)'; cg.lineCap = 'round';
     for (let i = 0; i < 26; i++) {
@@ -116,18 +105,13 @@ export default {
     }
 
     const logic = new WipeLogic(W, H);
-    let elapsed = 0, lastReal = performance.now(), raf = 0;
-    let paused = false, finished = false, outro = -1;
+    let finishing = false, doneElapsed: number | null = null;
     let down = false, space = false;
     let rag = { x: W / 2, y: H / 2 };
     const keys = new Set<string>();
 
-    const local = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      return { x: (e.clientX - r.left - 8) * (W / (r.width - 16)), y: (e.clientY - r.top - 8) * (H / (r.height - 16)) };
-    };
     const stroke = (to: { x: number; y: number }) => {
-      if (paused || outro >= 0) { rag = to; return; }
+      if (loop.paused || finishing) { rag = to; return; }
       cg.save();
       cg.globalCompositeOperation = 'destination-out';
       cg.lineWidth = logic.radius * 2; cg.lineCap = 'round';
@@ -135,74 +119,60 @@ export default {
       cg.restore();
       logic.wipe(rag.x, rag.y, to.x, to.y);
       rag = to;
-      if (logic.done) outro = WIPE.finishDelayMs;
+      if (logic.done) {
+        finishing = true;
+        doneElapsed = loop.elapsed;
+        loop.startOutro(WIPE.finishDelayMs, () => logic.result(doneElapsed!));
+      }
     };
 
     const draw = () => {
       g.clearRect(0, 0, W, H);
       g.drawImage(chalk, 0, 0, W, H);
-      g.fillStyle = (down || space) ? '#e6d3a8' : '#f2e3bf'; g.strokeStyle = INK; g.lineWidth = 2;
+      g.fillStyle = (down || space) ? '#e6d3a8' : '#f2e3bf'; g.strokeStyle = MG_INK; g.lineWidth = 2;
       g.beginPath(); g.roundRect(rag.x - 22, rag.y - 14, 44, 28, 6); g.fill(); g.stroke();
       const pct = Math.min(100, Math.floor(logic.coverage * 100));
-      bar.textContent = `Sạch: ${pct}% · ${(elapsed / 1000).toFixed(1)} giây`;
+      bar.textContent = `Sạch: ${pct}% · ${((doneElapsed ?? loop.elapsed) / 1000).toFixed(1)} giây`;
     };
 
-    const frame = (real: number) => {
-      const dt = Math.min(real - lastReal, 100);
-      lastReal = real;
-      if (!paused) {
-        if (outro < 0) {
-          elapsed += dt;
-          const vx = (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0);
-          const vy = (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0);
-          if (vx || vy) {
-            const to = { x: Math.max(0, Math.min(W, rag.x + vx * WIPE.keySpeed * dt / 1000)), y: Math.max(0, Math.min(H, rag.y + vy * WIPE.keySpeed * dt / 1000)) };
-            if (space) stroke(to); else rag = to;
-          }
-        } else if (!finished) {
-          outro -= dt;
-          if (outro <= 0) {
-            finished = true;
-            ctx.onFinish(logic.result(elapsed));
-          }
+    const loop = createMinigameLoop({
+      onFinish: ctx.onFinish,
+      onTick(dt) {
+        if (finishing) return;
+        const vx = (keys.has('ArrowRight') ? 1 : 0) - (keys.has('ArrowLeft') ? 1 : 0);
+        const vy = (keys.has('ArrowDown') ? 1 : 0) - (keys.has('ArrowUp') ? 1 : 0);
+        if (vx || vy) {
+          const to = { x: Math.max(0, Math.min(W, rag.x + vx * WIPE.keySpeed * dt / 1000)), y: Math.max(0, Math.min(H, rag.y + vy * WIPE.keySpeed * dt / 1000)) };
+          if (space) stroke(to); else rag = to;
         }
-      }
-      draw();
-      if (!finished) raf = requestAnimationFrame(frame);
-    };
+      },
+      onDraw: draw,
+      onPause() { down = false; space = false; keys.clear(); },
+      onDispose: () => wrap.remove(),
+    });
 
     const onDown = (e: PointerEvent) => {
-      if (e.button !== 0 || paused) return;
+      if (e.button !== 0 || loop.paused) return;
       e.preventDefault();
       down = true;
       try { canvas.setPointerCapture(e.pointerId); } catch { /* bỏ qua */ }
-      rag = local(e);
+      rag = toLocal(e);
       stroke(rag);
     };
-    const onMove = (e: PointerEvent) => { const p = local(e); if (down) stroke(p); else rag = p; };
+    const onMove = (e: PointerEvent) => { const p = toLocal(e); if (down) stroke(p); else rag = p; };
     const onUp = () => { down = false; };
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space') { e.preventDefault(); if (!paused) { space = true; stroke(rag); } }
+      if (e.code === 'Space') { e.preventDefault(); if (!loop.paused) { space = true; stroke(rag); } }
       else if (e.code.startsWith('Arrow')) { e.preventDefault(); keys.add(e.code); }
     };
     const onKeyUp = (e: KeyboardEvent) => { if (e.code === 'Space') space = false; keys.delete(e.code); };
-    canvas.addEventListener('pointerdown', onDown);
-    canvas.addEventListener('pointermove', onMove);
-    canvas.addEventListener('pointerup', onUp);
-    canvas.addEventListener('pointercancel', onUp);
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('keyup', onKeyUp);
-    raf = requestAnimationFrame(frame);
+    loop.on(canvas, 'pointerdown', onDown);
+    loop.on(canvas, 'pointermove', onMove);
+    loop.on(canvas, 'pointerup', onUp);
+    loop.on(canvas, 'pointercancel', onUp);
+    loop.on(window, 'keydown', onKey);
+    loop.on(window, 'keyup', onKeyUp);
 
-    return {
-      pause() { paused = true; down = false; space = false; keys.clear(); },
-      resume() { paused = false; lastReal = performance.now(); },
-      dispose() {
-        cancelAnimationFrame(raf);
-        window.removeEventListener('keydown', onKey);
-        window.removeEventListener('keyup', onKeyUp);
-        wrap.remove();
-      },
-    };
+    return loop.instance;
   },
 } satisfies MinigameModule;

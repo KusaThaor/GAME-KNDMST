@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Hành Trình Thanh Xuân — game 3D narrative trên web (dự án KNĐMST)",
+  "description": "Vùng Ký Ức — game 3D narrative trên web (dự án KNĐMST)",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

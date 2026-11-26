@@ -32,6 +32,12 @@ export interface PhotoView {
   url: string | null; marks: { label: string; ok: boolean }[]; score: number; display: 'marks' | 'score';
   /** Chụp nhiều lần (N-14): lần đang chụp (đếm từ 1) / tổng số lần. */
   shot?: { index: number; total: number };
+  /** Lời nhắc riêng của khung ngắm (lấy từ `shot_prompts[n]` hoặc `step.prompt`). */
+  prompt?: string;
+  /** Ẩn nút/nhắc tạo dáng ở chế độ hẹn giờ (ảnh cầu vồng Trang 4). */
+  hidePose?: boolean;
+  /** Thoại chen không chặn lúc đếm ngược (chỉ hiện trong phase 'countdown'). */
+  countdownLine?: { who: string; color: string; text: string } | null;
   /** Màn chọn 1 tấm (phase 'pick'): các tấm vừa chụp và tấm đang chọn. */
   picks?: { url: string; marks: { label: string; ok: boolean }[]; score: number }[];
   picked?: number;
@@ -43,6 +49,7 @@ export interface UiState {
   fade: { on: boolean; label: string };
   mode: 'hub' | 'day' | null;
   objective: string | null;
+  collectProgress?: { done: number; total: number } | null;
   quests: { title: string; type: string; state: string }[];
   prompt: { key: string; text: string } | null;
   toast: string | null;
@@ -56,6 +63,9 @@ export interface UiState {
   camOptions: { modeSwitch: boolean; freeLook: boolean };
   pointerLocked: boolean;
   dialogue: { who: string; color: string; text: string } | null;
+  narrator: { text: string; channel: 'narrator' | 'world_event' } | null;
+  titleCard: { title: string; subtitle: string | null; durationMs: number } | null;
+  keyHint: { text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
   endPrompt: { open: number } | null;
@@ -71,7 +81,8 @@ export interface UiState {
   boxView: { hint: string; hover: string | null; first: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
-  feedback: boolean;
+  /** Form phản hồi đang mở: 'demo_end' = sau màn kết bản thử; 'exit' = người chơi bấm Thoát (xong form thì rời game). */
+  feedback: false | 'demo_end' | 'exit';
   canEndDay: boolean;
   inReplay: boolean;
   wipeArmed: boolean;
@@ -79,8 +90,8 @@ export interface UiState {
 }
 
 export const initialUi: UiState = {
-  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
-  dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
+  ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, collectProgress: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
+  dialogue: null, narrator: null, titleCard: null, keyHint: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
 
@@ -107,6 +118,10 @@ export interface UiActions {
   phoneOpenThread(id: string | null): void;
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
+  /** Nút Thoát (Menu tạm dừng, cả phòng 2026, Ngày ký ức lẫn lúc đang chơi minigame): hiện Form phản hồi rồi rời game. */
+  menuExit(): void;
+  /** Đóng Form phản hồi mở từ nút Thoát, quay lại chơi tiếp (không gửi, không rời game). */
+  feedbackCancel(): void;
   feedbackSkip(): void;
   feedbackSubmitted(): void;
   toggleCameraMode(): void;

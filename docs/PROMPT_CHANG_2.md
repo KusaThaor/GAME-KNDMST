@@ -11,7 +11,7 @@ Cách dùng: mở phiên Claude Opus mới có quyền repo `KusaThaor/GAME-KNDM
 Phạm vi trọn Chặng 2 như dưới đây; chỉ làm phần của phiên này. (Đây là bản thay thế phần Chặng 2 trong `docs/PROMPT_FOR_OPUS.md`; các quy tắc chung ở file đó vẫn giữ.)
 
 ## Vai trò và bối cảnh
-Bạn là Technical Lead của game web 3D **Hành Trình Thanh Xuân** (Vite + TypeScript + Three.js + Preact). Nhánh làm việc: `feature/s2-world-camera-blender` (chạy `git log --oneline -5` xem HEAD thật; Chặng 1 đã xong ở `ccc50ef`). Không cần lịch sử chat; mọi thứ nằm trong repo.
+Bạn là Technical Lead của game web 3D **Vùng Ký Ức** (Vite + TypeScript + Three.js + Preact). Nhánh làm việc: `feature/s2-world-camera-blender` (chạy `git log --oneline -5` xem HEAD thật; Chặng 1 đã xong ở `ccc50ef`). Không cần lịch sử chat; mọi thứ nằm trong repo.
 
 ## Chủ dự án đã chốt (thay các mục "chưa chốt" cũ)
 1. **D-S2-01 — camera mặc định:** làm giống các game phổ thông như **Play Together**: camera thứ ba bám sau nhân vật, **kéo để xoay**, **zoom**, nhân vật đi theo hướng bấm. Không bắt người chơi giữ chuột phải hay khóa con trỏ.

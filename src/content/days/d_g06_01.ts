@@ -7,7 +7,6 @@
 import type { AlbumEntry, Artifact, MemoryDay, MemoryFragment, Quest } from '../types';
 
 const meta = { owner: 'NARRATIVE_APPROVED', ownership_label: 'HUMAN_CANON', status: 'SPEC_READY', version: 'v1.4' } as const;
-const sideMeta = { owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0' } as const;
 
 export const day: MemoryDay = {
   id: 'd.g06.01',
@@ -39,6 +38,7 @@ export const day: MemoryDay = {
   cameras: [
     { id: 'cam.d0601.grocery', marker: 'cam.thcs.grocery', fov: 42 },
     { id: 'cam.d0601.bench', marker: 'cam.thcs.yard_bench', fov: 42 },
+    { id: 'cam.d0601.desk3', marker: 'cam.thcs.desk3', fov: 42 },
   ],
   album_page_id: 'page.d.g06.01',
   completion: 'main_chain',
@@ -58,11 +58,26 @@ export const quests: Quest[] = [
         id: 'q_m1_main_01.s01',
         kind: 'talk',
         with: 'NPC_A',
-        objective: 'Làm quen bạn mới và tìm bảng phân lớp',
+        objective: 'Nói chuyện với bạn vừa nhặt vở giúp bạn',
+        title_card: { id: 'tc_p1_c1', title: 'Ngày đầu lớp 6', subtitle: 'Một buổi sáng tháng Chín, năm 2014', duration_ms: 3000 },
+        narrative: {
+          before: [{
+            id: 'narr_p1_c1_drop',
+            channel: 'narrator',
+            text: 'Một tiếng "bịch" vang lên phía sau. Cuốn vở bài tập trượt trên nền xi măng, dừng ngay trước mũi giày một cậu bạn đang chạy hớt hải.',
+            sfx: 'sfx_book_drop',
+          }],
+        },
+        stage: [
+          { cue: 'prop', actor: 'NPC_A', prop: 'notebook', at: 'start' },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: { line: 0 } },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_tada', at: { line: 4 } },
+          { cue: 'prop', actor: 'NPC_A', prop: null, at: 'end' },
+        ],
         lines: [
           { speaker: 'NPC_A', text: 'Ê, bạn gì ơi! Vở của cậu nè, suýt bay xuống sân luôn đó.' },
           { speaker: 'player', text: 'À, cảm ơn cậu nha.' },
-          { speaker: 'NPC_A', text: 'Cậu lớp này hả? Tớ cũng vậy nè. Đi chung hông, tớ đang kiếm phòng.' },
+          { speaker: 'NPC_A', text: 'Nhãn vở ghi chung lớp với tớ nè! Đi tìm phòng chung không?' },
           { speaker: 'player', text: 'Ừ, tớ cũng chưa quen đường.' },
           { speaker: 'NPC_A', text: 'Yên tâm, để tớ dẫn. Tớ mới đi lạc có… hai lần thôi!' },
           { speaker: 'player', text: 'Ủa, vậy cậu có chắc biết đường không?' },
@@ -74,15 +89,27 @@ export const quests: Quest[] = [
         kind: 'minigame',
         game: 'mg_cipher',
         level: 'min',
-        objective: 'Giải mật lệnh cùng Đức và Châu trong giờ học',
+        objective: 'Ghép ký hiệu giải mật lệnh của Đức',
+        stage: [
+          { cue: 'move', actor: 'NPC_A', to: 'spot.thcs.class_list_1', pace: 'walk', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.class_door', at: 'start' },
+          { cue: 'motion', actor: 'NPC_B', motion: 'pose_wave', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.desk3_1', at: { line: 0 } },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.desk3_2', at: { line: 0 } },
+          { cue: 'camera', camera_id: 'cam.d0601.desk3', dolly_ms: 800, at: { line: 0 } },
+          { cue: 'camera', camera_id: null, dolly_ms: 600, at: 'end' },
+        ],
+        intro_lines: [
+          { speaker: 'NPC_A', text: 'Ê, đọc đi! Mật lệnh tuyệt mật đó.' },
+        ],
         lines: [
-          { speaker: 'NPC_A', text: 'Ê, đọc đi! Mật lệnh tuyệt mật tớ vừa vẽ đó.' },
-          { speaker: 'player', text: 'Sao nhìn giống cậu vẽ linh tinh hơn vậy?' },
-          { speaker: 'NPC_B', text: 'Hai người làm gì đó? Đang trong giờ học mà.' },
-          { speaker: 'NPC_A', text: 'Không có gì! Tụi tớ đang… nghiên cứu tài liệu.' },
-          { speaker: 'NPC_B', text: 'Tài liệu gì toàn hình tròn hình vuông vậy trời? Đưa đây.' },
+          { speaker: 'player', text: 'Mật lệnh tuyệt mật… là "RA CHƠI" thôi hả?' },
+          { speaker: 'NPC_A', text: 'Mật mã cấp cao đó! Người ngoài đọc không ra đâu.' },
+          { speaker: 'NPC_B', text: 'Cấp cao đâu không thấy, chữ ông viết còn không đọc nổi.' },
           { speaker: 'NPC_A', text: 'Ơ… dạ, Châu Tổng.' },
-          { speaker: 'NPC_B', text: 'Gọi vậy nữa là tui khỏi sửa. Mật lệnh chỉ là rủ đá cầu ra chơi thôi à.' },
+          { speaker: 'NPC_B', text: 'Gọi vậy nữa là tui khỏi sửa.' },
+          { speaker: 'NPC_A', text: 'Dạ, Châu Tổng.' },
+          { speaker: 'NPC_B', text: 'Lo chép bài đi, chút ra chơi rồi tính tiếp.' },
         ],
       },
       {
@@ -90,10 +117,34 @@ export const quests: Quest[] = [
         kind: 'minigame',
         game: 'mg_footbag',
         level: 'min',
-        objective: 'Xuống sân đá cầu cùng Đức và Châu',
-        lines: [
+        objective: 'Đá cầu giữ nhịp cùng Đức',
+        narrative: {
+          before: [{
+            id: 'narr_p1_c4_bell',
+            channel: 'narrator',
+            text: 'Tùng... tùng... tùng! Hồi trống ra chơi dồn dập vang lên khắp các dãy hành lang. Cả lớp ùa ra sân.',
+            sfx: 'sfx_school_drum_3beats',
+          }],
+          after: [{
+            id: 'narr_p1_c4_fail',
+            channel: 'narrator',
+            text: 'Đức vung chân quá đà. Quả cầu lông vịt bay vút một đường cong rồi rớt tọt vào bụi rậm ven sân.',
+          }],
+        },
+        stage: [
+          { cue: 'prop', actor: 'NPC_B', prop: 'shuttlecock', at: 'start' },
+          { cue: 'sfx', sfx: 'sfx_shuttle_kick', at: 'start' },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_tada', at: 'end' },
+          { cue: 'move', actor: 'NPC_B', to: 'spot.thcs.shuttle_bush', pace: 'walk', at: 'end' },
+          { cue: 'prop', actor: 'NPC_B', prop: null, at: 'end' },
+        ],
+        intro_lines: [
           { speaker: 'NPC_A', text: 'Cậu cứ nhìn là biết tớ đá cầu giỏi cỡ nào!' },
-          { speaker: 'NPC_B', text: 'Ừ, giỏi dữ chưa. Đá hụt cầu bay vô bụi rồi kìa, để tui đi lượm.' },
+        ],
+        lines: [
+          { speaker: 'NPC_B', text: 'Ừ, giỏi dữ chưa. Cầu bay vô bụi luôn rồi kìa.' },
+          { speaker: 'NPC_A', text: 'Chiến thuật đánh lạc hướng thôi!' },
+          { speaker: 'NPC_B', text: 'Để tui lượm. Hai người đứng yên đó.' },
         ],
       },
       {
@@ -101,11 +152,22 @@ export const quests: Quest[] = [
         kind: 'minigame',
         game: 'mg_wipe_board',
         level: 'min',
-        objective: 'Lau bảng lớp và trực nhật cuối buổi',
+        objective: 'Dùng khăn lau sạch bảng phấn cùng Đức',
+        stage: [
+          { cue: 'sfx', sfx: 'sfx_chalk_wipe', at: 'start' },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'end' },
+          { cue: 'motion', actor: 'NPC_B', motion: 'pose_wave', at: 'end' },
+          { cue: 'visible', actor: 'NPC_B', visible: false, at: 'end' },
+        ],
+        intro_lines: [
+          { speaker: 'NPC_B', text: 'Ghế tui xếp xong rồi. Bảng là phần hai người nha.' },
+        ],
         lines: [
           { speaker: 'NPC_A', text: 'Mai mày nhớ ra chơi xuống sân với tao nha! …Ủa. Cậu. Với tớ.' },
           { speaker: 'NPC_B', text: 'Mới quen một bữa mà ông mày tao rồi hả?' },
           { speaker: 'NPC_A', text: 'Thì quen rồi còn gì!' },
+          { speaker: 'player', text: 'Ừ… nếu mai không có kiểm tra.' },
+          { speaker: 'NPC_B', text: 'Làm bài tập trước đi rồi tính. Tui về đây.' },
           { speaker: 'player', text: 'Ngày đầu ở trường mới… hình như cũng không tệ như mình nghĩ.' },
         ],
       },
@@ -113,8 +175,22 @@ export const quests: Quest[] = [
         id: 'q_m1_main_01.s05',
         kind: 'cutscene',
         objective: 'Thời gian trôi qua tới cuối học kỳ',
+        title_card: { id: 'tc_p1_c6', title: 'Mấy tháng sau…', subtitle: 'Bảng lớp đã ghi "Ôn tập học kỳ I".', duration_ms: 3000 },
+        narrative: {
+          before: [{
+            id: 'world_p1_c6_sunset',
+            channel: 'world_event',
+            text: 'Ánh nắng chuyển hẳn sang sắc vàng rực của buổi hoàng hôn tan học. Bóng cây đổ dài trên sân trường.',
+          }],
+        },
+        stage: [
+          { cue: 'visible', actor: 'NPC_B', visible: true, at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: 'start' },
+        ],
         lines: [
-          { speaker: 'narrator', text: 'Mấy tháng sau… Bảng lớp đã ghi "Ôn tập học kỳ I".' },
+          { speaker: 'NPC_A', text: 'Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!' },
         ],
       },
       {
@@ -122,14 +198,17 @@ export const quests: Quest[] = [
         kind: 'minigame',
         game: 'mg_noodle',
         level: 'min',
-        objective: 'Chia gói mì tôm ở bậc thềm tiệm tạp hóa',
+        objective: 'Tới bậc thềm tiệm tạp hóa trước cổng trường',
+        intro_lines: [
+          { speaker: 'NPC_A', text: 'Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!' },
+        ],
         lines: [
-          { speaker: 'NPC_A', text: 'Ra tiệm tạp hóa đi! Còn đúng một gói mì nè, mua lẹ chia ba!' },
-          { speaker: 'NPC_B', text: 'Chia đều. Không bàn cãi nữa.' },
-          { speaker: 'NPC_A', text: '{player_name} có máy ảnh mà! Quay ngược máy lại tự sướng đi!' },
-          { speaker: 'NPC_B', text: 'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.' },
-          { speaker: 'player', text: 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.' },
-          { speaker: 'NPC_A', text: 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!' },
+          { speaker: 'NPC_A', text: 'Chia ba thì còn được mấy sợi!' },
+          { speaker: 'NPC_B', text: 'Chia đều. Không bàn nữa.' },
+          { speaker: 'NPC_A', text: 'Ê, ba đứa mình chưa có tấm hình chung nào hết á!' },
+          { speaker: 'NPC_A', text: '{player_name} có máy ảnh mà! Quay ngược máy lại, tự sướng!' },
+          { speaker: 'NPC_B', text: 'Máy đó đâu có màn hình đằng trước. Sao biết có vô hình không?' },
+          { speaker: 'NPC_A', text: '…Đoán.' },
         ],
       },
       {
@@ -139,12 +218,37 @@ export const quests: Quest[] = [
         camera_id: 'cam.d0601.grocery',
         subjects: ['player', 'NPC_A', 'NPC_B'],
         album_entry_id: 'alb.d.g06.01.01',
-        objective: 'Chụp bức ảnh tự sướng đầu tiên của bộ ba',
+        shots: 3,
+        shot_prompts: [
+          'Lần 1: Quay ngược máy, đoán khung rồi bấm chụp',
+          'Lần 2: Lệch rồi! Chỉnh hướng máy, bấm lại',
+          'Lần 3: Lần cuối: Cố canh đủ ba người',
+        ],
+        prompt: 'Chọn một tấm ưng ý nhất để lưu vào cuốn Album',
+        stage: [
+          { cue: 'prop', actor: 'player', prop: 'camera', at: 'start' },
+          { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'start' },
+          { cue: 'prop', actor: 'player', prop: null, at: 'end' },
+        ],
+        objective: 'Chụp ảnh tự sướng bộ ba (Chụp 3 lần và chọn tấm đẹp nhất)',
+      },
+      {
+        id: 'q_m1_main_01.s08',
+        kind: 'cutscene',
+        lines: [
+          { speaker: 'NPC_A', text: 'Tấm này hư cấu quá! Chụp lại đi!' },
+          { speaker: 'NPC_B', text: 'Tui thấy giữ tấm này được nè. Nhìn ngố y chang ông đó Đức.' },
+          { speaker: 'player', text: 'Mai mốt nhất định tụi mình phải chụp thêm nhiều tấm nữa nha.' },
+          { speaker: 'NPC_A', text: 'Chốt! Sau này chụp đủ một bộ sưu tập luôn!' },
+        ],
       },
     ],
   },
+];
+
+export const sideQuests: Quest[] = [
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_side_01',
     type: 'side',
     scope: 'm1',
@@ -170,7 +274,7 @@ export const quests: Quest[] = [
     ],
   },
   {
-    ...sideMeta,
+    owner: 'DRAFT', ownership_label: 'AI_PROPOSED', status: 'DRAFT', version: 'v0',
     id: 'q_m1_ai_daily_01',
     type: 'daily',
     scope: 'm1',
@@ -206,6 +310,9 @@ export const fragments: MemoryFragment[] = [
   { id: 'frag.d.g06.01.01', memory_day_id: 'd.g06.01', kind: 'photo', source_quest_id: 'q_m1_main_01', media_spec: 'B' },
   { id: 'frag.d.g06.01.02', memory_day_id: 'd.g06.01', kind: 'note', source_quest_id: 'q_m1_main_01', text: 'Ngày đầu lớp 6, bắt đầu từ một mẩu giấy mật lệnh vẽ linh tinh.' },
   { id: 'frag.d.g06.01.03', memory_day_id: 'd.g06.01', kind: 'artifact' },
+];
+
+export const sideFragments: MemoryFragment[] = [
   { id: 'frag.d.g06.01.04', memory_day_id: 'd.g06.01', kind: 'sticker', source_quest_id: 'q_m1_ai_side_01', text: 'Danh sách trực nhật của Châu' },
   { id: 'frag.d.g06.01.05', memory_day_id: 'd.g06.01', kind: 'sticker', source_quest_id: 'q_m1_ai_daily_01', text: 'Dấu trực nhật đầu năm' },
 ];
@@ -214,6 +321,9 @@ export const entries: AlbumEntry[] = [
   { id: 'alb.d.g06.01.01', page_id: 'page.d.g06.01', slot_type: 'main_photo', slot_index: 0, fragment_id: 'frag.d.g06.01.01', source: 'auto_snapshot', required_for_restore: true, snapshot: { camera_id: 'cam.d0601.grocery', at_step_id: 'q_m1_main_01.s07' } },
   { id: 'alb.d.g06.01.02', page_id: 'page.d.g06.01', slot_type: 'note', slot_index: 1, fragment_id: 'frag.d.g06.01.02', source: 'text', required_for_restore: true },
   { id: 'alb.d.g06.01.03', page_id: 'page.d.g06.01', slot_type: 'artifact', slot_index: 2, fragment_id: 'frag.d.g06.01.03', source: 'sticker_art', required_for_restore: true },
+];
+
+export const sideEntries: AlbumEntry[] = [
   { id: 'alb.d.g06.01.04', page_id: 'page.d.g06.01', slot_type: 'sticker', slot_index: 3, fragment_id: 'frag.d.g06.01.04', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_side_01', replayable: true },
   { id: 'alb.d.g06.01.05', page_id: 'page.d.g06.01', slot_type: 'quest_record', slot_index: 4, fragment_id: 'frag.d.g06.01.05', source: 'sticker_art', required_for_restore: false, unlock_quest_id: 'q_m1_ai_daily_01', replayable: true },
 ];

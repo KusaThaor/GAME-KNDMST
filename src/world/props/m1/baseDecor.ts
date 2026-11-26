@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { toon } from '../../../render/materials';
 import { PAL } from '../../school/props';
 import { mergeStatic } from '../../../render/merge';
+import { groundAtZero } from '../common/helpers';
 
 export type BaseDecorStyle = 'paper' | 'flowers' | 'photos';
 
@@ -72,11 +73,7 @@ function makePaperDecor(): THREE.Group {
     root.add(m);
   }
 
-  // Chỉnh gốc min.y = 0
-  const b = new THREE.Box3().setFromObject(root);
-  root.position.y = -b.min.y;
-
-  return root;
+  return groundAtZero(root);
 }
 
 /**
@@ -137,10 +134,7 @@ function makeFlowersDecor(): THREE.Group {
     root.add(leafMesh);
   }
 
-  const b = new THREE.Box3().setFromObject(root);
-  root.position.y = -b.min.y;
-
-  return root;
+  return groundAtZero(root);
 }
 
 /**
@@ -198,10 +192,7 @@ function makePhotosDecor(): THREE.Group {
     root.add(pFlat);
   }
 
-  const b = new THREE.Box3().setFromObject(root);
-  root.position.y = -b.min.y;
-
-  return root;
+  return groundAtZero(root);
 }
 
 /**

@@ -13,6 +13,7 @@ export interface Avatar {
   height: number;
   setMotion(motion: Motion, speed?: number): void;
   readonly motion: Motion;
+  setProp?(propId: string | null): void;
   update(dt: number): void;
 }
 
@@ -31,6 +32,7 @@ export function rigAvatar(rig: CharacterRig, seed = 0): Avatar {
       if (speed !== undefined) anim.speed = speed;
       if (anim.motion !== motion) anim.setMotion(motion);
     },
+    setProp(propId) { rig.setProp(propId); },
     update(dt) { anim.update(dt); },
   };
 }

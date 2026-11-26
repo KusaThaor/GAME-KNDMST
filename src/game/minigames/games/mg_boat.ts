@@ -6,6 +6,9 @@
  * Kịch bản: Quân luôn nhất, thuyền Đức lật ngay khi thả, thuyền Hạ chạy chậm nhất → người chơi về thứ 2–3, lật = thứ 5.
  * Lời ước do bước `choice` của quest chọn trước đó; ảnh năm chiếc thuyền lúc vừa thả là bước `photo` riêng.
  */
+import { createRng } from '../../../core/random';
+import { createHiDpiCanvas, MG_INK, MG_RED, mgFont } from '../shared/canvasStage';
+import { createMinigameLoop } from '../shared/loopLifecycle';
 import type { MinigameModule, MinigameResult } from '../types';
 
 export type FoldId = 'sail' | 'roof' | 'double';
@@ -54,15 +57,8 @@ export const zoneOf = (power: number): LaunchZone => {
 export interface Trash { m: number; x: number; kind: 'leaf' | 'wrapper' | 'stick'; hit: boolean }
 export interface Whirl { m: number; side: -1 | 1; used: boolean }
 
-const rng = (seed: number) => () => {
-  seed = (seed + 0x6d2b79f5) | 0;
-  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
-
 export function makeCourse(seed: number): { trash: Trash[]; whirls: Whirl[] } {
-  const rand = rng(seed);
+  const rand = createRng(seed);
   const kinds = ['leaf', 'wrapper', 'stick'] as const;
   const trash = Array.from({ length: BOAT.trashCount }, (_, i) => ({
     m: 1.6 + i * 1.2 + rand() * 0.4, x: rand() * 1.4 - 0.7, kind: kinds[Math.floor(rand() * 3)], hit: false,
@@ -154,7 +150,7 @@ export class BoatLogic {
   }
 }
 
-const W = 480, H = 330, INK = '#3a2c26', RED = '#d8332a';
+const W = 480, H = 330;
 const GX = 200, GHALF = 92, BOAT_Y = 250, PX_PER_M = 70;
 const COLORS: Record<FoldId, string> = { sail: '#f6f2e8', roof: '#f2d98a', double: '#bfe0f2' };
 const sx = (x: number) => GX + x * GHALF;
@@ -175,50 +171,53 @@ export default {
     wrap.dataset.testid = 'mg-boat';
     const folds = document.createElement('div');
     folds.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;justify-content:center';
-    const canvas = document.createElement('canvas');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = W * dpr; canvas.height = H * dpr;
-    canvas.dataset.testid = 'mg-boat-canvas';
-    canvas.style.cssText = `display:none;width:100%;max-width:${W}px;aspect-ratio:${W}/${H};border:2px solid ${INK};border-radius:12px;touch-action:none;cursor:pointer`;
-    wrap.append(folds, canvas);
+    wrap.append(folds);
+    const { canvas, ctx: g, toLocal } = createHiDpiCanvas(wrap, {
+      width: W, height: H, testId: 'mg-boat-canvas', cursor: 'pointer', css: 'display:none;margin:0',
+    });
     el.append(wrap);
-    const g = canvas.getContext('2d')!;
-    g.scale(dpr, dpr);
 
     const ids = Object.keys(BOAT.folds) as FoldId[];
     let foldSel = 0;
     const renderFolds = () => {
       folds.innerHTML = ids.map((id, i) => `<button data-fold="${id}" style="display:flex;flex-direction:column;gap:2px;min-width:132px;
-        ${i === foldSel ? `box-shadow:0 0 0 3px ${INK};background:#ffd978;` : ''}"><b>${i + 1}. ${BOAT.folds[id].name}</b><span style="font-weight:600;font-size:13px">${BOAT.folds[id].note}</span></button>`).join('');
+        ${i === foldSel ? `box-shadow:0 0 0 3px ${MG_INK};background:#ffd978;` : ''}"><b>${i + 1}. ${BOAT.folds[id].name}</b><span style="font-weight:600;font-size:13px">${BOAT.folds[id].note}</span></button>`).join('');
     };
     renderFolds();
 
-    let paused = false, finished = false, raf = 0, lastReal = performance.now(), t = 0;
+    const rawWish = ctx.save.get('wish_text');
+    const wishText = typeof rawWish === 'string' && rawWish.trim() ? rawWish.trim() : '';
+
     let charging = false, chargeT = 0, endT = -1;
-    let steerKeys = 0, pointerSteer: number | null = null;
+    let pointerSteer: number | null = null;
     const keys = new Set<string>();
 
     const choose = (id: FoldId) => {
-      if (paused || !logic.chooseFold(id)) return;
+      if (loop.paused || !logic.chooseFold(id)) return;
       folds.style.display = 'none';
       canvas.style.display = 'block';
-      raf = requestAnimationFrame(frame);
+      loop.start();
     };
     const release = () => {
-      if (!charging || paused) return;
+      if (!charging || loop.paused) return;
       charging = false;
-      logic.launch(powerAt(t - chargeT));
+      logic.launch(powerAt(loop.elapsed - chargeT));
     };
 
-    const drawBoat = (x: number, y: number, color: string, tilt: number, scale = 1) => {
+    const drawBoat = (x: number, y: number, color: string, tilt: number, scale = 1, hasWish = false) => {
       g.save(); g.translate(x, y); g.rotate(tilt); g.scale(scale, scale);
-      g.fillStyle = color; g.strokeStyle = INK; g.lineWidth = 2;
+      g.fillStyle = color; g.strokeStyle = MG_INK; g.lineWidth = 2;
       g.beginPath(); g.moveTo(-16, 0); g.lineTo(16, 0); g.lineTo(10, 10); g.lineTo(-10, 10); g.closePath(); g.fill(); g.stroke();
       g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -20); g.lineTo(11, -2); g.closePath(); g.fill(); g.stroke();
+      if (hasWish) {
+        g.strokeStyle = '#233f6b'; g.lineWidth = 1.2;
+        g.beginPath(); g.moveTo(2, -12); g.lineTo(6, -10); g.moveTo(2, -7); g.lineTo(8, -5); g.stroke();
+      }
       g.restore();
     };
 
     const draw = () => {
+      const t = loop.elapsed;
       g.fillStyle = '#d9d2c3'; g.fillRect(0, 0, W, H);
       g.fillStyle = '#7fb3cf'; g.fillRect(GX - GHALF, 0, GHALF * 2, H);
       g.strokeStyle = 'rgba(255,255,255,.5)'; g.lineWidth = 2;
@@ -227,7 +226,7 @@ export default {
       const sy = (m: number) => BOAT_Y - (m - logic.pos) * PX_PER_M;
       // vạch đích
       const fy = sy(BOAT.lengthM);
-      if (fy > -10) { g.fillStyle = INK; for (let i = 0; i < 12; i++) if (i % 2 === 0) g.fillRect(GX - GHALF + i * (GHALF / 6), fy - 4, GHALF / 6, 8); }
+      if (fy > -10) { g.fillStyle = MG_INK; for (let i = 0; i < 12; i++) if (i % 2 === 0) g.fillRect(GX - GHALF + i * (GHALF / 6), fy - 4, GHALF / 6, 8); }
       for (const w of logic.whirls) {
         const y = sy(w.m);
         if (y < -40 || y > H + 40) continue;
@@ -241,94 +240,91 @@ export default {
         const y = sy(tr.m);
         if (y < -20 || y > H + 20 || tr.hit) continue;
         const x = sx(tr.x);
-        g.strokeStyle = INK; g.lineWidth = 1.5;
+        g.strokeStyle = MG_INK; g.lineWidth = 1.5;
         if (tr.kind === 'leaf') { g.fillStyle = '#5f9a4a'; g.beginPath(); g.ellipse(x, y, 13, 6, 0.6, 0, Math.PI * 2); g.fill(); g.stroke(); }
         else if (tr.kind === 'wrapper') { g.fillStyle = '#e58fb5'; g.fillRect(x - 10, y - 6, 20, 12); g.strokeRect(x - 10, y - 6, 20, 12); }
         else { g.fillStyle = '#d8b27a'; g.save(); g.translate(x, y); g.rotate(-0.5); g.fillRect(-14, -3, 28, 6); g.strokeRect(-14, -3, 28, 6); g.restore(); }
       }
       const fold = logic.fold ?? 'sail';
       const tilt = logic.phase === 'capsized' ? Math.min(Math.PI / 2, (t - endT + BOAT.endHoldMs) / 300) : logic.spinning ? t / 120 : logic.zone === 'red' && logic.stall > 0 ? 0.5 : 0;
-      drawBoat(sx(logic.x), BOAT_Y, COLORS[fold], tilt);
+      drawBoat(sx(logic.x), BOAT_Y, COLORS[fold], tilt, 1, Boolean(wishText));
       // cột tiến độ bên phải: Quân, Châu, Hạ chạy theo giờ; Đức lật ở vạch xuất phát
       const TX = 340, TTOP = 40, TBOT = 290;
-      g.strokeStyle = INK; g.lineWidth = 2; g.beginPath(); g.moveTo(TX, TTOP); g.lineTo(TX, TBOT); g.stroke();
+      g.strokeStyle = MG_INK; g.lineWidth = 2; g.beginPath(); g.moveTo(TX, TTOP); g.lineTo(TX, TBOT); g.stroke();
       const race = logic.phase === 'fold' || logic.phase === 'launch' ? 0 : logic.elapsed / 1000;
       const lane = (name: string, k: number, color: string, i: number, flipped = false) => {
         const y = TBOT - Math.min(1, k) * (TBOT - TTOP);
         const x = TX + 22 + i * 30;
         drawBoat(x, y, color, flipped ? Math.PI / 2 : 0, 0.55);
-        g.fillStyle = INK; g.font = '700 11px Nunito, sans-serif'; g.textAlign = 'center';
+        g.fillStyle = MG_INK; g.font = mgFont(11, 700); g.textAlign = 'center';
         g.fillText(name, x, TBOT + 16 + (i % 2) * 12);
       };
       lane('Quân', race / BOAT.rivals.quan, '#cde8c4', 0);
       lane('Châu', race / BOAT.rivals.chau, '#e4d4f2', 1);
       lane('Hạ', race / BOAT.rivals.ha, '#f7d0de', 2);
       lane('Đức', 0, '#f6c9a8', 3, logic.phase !== 'fold' && logic.phase !== 'launch');
-      g.fillStyle = INK; g.font = '800 15px Nunito, sans-serif'; g.textAlign = 'left';
+      g.fillStyle = MG_INK; g.font = mgFont(15); g.textAlign = 'left';
       g.fillText(`${logic.pos.toFixed(1)}/${BOAT.lengthM} m`, 12, 22);
       g.fillText(`Va chạm: ${logic.hits}/${BOAT.maxHits}`, 12, 42);
+      if (wishText) {
+        g.fillStyle = 'rgba(255,250,238,0.84)'; g.fillRect(GX - 86, H - 26, 172, 20);
+        g.strokeStyle = 'rgba(58,44,38,0.4)'; g.lineWidth = 1; g.strokeRect(GX - 86, H - 26, 172, 20);
+        g.fillStyle = '#233f6b'; g.font = mgFont(11, 700); g.textAlign = 'center';
+        g.fillText(`“${wishText}”`, GX, H - 12, 164);
+      }
       if (logic.phase === 'launch') {
         // thanh lực
         const BX = 22, BTOP = 80, BH = 180, p = charging ? powerAt(t - chargeT) : 0;
         g.fillStyle = '#e8a59b'; g.fillRect(BX, BTOP, 26, BH);
         g.fillStyle = '#f2d27a'; g.fillRect(BX, BTOP + BH * (0.5 - BOAT.yellowHalf), 26, BH * BOAT.yellowHalf * 2);
         g.fillStyle = '#8fd08a'; g.fillRect(BX, BTOP + BH * (0.5 - BOAT.greenHalf), 26, BH * BOAT.greenHalf * 2);
-        g.strokeStyle = INK; g.strokeRect(BX, BTOP, 26, BH);
-        g.fillStyle = INK; g.beginPath(); const py = BTOP + BH * (1 - p); g.moveTo(BX + 30, py); g.lineTo(BX + 42, py - 7); g.lineTo(BX + 42, py + 7); g.fill();
+        g.strokeStyle = MG_INK; g.strokeRect(BX, BTOP, 26, BH);
+        g.fillStyle = MG_INK; g.beginPath(); const py = BTOP + BH * (1 - p); g.moveTo(BX + 30, py); g.lineTo(BX + 42, py - 7); g.lineTo(BX + 42, py + 7); g.fill();
       }
       if (endT >= 0) {
         g.fillStyle = 'rgba(255,250,238,.9)'; g.fillRect(GX - 90, 110, 180, 44);
-        g.strokeStyle = INK; g.strokeRect(GX - 90, 110, 180, 44);
-        g.fillStyle = logic.phase === 'capsized' ? RED : INK; g.font = '800 20px Nunito, sans-serif'; g.textAlign = 'center';
+        g.strokeStyle = MG_INK; g.strokeRect(GX - 90, 110, 180, 44);
+        g.fillStyle = logic.phase === 'capsized' ? MG_RED : MG_INK; g.font = mgFont(20); g.textAlign = 'center';
         g.fillText(logic.phase === 'capsized' ? 'Thuyền lật!' : `Về thứ ${logic.rank}`, GX, 139);
       }
     };
 
-    const frame = (real: number) => {
-      const dt = Math.min(real - lastReal, 100);
-      lastReal = real;
-      if (!paused) {
-        t += dt;
+    const loop = createMinigameLoop({
+      autoStart: false,
+      onFinish: ctx.onFinish,
+      onTick(dt, t) {
         if (logic.phase === 'race') {
           let steer = (keys.has('KeyD') || keys.has('ArrowRight') ? 1 : 0) - (keys.has('KeyA') || keys.has('ArrowLeft') ? 1 : 0);
           if (pointerSteer !== null && !steer) steer = Math.abs(pointerSteer - logic.x) < 0.04 ? 0 : Math.sign(pointerSteer - logic.x);
-          steerKeys = steer;
-          logic.update(dt, steerKeys);
+          logic.update(dt, steer);
         }
         if ((logic.phase === 'finished' || logic.phase === 'capsized') && endT < 0) {
           endT = t + BOAT.endHoldMs;
           if (ctx.save.get('story') === undefined) ctx.save.set('story', logic.story());
+          loop.startOutro(BOAT.endHoldMs, () => logic.result());
         }
-        if (endT >= 0 && t >= endT && !finished) {
-          finished = true;
-          draw();
-          ctx.onFinish(logic.result());
-          return;
-        }
-      }
-      draw();
-      raf = requestAnimationFrame(frame);
-    };
+      },
+      onDraw: draw,
+      // Đang nạp lực mà tạm dừng thì hủy lần nạp (không tự thả).
+      onPause() { charging = false; pointerSteer = null; keys.clear(); },
+      onDispose: () => wrap.remove(),
+    });
 
-    const local = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
-    };
-    folds.addEventListener('click', e => {
+    loop.on(folds, 'click', e => {
       const b = (e.target as HTMLElement).closest('button');
       if (b?.dataset.fold) choose(b.dataset.fold as FoldId);
     });
     const onDown = (e: PointerEvent) => {
-      if (e.button !== 0 || paused) return;
+      if (e.button !== 0 || loop.paused) return;
       e.preventDefault();
       try { canvas.setPointerCapture(e.pointerId); } catch { /* bỏ qua */ }
-      if (logic.phase === 'launch' && !charging) { charging = true; chargeT = t; }
-      else if (logic.phase === 'race') pointerSteer = (local(e).x - GX) / GHALF;
+      if (logic.phase === 'launch' && !charging) { charging = true; chargeT = loop.elapsed; }
+      else if (logic.phase === 'race') pointerSteer = (toLocal(e).x - GX) / GHALF;
     };
-    const onMove = (e: PointerEvent) => { if (pointerSteer !== null && !paused) pointerSteer = (local(e).x - GX) / GHALF; };
+    const onMove = (e: PointerEvent) => { if (pointerSteer !== null && !loop.paused) pointerSteer = (toLocal(e).x - GX) / GHALF; };
     const onUp = () => { pointerSteer = null; release(); };
     const onKey = (e: KeyboardEvent) => {
-      if (paused) return;
+      if (loop.paused) return;
       if (logic.phase === 'fold') {
         if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') { foldSel = (foldSel + (e.code === 'ArrowLeft' ? -1 : 1) + ids.length) % ids.length; renderFolds(); }
         else if (/^(Digit|Numpad)[1-3]$/.test(e.code)) choose(ids[Number(e.code.slice(-1)) - 1]);
@@ -339,27 +335,17 @@ export default {
       }
       if (e.code === 'Space') {
         e.preventDefault();
-        if (logic.phase === 'launch' && !charging && !e.repeat) { charging = true; chargeT = t; }
+        if (logic.phase === 'launch' && !charging && !e.repeat) { charging = true; chargeT = loop.elapsed; }
       } else if (['KeyA', 'KeyD', 'ArrowLeft', 'ArrowRight'].includes(e.code)) { e.preventDefault(); keys.add(e.code); }
     };
     const onKeyUp = (e: KeyboardEvent) => { keys.delete(e.code); if (e.code === 'Space') release(); };
-    canvas.addEventListener('pointerdown', onDown);
-    canvas.addEventListener('pointermove', onMove);
-    canvas.addEventListener('pointerup', onUp);
-    canvas.addEventListener('pointercancel', onUp);
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('keyup', onKeyUp);
+    loop.on(canvas, 'pointerdown', onDown);
+    loop.on(canvas, 'pointermove', onMove);
+    loop.on(canvas, 'pointerup', onUp);
+    loop.on(canvas, 'pointercancel', onUp);
+    loop.on(window, 'keydown', onKey);
+    loop.on(window, 'keyup', onKeyUp);
 
-    return {
-      // Đang nạp lực mà tạm dừng thì hủy lần nạp (không tự thả).
-      pause() { paused = true; charging = false; pointerSteer = null; keys.clear(); },
-      resume() { paused = false; lastReal = performance.now(); },
-      dispose() {
-        cancelAnimationFrame(raf);
-        window.removeEventListener('keydown', onKey);
-        window.removeEventListener('keyup', onKeyUp);
-        wrap.remove();
-      },
-    };
+    return loop.instance;
   },
 } satisfies MinigameModule;

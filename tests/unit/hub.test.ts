@@ -246,8 +246,9 @@ describe('Hub 2026 — thứ tự mở đầu (B10)', () => {
     const q = questOf(HUB_QUESTS, 'q_hub_pd_04');
     expect(q.available_when).toEqual({ quest: 'q_hub_pd_01' });
     expect(stepLines(q.steps[0])).toEqual([
-      { speaker: 'player', text: 'Mật lệnh này… ai viết mà nhìn chẳng hiểu gì hết vậy?' },
-      { speaker: 'player', text: 'Không biết ngày đó tụi mình bắt đầu chơi với nhau từ lúc nào nhỉ?' },
+      { speaker: 'narrator', text: 'Mẩu giấy gấp tư đầy hình vẽ mũi tên, nét mực tím nguệch ngoạc kèm dòng mực đỏ nắn nót: "Mật lệnh số 01 – Chỉ dành cho người đủ can đảm tham gia!"' },
+      { speaker: 'player', text: 'Mật lệnh số 01… Mực đỏ này nhìn quen ghê, là chữ ai ta?' },
+      { speaker: 'player', text: 'Không biết ngày đó… tụi mình bắt đầu chơi chung từ lúc nào nhỉ?' },
     ]);
   });
   it('engine: mở thùng xong → kỷ vật đầu sáng và độc thoại bắt đầu', () => {
@@ -304,10 +305,11 @@ describe('Hub 2026 — chữ đã duyệt (Mục 0.2: B8, B9, D5), nhãn HUMAN_C
       'Ê. Ván caro hồi lớp 8 vẫn đang {quan}–{duc} đó nha. Ai gỡ?',
       'Mình mới lục ra cuốn sổ luật Căn cứ. Mọi người dạo này sao rồi?',
       'Điều 6, được dời, không được hủy. Tụi mình dời hơi lâu rồi ha.',
-      'Phòng trọ năm 2026. Buổi tối, ánh đèn bàn hắt lên một góc phòng.',
-      'Trên sàn có một thùng carton cũ dán băng keo vàng: "Đồ cũ – đừng vứt."',
-      'Mật lệnh này… ai viết mà nhìn chẳng hiểu gì hết vậy?',
-      'Không biết ngày đó tụi mình bắt đầu chơi với nhau từ lúc nào nhỉ?',
+      'Phòng trọ năm 2026. Buổi tối, ánh đèn bàn hắt lên một góc phòng tĩnh lặng.',
+      'Trên sàn có một chiếc thùng carton cũ dán băng keo ngả vàng: "Đồ cũ – đừng vứt."',
+      'Mẩu giấy gấp tư đầy hình vẽ mũi tên, nét mực tím nguệch ngoạc kèm dòng mực đỏ nắn nót: "Mật lệnh số 01 – Chỉ dành cho người đủ can đảm tham gia!"',
+      'Mật lệnh số 01… Mực đỏ này nhìn quen ghê, là chữ ai ta?',
+      'Không biết ngày đó… tụi mình bắt đầu chơi chung từ lúc nào nhỉ?',
       'Mấy năm sau…',
       'Tám năm sau.',
       'Hồi đó tụi mình hứa mỗi tháng gặp nhau một lần…',

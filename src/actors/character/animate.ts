@@ -17,6 +17,8 @@ export class CharacterAnimator {
   private nextBlink: number;
   private blinkT = -1;
   private blend = 0;            // 0 = đứng, 1 = đi/chạy
+  private poseFade = 0;         // 1 → 0 khi chuyển sang dáng mới để nối mượt
+  private prevPose = { aLx: 0, aLz: 0.1, aRx: 0, aRz: -0.1, headX: 0, headY: 0, headZ: 0, rootY: 0 };
 
   constructor(public rig: CharacterRig, seed = 0) {
     this.t = seed * 1.7;
@@ -24,14 +26,24 @@ export class CharacterAnimator {
   }
 
   setMotion(m: Motion) {
+    if (m !== this.motion) {
+      const r = this.rig;
+      this.prevPose = {
+        aLx: r.armL.rotation.x, aLz: r.armL.rotation.z,
+        aRx: r.armR.rotation.x, aRz: r.armR.rotation.z,
+        headX: r.head.rotation.x, headY: r.head.rotation.y, headZ: r.head.rotation.z,
+        rootY: r.root.position.y,
+      };
+      this.poseFade = 1;
+    }
     this.motion = m;
-    this.rig.setExpression(m === 'cheer' || m === 'pose_peace' || m === 'pose_tada' ? 'happy' : m === 'talk' ? 'talk' : 'neutral');
+    this.rig.setExpression(m === 'cheer' || m === 'pose_peace' || m === 'pose_tada' || m === 'pose_wave' ? 'happy' : m === 'talk' ? 'talk' : 'neutral');
     if (m === 'walk' && this.speed === 0) this.speed = 3.2;
     if (m === 'run' && this.speed === 0) this.speed = 5.5;
   }
 
   /** Đặt trạng thái tại một thời điểm cố định (dùng cho ảnh chụp kiểm thử lặp lại được). */
-  pose(t: number) { this.t = t; this.phase = t * this.stepRate(); this.blinkT = -1; this.blend = this.moving ? 1 : 0; this.apply(); }
+  pose(t: number) { this.t = t; this.phase = t * this.stepRate(); this.blinkT = -1; this.blend = this.moving ? 1 : 0; this.poseFade = 0; this.apply(); }
 
   private get moving() { return this.motion === 'walk' || this.motion === 'run'; }
   private stepRate() { return (this.speed || 3.2) / (this.rig.dims.legLen * 1.15); }
@@ -40,6 +52,7 @@ export class CharacterAnimator {
     this.t += dt;
     if (this.moving) this.phase += dt * this.stepRate();
     this.blend = lerp(this.blend, this.moving ? 1 : 0, Math.min(1, dt * 10));
+    if (this.poseFade > 0) this.poseFade = Math.max(0, this.poseFade - dt / 0.14);
     // chớp mắt ngẫu nhiên 2,5–5 giây/lần
     if (this.blinkT < 0 && this.t > this.nextBlink) this.blinkT = 0;
     if (this.blinkT >= 0) {
@@ -63,7 +76,7 @@ export class CharacterAnimator {
     r.torso.scale.y = 1 + breathe * (1 - this.blend);
     r.torso.rotation.x = (run ? 0.16 : 0.04) * this.blend;
     r.torso.rotation.y = s * 0.1 * this.blend;
-    r.root.position.y = 0;
+    let rootY = 0;
 
     // --- tay (mặc định buông thả, đánh tay ngược chân khi đi)
     const holdL = (r.armL.userData.holdIn as number | undefined) ?? 0;
@@ -82,24 +95,32 @@ export class CharacterAnimator {
         r.setMouthOpen(0.5 + 0.5 * Math.sin(t * 16) * Math.sin(t * 5.3));
         aRx = -0.35 + Math.sin(t * 3) * 0.12; aRz = -0.25;
         break;
-      case 'pose_peace':     // một tay giơ chữ V
-        aRz = -2.75; aRx = -0.5; headZ = 0.12; headX = -0.05;
+      case 'pose_peace':     // một tay giơ chữ V (nghiêng đầu nhẹ, tay hướng nhẹ ra trước)
+        aRz = -2.75; aRx = 0.35; headZ = 0.12; headX = -0.05;
         break;
-      case 'pose_wave':      // vẫy tay
-        aLz = 2.5 + Math.sin(t * 9) * 0.35; aLx = -0.2; headZ = -0.08;
+      case 'pose_wave':      // vẫy tay (giơ cao qua vai, vẫy nhịp rõ)
+        aLz = 2.45 + Math.sin(t * 9) * 0.38; aLx = 0.25; headZ = -0.08;
         break;
-      case 'pose_tada':      // dang hai tay "ta-da"
-        aLz = 1.15; aRz = -1.15; aLx = aRx = -0.35; headX = -0.08;
+      case 'pose_tada':      // dang rộng hai tay "ta-da" ngang trên vai
+        aLz = 1.85; aRz = -1.85; aLx = aRx = 0.28; headX = -0.08;
         break;
-      case 'cheer': {        // nhảy reo
+      case 'cheer': {        // nhảy reo, hai tay giơ cao
         const j = Math.abs(Math.sin(t * 5.5));
-        r.root.position.y = j * 0.16;
-        aLz = 2.75 + j * 0.2; aRz = -2.75 - j * 0.2; aLx = aRx = -0.45;
+        rootY = j * 0.16;
+        aLz = 2.75 + j * 0.2; aRz = -2.75 - j * 0.2; aLx = aRx = 0.3;
         r.legL.rotation.x = -j * 0.25; r.legR.rotation.x = -j * 0.1;
         headX = -0.12;
         break;
       }
     }
+    if (this.poseFade > 0) {
+      const k = 1 - this.poseFade, p = this.prevPose;
+      aLx = lerp(p.aLx, aLx, k); aLz = lerp(p.aLz, aLz, k);
+      aRx = lerp(p.aRx, aRx, k); aRz = lerp(p.aRz, aRz, k);
+      headX = lerp(p.headX, headX, k); headY = lerp(p.headY, headY, k); headZ = lerp(p.headZ, headZ, k);
+      rootY = lerp(p.rootY, rootY, k);
+    }
+    r.root.position.y = rootY;
     r.armL.rotation.set(aLx, 0, aLz);
     r.armR.rotation.set(aRx, 0, aRz);
     r.head.rotation.set(headX, headY, headZ);

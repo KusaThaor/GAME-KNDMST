@@ -246,7 +246,7 @@ Dữ liệu thật để quyết: nhánh asset **đã có một bộ xương dù
 
 **(3) Ghi công cây và năm học trong `ASSET_CREDITS.md`** (file nằm ở nhánh `feature/asset-workshop`, cần sửa trước khi gộp): hai file cây giống nhau từng byte, chiều cao thật 7,056 m, và tiêu đề ghi sai giai đoạn.
 *Sửa tiêu đề file:*
-> *Dự án Game 3D Narrative: Hành Trình Thanh Xuân (Mốc 1–2: năm học 2014–2015 đến 2017–2018)*
+> *Dự án Game 3D Narrative: Vùng Ký Ức (Mốc 1–2: năm học 2014–2015 đến 2017–2018)*
 
 *Thay hai hàng cây trong bảng §2 bằng:*
 > | **`schoolyard_flamboyant_tree.glb`** (cây phượng) | `CommonTree_Autumn_1` | **Quaternius** | CC0 1.0 | quaternius.com | **Đang là bản 12.224 tam giác, cao 7,056 m — VƯỢT ngân sách GDD `03` §1.2 (3.000 tam giác / 200 KB). Phải giảm tam giác ≥ 4 lần và hạ chiều cao về khoảng 5,3 m trước khi gộp** |
