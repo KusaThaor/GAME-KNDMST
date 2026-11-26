@@ -25,7 +25,7 @@ test.describe('bàn phím thật', () => {
     const errors = collectErrors(page);
     await open(page);
     await page.locator('[data-act="consent-yes"]').click({ timeout: 30_000 });
-    const dlg = page.locator('[data-testid="dialogue"] .text');
+    const dlg = page.locator('[data-testid="narrator-banner"] .text');
     await expect(dlg).toBeVisible({ timeout: 30_000 });
     // Lời dẫn mở đầu có 2 dòng (N-08, B10: độc thoại dời ra sau khi mở thùng): Space qua dòng 1, Enter qua dòng 2.
     const l1 = await dlg.textContent();
@@ -41,7 +41,7 @@ test.describe('bàn phím thật', () => {
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="panel-menu"]')).toHaveCount(0);
     await page.keyboard.press('Enter');
-    await expect.poll(async () => (await state(page)).ui.dialogue).not.toBe(l2);   // Enter = đi tiếp (sang form tên, hết thoại)
+    await expect(dlg).toHaveCount(0);   // Enter = đi tiếp (sang form tên, hết lời dẫn)
     expect(errors).toEqual([]);
   });
 

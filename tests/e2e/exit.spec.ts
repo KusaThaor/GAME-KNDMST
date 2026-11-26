@@ -17,7 +17,7 @@ test.describe('Thoát → Form phản hồi', () => {
     page.on('pageerror', (e) => errors.push(e.message));
     await open(page);
     await page.locator('[data-act="consent-yes"]').click({ timeout: 30_000 });
-    await expect(page.locator('[data-testid="dialogue"] .text')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('[data-testid="narrator-banner"], [data-testid="dialogue"]').first()).toBeVisible({ timeout: 30_000 });
 
     await page.keyboard.press('Escape');
     await expect(page.locator('[data-testid="panel-menu"]')).toBeVisible();
