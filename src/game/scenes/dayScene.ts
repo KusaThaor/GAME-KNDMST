@@ -78,6 +78,8 @@ export interface DayScene {
   cameraFor(point: CameraPoint): THREE.PerspectiveCamera | null;
   /** Giữ camera của người chơi ở khung của một máy ảnh đặt sẵn (khung ngắm, cutscene); null = trả lại camera bám theo. */
   lockCamera(point: CameraPoint | null): void;
+  /** Lướt mượt camera tới máy ảnh đặt sẵn trong `durationMs` ms; null = trả về người chơi. */
+  dollyCamera(point: CameraPoint | null, durationMs?: number): void;
   lockWeatherCamera(stepId: string): boolean;
   /** Mọi nhân vật trong danh sách có nằm trong khung của máy ảnh không. */
   allInFrame(cam: THREE.PerspectiveCamera, actors: string[]): boolean;
@@ -286,6 +288,10 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     lockCamera(point) {
       const b = point ? bindCamera(point, world) : null;
       if (b) cam.lock({ position: b.position, look_at: b.look_at, fov: b.fov }); else cam.release();
+    },
+    dollyCamera(point, durationMs = 900) {
+      const b = point ? bindCamera(point, world) : null;
+      if (b) cam.dollyTo({ position: b.position, look_at: b.look_at, fov: b.fov }, durationMs); else cam.release();
     },
     allInFrame(c, refs) {
       c.updateMatrixWorld(true); c.updateProjectionMatrix();

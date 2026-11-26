@@ -56,6 +56,9 @@ export interface UiState {
   camOptions: { modeSwitch: boolean; freeLook: boolean };
   pointerLocked: boolean;
   dialogue: { who: string; color: string; text: string } | null;
+  narrator: { text: string; channel: 'narrator' | 'world_event' } | null;
+  titleCard: { title: string; subtitle: string | null; durationMs: number } | null;
+  keyHint: { text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
   endPrompt: { open: number } | null;
@@ -81,7 +84,7 @@ export interface UiState {
 
 export const initialUi: UiState = {
   ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
-  dialogue: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
+  dialogue: null, narrator: null, titleCard: null, keyHint: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
   panel: null, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
 };
 

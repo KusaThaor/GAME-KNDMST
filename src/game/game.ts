@@ -28,6 +28,7 @@ import { createInput, type GameInput } from './input';
 import { createDayController } from './runtime/dayController';
 import { createHubController, FEEDBACK_SENT_FLAG } from './runtime/hubController';
 import { createMinigameRunner } from './runtime/minigameRunner';
+import { createNarrativeRunner } from './runtime/narrativeRunner';
 import { createPhotoRunner } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
 import { createStepHooks } from './runtime/stepHooks';
@@ -105,6 +106,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
    * không sửa dòng khác của game.ts.
    */
   const stepHooks = createStepHooks();
+  stepHooks.register(createNarrativeRunner({ ui, fmt, conditions: engine.conditions, getQueue: () => queue, getDayScene: dayCtrl.scene, getCurrentDay: dayCtrl.currentDay }));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,
     runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
@@ -199,7 +201,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   function continueKey(): boolean {
     const s = ui.get();
     if ((s.panel && s.panel !== 'box3d') || s.fade.on) return false;
-    if (s.dialogue || s.notice) { actions.next(); return true; }
+    if (s.dialogue || s.narrator || s.notice) { actions.next(); return true; }
     if (s.dayEnd) { actions.continueDayEnd(); return true; }
     if (s.minigame) return false;
     if (s.photo?.phase === 'countdown') { actions.photoPose(); return true; }

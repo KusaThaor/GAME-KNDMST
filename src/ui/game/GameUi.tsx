@@ -8,8 +8,11 @@ import { MinigameFrame } from './MinigameFrame';
 import { ChoiceBox } from './overlays/ChoiceBox';
 import { DialogueBox } from './overlays/DialogueBox';
 import { HudBar } from './overlays/HudBar';
+import { KeyHintCard } from './overlays/KeyHintCard';
+import { NarratorBanner } from './overlays/NarratorBanner';
 import { ConsentModal, DayEndModal, EndPromptModal, FeedbackModal, NoticeModal } from './overlays/NoticeModal';
 import { PhotoOverlay } from './overlays/PhotoOverlay';
+import { TitleCardOverlay } from './overlays/TitleCardOverlay';
 import { AlbumPanel } from './panels/AlbumPanel';
 import { Box3dBar, BoxPanel } from './panels/BoxPanel';
 import { JournalPanel } from './panels/JournalPanel';
@@ -28,8 +31,11 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
     <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''} data-device={s.device}>
       {s.placeholderBanner && <div class="g-banner">Bản khung — nội dung [PLACEHOLDER], không phải cốt truyện</div>}
       <HudBar s={s} a={a} blocking={blocking} />
+      {s.keyHint && !s.titleCard && !blocking && <KeyHintCard keyHint={s.keyHint} />}
       {s.panel === 'box3d' && s.boxView && <Box3dBar boxView={s.boxView} touch={touch} a={a} />}
       {s.dialogue && <DialogueBox dialogue={s.dialogue} touch={touch} a={a} />}
+      {s.narrator && <NarratorBanner narrator={s.narrator} touch={touch} a={a} />}
+      {s.titleCard && <TitleCardOverlay titleCard={s.titleCard} />}
       {s.choice && <ChoiceBox choice={s.choice} a={a} />}
       {s.profile && <ProfileCard a={a} />}
       {s.endPrompt && <EndPromptModal endPrompt={s.endPrompt} a={a} />}

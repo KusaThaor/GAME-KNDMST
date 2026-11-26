@@ -32,6 +32,16 @@ export class CameraManager {
   private hasFocus = false;
   private locked: { pose: CameraPose; saved: { yaw: number; pitch: number; distance: number; fov: number } } | null = null;
   private look = new THREE.Vector3();
+  private dolly: {
+    fromPos: THREE.Vector3;
+    toPos: THREE.Vector3;
+    fromLook: THREE.Vector3;
+    toLook: THREE.Vector3;
+    fromFov: number;
+    toFov: number;
+    elapsed: number;
+    duration: number;
+  } | null = null;
 
   constructor(preset: CameraPreset, private occluder: Occluder | null = null) {
     this.preset = preset;
@@ -66,15 +76,40 @@ export class CameraManager {
   lock(pose: CameraPose): void {
     const saved = this.locked?.saved ?? { yaw: this.yaw, pitch: this.pitch, distance: this.distance, fov: this.camera.fov };
     this.locked = { pose, saved };
+    this.dolly = null;
     this.camera.position.set(...pose.position);
     if (pose.fov) { this.camera.fov = pose.fov; this.camera.updateProjectionMatrix(); }
     this.camera.lookAt(this.look.set(...pose.look_at));
+  }
+  /** Lướt mượt camera (position, lookAt, fov) tới `pose` trong `durationMs` ms trong `update(dt)`. */
+  dollyTo(pose: CameraPose, durationMs = 900): void {
+    if (durationMs <= 0) { this.lock(pose); return; }
+    const saved = this.locked?.saved ?? { yaw: this.yaw, pitch: this.pitch, distance: this.distance, fov: this.camera.fov };
+    const fromPos = this.camera.position.clone();
+    const fromLook = this.locked
+      ? this.look.clone()
+      : this.hasFocus
+        ? this.focus.clone()
+        : fromPos.clone().add(new THREE.Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion));
+    const fromFov = this.camera.fov;
+    this.locked = { pose, saved };
+    this.dolly = {
+      fromPos,
+      toPos: new THREE.Vector3(...pose.position),
+      fromLook,
+      toLook: new THREE.Vector3(...pose.look_at),
+      fromFov,
+      toFov: pose.fov ?? fromFov,
+      elapsed: 0,
+      duration: durationMs / 1000,
+    };
   }
   /** Trả camera về bám theo nhân vật, đúng góc/khoảng cách trước khi khóa. */
   release(): void {
     if (!this.locked) return;
     const s = this.locked.saved;
     this.locked = null;
+    this.dolly = null;
     this.yaw = s.yaw; this.pitch = s.pitch; this.distance = s.distance;
     if (this.camera.fov !== s.fov) { this.camera.fov = s.fov; this.camera.updateProjectionMatrix(); }
     this.current = this.distance;
@@ -86,7 +121,23 @@ export class CameraManager {
    * dx/dy là chuyển động chuột (pixel) đã được input lọc theo kiểu A/B.
    */
   update(dt: number, target: { x: number; y: number; z: number }, input: LookInput | null): void {
-    if (this.locked) return;
+    if (this.locked) {
+      if (this.dolly) {
+        this.dolly.elapsed += Math.max(0, dt);
+        const raw = Math.min(1, this.dolly.elapsed / this.dolly.duration);
+        const t = raw * raw * (3 - 2 * raw);
+        this.camera.position.lerpVectors(this.dolly.fromPos, this.dolly.toPos, t);
+        this.look.lerpVectors(this.dolly.fromLook, this.dolly.toLook, t);
+        const fov = THREE.MathUtils.lerp(this.dolly.fromFov, this.dolly.toFov, t);
+        if (Math.abs(this.camera.fov - fov) > 1e-4) {
+          this.camera.fov = fov;
+          this.camera.updateProjectionMatrix();
+        }
+        this.camera.lookAt(this.look);
+        if (raw >= 1) this.dolly = null;
+      }
+      return;
+    }
     const p = this.preset;
     if (input) {
       this.yaw -= input.dx * LOOK_SENSITIVITY.yaw;
