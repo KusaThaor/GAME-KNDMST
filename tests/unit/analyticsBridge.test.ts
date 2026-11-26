@@ -60,8 +60,8 @@ function playAll(t: ReturnType<typeof setup>) {
   e.startDay('d.g07.01');
   e.trigger('interact', 'NPC_A'); e.complete('q_m1_main_02.s01');
   e.trigger('interact', 'NPC_C'); e.complete('q_m1_main_02.s02');
+  e.recordMinigameChoice('q_m1_main_02.s06', 'friendship');   // R-D5: điều ước chọn trong trò gấp thuyền
   e.complete('q_m1_main_02.s06');
-  e.complete('q_m1_main_02.s03', { option_id: 'friendship' });
   e.complete('q_m1_main_02.s07');
   e.trigger('interact', 'itr.thcs.gutter'); e.complete('q_m1_main_02.s04');
   e.complete('q_m1_main_02.s05');
