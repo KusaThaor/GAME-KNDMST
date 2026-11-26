@@ -31,6 +31,7 @@ import { createMinigameRunner } from './runtime/minigameRunner';
 import { createPhotoRunner } from './runtime/photoRunner';
 import { createPresentationQueue, type PresentationQueue } from './runtime/presentationQueue';
 import { createStepHooks } from './runtime/stepHooks';
+import { createStageRunner } from './runtime/stageRunner';
 import { formatGameText } from './runtime/uiAdapters';
 import type { DayScene } from './scenes/dayScene';
 import type { BoxItemView, HubPlayer } from './scenes/hubScene';
@@ -105,6 +106,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
    * không sửa dòng khác của game.ts.
    */
   const stepHooks = createStepHooks();
+  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene }));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,
     runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
