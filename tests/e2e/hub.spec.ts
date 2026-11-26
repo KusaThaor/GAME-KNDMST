@@ -143,7 +143,13 @@ test.describe('phòng 2026 góc nhìn thứ nhất', () => {
     await spaceThrough(page);
     await boxSettled(page);
     await clickHub(page, 'deco.scarf');
-    await expect(page.locator('[data-testid="dialogue"]')).toContainText('Khăn quàng đỏ');
+    // R-D (SO_HOA narr_decor_scarf): lời dẫn chuyện tả món đồ trước, rồi mới tới câu của người chơi
+    await expect(page.locator('[data-testid="narrator-banner"]')).toContainText('khăn quàng đỏ đã bạc màu');
+    await expect.poll(async () => {
+      if (!(await page.locator('[data-testid="dialogue"]').count())) await page.keyboard.press('Space');
+      return page.locator('[data-testid="dialogue"]').count();
+    }, { timeout: 10_000, intervals: [300] }).toBe(1);
+    await expect(page.locator('[data-testid="dialogue"]')).toContainText('Khăn quàng đỏ nè');
     await spaceThrough(page);
     await clickHub(page, 'art_m1_05');
     await expect(page.locator('[data-testid="dialogue"]')).toBeVisible();
