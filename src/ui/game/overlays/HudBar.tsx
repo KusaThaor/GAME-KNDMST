@@ -14,7 +14,17 @@ export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking:
     <>
       {s.mode && !s.fade.on && (
         <div class="g-top">
-          {s.objective && <div class="hud-objective" data-testid="objective"><span class="dot" />{s.objective}</div>}
+          {s.objective && (
+            <div class="hud-objective" data-testid="objective">
+              <span class="dot" />
+              <span>{s.objective}</span>
+              {s.collectProgress && (
+                <span class="tag" data-testid="collect-counter">
+                  {s.collectProgress.done}/{s.collectProgress.total}
+                </span>
+              )}
+            </div>
+          )}
           <div class="g-buttons">
             {s.mode === 'day' && s.device !== 'touch' && s.camOptions.modeSwitch && (
               <button data-act="camera-mode" data-mode={s.cameraMode} title={CAMERA_MODES[s.cameraMode].hint} onClick={a.toggleCameraMode}>

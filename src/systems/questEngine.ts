@@ -248,8 +248,8 @@ export class QuestEngine {
     if (s.kind === 'collect') {
       const r = this.rec(q);
       r.progress.push(target);
+      this.bus.emit('step_progress', { quest_id: q.id, step_id: s.id, done: r.progress.length, total: s.count, target });
       if (r.progress.length < s.count) {
-        this.bus.emit('step_progress', { quest_id: q.id, step_id: s.id, done: r.progress.length, total: s.count });
         return { ref, action: 'progress' };
       }
     }
