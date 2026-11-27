@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Pop } from '../overlays/NoticeModal';
 import type { AlbumEntryView, AlbumView, UiActions, UiState } from '../store';
 import { AlbumSticker, pageDecoStickers, pickStickerKind } from './albumStickers';
@@ -146,7 +146,21 @@ function BackEndPage({ al }: { al: AlbumView }) {
 export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const al = s.album;
   const [spread, setSpread] = useState(0);
-  const [turnDir, setTurnDir] = useState<'next' | 'prev' | ''>('');
+  const [flip, setFlip] = useState<{ dir: 'next' | 'prev'; key: number } | null>(null);
+  const dragStart = useRef<{ x: number; y: number } | null>(null);
+  const timerRef = useRef<number>(0);
+
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') go(spread + 1);
+      else if (e.key === 'ArrowLeft') go(spread - 1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   if (!al) return null;
 
   type Leaf = { kind: 'cover' } | { kind: 'page'; page: PageData } | { kind: 'end' };
@@ -156,12 +170,40 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const cur = Math.min(spread, totalSpreads - 1);
   const left = leaves[cur * 2];
   const right = leaves[cur * 2 + 1];
+  const canPrev = cur > 0;
+  const canNext = cur < totalSpreads - 1;
 
-  const go = (nextIdx: number) => {
+  function go(nextIdx: number) {
     const clamped = Math.max(0, Math.min(totalSpreads - 1, nextIdx));
     if (clamped === cur) return;
-    setTurnDir(clamped > cur ? 'next' : 'prev');
+    const dir = clamped > cur ? 'next' : 'prev';
+    window.clearTimeout(timerRef.current);
+    setFlip({ dir, key: Date.now() });
     setSpread(clamped);
+    timerRef.current = window.setTimeout(() => setFlip(null), 460);
+  }
+
+  const onLeafClick = (side: 'left' | 'right', e: MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    if (side === 'right' && canNext) go(cur + 1);
+    else if (side === 'left' && canPrev) go(cur - 1);
+  };
+
+  const onSpreadPointerDown = (e: PointerEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return;
+    dragStart.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const onSpreadPointerUp = (e: PointerEvent) => {
+    const start = dragStart.current;
+    dragStart.current = null;
+    if (!start) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0 && canNext) go(cur + 1);
+      else if (dx > 0 && canPrev) go(cur - 1);
+    }
   };
 
   const renderLeaf = (leaf: Leaf | undefined) => {
@@ -178,27 +220,38 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
         <span class="g-progress" data-testid="album-progress">{al.progress}</span>
         <button data-act="close" onClick={a.closePanel}>Đóng</button>
       </header>
-      <div key={cur} class={`g-album-spread ${turnDir ? `turn-${turnDir}` : ''}`}>
-        <div class="g-album-leaf left">{renderLeaf(left)}</div>
-        <div class="g-album-spine" aria-hidden="true" />
-        <div class="g-album-leaf right">{renderLeaf(right)}</div>
-      </div>
-      <footer class="g-album-nav">
-        <button data-act="album-prev" disabled={cur === 0} onClick={() => go(cur - 1)}>‹ Lật lại</button>
-        <div class="g-album-dots">
-          {Array.from({ length: totalSpreads }, (_, i) => (
-            <button
-              key={i}
-              class={i === cur ? 'on' : ''}
-              data-act={`album-spread-${i}`}
-              onClick={() => go(i)}
-            >
-              {i === 0 ? 'Bìa & Tr.1' : `Tr.${i * 2}–${i * 2 + 1}`}
-            </button>
-          ))}
+      <div
+        class="g-album-spread"
+        onPointerDown={onSpreadPointerDown}
+        onPointerUp={onSpreadPointerUp}
+      >
+        <div
+          class={`g-album-leaf left ${canPrev ? 'can-flip' : ''}`}
+          onClick={(e) => onLeafClick('left', e)}
+          title={canPrev ? 'Bấm hoặc kéo sang phải để lật lại' : undefined}
+        >
+          {renderLeaf(left)}
+          {canPrev && <span class="g-page-corner prev" data-act="album-prev" aria-label="Lật lại trang trước" />}
         </div>
-        <button class="primary" data-act="album-next" disabled={cur >= totalSpreads - 1} onClick={() => go(cur + 1)}>Lật tiếp ›</button>
-      </footer>
+        <div class="g-album-spine" aria-hidden="true" />
+        <div
+          class={`g-album-leaf right ${canNext ? 'can-flip' : ''}`}
+          onClick={(e) => onLeafClick('right', e)}
+          title={canNext ? 'Bấm hoặc kéo sang trái để lật tiếp' : undefined}
+        >
+          {renderLeaf(right)}
+          {canNext && <span class="g-page-corner next" data-act="album-next" aria-label="Lật sang trang sau" />}
+        </div>
+        {flip && (
+          <div key={flip.key} class={`g-album-flipper ${flip.dir}`} aria-hidden="true">
+            <div class="g-album-flipper-face" />
+          </div>
+        )}
+      </div>
+      <div class="g-album-hint">
+        <span>Trang {cur * 2 + 1}–{cur * 2 + 2} / {leaves.length}</span>
+        <span>· Chạm hoặc kéo trang để lật</span>
+      </div>
     </Pop>
   );
 }
