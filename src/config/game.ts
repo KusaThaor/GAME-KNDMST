@@ -13,3 +13,13 @@ export const GAME_CONFIG = {
   /** 3 sắc thái lựa chọn (RETAINED). */
   tone_labels: { playful: 'Rộn ràng', gentle: 'Ấm áp', deep: 'Sâu lắng' } as Record<Tone, string>,
 } as const;
+
+/**
+ * BUG-T1-A (chủ dự án chốt 27/11): tạm ẩn nhiệm vụ Side/Daily nháp (AI_PROPOSED + [PLACEHOLDER]) ở bản test/Preview,
+ * để người chơi thử gặp đúng luồng như bản production. Bản production luôn tắt (filterPackForRelease), không phụ thuộc cờ này.
+ * Bật lại khi cần kiểm nhiệm vụ nháp: đổi `show_in_test` thành true, hoặc mở bản test với `?drafts=1`.
+ */
+export const DRAFT_QUESTS = {
+  show_in_test: false,
+  url_param: 'drafts',
+} as const;

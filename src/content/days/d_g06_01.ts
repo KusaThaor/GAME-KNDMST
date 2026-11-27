@@ -20,11 +20,13 @@ export const day: MemoryDay = {
   main_chain: ['q_m1_main_01'],
   side_quests: ['q_m1_ai_side_01'],
   daily_pool: ['q_m1_ai_daily_01'],
-  // Đức + Châu đứng ở bậc thềm tiệm tạp hóa, trong khung cam.thcs.grocery (ảnh bộ ba s07).
-  // NPC đứng yên cả Ngày và s02–s07 đều tự hiện, nên người chơi gặp Đức ở s01 rồi đứng tại đây tới lúc chụp.
+  // BUG-T1-B: đầu Ngày Đức đứng ngay trước chỗ người chơi xuất hiện (Cảnh 1 nhặt vở), Châu ở cửa lớp (Cảnh 2).
+  // Các bước sau tự dời cả người chơi lẫn hai bạn bằng cue (khuất sau màn tối): s02 trong lớp, s03 sân đá cầu,
+  // s04 trước bảng đen, s05 bậc thềm tiệm tạp hóa (khung cam.thcs.grocery, ảnh bộ ba s07). s06/s07 đặt lại chỗ đứng
+  // để khi tải lại giữa chừng (tiếp tục Ngày) ảnh bộ ba vẫn đúng.
   npc_placements: [
-    { actor: 'NPC_A', marker: 'spot.thcs.grocery_1', motion: 'idle' },
-    { actor: 'NPC_B', marker: 'spot.thcs.grocery_2', motion: 'idle' },
+    { actor: 'NPC_A', marker: 'spot.thcs.notebook_drop', motion: 'idle' },
+    { actor: 'NPC_B', marker: 'spot.thcs.class_door', motion: 'idle' },
   ],
   interactables: [
     { id: 'itr.thcs.class_list', label: 'Bảng phân lớp', zone_id: 'zone.thcs.corridor', kind: 'marker' },
@@ -91,11 +93,12 @@ export const quests: Quest[] = [
         level: 'min',
         objective: 'Ghép ký hiệu giải mật lệnh của Đức',
         stage: [
-          { cue: 'move', actor: 'NPC_A', to: 'spot.thcs.class_list_1', pace: 'walk', at: 'start' },
-          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.class_door', at: 'start' },
-          { cue: 'motion', actor: 'NPC_B', motion: 'pose_wave', at: 'start' },
-          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.desk3_1', at: { line: 0 } },
-          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.desk3_2', at: { line: 0 } },
+          // Cảnh 3 — trong lớp, ba bạn quanh bàn gần cửa sổ
+          { cue: 'fade', on: true, at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'itr.thcs.desk3', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.desk3_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.desk3_2', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'camera', camera_id: 'cam.d0601.desk3', dolly_ms: 800, at: { line: 0 } },
           { cue: 'camera', camera_id: null, dolly_ms: 600, at: 'end' },
         ],
@@ -132,6 +135,12 @@ export const quests: Quest[] = [
           }],
         },
         stage: [
+          // Cảnh 4 — giờ ra chơi ở vòng đá cầu ngoài sân; người chơi đối diện Đức
+          { cue: 'fade', on: true, at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.shuttle_group', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.shuttle_group_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.shuttle_group_2', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'prop', actor: 'NPC_B', prop: 'shuttlecock', at: 'start' },
           { cue: 'sfx', sfx: 'sfx_shuttle_kick', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_tada', at: 'end' },
@@ -154,6 +163,12 @@ export const quests: Quest[] = [
         level: 'min',
         objective: 'Dùng khăn lau sạch bảng phấn cùng Đức',
         stage: [
+          // Cảnh 5 — cuối buổi trong lớp: hai bạn trước bảng đen, Châu đeo cặp ở cửa
+          { cue: 'fade', on: true, at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.board_group', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.board_group_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.class_door_in', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'sfx', sfx: 'sfx_chalk_wipe', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'end' },
           { cue: 'motion', actor: 'NPC_B', motion: 'pose_wave', at: 'end' },
@@ -184,9 +199,14 @@ export const quests: Quest[] = [
           }],
         },
         stage: [
+          // Cảnh 6 — trong lúc tối: chiều hoàng hôn tan học; Đức, Châu chờ trên bậc thềm tiệm, người chơi gần cổng nhìn về tiệm
+          { cue: 'fade', on: true, at: 'start' },
+          { cue: 'weather', preset: 'golden_sunset', at: 'start' },
           { cue: 'visible', actor: 'NPC_B', visible: true, at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.grocery_watch', at: 'start' },
           { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
           { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: 'start' },
         ],
         lines: [
@@ -199,6 +219,12 @@ export const quests: Quest[] = [
         game: 'mg_noodle',
         level: 'min',
         objective: 'Tới bậc thềm tiệm tạp hóa trước cổng trường',
+        // Chạy bình thường thì s05 đã đặt sẵn (không thấy gì đổi); chỉ có tác dụng khi tải lại trang giữa chừng ở bước này.
+        stage: [
+          { cue: 'weather', preset: 'golden_sunset', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
+        ],
         intro_lines: [
           { speaker: 'NPC_A', text: 'Ê ê! Còn đúng một gói mì thôi! Lẹ lên mày!' },
         ],
@@ -228,9 +254,18 @@ export const quests: Quest[] = [
         // TONG_DUYET Trang 1 Cảnh 8, lần bấm 1. Câu này từng nằm cứng trong game.ts (N-14), bị rơi khi R-B3 chuyển sang dữ liệu.
         first_line: { speaker: 'NPC_B', text: 'Khoan! Đức, tóc ông dựng lọt hết vô khung kìa!' },
         stage: [
+          // Cảnh 8 — người chơi vào giữa hai bạn trên bậc thềm (khuất sau màn tối); như s06 giữ chỗ đứng + ánh sáng khi tải lại giữa chừng
+          { cue: 'fade', on: true, at: 'start' },
+          { cue: 'weather', preset: 'golden_sunset', at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.grocery_group', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
+          { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'prop', actor: 'player', prop: 'camera', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'start' },
           { cue: 'prop', actor: 'player', prop: null, at: 'end' },
+          // hạ máy, quay sang Đức (câu đầu s08) — camera góc ba về phía cổng thay vì lọt vào trong tiệm sau lưng
+          { cue: 'face', actor: 'player', toward: 'NPC_A', at: 'end' },
         ],
         objective: 'Chụp ảnh tự sướng bộ ba (Chụp 3 lần và chọn tấm đẹp nhất)',
       },

@@ -57,7 +57,8 @@ async function captureCollect(page: Page, real = false) {
 }
 
 async function openGame(page: Page, query = '') {
-  await page.goto(`/?play=1${query}`);
+  // BUG-T1-A: bản test mặc định ẩn Side/Daily nháp; các ca ở file này kiểm cả nhiệm vụ nháp nên bật lại bằng drafts=1.
+  await page.goto(`/?play=1&drafts=1${query}`);
   await page.waitForFunction(() => window.__game !== undefined, null, { timeout: 60_000 });
 }
 const state = (page: Page) => page.evaluate(() => window.__game!.state() as unknown as GameState);

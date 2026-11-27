@@ -110,6 +110,8 @@ export type StageCue = StageCueBase & (
   | { cue: 'camera'; /** ID máy ảnh của Ngày (`day.cameras`); null = trả máy về người chơi */ camera_id: string | null; dolly_ms?: number }
   | { cue: 'weather'; preset: string; tween_s?: number }
   | { cue: 'sfx'; sfx: string }
+  /** BUG-T1-B: màn tối toàn màn hình. `on: true` chờ tối hẳn rồi mới chạy cue sau (che lúc dời người chơi); `on: false` mở lại. */
+  | { cue: 'fade'; on: boolean }
 );
 export type StageCueKind = StageCue['cue'];
 /** Dòng thoại chen lúc đếm ngược hẹn giờ chụp; `at_s` = giây còn lại khi hiện (bỏ trống = UI tự rải). */

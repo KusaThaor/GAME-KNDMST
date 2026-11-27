@@ -3,14 +3,14 @@
  * Luồng: Boot → Hub(intro|idle) → chuyển cảnh → Ngày ký ức → kết Ngày → chuyển cảnh → Hub.
  */
 import { CAMERA_OPTIONS, DEFAULT_CAMERA_MODE, isCameraMode, isControl } from '../config/camera';
-import { GAME_CONFIG } from '../config/game';
+import { DRAFT_QUESTS, GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
 import { attachAnalytics } from '../analytics/bridge';
 import { ActivePlaytime } from '../analytics/heartbeat';
 import { Tracker } from '../analytics/tracker';
 import { indexContent, type ContentIndex } from '../content/indexContent';
-import { CONTENT, contentConfig } from '../content/pack';
+import { CONTENT, contentConfig, packForSession } from '../content/pack';
 import type { Gender, MemoryDay } from '../content/types';
 import { formatReport, validateContent } from '../content/validate';
 import { EventBus } from '../core/eventBus';
@@ -59,8 +59,11 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export async function runGame(container: HTMLElement, opts: RunOptions = {}): Promise<GameHandle> {
   const t0 = performance.now();
-  const idx = indexContent(CONTENT, contentConfig(__APP_ENV__, opts.castName));
-  const report = validateContent(CONTENT, idx.config);
+  // BUG-T1-A: bản test mặc định ẩn Side/Daily nháp; ?drafts=1 (hoặc DRAFT_QUESTS.show_in_test) bật lại.
+  const showDrafts = __DEV_TOOLS__ && (DRAFT_QUESTS.show_in_test || new URLSearchParams(location.search).get(DRAFT_QUESTS.url_param) === '1');
+  const pack = packForSession(CONTENT, __APP_ENV__, showDrafts);
+  const idx = indexContent(pack, contentConfig(__APP_ENV__, opts.castName));
+  const report = validateContent(pack, idx.config);
   if (report.errors.length) console.error(`[content] gói nội dung có lỗi:\n${formatReport(report)}`);
 
   const store = new SaveStore(window.localStorage);
@@ -110,7 +113,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const stepHooks = createStepHooks();
   stepHooks.register(createStepReactions({ idx, bus, engine, ui, getQueue: () => queue, getDayScene: dayCtrl.scene }));
   stepHooks.register(createPropHook(dayCtrl.scene));
-  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene }));
+  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene, setFade: (on) => ui.set({ fade: { on, label: '' } }) }));
   stepHooks.register(createNarrativeRunner({ ui, fmt, conditions: engine.conditions, getQueue: () => queue, getDayScene: dayCtrl.scene, getCurrentDay: dayCtrl.currentDay }));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,

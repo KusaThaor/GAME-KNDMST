@@ -112,6 +112,15 @@ export const CONTENT: ContentPack =
         ],
       };
 
+/**
+ * Gói mà phiên chơi dùng (BUG-T1-A). Bản `test` mặc định gỡ Side/Daily nháp giống production; `showDrafts` = true giữ lại.
+ * Bản `production` đã lọc sẵn trong `CONTENT`, lọc lại không đổi gì.
+ */
+export function packForSession(pack: ContentPack, environment: 'test' | 'production', showDrafts: boolean): ContentPack {
+  if (environment === 'test' && showDrafts) return pack;
+  return filterPackForRelease(pack, 'production');
+}
+
 /** Cấu hình nội dung theo môi trường. `castName` chỉ dùng cho công cụ test (?cast=B). */
 export function contentConfig(environment: 'test' | 'production', castName: string = ACTIVE_CAST): ContentConfig {
   return { cast: CAST_TABLES[castName] ?? CAST_TABLES[ACTIVE_CAST], release: RELEASES[environment], environment };

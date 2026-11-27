@@ -51,6 +51,8 @@ export const M2_MARKERS = [
  * Chỗ đứng nhóm: `<…>_group` = vòng sáng của người chơi (giữa), `_1…_4` = 4 bạn (hai đầu lùi 0,25 m thành vòng cung), mặt nhìn máy.
  */
 export const M1_MARKERS = [
+  // Trang 1 — Cảnh 1 (BUG-T1-B): Đức nhặt vở, dừng trước mặt người chơi vừa xuất hiện (spawn.thcs.yard [3; 11], nhìn bắc)
+  marker('spot', 'spot.thcs.notebook_drop', Z.yard, [3, 0, 8.8], 0),
   // Trang 1 — Cảnh 2: bảng phân lớp + cửa lớp
   marker('spot', 'spot.thcs.class_list_1', Z.corridor, [-5.0, CORRIDOR_Y, -20.5], PI),            // Đức đứng cạnh người chơi trước bảng (itr.thcs.class_list)
   marker('spot', 'spot.thcs.class_door', Z.corridor, [-1.0, CORRIDOR_Y, -20.9], -PI / 2),         // Châu đứng trước cửa lớp (khe tường x −1,6…−0,4) ngoái về phía bảng
@@ -62,6 +64,19 @@ export const M1_MARKERS = [
   // Trang 1 — Cảnh 4: bụi cây ven vòng đá cầu (cầu rơi vào); R-B4 dời cụm makeFootbagSpot về itr này
   marker('interact', 'itr.thcs.shuttle_bush', Z.yard, [14.6, 0, 9.2], 0.86),
   marker('spot', 'spot.thcs.shuttle_bush', Z.yard, [13.9, 0, 8.6], 0.86),                         // Châu tới lượm cầu
+  // Trang 1 — Cảnh 4 (BUG-T1-B): vòng đá cầu itr.thcs.shuttle_ring (12; 7) — người chơi đối diện Đức, Châu cầm cầu đứng cạnh
+  marker('spot', 'spot.thcs.shuttle_group', Z.yard, [12, 0, 8.3], PI),                              // người chơi, nhìn bắc về Đức
+  marker('spot', 'spot.thcs.shuttle_group_1', Z.yard, [12, 0, 5.7], 0),                             // Đức, nhìn nam về người chơi
+  marker('spot', 'spot.thcs.shuttle_group_2', Z.yard, [13.6, 0, 7.0], -PI / 2),                     // Châu, mép đông vòng, nhìn vào giữa
+  // Trang 1 — Cảnh 5 (BUG-T1-B): trực nhật — hai bạn trước bảng đen (vách đông lớp, itr.thcs.blackboard), Châu đứng trong cửa lớp
+  marker('spot', 'spot.thcs.board_group', Z.classroom, [-0.4, CORRIDOR_Y, -26.6], PI / 2),        // người chơi, nhìn đông vào bảng
+  marker('spot', 'spot.thcs.board_group_1', Z.classroom, [-0.4, CORRIDOR_Y, -25.3], PI / 2),      // Đức, cạnh người chơi
+  marker('spot', 'spot.thcs.class_door_in', Z.classroom, [-1.0, CORRIDOR_Y, -22.3], PI),          // Châu đeo cặp ở cửa (khe tường x −1,6…−0,4), ngoái về bảng
+  // Trang 1 — Cảnh 6–7 (BUG-T1-B): người chơi đứng gần cổng nhìn về bậc thềm tiệm (itr.thcs.grocery_steps); camera góc ba ở phía cổng
+  marker('spot', 'spot.thcs.grocery_watch', Z.gate, [-5.6, 0, 24.0], -0.59),
+  // Trang 1 — Cảnh 8 (BUG-T1-B): người chơi đứng giữa Đức (spot.thcs.grocery_1) và Châu (spot.thcs.grocery_2) trên bậc thềm,
+  // nhìn về máy cam.thcs.grocery (ảnh tự sướng bộ ba)
+  marker('spot', 'spot.thcs.grocery_group', Z.gate, [-7.75, 0, 27.0], 2.45),
   // Trang 2 — Cảnh 4: đứng lùi 2,7 m chụp 5 thuyền ở mép rãnh; Cảnh 5–6: cuối rãnh (thuyền Hạ mắc lại)
   marker('spot', 'spot.thcs.gutter_photo', Z.yard, [-14, 0, -15.4], PI),
   marker('interact', 'itr.thcs.gutter_end', Z.yard, [-6.0, 0, -17.6], PI),                         // vớt thuyền, ký tên lên buồm
