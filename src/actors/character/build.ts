@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import type { OutfitStyle } from '../../config/cosmetics';
 import { flat, toon } from '../../render/materials';
 import { cached, capsule, cyl, mesh, onSphere, rbox, shade, sphere } from './geometry';
 import { buildHair } from './hair';
@@ -59,13 +60,19 @@ function dimsFor(grade: Grade, look: GradeLook): Dims {
 }
 
 // ---------- dựng nhân vật ----------
-export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: boolean } = {}): CharacterRig {
-  const def = CHARACTERS[id];
+export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: boolean; outfit?: OutfitStyle } = {}): CharacterRig {
+  const baseDef = CHARACTERS[id];
+  const outfit = opts.outfit;
+  const def: CharacterDef = outfit?.hairColor ? { ...baseDef, hairColor: outfit.hairColor } : baseDef;
   const look = grade === 6 ? def.g6 : def.g9;
   const d = dimsFor(grade, look);
   const skin = toon(def.skin, { emissive: shade(def.skin, 0.16) });
-  const shirt = toon(UNIFORM.shirt);
-  const trousers = toon(UNIFORM.trousers);
+  const shirtHex = outfit?.shirtColor ?? UNIFORM.shirt;
+  const trousersHex = outfit?.trousersColor ?? UNIFORM.trousers;
+  const shoeHex = outfit?.shoeColor ?? UNIFORM.shoe;
+  const shirt = toon(shirtHex);
+  const trousers = toon(trousersHex);
+  const topKind = outfit?.topKind ?? 'uniform';
 
   const root = new THREE.Group(); root.name = `char:${id}:g${grade}`;
   const hips = new THREE.Group(); hips.position.y = d.legLen; root.add(hips);
@@ -77,7 +84,7 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
     const span = d.legLen - d.shoeH;
     mesh(capsule(d.legR, span - d.legR * 1.2), trousers, [0, -span / 2 + 0.01, 0], g);
     const shoe = new THREE.Group(); shoe.position.set(0, -d.legLen + d.shoeH / 2, d.legR * 0.45); g.add(shoe);
-    mesh(rbox(d.legR * 2.35, d.shoeH, d.legR * 3.5, 0.03), toon(UNIFORM.shoe), [0, 0.008, 0], shoe);
+    mesh(rbox(d.legR * 2.35, d.shoeH, d.legR * 3.5, 0.03), toon(shoeHex), [0, 0.008, 0], shoe);
     mesh(rbox(d.legR * 2.45, 0.025, d.legR * 3.6, 0.01), toon(UNIFORM.sole), [0, -d.shoeH / 2 + 0.008, 0], shoe);
     return g;
   };
@@ -86,14 +93,33 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
   // thân áo
   const torso = new THREE.Group(); torso.position.y = 0.06; hips.add(torso);
   mesh(rbox(d.torsoW, d.torsoH, d.torsoD, 0.1), shirt, [0, d.torsoH / 2, 0], torso);
-  mesh(rbox(d.torsoW * 1.005, 0.035, d.torsoD * 1.01, 0.015), toon(UNIFORM.belt), [0, 0.0, 0], torso);
-  mesh(rbox(0.012, d.torsoH * 0.62, 0.006, 0.003), flat(UNIFORM.shirtShade), [0, d.torsoH * 0.55, d.torsoD / 2 + 0.002], torso);
-  for (const s of [-1, 1]) {
-    const c = mesh(rbox(0.12, 0.035, 0.07, 0.012), shirt, [s * 0.055, d.torsoH - 0.005, d.torsoD / 2 - 0.035], torso);
-    c.rotation.set(-0.35, 0, s * 0.42);
+  if (topKind === 'uniform') {
+    mesh(rbox(d.torsoW * 1.005, 0.035, d.torsoD * 1.01, 0.015), toon(UNIFORM.belt), [0, 0.0, 0], torso);
+    mesh(rbox(0.012, d.torsoH * 0.62, 0.006, 0.003), flat(UNIFORM.shirtShade), [0, d.torsoH * 0.55, d.torsoD / 2 + 0.002], torso);
+    for (const s of [-1, 1]) {
+      const c = mesh(rbox(0.12, 0.035, 0.07, 0.012), shirt, [s * 0.055, d.torsoH - 0.005, d.torsoD / 2 - 0.035], torso);
+      c.rotation.set(-0.35, 0, s * 0.42);
+    }
+    mesh(rbox(0.085, 0.03, 0.008, 0.004), toon(UNIFORM.nametag, { outline: false }), [d.torsoW * 0.24, d.torsoH * 0.74, d.torsoD / 2 + 0.003], torso);
+  } else if (topKind === 'hoodie') {
+    // túi áo trước bụng & mũ trùm sau gáy
+    mesh(rbox(d.torsoW * 0.62, d.torsoH * 0.26, 0.025, 0.012), toon(shade(shirtHex, 0.9)), [0, d.torsoH * 0.22, d.torsoD / 2 + 0.004], torso);
+    mesh(rbox(d.torsoW * 0.55, 0.11, 0.12, 0.05), toon(shade(shirtHex, 0.92)), [0, d.torsoH - 0.02, -d.torsoD / 2 - 0.02], torso);
+    for (const s of [-1, 1]) mesh(rbox(0.014, 0.11, 0.01, 0.005), flat('#fffdf6'), [s * 0.04, d.torsoH - 0.07, d.torsoD / 2 + 0.006], torso);
+  } else if (topKind === 'cardigan') {
+    // áo trong trắng + hàng nút
+    mesh(rbox(d.torsoW * 0.34, d.torsoH * 0.88, 0.014, 0.005), toon('#fffdf6'), [0, d.torsoH * 0.48, d.torsoD / 2 + 0.002], torso);
+    for (let b = 0; b < 3; b++) mesh(sphere(0.014, 8, 6), flat('#5b4636'), [0.025, d.torsoH * (0.25 + b * 0.22), d.torsoD / 2 + 0.011], torso);
+  } else if (topKind === 'denim') {
+    // khóa kéo + 2 túi ngực
+    mesh(rbox(0.018, d.torsoH * 0.92, 0.012, 0.004), flat('#d5dce6'), [0, d.torsoH * 0.48, d.torsoD / 2 + 0.004], torso);
+    for (const s of [-1, 1]) mesh(rbox(0.085, 0.075, 0.018, 0.006), toon(shade(shirtHex, 0.85)), [s * d.torsoW * 0.24, d.torsoH * 0.65, d.torsoD / 2 + 0.005], torso);
+  } else if (topKind === 'sport') {
+    // sọc thể thao ngang ngực
+    mesh(rbox(d.torsoW * 1.01, 0.065, d.torsoD * 1.015, 0.01), toon('#3366a8'), [0, d.torsoH * 0.62, 0], torso);
+    mesh(rbox(d.torsoW * 1.005, 0.028, d.torsoD * 1.01, 0.01), toon('#d8332a'), [0, d.torsoH * 0.52, 0], torso);
   }
-  mesh(rbox(0.085, 0.03, 0.008, 0.004), toon(UNIFORM.nametag, { outline: false }), [d.torsoW * 0.24, d.torsoH * 0.74, d.torsoD / 2 + 0.003], torso);
-  const scarf = opts.scarf ?? grade === 6;
+  const scarf = outfit?.scarfOverride ?? (opts.scarf ?? grade === 6);
   if (scarf) {
     const red = toon(UNIFORM.scarf);
     const ring = new THREE.Mesh(cached('scarf-ring', () => new THREE.TorusGeometry(0.105, 0.028, 8, 20)), red);
@@ -105,12 +131,17 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
     }
   }
 
-  // tay (tay áo ngắn trắng)
+  // tay (tay áo ngắn hoặc dài theo kiểu áo)
+  const longSleeve = topKind === 'hoodie' || topKind === 'cardigan' || topKind === 'denim';
   const mkArm = (s: number) => {
     const g = new THREE.Group(); g.position.set(s * (d.torsoW / 2 + d.armR * 0.3), d.torsoH - d.armR * 1.6, 0); torso.add(g);
     g.rotation.z = s * 0.1;
-    mesh(capsule(d.armR * 1.55, 0.06), shirt, [0, -0.045, 0], g);
-    mesh(capsule(d.armR, d.armLen - d.armR * 2), skin, [0, -d.armLen / 2, 0], g);
+    if (longSleeve) {
+      mesh(capsule(d.armR * 1.32, d.armLen - d.armR * 2), shirt, [0, -d.armLen / 2 + 0.015, 0], g);
+    } else {
+      mesh(capsule(d.armR * 1.55, 0.06), shirt, [0, -0.045, 0], g);
+      mesh(capsule(d.armR, d.armLen - d.armR * 2), skin, [0, -d.armLen / 2, 0], g);
+    }
     const hand = new THREE.Group(); hand.position.y = -d.armLen; g.add(hand);
     mesh(sphere(d.armR * 1.3, 12, 10), skin, [0, 0, 0], hand);
     return { g, hand };
@@ -177,6 +208,48 @@ export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: bo
     setProp(propId) { return setDynamicProp(rig, propId); },
   };
   buildHair(face, R, def, look, grade, rig);
+  if (outfit?.accessory && outfit.accessory !== 'none') {
+    const acc = outfit.accessory;
+    if (acc === 'glasses') {
+      const frameMat = flat('#3a2c26');
+      for (const s of [-1, 1]) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.072 * k, 0.009, 8, 20), frameMat);
+        onSphere(ring, R * 1.03, s * 0.34, -0.06);
+        face.add(ring);
+      }
+      const bridge = mesh(rbox(0.06 * k, 0.01, 0.01, 0.003), frameMat);
+      onSphere(bridge, R * 1.035, 0, -0.03);
+      face.add(bridge);
+    } else if (acc === 'headphones') {
+      const band = new THREE.Mesh(new THREE.TorusGeometry(R * 1.08, 0.025 * k, 8, 24, Math.PI), toon('#4d73b8'));
+      band.position.set(0, R * 0.06, 0);
+      face.add(band);
+      for (const s of [-1, 1]) {
+        const cup = mesh(cyl(0.078 * k, 0.078 * k, 0.045 * k, 14), toon('#4d73b8'), [s * (R * 1.06), -0.02, 0]);
+        cup.rotation.z = Math.PI / 2;
+        face.add(cup);
+      }
+    } else if (acc === 'cap') {
+      const capMat = toon('#d97236');
+      const dome = new THREE.Mesh(new THREE.SphereGeometry(R * 1.07, 22, 14, 0, Math.PI * 2, 0, Math.PI * 0.46), capMat);
+      dome.rotation.x = -0.18;
+      face.add(dome);
+      const brim = mesh(rbox(R * 1.25, 0.024, R * 0.85, 0.01), toon('#b85923'), [0, R * 0.42, R * 0.72]);
+      brim.rotation.x = 0.16;
+      face.add(brim);
+    } else if (acc === 'ribbon_bow') {
+      const bowMat = toon('#e85874');
+      const bow = new THREE.Group();
+      for (const s of [-1, 1]) {
+        const wing = mesh(rbox(0.08 * k, 0.055 * k, 0.03 * k, 0.012), bowMat, [s * 0.05 * k, 0, 0]);
+        wing.rotation.z = s * 0.25;
+        bow.add(wing);
+      }
+      mesh(sphere(0.026 * k, 10, 8), toon('#ffd95a'), [0, 0, 0.01], bow);
+      onSphere(bow, R * 1.07, 0.65, 0.55);
+      face.add(bow);
+    }
+  }
   buildProps(rig);
   root.userData.rig = rig;
   return rig;

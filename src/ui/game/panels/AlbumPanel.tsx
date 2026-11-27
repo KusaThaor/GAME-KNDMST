@@ -4,16 +4,16 @@ import type { AlbumEntryView, AlbumStyle, AlbumView, PlacedStickerView, UiAction
 import { AlbumSticker, pageDecoStickers, pickStickerKind, type StickerKind } from './albumStickers';
 import {
   COVER_THEMES,
-  IAP_PACKS,
   isUnlocked,
   PAPER_COLORS,
   PAPER_PATTERNS,
   STICKER_CATALOG,
   WASHI_STYLES,
-  type IapPackId,
   type StyleOption,
   type UnlockRule,
 } from './albumCatalog';
+import { AlbumStudioModal } from './AlbumStudioModal';
+import { ShopBagSvg, StampSvg } from './shopIcons';
 
 const SLOT_LABEL: Record<string, string> = {
   main_photo: 'Ảnh kỷ niệm', free_photo: 'Ảnh tự chọn', sticker: 'Sticker', note: 'Ghi chú', artifact: 'Kỷ vật',
@@ -26,18 +26,22 @@ const STICKER_TILTS = [-9, 8, -6, 11, -12];
 
 type PageData = AlbumView['pages'][number];
 
+type PreviewPlacedSticker = PlacedStickerView & { isPreview?: boolean };
+
 function ScrapPage({
   p,
   placed,
   dragging,
   onStartMoveSticker,
+  onRemovePreviewSticker,
   a,
   pageIdx,
 }: {
   p: PageData;
-  placed: PlacedStickerView[];
+  placed: PreviewPlacedSticker[];
   dragging: boolean;
-  onStartMoveSticker: (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => void;
+  onStartMoveSticker: (pageId: string, sticker: PreviewPlacedSticker, e: PointerEvent) => void;
+  onRemovePreviewSticker: (pageId: string, stickerId: string) => void;
   a: UiActions;
   pageIdx: number;
 }) {
@@ -76,7 +80,7 @@ function ScrapPage({
       {placed.map((stk) => (
         <div
           key={stk.id}
-          class="g-placed-sticker"
+          class={`g-placed-sticker ${stk.isPreview ? 'is-preview' : ''}`}
           style={{ left: `${stk.x}%`, top: `${stk.y}%` }}
           onPointerDown={(e) => {
             if ((e.target as HTMLElement).closest('button')) return;
@@ -84,12 +88,17 @@ function ScrapPage({
           }}
           onClick={(e) => e.stopPropagation()}
         >
+          {stk.isPreview && <span class="g-placed-preview-tag">Thử</span>}
           <AlbumSticker kind={stk.kind as StickerKind} rotate={stk.rotate} />
           <button
             type="button"
             class="g-placed-sticker-del"
             aria-label="Gỡ sticker"
-            onClick={(e) => { e.stopPropagation(); a.albumRemoveSticker(p.page_id, stk.id); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (stk.isPreview) onRemovePreviewSticker(p.page_id, stk.id);
+              else a.albumRemoveSticker(p.page_id, stk.id);
+            }}
           >×</button>
         </div>
       ))}
@@ -193,12 +202,14 @@ function CoverPage({
   placed,
   dragging,
   onStartMoveSticker,
+  onRemovePreviewSticker,
   a,
 }: {
   al: AlbumView;
-  placed: PlacedStickerView[];
+  placed: PreviewPlacedSticker[];
   dragging: boolean;
-  onStartMoveSticker: (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => void;
+  onStartMoveSticker: (pageId: string, sticker: PreviewPlacedSticker, e: PointerEvent) => void;
+  onRemovePreviewSticker: (pageId: string, stickerId: string) => void;
   a: UiActions;
 }) {
   return (
@@ -216,7 +227,7 @@ function CoverPage({
       {placed.map((stk) => (
         <div
           key={stk.id}
-          class="g-placed-sticker"
+          class={`g-placed-sticker ${stk.isPreview ? 'is-preview' : ''}`}
           style={{ left: `${stk.x}%`, top: `${stk.y}%` }}
           onPointerDown={(e) => {
             if ((e.target as HTMLElement).closest('button')) return;
@@ -224,12 +235,17 @@ function CoverPage({
           }}
           onClick={(e) => e.stopPropagation()}
         >
+          {stk.isPreview && <span class="g-placed-preview-tag">Thử</span>}
           <AlbumSticker kind={stk.kind as StickerKind} rotate={stk.rotate} />
           <button
             type="button"
             class="g-placed-sticker-del"
             aria-label="Gỡ sticker"
-            onClick={(e) => { e.stopPropagation(); a.albumRemoveSticker('cover', stk.id); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (stk.isPreview) onRemovePreviewSticker('cover', stk.id);
+              else a.albumRemoveSticker('cover', stk.id);
+            }}
           >×</button>
         </div>
       ))}
@@ -252,7 +268,16 @@ function BackEndPage({ al }: { al: AlbumView }) {
   );
 }
 
-type DragState = { kind: StickerKind; x: number; y: number; fromPageId?: string; stickerId?: string };
+type DragState = {
+  kind: StickerKind;
+  x: number;
+  y: number;
+  startX: number;
+  startY: number;
+  fromPageId?: string;
+  stickerId?: string;
+  isPreview?: boolean;
+};
 
 export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const al = s.album;
@@ -261,20 +286,15 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const [drag, setDrag] = useState<DragState | null>(null);
   const [toolTab, setToolTab] = useState<'stickers' | 'paper'>('stickers');
   const [shopOpen, setShopOpen] = useState(false);
-  const [highlightPack, setHighlightPack] = useState<IapPackId | null>(null);
-  const [buyingPack, setBuyingPack] = useState<IapPackId | null>(null);
-  const [lockNotice, setLockNotice] = useState<string | null>(null);
   const [previewStyle, setPreviewStyle] = useState<Partial<AlbumStyle> | null>(null);
   const [previewMeta, setPreviewMeta] = useState<{ label: string; rule: UnlockRule } | null>(null);
-  const [previewSticker, setPreviewSticker] = useState<{ kind: StickerKind; label: string; rule: UnlockRule } | null>(null);
+  const [previewStickers, setPreviewStickers] = useState<Record<string, PlacedStickerView[]>>({});
   const dragRef = useRef<DragState | null>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const timerRef = useRef<number>(0);
-  const noticeTimerRef = useRef<number>(0);
 
   useEffect(() => () => {
     window.clearTimeout(timerRef.current);
-    window.clearTimeout(noticeTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -298,8 +318,68 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
       dragRef.current = null;
       setDrag(null);
       if (!curDrag) return;
+      const moved = Math.hypot(e.clientX - curDrag.startX, e.clientY - curDrag.startY);
       const el = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>('[data-drop-page]');
       const pageId = el?.dataset.dropPage;
+
+      if (curDrag.isPreview) {
+        if (el && pageId) {
+          const r = el.getBoundingClientRect();
+          const px = Math.max(8, Math.min(92, ((e.clientX - r.left) / Math.max(1, r.width)) * 100));
+          const py = Math.max(8, Math.min(92, ((e.clientY - r.top) / Math.max(1, r.height)) * 100));
+          if (curDrag.stickerId && curDrag.fromPageId === pageId) {
+            setPreviewStickers((prev) => ({
+              ...prev,
+              [pageId]: (prev[pageId] ?? []).map((item) => (item.id === curDrag.stickerId ? { ...item, x: px, y: py } : item)),
+            }));
+          } else {
+            setPreviewStickers((prev) => {
+              const next = { ...prev };
+              if (curDrag.stickerId && curDrag.fromPageId) {
+                next[curDrag.fromPageId] = (next[curDrag.fromPageId] ?? []).filter((item) => item.id !== curDrag.stickerId);
+              }
+              const list = next[pageId] ?? [];
+              next[pageId] = [...list, {
+                id: `prv-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                kind: curDrag.kind,
+                x: px,
+                y: py,
+                rotate: ((list.length % 5) - 2) * 5,
+              }];
+              return next;
+            });
+          }
+        } else if (moved < 8 && !curDrag.stickerId) {
+          // Bấm trực tiếp vào sticker khóa trên thanh: tự dán lên trang đang mở để xem thử luôn
+          const targetPageEl = document.querySelector<HTMLElement>('.g-album-leaf.right [data-drop-page]')
+            ?? document.querySelector<HTMLElement>('[data-drop-page]');
+          const fallbackPageId = targetPageEl?.dataset.dropPage;
+          if (fallbackPageId) {
+            setPreviewStickers((prev) => {
+              const list = prev[fallbackPageId] ?? [];
+              const spots = [
+                { x: 78, y: 24, rotate: 9 },
+                { x: 22, y: 76, rotate: -10 },
+                { x: 76, y: 78, rotate: 7 },
+                { x: 24, y: 24, rotate: -8 },
+              ];
+              const spot = spots[list.length % spots.length];
+              return {
+                ...prev,
+                [fallbackPageId]: [...list, {
+                  id: `prv-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                  kind: curDrag.kind,
+                  x: spot.x,
+                  y: spot.y,
+                  rotate: spot.rotate,
+                }],
+              };
+            });
+          }
+        }
+        return;
+      }
+
       if (!el || !pageId) return;
       const r = el.getBoundingClientRect();
       const px = ((e.clientX - r.left) / Math.max(1, r.width)) * 100;
@@ -343,26 +423,36 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     timerRef.current = window.setTimeout(() => setFlip(null), 460);
   }
 
-  const startNewStickerDrag = (kind: StickerKind, e: PointerEvent) => {
+  const startNewStickerDrag = (kind: StickerKind, e: PointerEvent, isPreview = false) => {
     e.preventDefault();
     e.stopPropagation();
-    const next: DragState = { kind, x: e.clientX, y: e.clientY };
+    const next: DragState = { kind, x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY, isPreview };
     dragRef.current = next;
     setDrag(next);
   };
 
-  const startMoveStickerDrag = (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => {
+  const startMoveStickerDrag = (pageId: string, sticker: PreviewPlacedSticker, e: PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const next: DragState = {
       kind: sticker.kind as StickerKind,
       x: e.clientX,
       y: e.clientY,
+      startX: e.clientX,
+      startY: e.clientY,
       fromPageId: pageId,
       stickerId: sticker.id,
+      isPreview: sticker.isPreview,
     };
     dragRef.current = next;
     setDrag(next);
+  };
+
+  const removePreviewSticker = (pageId: string, stickerId: string) => {
+    setPreviewStickers((prev) => ({
+      ...prev,
+      [pageId]: (prev[pageId] ?? []).filter((item) => item.id !== stickerId),
+    }));
   };
 
   const onLeafClick = (side: 'left' | 'right', e: MouseEvent) => {
@@ -389,19 +479,33 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   };
 
   const placedMap = al.placedStickers ?? {};
+  const mergedForPage = (pageId: string): PreviewPlacedSticker[] => [
+    ...(placedMap[pageId] ?? []),
+    ...(previewStickers[pageId] ?? []).map((x) => ({ ...x, isPreview: true })),
+  ];
   const renderLeaf = (leaf: Leaf | undefined, side: 'left' | 'right') => {
     if (!leaf) return null;
     if (leaf.kind === 'cover') {
-      return <CoverPage al={al} placed={placedMap['cover'] ?? []} dragging={!!drag} onStartMoveSticker={startMoveStickerDrag} a={a} />;
+      return (
+        <CoverPage
+          al={al}
+          placed={mergedForPage('cover')}
+          dragging={!!drag}
+          onStartMoveSticker={startMoveStickerDrag}
+          onRemovePreviewSticker={removePreviewSticker}
+          a={a}
+        />
+      );
     }
     if (leaf.kind === 'end') return <BackEndPage al={al} />;
     return (
       <ScrapPage
         p={leaf.page}
         pageIdx={cur * 2 + (side === 'right' ? 1 : 0)}
-        placed={placedMap[leaf.page.page_id] ?? []}
+        placed={mergedForPage(leaf.page.page_id)}
         dragging={!!drag}
         onStartMoveSticker={startMoveStickerDrag}
+        onRemovePreviewSticker={removePreviewSticker}
         a={a}
       />
     );
@@ -416,51 +520,12 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     washiStyle: 'amber',
   };
   const effectiveStyle: AlbumStyle = previewStyle ? { ...savedStyle, ...previewStyle } : savedStyle;
+  const previewStickerCount = Object.values(previewStickers).reduce((sum, list) => sum + list.length, 0);
 
   const clearPreview = () => {
     setPreviewStyle(null);
     setPreviewMeta(null);
-    setPreviewSticker(null);
-  };
-
-  const handleBuyPack = (packId: IapPackId) => {
-    if (buyingPack) return;
-    setBuyingPack(packId);
-    window.setTimeout(() => {
-      a.albumBuyIap(packId);
-      // Nếu đang xem thử gói vừa mua thì tự động lưu thành kiểu đang dùng luôn!
-      if (previewStyle) {
-        a.albumSetStyle(previewStyle);
-      }
-      clearPreview();
-      setBuyingPack(null);
-      window.clearTimeout(noticeTimerRef.current);
-      const packName = IAP_PACKS.find((p) => p.id === packId)?.title ?? 'Gói vật phẩm';
-      setLockNotice(`✨ Thanh toán thành công! Đã mở khóa "${packName}"`);
-      noticeTimerRef.current = window.setTimeout(() => setLockNotice(null), 3200);
-    }, 550);
-  };
-
-  const handlePreviewPack = (packId: IapPackId) => {
-    const pack = IAP_PACKS.find((p) => p.id === packId);
-    if (!pack) return;
-    if (pack.previewStyle) {
-      setPreviewStyle(pack.previewStyle);
-    }
-    if (pack.previewStickers && pack.previewStickers.length > 0) {
-      setPreviewSticker({
-        kind: pack.previewStickers[0],
-        label: pack.title,
-        rule: { type: 'iap', packId, priceLabel: pack.price },
-      });
-    } else {
-      setPreviewSticker(null);
-    }
-    setPreviewMeta({
-      label: `Gói "${pack.title}"`,
-      rule: { type: 'iap', packId, priceLabel: pack.price },
-    });
-    setShopOpen(false);
+    setPreviewStickers({});
   };
 
   const renderStyleOptions = (
@@ -508,7 +573,7 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
               <span class="g-style-name">{opt.label}</span>
               {!unlocked && (
                 <span class={`g-lock-tag ${opt.unlock.type === 'iap' ? 'iap' : 'milestone'}`}>
-                  {opt.unlock.type === 'iap' ? '💎' : `🔒${opt.unlock.type === 'milestone' ? `${opt.unlock.pagesRequired}T` : ''}`}
+                  {opt.unlock.type === 'iap' ? <StampSvg size={11} /> : opt.unlock.type === 'milestone' ? `${opt.unlock.pagesRequired}T` : ''}
                 </span>
               )}
             </button>
@@ -555,43 +620,35 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
               type="button"
               class="g-iap-shop-btn"
               data-act="open-iap-shop"
-              onClick={() => { setHighlightPack(null); setShopOpen(true); }}
+              onClick={() => setShopOpen(true)}
             >
-              ✨ Cửa hàng
+              <ShopBagSvg size={14} /> Cửa hàng
             </button>
             <button type="button" class="g-album-close-btn" data-act="close" onClick={a.closePanel}>Đóng</button>
           </div>
         </header>
-        {lockNotice && (
-          <div class="g-album-lock-banner" role="status">
-            <span>{lockNotice}</span>
-          </div>
-        )}
-        {previewMeta && (
+        {(previewMeta || previewStickerCount > 0) && (
           <div class="g-preview-banner" role="status">
             <span class="g-preview-text">
-              👁️ Đang xem thử: <strong>{previewMeta.label}</strong> (Chưa sở hữu)
+              Đang xem thử trực tiếp trên sổ
+              {previewMeta ? <>: <strong>{previewMeta.label}</strong></> : null}
+              {previewStickerCount > 0 ? <> · {previewStickerCount} sticker dán thử</> : null}
             </span>
             <div class="g-preview-actions">
-              {previewMeta.rule.type === 'iap' ? (
+              {previewMeta?.rule.type === 'milestone' ? (
+                <span class="g-preview-milestone">
+                  Hoàn thành {previewMeta.rule.pagesRequired} trang để mở ({pagesRestored}/{previewMeta.rule.pagesRequired})
+                </span>
+              ) : (
                 <button
                   type="button"
                   class="g-preview-buy"
-                  onClick={() => {
-                    if (previewMeta.rule.type === 'iap') {
-                      setHighlightPack(previewMeta.rule.packId);
-                      setShopOpen(true);
-                    }
-                  }}
+                  onClick={() => setShopOpen(true)}
                 >
-                  💎 Mở khóa / Mua gói
+                  <StampSvg size={13} /> Mở khóa tại Cửa hàng
                 </button>
-              ) : previewMeta.rule.type === 'milestone' ? (
-                <span class="g-preview-milestone">
-                  🔒 Hoàn thành {previewMeta.rule.pagesRequired} trang để dùng ({pagesRestored}/{previewMeta.rule.pagesRequired})
-                </span>
-              ) : null}
-              <button type="button" class="g-preview-exit" onClick={clearPreview}>Thoát xem thử</button>
+              )}
+              <button type="button" class="g-preview-exit" onClick={clearPreview}>Xóa đồ thử</button>
             </div>
           </div>
         )}
@@ -600,32 +657,29 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
             <div class="g-sticker-bar-list">
               {STICKER_CATALOG.map((st) => {
                 const unlocked = isUnlocked(st.unlock, pagesRestored, iapPacks);
-                const isPreviewing = previewSticker?.kind === st.kind;
                 return (
                   <button
                     key={st.kind}
                     type="button"
-                    class={`g-sticker-chip ${!unlocked ? 'locked' : ''} ${isPreviewing ? 'previewing' : ''}`}
+                    class={`g-sticker-chip ${!unlocked ? 'locked' : ''}`}
                     title={
                       unlocked
                         ? `Kéo ${st.label} thả vào trang`
-                        : `${st.label} — Bấm để xem thử`
+                        : `${st.label} — Bấm hoặc kéo thả lên trang để dán thử`
                     }
                     onPointerDown={(e) => {
                       if (!unlocked) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setPreviewSticker({ kind: st.kind, label: st.label, rule: st.unlock });
                         setPreviewMeta({ label: `Sticker "${st.label}"`, rule: st.unlock });
+                        startNewStickerDrag(st.kind, e, true);
                         return;
                       }
-                      startNewStickerDrag(st.kind, e);
+                      startNewStickerDrag(st.kind, e, false);
                     }}
                   >
                     <AlbumSticker kind={st.kind} />
                     {!unlocked && (
                       <span class={`g-chip-lock ${st.unlock.type === 'iap' ? 'iap' : 'milestone'}`}>
-                        {st.unlock.type === 'iap' ? '💎' : `🔒${st.unlock.type === 'milestone' ? `${st.unlock.pagesRequired}T` : ''}`}
+                        {st.unlock.type === 'iap' ? <StampSvg size={10} /> : st.unlock.type === 'milestone' ? `${st.unlock.pagesRequired}T` : ''}
                       </span>
                     )}
                   </button>
@@ -663,13 +717,6 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
           {renderLeaf(right, 'right')}
           {canNext && <span class="g-page-corner next" data-act="album-next" aria-label="Lật sang trang sau" />}
         </div>
-        {previewSticker && (
-          <div class="g-sticker-preview-float" aria-live="polite">
-            <span class="g-sticker-preview-badge">Xem thử</span>
-            <AlbumSticker kind={previewSticker.kind} rotate={-8} />
-            <span class="g-sticker-preview-name">{previewSticker.label}</span>
-          </div>
-        )}
         {flip && (
           <div key={flip.key} class={`g-album-flipper ${flip.dir}`} aria-hidden="true">
             <div class="g-album-flipper-face" />
@@ -687,91 +734,26 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
       )}
     </Pop>
     {shopOpen && (
-      <div class="g-iap-backdrop" onClick={() => !buyingPack && setShopOpen(false)}>
-        <div class="g-iap-modal" onClick={(e) => e.stopPropagation()} data-testid="iap-shop-modal">
-          <div class="g-iap-head">
-            <div class="g-iap-head-title">
-              <span class="g-iap-store-icon" aria-hidden="true">🛍️</span>
-              <div>
-                <h3>Cửa Hàng Trang Trí Sổ</h3>
-                <p>Xem thử trực tiếp trên sổ hoặc mở khóa gói vật phẩm kỷ niệm</p>
-              </div>
-            </div>
-            <button type="button" class="g-iap-close" aria-label="Đóng cửa hàng" onClick={() => !buyingPack && setShopOpen(false)}>✕</button>
-          </div>
-          <div class="g-iap-packs">
-            {IAP_PACKS.map((pack) => {
-              const owned = iapPacks.includes('pack_vip') || iapPacks.includes(pack.id);
-              const isHighlighted = highlightPack === pack.id;
-              const isBuying = buyingPack === pack.id;
-              return (
-                <div key={pack.id} class={`g-iap-card ${owned ? 'owned' : ''} ${isHighlighted ? 'highlight' : ''} ${pack.id === 'pack_vip' ? 'vip' : ''}`}>
-                  {pack.badge && <span class="g-iap-badge">{pack.badge}</span>}
-                  <div class="g-iap-card-top">
-                    <strong>{pack.title}</strong>
-                    <span class="g-iap-subtitle">{pack.subtitle}</span>
-                  </div>
-                  <div class="g-iap-preview-strip">
-                    {pack.previewStickers?.map((k) => (
-                      <span key={k} class="g-iap-mini-item"><AlbumSticker kind={k} /></span>
-                    ))}
-                    {pack.previewSwatches?.map((sw) => (
-                      <span key={sw.label} class="g-iap-mini-swatch" style={{ background: sw.bg }} title={sw.label} />
-                    ))}
-                  </div>
-                  <ul class="g-iap-features">
-                    {pack.features.map((f, i) => <li key={i}>{f}</li>)}
-                  </ul>
-                  <div class="g-iap-card-foot">
-                    <div class="g-iap-price-col">
-                      {pack.originalPrice && <del class="g-iap-old-price">{pack.originalPrice}</del>}
-                      <span class="g-iap-price">{pack.price}</span>
-                    </div>
-                    {owned ? (
-                      <span class="g-iap-owned-pill">✓ Đã sở hữu</span>
-                    ) : (
-                      <div class="g-iap-card-btns">
-                        <button
-                          type="button"
-                          class="g-iap-try-btn"
-                          onClick={() => handlePreviewPack(pack.id)}
-                        >
-                          Xem thử
-                        </button>
-                        <button
-                          type="button"
-                          class="g-iap-buy-btn"
-                          disabled={!!buyingPack}
-                          data-act={`buy-${pack.id}`}
-                          onClick={() => handleBuyPack(pack.id)}
-                        >
-                          {isBuying ? 'Đang xử lý...' : 'Mua ngay'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div class="g-iap-foot">
-            <span class="g-iap-demo-note">Chế độ Demo IAP: Xem thử thoải mái trước khi bấm Mua ngay (không trừ tiền thật).</span>
-            {iapPacks.length > 0 && (
-              <button
-                type="button"
-                class="g-iap-reset-btn"
-                onClick={() => {
-                  a.albumResetIap();
-                  clearPreview();
-                  setLockNotice('Đã đặt lại trạng thái IAP về mặc định để demo lại.');
-                }}
-              >
-                Đặt lại Demo IAP
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <AlbumStudioModal
+        baseStyle={effectiveStyle}
+        pagesRestored={pagesRestored}
+        iapPacks={iapPacks}
+        onClose={() => setShopOpen(false)}
+        onApplyToAlbum={(style, stickers) => {
+          setPreviewStyle(style);
+          const targetPageId = (right?.kind === 'page' ? right.page.page_id : left?.kind === 'page' ? left.page.page_id : 'cover');
+          if (stickers.length > 0) {
+            setPreviewStickers((prev) => ({
+              ...prev,
+              [targetPageId]: stickers.map((stk, i) => ({
+                ...stk,
+                id: `prv-st-${i}-${Date.now()}`,
+              })),
+            }));
+          }
+          setPreviewMeta({ label: 'Bộ trang trí từ Cửa hàng', rule: { type: 'iap', packId: 'pack_vip' } });
+        }}
+      />
     )}
     </>
   );

@@ -13,6 +13,7 @@ import type { Avatar } from '../../actors/player/avatar';
 import { DEFAULT_RIG_ADAPTER, type CharacterRigAdapter } from '../../actors/player/rigAdapter';
 import { DEFAULT_MOVE, PlayerController, type MoveConfig, type MoveIntent } from '../../actors/player/controller';
 import { CAMERA_PRESETS, DEFAULT_CAMERA_PRESET, type CameraPreset } from '../../config/camera';
+import type { OutfitStyle } from '../../config/cosmetics';
 import { GAME_CONFIG } from '../../config/game';
 import type { ContentIndex } from '../../content/indexContent';
 import type { CameraPoint, Gender, MemoryDay, StandZone } from '../../content/types';
@@ -59,6 +60,8 @@ export interface DaySceneOptions extends Pick<AtmosphereDeps, 'bus' | 'stepId'> 
   fetchAsset?: (url: string) => Promise<ArrayBuffer>;
   /** Đọc flag của bản lưu cho đồ trang trí (vd. 'm1.base_decor'). Không truyền → mọi flag là undefined. */
   flag?: (name: string) => unknown;
+  /** Trang phục tùy chỉnh của người chơi. */
+  playerOutfit?: OutfitStyle;
 }
 
 export interface DayScene {
@@ -112,6 +115,7 @@ export interface DayScene {
   faceActor(actor: string, toward: string): void;
   /** Đặt motion cho actor ('idle' trả player về điều khiển tự do). */
   setActorMotion(actor: string, motion: string): void;
+  setPlayerOutfit(outfit?: OutfitStyle): void;
   /** Ẩn/hiện actor; nếu là NPC thì đồng thời vô hiệu hóa/kích hoạt lại tương tác & collider. */
   setActorVisible(actor: string, visible: boolean): void;
   /** Đổi ánh sáng/thời tiết sang preset có sẵn (LIGHTING_PRESETS), chuyển trong `tweenSec` giây (0 = ngay). BUG-T1-B. */
@@ -241,7 +245,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   const selfieCam = new THREE.PerspectiveCamera(48, 4 / 3, 0.1, 400);
 
   // ---- Player: hình (Avatar) + điều khiển + camera + theo dõi khu ----
-  const player = rigAdapter.create({ id: rigOf('player'), grade, scarf: decor.scarf, seed: 0 });
+  let player = rigAdapter.create({ id: rigOf('player'), grade, scarf: decor.scarf, seed: 0, outfit: opts.playerOutfit });
   scene.add(player.root);
   actors.set('player', player);
   const move: MoveConfig = { ...DEFAULT_MOVE, walk: GAME_CONFIG.move.walk, run: GAME_CONFIG.move.run };
@@ -688,6 +692,15 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
     },
     debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing, weather: atmosphere.preset }),
     setActorProp(actor, propId) { actors.get(actor)?.setProp?.(propId); },
+    setPlayerOutfit(outfit) {
+      const wasVisible = player.root.visible;
+      scene.remove(player.root);
+      player = rigAdapter.create({ id: rigOf('player'), grade, scarf: decor.scarf, seed: 0, outfit });
+      player.root.visible = wasVisible;
+      scene.add(player.root);
+      actors.set('player', player);
+      sync();
+    },
     dispose() {
       disposed = true;
       for (const m of [...activeMoves.values()]) { activeMoves.delete(m.actor); m.resolve(); }

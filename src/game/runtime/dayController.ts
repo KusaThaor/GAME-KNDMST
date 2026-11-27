@@ -224,6 +224,7 @@ export function createDayController(deps: DayControllerDeps) {
       bus,
       stepId: engine.mainStep()?.step.id,
       startZone: resume ? save.current.zone_id : null,
+      playerOutfit: save.player_outfit,
     });
     if (ep !== queue.getEpoch()) { scene.dispose(); return; }       // người chơi đã rời đi trong lúc tải
     currentDay = day; dayScene = scene;
@@ -337,6 +338,7 @@ export function createDayController(deps: DayControllerDeps) {
     menuRestartDay,
     menuLeaveDay,
     menuSafeSpot,
+    refreshPlayerOutfit: () => dayScene?.setPlayerOutfit(save.player_outfit),
     tick,
   };
 }

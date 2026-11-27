@@ -61,8 +61,24 @@ export interface SaveState {
   album_stickers?: Record<string, { id: string; kind: string; x: number; y: number; rotate: number }[]>;
   /** Tùy chỉnh giao diện sổ Album (màu giấy, kiểu giấy, bìa sổ, băng dính). */
   album_style?: { paperColor: string; paperPattern: string; coverTheme: string; washiStyle: string };
-  /** Các gói vật phẩm IAP đã mở khóa (demo IAP). */
+  /** Các gói vật phẩm IAP đã mở khóa. */
   album_iap_packs?: string[];
+  /** Tùy chỉnh trang trí Phòng 2026 (tường, rèm, thảm, vật trang trí 3D). */
+  room_decor?: {
+    wallColor: string; floorColor: string; curtainColor: string; rugColors: [string, string, string]; bedColor: string;
+    accentFairyLights: boolean; accentDeskPlant: boolean; accentRocket: boolean; accentCatPlush: boolean;
+  };
+  /** Trang phục & phụ kiện hiện tại của nhân vật người chơi. */
+  player_outfit?: {
+    topKind: 'uniform' | 'hoodie' | 'cardigan' | 'denim' | 'sport';
+    shirtColor: string; trousersColor: string; shoeColor: string; hairColor: string | null;
+    accessory: 'none' | 'glasses' | 'headphones' | 'cap' | 'ribbon_bow';
+    scarfOverride?: boolean;
+  };
+  /** Danh sách ID vật phẩm trang trí phòng & trang phục đã mở khóa. */
+  unlocked_cosmetics?: string[];
+  /** Ví tiền tệ (Xu Kỷ Niệm & Tem Thanh Xuân). */
+  wallet?: { coin: number; stamp: number };
   relationships: Record<string, RelationshipState>;
   pde_done: string[];
   phone: Record<string, PhoneMessage[]>;

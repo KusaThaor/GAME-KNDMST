@@ -7,6 +7,7 @@ import {
   SHOP_NAV_TABS,
   TOPUP_PACKS,
 } from '../../src/config/shopDemo';
+import { IAP_PACKS, STICKER_CATALOG } from '../../src/ui/game/panels/albumCatalog';
 
 describe('shopDemo config & catalog', () => {
   it('tắt ở production kể cả khi có ?shopdemo=1', () => {
@@ -34,5 +35,17 @@ describe('shopDemo config & catalog', () => {
     const serialized = JSON.stringify({ SHOP_DEMO_CONFIG, SHOP_DEMO_ITEMS, TOPUP_PACKS, BLIND_BOX_CONFIG });
     expect(serialized).not.toContain('[PLACEHOLDER]');
     expect(serialized.toLowerCase()).not.toContain('demo minh họa');
+  });
+
+  it('albumCatalog đồng bộ đơn vị tiền tệ Xu/Tem và không chứa nhãn Demo IAP hay VNĐ trực tiếp', () => {
+    expect(IAP_PACKS.length).toBe(3);
+    expect(STICKER_CATALOG.length).toBeGreaterThanOrEqual(15);
+    for (const p of IAP_PACKS) {
+      expect(['coin', 'stamp']).toContain(p.currency);
+      expect(p.price).toBeGreaterThan(0);
+    }
+    const raw = JSON.stringify(IAP_PACKS);
+    expect(raw).not.toContain('000đ');
+    expect(raw.toLowerCase()).not.toContain('demo iap');
   });
 });

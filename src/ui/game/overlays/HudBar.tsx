@@ -22,6 +22,7 @@ function CameraIcon() {
 export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking: boolean }) {
   const touch = s.device === 'touch';
   const canSelfie = !!(s.mode && !s.fade.on && !s.minigame && !s.consentAsk && !s.profile);
+  const wallet = s.cosmetics?.wallet ?? SHOP_DEMO_CONFIG.demo_wallet;
   return (
     <>
       {s.mode && !s.fade.on && (
@@ -64,9 +65,19 @@ export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking:
                 title={SHOP_DEMO_CONFIG.ui.panel_title}
                 onClick={() => a.openPanel('shop')}
               >
-                <span class="g-hud-cur"><CoinSvg size={15} /> {SHOP_DEMO_CONFIG.demo_wallet.coin}</span>
-                <span class="g-hud-cur"><StampSvg size={15} /> {SHOP_DEMO_CONFIG.demo_wallet.stamp}</span>
+                <span class="g-hud-cur"><CoinSvg size={15} /> {wallet.coin}</span>
+                <span class="g-hud-cur"><StampSvg size={15} /> {wallet.stamp}</span>
                 <span class="g-shop-hud-label"><ShopBagSvg size={14} /> {SHOP_DEMO_CONFIG.ui.hud_button_label}</span>
+              </button>
+            )}
+            {s.mode === 'hub' && (
+              <button data-act="room-decor" title="Trang trí phòng 2026" onClick={() => a.openPanel('room_decor')}>
+                🛋️ Trang trí phòng
+              </button>
+            )}
+            {s.mode && (
+              <button data-act="wardrobe" title="Tủ đồ & trang phục 3D" onClick={() => a.openPanel('wardrobe')}>
+                👕 Tủ đồ
               </button>
             )}
             {s.mode === 'day' && <button data-act="journal" onClick={() => a.openPanel('journal')}>Sổ tay <kbd>J</kbd></button>}

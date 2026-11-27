@@ -20,7 +20,9 @@ import { JournalPanel } from './panels/JournalPanel';
 import { MenuModal } from './panels/MenuModal';
 import { PhonePanel } from './panels/PhonePanel';
 import { ProfileCard } from './panels/ProfileCard';
+import { RoomDecorPanel } from './panels/RoomDecorPanel';
 import { ShopDemoPanel } from './panels/ShopDemoPanel';
+import { WardrobePanel } from './panels/WardrobePanel';
 import type { UiActions, UiStore } from './store';
 
 function Ui({ store, a }: { store: UiStore; a: UiActions }) {
@@ -56,7 +58,9 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.panel === 'album' && <AlbumPanel s={s} a={a} />}
       {s.panel === 'phone' && <PhonePanel s={s} a={a} />}
       {s.panel === 'journal' && <JournalPanel s={s} a={a} />}
-      {s.shopDemo && s.panel === 'shop' && <ShopDemoPanel a={a} />}
+      {s.panel === 'room_decor' && <RoomDecorPanel s={s} a={a} />}
+      {s.panel === 'wardrobe' && <WardrobePanel s={s} a={a} />}
+      {s.shopDemo && s.panel === 'shop' && <ShopDemoPanel s={s} a={a} />}
       {s.panel === 'menu' && <MenuModal s={s} a={a} />}
       {s.feedback && <FeedbackModal a={a} placement={s.feedback} />}
       {s.consentAsk && <ConsentModal a={a} />}

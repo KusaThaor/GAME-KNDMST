@@ -10,6 +10,7 @@
  *  - Ngân sách: nhân vật chính ≤ 6.000 tam giác / 1,5 MB; học sinh phụ ≤ 2.500 tam giác / 600 KB.
  */
 import { buildCharacter } from '../character/build';
+import type { OutfitStyle } from '../../config/cosmetics';
 import type { CharacterId, Grade } from '../character/presets';
 import { rigAvatar, type Avatar } from './avatar';
 
@@ -20,6 +21,8 @@ export interface CharacterSpec {
   scarf?: boolean;
   /** Hạt giống cho dao động nhỏ giữa các nhân vật (animation thủ tục). */
   seed?: number;
+  /** Trang phục & phụ kiện tùy chọn của người chơi. */
+  outfit?: OutfitStyle;
 }
 
 export interface CharacterRigAdapter {
@@ -31,7 +34,7 @@ export interface CharacterRigAdapter {
 /** Nhân vật dựng bằng code (actors/character): chạy ngay, dùng làm fallback. */
 export const codeRigAdapter: CharacterRigAdapter = {
   name: 'code',
-  create: (spec) => rigAvatar(buildCharacter(spec.id, spec.grade, { scarf: spec.scarf }), spec.seed ?? 0),
+  create: (spec) => rigAvatar(buildCharacter(spec.id, spec.grade, { scarf: spec.scarf, outfit: spec.outfit }), spec.seed ?? 0),
 };
 
 export const DEFAULT_RIG_ADAPTER: CharacterRigAdapter = codeRigAdapter;

@@ -180,13 +180,21 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       if (p === 'shop' && !s.shopDemo) return;
       if (s.minigame) { if (p === 'menu') s.minigame.toggleOverlay('menu'); return; }
       if (p === 'menu' ? (s.fade.on || s.profile || s.consentAsk || s.feedback || s.panel) : (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo)) return;
-      if (p !== 'shop' && ((s.mode === 'day' && p !== 'menu' && p !== 'journal') || (s.mode === 'hub' && p === 'journal'))) return;
+      if (p !== 'shop' && p !== 'wardrobe' && ((s.mode === 'day' && p !== 'menu' && p !== 'journal') || (s.mode === 'hub' && p === 'journal') || (s.mode !== 'hub' && p === 'room_decor'))) return;
       ui.set({ panel: p, mapOpen: false, wipeArmed: false, prompt: null }); promptId = null; hubCtrl.onOpenPanel(p);
     },
     closePanel: () => { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubCtrl.onClosePanel(); },
     openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
     albumPlaceSticker: hubCtrl.albumPlaceSticker, albumMoveSticker: hubCtrl.albumMoveSticker, albumRemoveSticker: hubCtrl.albumRemoveSticker,
     albumSetStyle: hubCtrl.albumSetStyle, albumBuyIap: hubCtrl.albumBuyIap, albumResetIap: hubCtrl.albumResetIap,
+    roomSetDecor: hubCtrl.roomSetDecor,
+    outfitSet: (outfit, persist) => {
+      hubCtrl.outfitSet(outfit, persist);
+      if (persist) dayCtrl.refreshPlayerOutfit();
+    },
+    unlockCosmetic: hubCtrl.unlockCosmetic,
+    topupWallet: hubCtrl.topupWallet,
+    resetCosmeticsDemo: hubCtrl.resetCosmeticsDemo,
     phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend, phoneSendCustom: hubCtrl.phoneSendCustom,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },
@@ -286,7 +294,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   input.setFreeLook(!!save.settings.free_look);
   input.onPointer((kind, x, y) => { if (!hubCtrl.handlePointer(kind, x, y, interact) && kind === 'click') interact(); });
   input.onDeviceChange((d) => ui.set({ device: d }));
-  ui.set({ freeLook: !!save.settings.free_look, camOptions: camOpts, device: input.device });
+  ui.set({ freeLook: !!save.settings.free_look, camOptions: camOpts, device: input.device, cosmetics: hubCtrl.currentCosmeticsView() });
 
   const heartbeat = new ActivePlaytime({ now: () => performance.now(), onBeat: (ms) => tracker.track('active_heartbeat', { active_delta_ms: ms, memory_day_id: engine.dayId, step_id: engine.mainStep()?.step.id ?? null }) });
   input.onActivity(() => heartbeat.markInput());

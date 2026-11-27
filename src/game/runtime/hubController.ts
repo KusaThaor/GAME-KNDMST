@@ -2,7 +2,9 @@
  * Điều khiển phòng 2026 (Hub): cảnh 3D phòng trọ, Hộp Kỷ Vật, Album, Điện thoại,
  * chuỗi Present-day Event (`hubSettle`/`presentPde`) và tương tác gần/chuột ở Hub.
  */
+import { DEFAULT_OUTFIT, DEFAULT_ROOM_DECOR, type OutfitStyle, type RoomDecorStyle } from '../../config/cosmetics';
 import { HUB_CONFIG } from '../../config/hub';
+import { SHOP_DEMO_CONFIG } from '../../config/shopDemo';
 import { HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../../config/hubRoom';
 import type { ContentIndex } from '../../content/indexContent';
 import type { AlbumEntry, DialogueLine } from '../../content/types';
@@ -91,12 +93,33 @@ export function createHubController(deps: HubControllerDeps) {
     ui.set({ boxView: { hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal, hover: ui.get().boxView?.hover ?? null, first } });
   }
 
+  function ensureWallet() {
+    return (save.wallet ??= {
+      coin: SHOP_DEMO_CONFIG.demo_wallet.coin,
+      stamp: SHOP_DEMO_CONFIG.demo_wallet.stamp,
+    });
+  }
+
+  function currentCosmeticsView() {
+    const w = ensureWallet();
+    const prog = album.progress();
+    return {
+      roomDecor: save.room_decor ?? { ...DEFAULT_ROOM_DECOR },
+      outfit: save.player_outfit ?? { ...DEFAULT_OUTFIT },
+      unlockedIds: [...(save.unlocked_cosmetics ?? [])],
+      pagesRestored: prog.pages_restored,
+      gender: save.appearance.gender,
+      wallet: { coin: w.coin, stamp: w.stamp },
+    };
+  }
+
   function refreshHubScene() {
     if (!hubScene) return;
     hubScene.setLighting(hub.lightingPreset());
     hubScene.setShelf(hub.shelf());
     hubScene.setBoxItems(boxItems());
     hubScene.setBoxHint(!introDone() && ui.get().panel !== 'box3d');
+    hubScene.setRoomDecor(save.room_decor ?? DEFAULT_ROOM_DECOR);
   }
 
   /** Nói vài câu khi đang nhìn vào hộp (không chuyển cảnh). */
@@ -138,8 +161,11 @@ export function createHubController(deps: HubControllerDeps) {
     const p = ui.get().panel;
     if (p === 'box') ui.set({ box: boxView({ hub, fmt }) });
     if (p === 'box3d') { refreshBox(); hubScene?.setBoxItems(boxItems()); }
-    if (p === 'album') { ui.set({ album: currentAlbumView() }); loadAlbumPhotos(); }
+    if (p === 'album') { ui.set({ album: currentAlbumView(), cosmetics: currentCosmeticsView() }); loadAlbumPhotos(); }
     if (p === 'phone') ui.set({ phone: currentPhoneView() });
+    if (p === 'room_decor' || p === 'wardrobe' || p === 'shop') {
+      ui.set({ cosmetics: currentCosmeticsView() });
+    }
   }
 
   function presentPde(p: PdePresentation): Promise<boolean> {
@@ -189,7 +215,7 @@ export function createHubController(deps: HubControllerDeps) {
     hubScene = buildHubScene(idx.pack.hub, HUB_CONFIG);
     refreshHubScene();
     view.setScene(hubScene.scene, hubScene.camera);
-    ui.set({ mode: 'hub', inReplay: false, canEndDay: false, panel: null, dayEnd: null, fade: { on: false, label: '' } });
+    ui.set({ mode: 'hub', inReplay: false, canEndDay: false, panel: null, dayEnd: null, fade: { on: false, label: '' }, cosmetics: currentCosmeticsView() });
     bus.emit('hub_entered', { first });
     if (flow.state === 'to_hub') flow.dispatch('scene_ready');
     void queue.enqueue(hubSettle);
@@ -285,6 +311,7 @@ export function createHubController(deps: HubControllerDeps) {
     setCursor('');
     hubScene?.setBoxOpen(false);
     hubScene?.setBoxHint(!introDone());
+    hubScene?.setRoomDecor(save.room_decor ?? DEFAULT_ROOM_DECOR);
   }
 
   function albumFlip(pageId: string) {
@@ -360,6 +387,55 @@ export function createHubController(deps: HubControllerDeps) {
     save.album_iap_packs = [];
     save.album_style = { paperColor: 'cream', paperPattern: 'dots', coverTheme: 'classic', washiStyle: 'amber' };
     bus.emit('save_requested', { reason: 'album_iap_reset' });
+    refreshPanels();
+  }
+
+  function roomSetDecor(decor: RoomDecorStyle, persist: boolean) {
+    hubScene?.setRoomDecor(decor);
+    if (persist) {
+      save.room_decor = { ...decor, rugColors: [...decor.rugColors] as [string, string, string] };
+      bus.emit('save_requested', { reason: 'room_decor' });
+      refreshPanels();
+    }
+  }
+
+  function outfitSet(outfit: OutfitStyle, persist: boolean) {
+    if (persist) {
+      save.player_outfit = { ...outfit };
+      bus.emit('save_requested', { reason: 'player_outfit' });
+      refreshPanels();
+    }
+  }
+
+  function unlockCosmetic(id: string, currency: 'coin' | 'stamp', price: number): boolean {
+    const unlocked = (save.unlocked_cosmetics ??= []);
+    if (unlocked.includes(id)) return true;
+    const w = ensureWallet();
+    if (w[currency] < price) return false;
+    w[currency] -= price;
+    unlocked.push(id);
+    bus.emit('save_requested', { reason: 'cosmetic_unlock' });
+    ui.set({ cosmetics: currentCosmeticsView() });
+    refreshPanels();
+    return true;
+  }
+
+  function topupWallet(currency: 'coin' | 'stamp', amount: number) {
+    const w = ensureWallet();
+    w[currency] += Math.max(0, Math.round(amount));
+    bus.emit('save_requested', { reason: 'wallet_topup' });
+    ui.set({ cosmetics: currentCosmeticsView() });
+    refreshPanels();
+  }
+
+  function resetCosmeticsDemo() {
+    save.unlocked_cosmetics = [];
+    save.room_decor = { ...DEFAULT_ROOM_DECOR, rugColors: [...DEFAULT_ROOM_DECOR.rugColors] };
+    save.player_outfit = { ...DEFAULT_OUTFIT };
+    save.wallet = { coin: SHOP_DEMO_CONFIG.demo_wallet.coin, stamp: SHOP_DEMO_CONFIG.demo_wallet.stamp };
+    hubScene?.setRoomDecor(save.room_decor);
+    bus.emit('save_requested', { reason: 'cosmetics_reset' });
+    ui.set({ cosmetics: currentCosmeticsView() });
     refreshPanels();
   }
 
@@ -455,6 +531,12 @@ export function createHubController(deps: HubControllerDeps) {
     albumSetStyle,
     albumBuyIap,
     albumResetIap,
+    roomSetDecor,
+    outfitSet,
+    unlockCosmetic,
+    topupWallet,
+    resetCosmeticsDemo,
+    currentCosmeticsView,
     phoneOpenThread,
     phonePick,
     phoneErase,

@@ -14,11 +14,12 @@ import {
 } from '../../../config/shopDemo';
 import { playSfx } from '../../../game/sfx';
 import { Pop } from '../overlays/NoticeModal';
-import type { UiActions } from '../store';
+import type { UiActions, UiState } from '../store';
 import { CoinSvg, ItemArtSvg, ShopBagSvg, StampSvg, type ShopItemArtKind } from './shopIcons';
 
 type NoticeModalState =
   | { kind: 'coming_soon'; art: ShopItemArtKind; title: string; subtitle: string }
+  | { kind: 'topup_done'; art: ShopItemArtKind; title: string; subtitle: string }
   | { kind: 'shortage'; art: ShopItemArtKind; title: string; currency: 'coin' | 'stamp'; required: number; current: number };
 
 function CurrencyBadge({ currency, price }: { currency: ShopCurrencyType; price: number }) {
@@ -83,11 +84,16 @@ function StoreSection({
   );
 }
 
-export function ShopDemoPanel({ a }: { a: UiActions }) {
+export function ShopDemoPanel({ s, a }: { s: UiState; a: UiActions }) {
   const [nav, setNav] = useState<ShopNavId>('store');
   const [modal, setModal] = useState<NoticeModalState | null>(null);
 
-  const { demo_wallet: wallet, ui, shortage_notice, coming_soon } = SHOP_DEMO_CONFIG;
+  const { demo_wallet: walletLabels, ui, shortage_notice, coming_soon } = SHOP_DEMO_CONFIG;
+  const wallet = {
+    ...walletLabels,
+    coin: s.cosmetics?.wallet.coin ?? walletLabels.coin,
+    stamp: s.cosmetics?.wallet.stamp ?? walletLabels.stamp,
+  };
 
   const tryPurchase = (
     art: ShopItemArtKind,
@@ -109,6 +115,21 @@ export function ShopDemoPanel({ a }: { a: UiActions }) {
   };
 
   const handleStoreItem = (item: ShopStoreItem) => {
+    if (item.section === 'decor' && s.mode === 'hub') {
+      playSfx('sfx_tick');
+      a.openPanel('room_decor');
+      return;
+    }
+    if (item.id === 'cos_01') {
+      playSfx('sfx_tick');
+      a.openPanel('wardrobe');
+      return;
+    }
+    if (item.id === 'alb_01' && s.mode === 'hub') {
+      playSfx('sfx_tick');
+      a.openPanel('album');
+      return;
+    }
     const sub = item.currency === 'free'
       ? item.target
       : `${item.price} ${item.currency === 'coin' ? wallet.coin_label : wallet.stamp_label}`;
@@ -267,11 +288,12 @@ export function ShopDemoPanel({ a }: { a: UiActions }) {
                         data-topup-pack={pack.id}
                         onClick={() => {
                           playSfx('sfx_tick');
+                          a.topupWallet('stamp', pack.stampAmount);
                           setModal({
-                            kind: 'coming_soon',
+                            kind: 'topup_done',
                             art: pack.isPass ? 'pass' : 'diary_chau',
-                            title: pack.title,
-                            subtitle: `${pack.stampAmount} ${wallet.stamp_label} · ${pack.priceVnd}`,
+                            title: `Đã nhận +${pack.stampAmount} ${wallet.stamp_label}`,
+                            subtitle: `${pack.title} · ${pack.priceVnd}`,
                           });
                         }}
                       >
@@ -303,7 +325,22 @@ export function ShopDemoPanel({ a }: { a: UiActions }) {
                       <article
                         key={ex.id}
                         class="g-exchange-card"
-                        onClick={() => tryPurchase('snack', ex.title, `${ex.costStamp} ${wallet.stamp_label}`, 'stamp', ex.costStamp)}
+                        onClick={() => {
+                          if (wallet.stamp < ex.costStamp) {
+                            tryPurchase('snack', ex.title, `${ex.costStamp} ${wallet.stamp_label}`, 'stamp', ex.costStamp);
+                            return;
+                          }
+                          playSfx('sfx_tick');
+                          if (a.unlockCosmetic(`ex_${Date.now()}`, 'stamp', ex.costStamp)) {
+                            a.topupWallet('coin', ex.coinAmount);
+                            setModal({
+                              kind: 'topup_done',
+                              art: 'snack',
+                              title: `Đã đổi +${ex.coinAmount} ${wallet.coin_label}`,
+                              subtitle: `Sử dụng ${ex.costStamp} ${wallet.stamp_label}`,
+                            });
+                          }
+                        }}
                       >
                         <div class="g-exchange-left">
                           <CoinSvg size={28} />
@@ -325,11 +362,12 @@ export function ShopDemoPanel({ a }: { a: UiActions }) {
                       class="g-exchange-card is-ad"
                       onClick={() => {
                         playSfx('sfx_tick');
+                        a.topupWallet('coin', REWARDED_AD_OFFER.rewardCoin);
                         setModal({
-                          kind: 'coming_soon',
+                          kind: 'topup_done',
                           art: 'ads',
-                          title: REWARDED_AD_OFFER.title,
-                          subtitle: `Nhận +${REWARDED_AD_OFFER.rewardCoin} ${wallet.coin_label}`,
+                          title: `Đã nhận +${REWARDED_AD_OFFER.rewardCoin} ${wallet.coin_label}`,
+                          subtitle: REWARDED_AD_OFFER.title,
                         });
                       }}
                     >
@@ -395,6 +433,26 @@ export function ShopDemoPanel({ a }: { a: UiActions }) {
                     {modal.currency === 'stamp' ? shortage_notice.cta_topup_stamp : shortage_notice.cta_topup_coin}
                   </button>
                 </div>
+              </>
+            ) : modal.kind === 'topup_done' ? (
+              <>
+                <span class="g-shop-soon-badge" style={{ background: '#2b7a42', color: '#fff' }}>Giao dịch hoàn tất</span>
+                <div class="g-shop-soon-item">
+                  <ItemArtSvg kind={modal.art} size={38} />
+                  <div>
+                    <h3>{modal.title}</h3>
+                    <small>{modal.subtitle}</small>
+                  </div>
+                </div>
+                <p>Số dư mới của bạn đã được cập nhật. Bạn có thể dùng ngay để mở khóa vật phẩm trong Tủ Đồ, Trang Trí Phòng hoặc Album!</p>
+                <button
+                  type="button"
+                  class="primary"
+                  data-act="close-topup-done"
+                  onClick={() => setModal(null)}
+                >
+                  Tuyệt vời
+                </button>
               </>
             ) : (
               <>

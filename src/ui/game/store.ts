@@ -3,7 +3,16 @@ import type { MinimapView, QuestCompassView } from '../../game/runtime/navigatio
 /** Trạng thái giao diện của game. UI (Preact) chỉ ĐỌC trạng thái này và gọi `UiActions`; không tự đổi tiến trình. */
 import type { Gender } from '../../content/types';
 import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../../config/camera';
+import type { OutfitStyle, RoomDecorStyle } from '../../config/cosmetics';
 
+export interface CosmeticsView {
+  roomDecor: RoomDecorStyle;
+  outfit: OutfitStyle;
+  unlockedIds: string[];
+  pagesRestored: number;
+  gender: Gender;
+  wallet: { coin: number; stamp: number };
+}
 export interface BoxView {
   compartments: { title: string; open: boolean; artifacts: { id: string; name: string; hook: string; state: string; action: 'first' | 'replay' | null }[] }[];
 }
@@ -89,7 +98,7 @@ export interface UiState {
   free: { text: string } | null;
   notice: { title: string; text: string; effect: string } | null;
   /** 'box3d' = đang nhìn cận cảnh vào Hộp Kỷ Vật ở phòng 2026; 'box' = bảng kỷ vật trên kệ (xem lại ký ức). */
-  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | 'shop' | null;
+  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | 'shop' | 'room_decor' | 'wardrobe' | null;
   /** Bật chế độ Demo Tiệm Ký Ức / Hệ thống vật phẩm (chỉ bật ở bản test hoặc khi cấu hình cho phép). */
   shopDemo: boolean;
   box: BoxView | null;
@@ -97,6 +106,7 @@ export interface UiState {
   boxView: { hint: string; hover: string | null; first: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
+  cosmetics?: CosmeticsView | null;
   /** Form phản hồi đang mở: 'demo_end' = sau màn kết bản thử; 'exit' = người chơi bấm Thoát (xong form thì rời game). */
   feedback: false | 'demo_end' | 'exit';
   canEndDay: boolean;
@@ -142,6 +152,11 @@ export interface UiActions {
   albumSetStyle(patch: Partial<AlbumStyle>): void;
   albumBuyIap(packId: string): void;
   albumResetIap(): void;
+  roomSetDecor(decor: RoomDecorStyle, persist: boolean): void;
+  outfitSet(outfit: OutfitStyle, persist: boolean): void;
+  unlockCosmetic(id: string, currency: 'coin' | 'stamp', price: number): boolean;
+  topupWallet(currency: 'coin' | 'stamp', amount: number): void;
+  resetCosmeticsDemo(): void;
   phoneOpenThread(id: string | null): void;
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void; phoneSendCustom(text: string): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
