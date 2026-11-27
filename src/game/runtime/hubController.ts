@@ -42,6 +42,7 @@ export interface HubControllerDeps {
   profile: () => PlayerProfile;
   fmt: (text: string) => string;
   setPrompt: (id: string | null, prompt: UiState['prompt']) => void;
+  setCursor: (cursor: string) => void;
   refreshHud: () => void;
   goDay: (dayId: string, replay: boolean, resume: boolean) => Promise<void>;
 }
@@ -49,7 +50,7 @@ export interface HubControllerDeps {
 export function createHubController(deps: HubControllerDeps) {
   const {
     idx, save, bus, engine, album, hub, flow, ui, input, view, queue, photo,
-    introId, introDone, profile, fmt, setPrompt, refreshHud, goDay,
+    introId, introDone, profile, fmt, setPrompt, setCursor, refreshHud, goDay,
   } = deps;
 
   let hubScene: HubScene | null = null;
@@ -95,6 +96,7 @@ export function createHubController(deps: HubControllerDeps) {
     hubScene.setLighting(hub.lightingPreset());
     hubScene.setShelf(hub.shelf());
     hubScene.setBoxItems(boxItems());
+    hubScene.setBoxHint(!introDone() && ui.get().panel !== 'box3d');
   }
 
   /** Nói vài câu khi đang nhìn vào hộp (không chuyển cảnh). */
@@ -185,6 +187,7 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   function dispose() {
+    setCursor('');
     hubScene?.dispose();
     hubScene = null;
   }
@@ -250,10 +253,12 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   function onOpenPanel(p: NonNullable<UiState['panel']>) {
+    setCursor('');
     if (p === 'box') hub.refresh();
     if (p === 'album') album.markViewed();
     if (p === 'phone') { phoneThread = null; phoneDraft = null; }
     hubScene?.setBoxOpen(p === 'box3d');
+    hubScene?.setBoxHint(!introDone() && p !== 'box3d');
     if (p === 'box3d') {
       hubMouseHover = null;
       hubScene?.setBoxItems(boxItems());
@@ -268,7 +273,9 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   function onClosePanel() {
+    setCursor('');
     hubScene?.setBoxOpen(false);
+    hubScene?.setBoxHint(!introDone());
   }
 
   function albumFlip(pageId: string) {
@@ -307,6 +314,21 @@ export function createHubController(deps: HubControllerDeps) {
     refreshPanels();
     if (ok) void queue.enqueue(hubSettle);
   }
+  function phoneSendCustom(text: string) {
+    const clean = text.trim();
+    const step = engine.activeSteps().map((r) => r.step).find((s) => s.kind === 'compose_message' && s.thread_id === phoneThread);
+    if (!step || !clean) return;
+    const ok = engine.complete(step.id, { text: clean });
+    phoneDraft = null;
+    refreshPanels();
+    if (ok) void queue.enqueue(hubSettle);
+  }
+
+  const hubActionable = (id: string | null) => {
+    if (!id) return false;
+    if (!introDone()) return id === 'itr.hub.memory_box';
+    return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || id === 'itr.hub.album' || id === 'itr.hub.phone' || engine.peek('interact', id);
+  };
 
   function handlePointer(kind: 'move' | 'click', x: number, y: number, onInteract: () => void): boolean {
     if (!hubScene || engine.context?.kind !== 'hub') return false;
@@ -317,6 +339,7 @@ export function createHubController(deps: HubControllerDeps) {
       const id = busy ? null : hubScene.pick(x, y);
       const item = id ? boxItems().find((i) => i.id === id && i.clickable) ?? null : null;
       hubScene.setHover(item?.id ?? null);
+      setCursor(item ? 'pointer' : '');
       if ((item?.name ?? null) !== (s.boxView?.hover ?? null) && s.boxView) ui.set({ boxView: { ...s.boxView, hover: item?.name ?? null } });
       if (kind === 'click' && item) boxPick(item.id);
       return true;
@@ -324,7 +347,9 @@ export function createHubController(deps: HubControllerDeps) {
     if (kind === 'move' && input.device !== 'touch') hubCursor = { x, y };
     // đi lại trong phòng: vật dưới con trỏ chỉ tính khi đứng đủ gần; bấm chuột = tương tác (vật dưới con trỏ, hoặc vật gần nhất)
     const id = queue.locked() ? null : hubScene.pick(x, y);
-    hubMouseHover = id && hubScene.reachable(id) ? id : null;
+    const hoverId = id && hubScene.reachable(id) && hubActionable(id) ? id : null;
+    hubMouseHover = hoverId;
+    setCursor(hoverId ? 'pointer' : '');
     if (kind === 'click') onInteract();
     return true;
   }
@@ -358,6 +383,7 @@ export function createHubController(deps: HubControllerDeps) {
     phonePick,
     phoneErase,
     phoneSend,
+    phoneSendCustom,
     handlePointer,
     tick,
     hubPoint: (container: HTMLElement, id: string) => {

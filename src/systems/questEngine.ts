@@ -16,7 +16,7 @@ import type { QuestRecord, QuestState, SaveState } from '../core/save';
 export type EnginePhase = 'idle' | 'playing' | 'end_prompt' | 'free_after_main' | 'ended';
 export type TriggerKind = 'interact' | 'arrive';
 export interface TriggerResult { ref: StepRef; action: 'completed' | 'present' | 'progress' }
-export interface StepResult { option_id?: string }
+export interface StepResult { option_id?: string; text?: string }
 type Ctx = { kind: 'hub' } | { kind: 'day'; day: MemoryDay; replay: boolean } | null;
 
 export interface EngineDeps { idx: ContentIndex; save: SaveState; bus: EventBus }
@@ -274,11 +274,18 @@ export class QuestEngine {
       this.bus.emit('choice_made', { step_id: s.id, choice_id: s.choice_id, option_id: opt.id, tone: opt.tone ?? null, measured: !!s.measured, is_replay: this.isReplay });
     }
     if (s.kind === 'compose_message') {
-      const opt = s.openers.find((o) => o.id === result.option_id);
-      if (!opt) return false;
-      this.applyChoice(opt, []);
-      if (!this.isReplay) (this.save.phone[s.thread_id] ??= []).push({ kind: 'sent', step_id: s.id, option_id: opt.id });
-      this.bus.emit('message_sent', { quest_id: q.id, step_id: s.id, tone: opt.tone ?? null });
+      const custom = typeof result.text === 'string' ? result.text.trim() : '';
+      const opt = result.option_id ? s.openers.find((o) => o.id === result.option_id) : undefined;
+      if (!opt && !custom) return false;
+      if (opt) this.applyChoice(opt, []);
+      if (!this.isReplay) {
+        (this.save.phone[s.thread_id] ??= []).push(
+          opt
+            ? { kind: 'sent', step_id: s.id, option_id: opt.id }
+            : { kind: 'sent', step_id: s.id, option_id: 'custom', custom_text: custom },
+        );
+      }
+      this.bus.emit('message_sent', { quest_id: q.id, step_id: s.id, tone: opt?.tone ?? null });
     }
     this.presenting.delete(stepId);
     this.finishStep(q, s);

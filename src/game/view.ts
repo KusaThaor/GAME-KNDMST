@@ -8,6 +8,7 @@ import { createStage, type Stage } from '../render/stage';
 export interface GameView {
   stage: Stage;
   setScene(scene: THREE.Scene | null, camera: THREE.PerspectiveCamera | null): void;
+  setRenderPaused(paused: boolean): void;
   start(update: (dt: number, t: number) => void): void;
   stop(): void;
   /** Chụp ảnh từ một máy ảnh ảo trong cảnh (không dính HUD) → JPEG. */
@@ -20,6 +21,7 @@ export function createGameView(container: HTMLElement): GameView {
   const { renderer, outline } = stage;
   let scene: THREE.Scene | null = null, camera: THREE.PerspectiveCamera | null = null;
   let raf = 0, fps = 0, frames = 0, acc = 0, last = performance.now(), elapsed = 0;
+  let renderPaused = false;
 
   const fit = () => {
     if (!camera) return;
@@ -31,15 +33,18 @@ export function createGameView(container: HTMLElement): GameView {
   return {
     stage,
     setScene(s, c) { scene = s; camera = c; fit(); },
+    setRenderPaused(p) { renderPaused = p; if (!p) last = performance.now(); },
     start(update) {
       const loop = (now: number) => {
         raf = requestAnimationFrame(loop);
         const raw = (now - last) / 1000; last = now;
         const dt = Math.min(raw, 0.1); elapsed += dt;          // game chậm lại khi máy quá yếu, không nhảy cóc
-        acc += raw; frames++;                                  // FPS tính theo thời gian thật
-        if (acc >= 0.5) { fps = Math.round(frames / acc); frames = 0; acc = 0; }
+        if (!renderPaused) {
+          acc += raw; frames++;                                // FPS tính theo thời gian thật
+          if (acc >= 0.5) { fps = Math.round(frames / acc); frames = 0; acc = 0; }
+        }
         update(dt, elapsed);
-        if (scene && camera) outline.render(scene, camera);
+        if (!renderPaused && scene && camera) outline.render(scene, camera);
       };
       raf = requestAnimationFrame(loop);
     },

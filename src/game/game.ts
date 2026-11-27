@@ -117,8 +117,9 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     runPhoto: (s, alive) => photo.runPhoto(s, alive), runMinigame, hooks: stepHooks,
   });
   photo = createPhotoRunner({ idx, save, bus, engine, album, photos, view, ui, queue, style, getDayScene: dayCtrl.scene, getCurrentDay: dayCtrl.currentDay });
+  const setCursor = (cursor: string) => { view.stage.renderer.domElement.style.cursor = cursor; };
   const hubCtrl = createHubController({
-    idx, save, bus, engine, album, hub, flow, ui, input, view, queue, photo, introId, introDone, profile, fmt, setPrompt, refreshHud: dayCtrl.refreshHud, goDay,
+    idx, save, bus, engine, album, hub, flow, ui, input, view, queue, photo, introId, introDone, profile, fmt, setPrompt, setCursor, refreshHud: dayCtrl.refreshHud, goDay,
   });
 
   async function fadeTo(label: string, kind: 'to_day' | 'to_hub', day?: MemoryDay) {
@@ -126,7 +127,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     playTransitionSound(kind);
     await Promise.all([sleep(480), ...transitionHooks.map((h) => h(kind, { day }))]);
   }
-  const teardown = () => { view.setScene(null, null); hubCtrl.dispose(); dayCtrl.dispose(); photo.clearUrls(); };
+  const teardown = () => { setCursor(''); view.setScene(null, null); hubCtrl.dispose(); dayCtrl.dispose(); photo.clearUrls(); };
   async function goHub() { queue.cancelAll(); await fadeTo('Năm 2026', 'to_hub'); teardown(); hubCtrl.mount(); }
   async function goDay(dayId: string, replay: boolean, resume: boolean) {
     const day = idx.days.get(dayId);
@@ -165,7 +166,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     closePanel: () => { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubCtrl.onClosePanel(); },
     openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
-    phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend,
+    phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend, phoneSendCustom: hubCtrl.phoneSendCustom,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },
     menuExit: () => {
@@ -243,8 +244,14 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     return f || s || !input.stick ? { forward: f, strafe: s, run: input.held('run') } : { forward: input.stick.forward, strafe: input.stick.strafe, run: input.stick.run || input.held('run') };
   };
 
+  ui.subscribe((s) => view.setRenderPaused(!!s.minigame));
   mountGameUi(uiEl, ui, actions);
-  view.start((dt, t) => { queue.runTickers(dt); dayCtrl.tick(dt, t, moveIntent); hubCtrl.tick(dt, t, moveIntent); });
+  view.start((dt, t) => {
+    queue.runTickers(dt);
+    if (ui.get().minigame) return;
+    dayCtrl.tick(dt, t, moveIntent);
+    hubCtrl.tick(dt, t, moveIntent);
+  });
   ui.set({ ready: true, placeholderBanner: idx.releaseDays.some((d) => d.main_chain.some((q) => idx.quests.get(q)?.ownership_label === 'AI_PROPOSED')) });
 
   void (async () => {

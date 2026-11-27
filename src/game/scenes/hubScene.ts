@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import type { HubConfig } from '../../config/hub';
 import { HUB_ROOM } from '../../config/hubRoom';
 import type { Artifact, HubContent } from '../../content/types';
-import { toon } from '../../render/materials';
+import { flat, toon } from '../../render/materials';
 import { mergeStatic } from '../../render/merge';
 import { PAL, box } from '../../world/school/props';
 import { enableShadows } from '../../world/props/common/helpers';
@@ -61,6 +61,8 @@ export interface HubScene {
   /** 0 = góc nhìn thứ nhất, 1 = camera đã lướt xong vào cận cảnh hộp. */
   readonly boxBlend: number;
   setBoxItems(items: BoxItemView[]): void;
+  /** Bật/tắt vòng sáng và mũi tên gợi ý bấm vào Hộp Kỷ Vật. */
+  setBoxHint(visible: boolean): void;
   dispose(): void;
 }
 
@@ -245,6 +247,19 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   }
   const shelfItems = new THREE.Group(); shelfItems.position.set(L.shelf.x, 1.48, -Dz + 0.16); room.add(shelfItems);
 
+  // Vòng sáng + mũi tên nổi gợi ý bấm vào Hộp Kỷ Vật lúc mở đầu.
+  const boxHintRingMat = flat('#f2b53a', { transparent: true, opacity: 0.85 });
+  const boxHintRing = new THREE.Mesh(new THREE.RingGeometry(0.68, 0.84, 36), boxHintRingMat);
+  boxHintRing.rotation.x = -Math.PI / 2; boxHintRing.position.y = 0.025;
+  const boxHintGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.14), toon('#f2b53a', { emissive: '#9a6200' }));
+  boxHintGem.position.y = 0.85;
+  const boxHintGroup = new THREE.Group();
+  boxHintGroup.name = 'hub:box-hint';
+  boxHintGroup.position.set(L.memory_box.x, 0, L.memory_box.z);
+  boxHintGroup.add(boxHintRing, boxHintGem);
+  boxHintGroup.visible = false;
+  room.add(boxHintGroup);
+
   room.add(mergeStatic(decor));
 
   // ---- va chạm: đồ đạc là hình chữ nhật (hộp xoay → lấy khung bao) ----
@@ -339,8 +354,13 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
       placeCamera();
       lidPivot.rotation.x = THREE.MathUtils.lerp(lidPivot.rotation.x, boxOpen ? -1.9 : 0, 0.12);
       for (const [id, obj] of items) {
-        const k2 = id === hover && !boxOpen ? 1.06 + Math.sin(t * 6) * 0.012 : 1;
-        if (id !== 'itr.hub.memory_box') obj.scale.setScalar(THREE.MathUtils.lerp(obj.scale.x, k2, 0.25));
+        const k2 = id === hover && !boxOpen ? (id === 'itr.hub.memory_box' ? 1.03 : 1.06 + Math.sin(t * 6) * 0.012) : 1;
+        obj.scale.setScalar(THREE.MathUtils.lerp(obj.scale.x, k2, 0.25));
+      }
+      if (boxHintGroup.visible) {
+        boxHintGem.rotation.y = t * 1.8;
+        boxHintGem.position.y = 0.85 + Math.sin(t * 3) * 0.06;
+        boxHintRingMat.opacity = 0.5 + 0.35 * (0.5 + 0.5 * Math.sin(t * 4));
       }
       for (const [id, it] of boxItems) {
         const s = id === hover && boxOpen ? 1.15 : 1;
@@ -406,6 +426,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
       });
     },
     setBoxOpen(open) { boxOpen = open; if (!open) hover = null; },
+    setBoxHint(visible) { boxHintGroup.visible = visible; },
     setBoxItems(list) {
       clearBoxItems();
       let artIndex = 0;

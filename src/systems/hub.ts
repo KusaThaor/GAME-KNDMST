@@ -118,9 +118,12 @@ export class HubModel {
     const out: ThreadMessage[] = thread.history.map((l) => ({ speaker: l.speaker, text: l.text, origin: 'history' }));
     for (const m of this.save.phone[threadId] ?? []) {
       if (m.kind === 'sent') {
-        const s = this.idx.steps.get(m.step_id)?.step;
-        const opt = s?.kind === 'compose_message' ? s.openers.find((o) => o.id === m.option_id) : undefined;
-        if (opt) out.push({ speaker: 'player', text: opt.text, origin: 'sent' });
+        if (m.custom_text) out.push({ speaker: 'player', text: m.custom_text, origin: 'sent' });
+        else {
+          const s = this.idx.steps.get(m.step_id)?.step;
+          const opt = s?.kind === 'compose_message' ? s.openers.find((o) => o.id === m.option_id) : undefined;
+          if (opt) out.push({ speaker: 'player', text: opt.text, origin: 'sent' });
+        }
       } else {
         for (const fx of this.idx.pack.pdes.find((p) => p.id === m.pde_id)?.effects ?? []) {
           if (fx.kind === 'message' && fx.thread_id === threadId) out.push(...fx.lines.map((l) => ({ speaker: l.speaker, text: l.text, origin: 'reply' as const })));
