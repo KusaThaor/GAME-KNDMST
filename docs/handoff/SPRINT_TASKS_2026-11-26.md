@@ -1,125 +1,226 @@
-# SPRINT TASKS — sau Audit Đợt 1–3 (26/11/2026)
+# SPRINT TASKS — sau Audit Đợt 1–3 (lập 26/11, cập nhật 27/11/2026)
 
 | Trường | Giá trị |
 |---|---|
-| Lập | 26/11/2026 (tối), sau `AUDIT_DOT1-3_VA_KE_HOACH_DEPLOY_2026-11-26.md` (Project Claude) |
-| Nhánh gốc | `feat/sprint-0412` |
-| Chủ dự án đã duyệt (26/11) | (1) gộp bản vá audit · (2) Trang 2 chỉ chọn điều ước một lần · (3) dọn nhánh cũ · (4) đưa bản này lên `dev` (Preview). **Chưa** duyệt lên `main`. |
-| Phạm vi bản đo 05–15/12 | **Mốc 1 (Hub 2026 + Trang 1–4)** theo phiếu 26/11 (Mốc 2 = Giai đoạn 3). ⚠ Khác quyết định A1 ngày 22/11 trong `CLAUDE.md` / `NEXT_SPRINT_TASK_BOARD.md` ("Mốc 1 + Main Trang 5–9"). **Chờ chủ dự án xác nhận** rồi sửa `CLAUDE.md` §3 mục 1. |
-| Thay thế | Mục 1 của `docs/NEXT_SPRINT_TASK_BOARD.md` cho giai đoạn tới 05/12. Thẻ N-xx cũ giữ làm lịch sử / tham chiếu. |
+| Nhánh gốc | `feat/sprint-0412` (đầu nhánh có R-D5 + bản vá audit) · Preview: nhánh `dev` |
+| Link Preview | https://kndmst-git-dev-game-kndmst.vercel.app/?play=1 |
+| Chủ dự án chốt 27/11 | **Ưu tiên Mốc 1** (Hub 2026 + Trang 1–4) cho bản đo 05–15/12; Mốc 2 = Giai đoạn 3 (đã sửa `CLAUDE.md` §3.1). `FIREBASE_SERVICE_ACCOUNT` đã bật trên Vercel. R-D6 vào sprint. |
+| Chưa duyệt | Đưa lên `main` (Production) — chỉ làm khi chủ dự án nói "lên main" |
 
-**Cách dùng:** nhận một mã → đọc thẻ ở Mục 2 → copy khối "Prompt" cho AI agent. Mỗi thẻ chỉ sửa file trong cột "File". Mọi thẻ code phải qua **5 lệnh Gatekeeper** (Mục 3) trước khi mở PR vào `feat/sprint-0412`.
+## Cách dùng (đọc 1 lần)
+1. Chọn thẻ theo thứ tự ở **Mục 1** (làm từ trên xuống).
+2. Cột **Agent** cho biết ai làm. Mở đúng công cụ đó, **dán nguyên khối "Prompt"** của thẻ.
+3. Agent làm xong sẽ push một nhánh `task/...`. Khi đó mở phiên **Integrator** (Mục 3) để kiểm và gộp. Không tự gộp tay.
+4. Việc có chữ **"Chủ dự án"** thì anh/chị tự làm theo các bước ghi trong thẻ.
+
+**Các agent:**
+| Tên trong bảng | Là gì | Dùng cho |
+|---|---|---|
+| **Claude Code · Sonnet** | Phiên Claude Code mới, gắn repo `KusaThaor/GAME-KNDMST`, chọn model Sonnet | Việc code nhỏ, phạm vi rõ |
+| **Claude Code · Opus** | Như trên, chọn Opus | Việc đụng engine/nhiều file, Integrator |
+| **Project thiết kế** | Claude/Gemini ở Project thiết kế (narrative) | Viết/chốt thoại, kịch bản — **không** code |
+| **Chủ dự án** | Anh/chị | Duyệt, cài đặt Vercel/GitHub, chơi tay |
+| **Cả nhóm** | Các thành viên | Chơi tay QA |
 
 ---
 
-## Mục 0 — Đã làm trong phiên 26/11
-
-| Việc | Kết quả | Commit / nhánh |
-|---|---|---|
-| A1 Trang 4: câu "Có mười giây thôi…" phát lúc bấm hẹn giờ (trước đây phát sau khi chụp, chặn màn xem ảnh) | Xong | `task/R-D-audit-fix` |
-| A2 Trang 1: trả câu Châu sau lần chụp 1 (rơi khi R-B3 chuyển cấu hình) | Xong | `task/R-D-audit-fix` |
-| A3 Cập nhật 4 spec E2E theo thoại R-D | Xong | `task/R-D-audit-fix` |
-| R-D5 Trang 2 chỉ chọn điều ước một lần, trong trò gấp thuyền; vẫn đo `choice_made c_m1_02_wish` | Xong | `task/R-D5-dieu-uoc-mot-lan` |
-| GIT-1 Dọn 15 nhánh cũ | **Một phần**: đã tạo nhánh lưu trữ `archive/nhanh-cu-2026-11-26` (giữ đầu cả 15 nhánh). **Xóa nhánh bị proxy của phiên chặn** → chủ dự án chạy lệnh ở thẻ GIT-1 | — |
-| DEP-1 Đưa lên `dev` | Xem `DEV_SESSION_HANDOFF.md` | `dev` |
+## Mục 0 — Đã xong (26–27/11)
+| Việc | Kết quả |
+|---|---|
+| Bản vá audit (Trang 4 "Có mười giây…", câu Châu Trang 1, 4 spec E2E) | Đã gộp `feat/sprint-0412` |
+| R-D5 Trang 2 chỉ chọn điều ước một lần | Đã gộp `feat/sprint-0412` |
+| Đưa lên `dev` | `dev` @ `14fa8b6`, Vercel build thành công |
+| **DEP-1 phần máy kiểm (27/11)** | `/api/health` → `{"ok":true,"environment":"test","server_build":"14fa8b6","firebase":"configured"}` · gửi lô `pipeline_test` → **ghi Firestore thật OK** (`accepted:1`), gửi lại cùng lô → `duplicate:true`, khóa `player_name` bị bỏ, Origin lạ → 403 · trang chủ + `?play=1` tải 0 lỗi, 0 tài nguyên 4xx/5xx, 6 file GLB đều 200 · bấm "Đồng ý" → vào Phòng 2026, game tự gửi `/api/collect` 2 lần đều 200 · bundle có đủ 3 bản sửa. Lô kiểm có `build_version = 20261127-dep1smoke` để lọc bỏ. |
+| GIT-1 | Đã có nhánh lưu trữ `archive/nhanh-cu-2026-11-26`; **còn bước xóa** (thẻ GIT-1) |
 
 ---
 
 ## Mục 1 — Bảng tổng hợp
 
-### Giai đoạn 1 — Trước bản đo 05/12 (TASK-08 & Polish)
-| Mã | Việc | Nhánh | Ưu tiên | Hạn | Người/agent | Tiêu chí nghiệm thu (rút gọn) |
+### Giai đoạn 1 — Trước bản đo 05/12
+| # | Mã | Việc | Agent | Nhánh | Ưu tiên | Hạn |
 |---|---|---|---|---|---|---|
-| GIT-1 | Xóa 15 nhánh cũ trên origin | — | P1 | 27/11 | Chủ dự án (máy mình) | `git ls-remote --heads origin` không còn 15 nhánh ở thẻ |
-| DEP-1 | Preview trên `dev`: env, smoke test | `dev` | **P0** | 27/11 | Chủ dự án + Claude | Checklist Mục 4-B đủ tích |
-| R-D6 | Thoại TRƯỚC khi chụp cho bước ảnh + sửa Trang 2 cảnh 4 | `task/R-D6-thoai-truoc-chup` | P1 | 28/11 | Claude (Sonnet) | Hạ hỏi → Đức "Có nè!…" → khung ngắm; Trang 1 câu Châu vẫn sau lần 1 |
-| UX-1 | Dòng nhắc "Đừng ghi tên/SĐT" ở ô góp ý | `task/UX-1-nhac-form` | P2 | 28/11 | Claude (Sonnet) | Hiện dưới ô góp ý; 4 câu hỏi không đổi |
-| QA-1 | Chơi tay trọn Mốc 1 trên laptop thật + đo FPS | — | **P0** | 29/11–01/12 | Cả nhóm | Biên bản QA-1 (mẫu ở thẻ); lỗi mở thành thẻ `BUG-xx` |
-| BUG-xx | Sửa lỗi phát hiện ở QA-1 | `task/BUG-xx-<ten>` | P0/P1 | 02/12 | Claude | Mỗi lỗi có test tái hiện |
-| DEP-2 | Production: `dev` → `main` + nhật ký phát hành | PR → `main` | **P0 (cần duyệt)** | 03–04/12 | Chủ dự án | Checklist Mục 4-C đạt; dòng nhật ký có SHA |
+| 1 | GIT-1 | Xóa 15 nhánh cũ | Chủ dự án | — | P1 | 27/11 |
+| 2 | DEP-1b | Chơi tay trên Preview + kiểm Firestore console | Chủ dự án | — | **P0** | 28/11 |
+| 3 | R-D6 | Thoại trước khi chụp + sửa Trang 2 cảnh 4 | Claude Code · Sonnet | `task/R-D6-thoai-truoc-chup` | P1 | 28/11 |
+| 4 | UX-1 | Nhắc "đừng ghi tên/SĐT" ở ô góp ý | Claude Code · Sonnet | `task/UX-1-nhac-form` | P2 | 28/11 |
+| 5 | INT-1 | Kiểm + gộp R-D6, UX-1 → `feat/sprint-0412` → `dev` | Claude Code · Opus (Integrator) | — | P0 | 29/11 |
+| 6 | QA-1 | Chơi tay trọn Mốc 1 trên laptop thật + FPS | Cả nhóm | — | **P0** | 29/11–01/12 |
+| 7 | BUG-xx | Sửa lỗi QA-1 tìm ra | Claude Code · Sonnet/Opus | `task/BUG-xx-<ten>` | P0/P1 | 02/12 |
+| 8 | DEP-2 | Lên Production + nhật ký phát hành | Chủ dự án duyệt → Claude Code · Opus | PR `dev` → `main` | **P0** | 03–04/12 |
 
-### Giai đoạn 2 — Sau bản đo 05/12 (Nhóm B)
-| Mã | Việc | Nhánh | Ưu tiên | Tiêu chí nghiệm thu |
+### Giai đoạn 2 — Sau bản đo (từ 16/12)
+| Mã | Việc | Agent | Nhánh | Ưu tiên |
 |---|---|---|---|---|
-| N-12 | Nhân vật phụ procedural: cô giáo, bác bảo vệ, chú tạp hóa, học sinh nền | `task/N-12-nhan-vat-phu` | P1 | Có ở sân/lớp/tiệm; không chặn đường; FPS tụt ≤ 10% |
-| N-18 | Đo lường bổ sung: phát `free_photo_taken`, rà mọi event | `task/N-18-do-luong` | P1 | Mọi tên trong `EVENT_NAMES` có nơi phát hoặc ghi lý do; test bridge |
-| SFX-1 | Âm thanh đời thường (vở rơi, trống, "tách", mưa) | `task/SFX-1-am-thanh` | P2 | Thay dòng "Tùng… tùng…" tạm; có nút tắt tiếng |
-| ANIM-1 | Hoạt ảnh nâng cao (ngồi, cúi vớt thuyền, treo biển, chữ hiện từng nét trên buồm) | `task/ANIM-1-hoat-anh` | P2 | Đúng cảnh TONG_DUYET; không đổi luồng quest |
-| SQ-1 | Nhiệm vụ phụ Mốc 1 chính thức (`q_m1_ai_side_*`, `q_m1_ai_daily_01`) | `task/SQ-1-side-quest-m1` | P2 | Thoại được duyệt, `HUMAN_CANON`, bật ở production, 0 `[PLACEHOLDER]` |
-| PERF-1 | Chia nhỏ chunk game / tải trước | `task/PERF-1-chia-chunk` | P3 | Không còn cảnh báo > 900 KB; thời gian vào phòng không tăng |
-| AN-1 | Xuất số liệu kỳ đo (CSV) tách `environment` | `task/AN-1-xuat-so-lieu` | P1 | CSV chỉ `production`; không có tên/email/IP |
+| AN-1 | Xuất số liệu kỳ đo ra CSV (chỉ `production`) | Claude Code · Sonnet | `task/AN-1-xuat-so-lieu` | P1 |
+| N-18 | Đo lường bổ sung (`free_photo_taken`…) | Claude Code · Sonnet | `task/N-18-do-luong` | P1 |
+| N-12 | Nhân vật phụ procedural | Claude Code · Opus | `task/N-12-nhan-vat-phu` | P1 |
+| SQ-0 → SQ-1 | Viết thoại nhiệm vụ phụ Mốc 1 → đưa vào game | Project thiết kế → Claude Code · Sonnet | `task/SQ-1-side-quest-m1` | P2 |
+| SFX-1 | Âm thanh đời thường | Claude Code · Sonnet | `task/SFX-1-am-thanh` | P2 |
+| ANIM-1 | Hoạt ảnh nâng cao | Claude Code · Opus | `task/ANIM-1-hoat-anh` | P2 |
+| PERF-1 | Chia nhỏ file game | Claude Code · Sonnet | `task/PERF-1-chia-chunk` | P3 |
 
-### Giai đoạn 3 — Mốc 2 (Trang 5–9, lớp 8–9)
-| Mã | Việc | Nhánh | Ưu tiên | Tiêu chí nghiệm thu |
+### Giai đoạn 3 — Mốc 2 (Trang 5–9)
+| Mã | Việc | Agent | Nhánh | Ưu tiên |
 |---|---|---|---|---|
-| M2-0 | Chốt kịch bản Trang 5–9 (Project thiết kế) | — | P0 cho Mốc 2 | Tài liệu CONFIRMED như TONG_DUYET Mốc 1 |
-| M2-1 | Nối Hub Mốc 2: `HUB_QUESTS_M2`, `PDES_M2`, `ART_M2_01` | `task/M2-1-hub` | P1 | Pack test có Mốc 2; validator 0 lỗi; Mốc 1 không đổi |
-| M2-2 | Số hóa Trang 5–9 (`d_g08_01`…`d_g09_03`) — làm lại trên nền mới (tham khảo `task/N-15a`, `N-15c`, không gộp thẳng) | `task/M2-2-so-hoa-trang<N>` | P1 | Mỗi Trang một file; E2E chơi qua |
-| M2-3 | Minigame Mốc 2 (Caro, Sudoku, Ném bóng, Săn góc ảnh, Trang trí Căn cứ) | `task/M2-3-<mg>` | P2 | Khung chung, có Bỏ qua, unit test |
-| M2-4 | Biến thể bản đồ lớp 8–9 (procedural, D3) | `task/M2-4-ban-do` | P2 | Dùng lại map THCS, đổi trang trí theo năm |
-| M2-5 | Album + kết Mốc 2 + timeskip | `task/M2-5-album-ket` | P2 | Album có trang Mốc 2; lưu/tải đúng |
+| M2-0 | Chốt kịch bản Trang 5–9 (bản CONFIRMED) | Project thiết kế + Chủ dự án | — | P0 |
+| M2-1 | Nối Hub Mốc 2 (`HUB_QUESTS_M2`, `PDES_M2`, `ART_M2_01`) | Claude Code · Opus | `task/M2-1-hub` | P1 |
+| M2-2 | Số hóa từng Trang 5–9 | Claude Code · Sonnet (mỗi Trang 1 phiên) | `task/M2-2-trang<N>` | P1 |
+| M2-3 | Minigame Mốc 2 | Claude Code · Sonnet (mỗi trò 1 phiên) | `task/M2-3-<ma-tro>` | P2 |
+| M2-4 | Biến thể bản đồ lớp 8–9 | Claude Code · Opus | `task/M2-4-ban-do` | P2 |
+| M2-5 | Album + kết Mốc 2 + timeskip | Claude Code · Opus | `task/M2-5-album-ket` | P2 |
 
 ---
 
-## Mục 2 — Thẻ giao việc chi tiết (Giai đoạn 1)
+## Mục 2 — Thẻ chi tiết Giai đoạn 1
 
-### GIT-1 · Xóa 15 nhánh cũ (chủ dự án chạy trên máy mình)
-- **Vì sao chủ dự án chạy:** proxy của phiên Claude cho push nhánh nhưng chặn xóa nhánh và tạo tag.
-- **Đã an toàn:** nhánh `archive/nhanh-cu-2026-11-26` trỏ tới một commit có 15 cha = đầu của 15 nhánh → lịch sử không mất. Trong thông điệp commit có bảng tên nhánh ↔ SHA.
-- **Lệnh (Git Bash / PowerShell, ở thư mục repo):**
+### #1 GIT-1 · Xóa 15 nhánh cũ — Chủ dự án
+Mở Git Bash ở thư mục repo, chạy:
 ```bash
 git push origin --delete task/R-A1-thoai-trang1 task/R-A1-v1.1-hub task/R-A2-trang2-outline task/R-A2-v1.1-hub task/R-A3-thoai-trang3 task/R-A3-v1.1-hub task/R-A4-thoai-trang4 task/R-A4-v1.1-hub content/R-A2-trang2-hoan-thien feat/t02-a01-a02 feat/t04-savestate-v3 content/m1-buoc-choi docs/sync-approved-gdd-v1 docs/tong-duyet-moc1-4-trang wip/asset-workshop-backup
 ```
-- **Khôi phục một nhánh (nếu cần):** `git push origin <sha>:refs/heads/<tên-nhánh>` (SHA trong commit `archive/nhanh-cu-2026-11-26`).
-- **Đợt sau (chưa duyệt):** ~30 nhánh `task/N-*`, `task/R-B*`, `task/RF-*`, `task/R-D*` đã gộp hết vào `feat/sprint-0412` → có thể xóa cùng cách.
+- An toàn: lịch sử cả 15 nhánh nằm trong `archive/nhanh-cu-2026-11-26`. Cần lấy lại một nhánh: `git push origin <sha>:refs/heads/<tên>` (SHA ghi trong commit của nhánh lưu trữ).
+- **Xong khi:** trang Branches trên GitHub không còn 15 nhánh trên.
 
-### DEP-1 · Preview trên `dev`
-- **Mục tiêu:** link Preview Vercel chạy đúng bản `feat/sprint-0412` mới nhất.
-- **Việc:** (1) Vercel → Settings → Environment Variables: `FIREBASE_SERVICE_ACCOUNT` (base64) bật cho Preview + Production; (2) kiểm Firestore rules; (3) chạy checklist Mục 4-B trên link Preview của nhánh `dev`.
-- **Nghiệm thu:** Mục 4-B đủ tích, ghi link Preview vào `docs/DEV_SESSION_HANDOFF.md`.
+### #2 DEP-1b · Chơi tay trên Preview — Chủ dự án
+Máy kiểm đã làm phần tự động (Mục 0). Phần còn lại cần người thật:
+1. Mở https://kndmst-git-dev-game-kndmst.vercel.app/?play=1 bằng Chrome, **cửa sổ ẩn danh**, trên laptop.
+2. Bấm "Đồng ý" → chơi: Hộp Kỷ Vật (bấm 2 đồ nền) → Trang 1 → Trang 2 → Trang 3 → Trang 4 → Album → điện thoại `AloNhau` → gửi tin.
+3. Đối chiếu nhanh: Trang 1 Châu nói "Khoan! Đức, tóc ông dựng…" sau lần chụp 1 · Trang 2 chỉ chọn điều ước **một lần** trong trò gấp thuyền · Trang 3 dọn trước, trang trí sau, tên khu đổi thành "Căn cứ bí mật" · Trang 4 Đức giục "Có mười giây…" **lúc bấm hẹn giờ**.
+4. Giữa chừng bấm Esc → Thoát → Form hiện → gửi 1 phản hồi (ghi "TEST" trong ô góp ý).
+5. Tải lại trang giữa Trang 2 → phải về đúng chỗ.
+6. Firebase console → Firestore: `event_batches` có bản ghi mới `environment = "test"`, thấy `choice_made` với `c_m1_02_wish`; `feedback` có bản "TEST"; **không** thấy tên đã nhập.
+- **Xong khi:** đủ 6 bước; lỗi gặp phải ghi vào `docs/handoff/QA1_<ten>_<ngay>.md` (mẫu ở #6).
 
-### R-D6 · Thoại trước khi chụp cho bước ảnh
-- **Vấn đề:** `types.ts` mô tả `first_line` là "câu mở đầu trước lần bấm đầu tiên", nhưng `photoRunner` phát nó **sau** lần chụp 1 (hành vi N-14 cho câu Châu Trang 1). Trang 2 cảnh 4 cần thoại **trước** khi chụp: Hạ "Chụp lại năm chiếc trước khi thả được hông?" → Đức "Có nè! Máy của mày đó, chụp lẹ đi!".
-- **File:** `src/content/types.ts`, `src/game/runtime/photoRunner.ts`, `src/content/validate.ts`, `src/content/days/d_g06_01.ts`, `src/content/days/d_g07_01.ts`, `tests/unit/photoRunnerProps.test.ts`, `tests/e2e/*.spec.ts` (nếu cần).
-- **Yêu cầu:** thêm `intro_lines?: DialogueLine[]` cho bước `photo` (phát trước khi hiện khung ngắm, giống minigame); đổi tên `first_line` → `after_first_shot_line` (hoặc giữ tên nhưng sửa chú thích cho đúng hành vi) — chọn một, ghi trong PR; Trang 2 s07: bỏ `first_line`, thêm `intro_lines` 2 câu theo TONG_DUYET (chữ đã CONFIRMED).
-- **Nghiệm thu:** unit test thứ tự thoại; 5 lệnh Gatekeeper đạt.
-- **Prompt:** "Đọc `CLAUDE.md`, thẻ R-D6 trong `docs/handoff/SPRINT_TASKS_2026-11-26.md` và TONG_DUYET Trang 2 Cảnh 4. Làm trên nhánh `task/R-D6-thoai-truoc-chup` từ `feat/sprint-0412`. Chỉ sửa file trong thẻ. Viết test đỏ trước. Chạy đủ 5 lệnh Gatekeeper, báo đã chạy gì."
+### #3 R-D6 · Thoại trước khi chụp — Claude Code · Sonnet
+- **Vấn đề:** Trang 2 Cảnh 4 (TONG_DUYET dòng 297–298) cần thoại **trước** khung ngắm: Hạ "Chụp lại năm chiếc trước khi thả được hông?" → Đức "Có nè! Máy của mày đó, chụp lẹ đi!". Hiện câu Hạ nằm ở `first_line`, mà `photoRunner` phát `first_line` **sau** lần chụp 1; thiếu câu Đức. Ngoài ra chú thích `first_line` trong `types.ts` ghi "trước lần bấm đầu tiên" — sai so với hành vi thật.
+- **Cách làm đã chốt:** thêm `intro_lines?: DialogueLine[]` cho bước `photo` (phát trước khi hiện khung ngắm, như minigame). **Giữ** `first_line` = câu phát sau lần chụp 1 (Trang 1 dùng), chỉ sửa chú thích cho đúng.
+- **File được sửa:** `src/content/types.ts`, `src/game/runtime/photoRunner.ts`, `src/content/validate.ts` (thêm `intro_lines` vào danh sách câu của bước photo, dòng ~109), `src/content/days/d_g07_01.ts` (bước `q_m1_main_02.s07`), `tests/unit/photoRunnerProps.test.ts`, `tests/e2e/*.spec.ts` nếu ca nào kẹt vì thoại mới.
+- **Prompt:**
+```
+Bạn là Claude Code làm task R-D6 cho repo KusaThaor/GAME-KNDMST.
+1. Đọc CLAUDE.md và thẻ "#3 R-D6" trong docs/handoff/SPRINT_TASKS_2026-11-26.md. Đọc docs/handoff/TONG_DUYET_MOC1_HUB_VA_HANH_DONG_THIEU.md dòng 290–300 (Trang 2 Cảnh 4).
+2. Tạo nhánh task/R-D6-thoai-truoc-chup từ origin/feat/sprint-0412. Chỉ sửa các file liệt kê trong thẻ.
+3. Viết unit test trước (phải đỏ): bước photo có intro_lines thì các câu đó phát TRƯỚC khi khung ngắm hiện; first_line vẫn phát SAU lần chụp 1.
+4. Thêm intro_lines cho bước photo trong types.ts + photoRunner.ts + validate.ts; sửa chú thích first_line cho đúng hành vi "sau lần chụp 1".
+5. d_g07_01.ts bước q_m1_main_02.s07: bỏ first_line; thêm intro_lines đúng nguyên văn 2 câu: Hạ (NPC_C) "Chụp lại năm chiếc trước khi thả được hông?" và Đức (NPC_A) "Có nè! Máy của mày đó, chụp lẹ đi!". Không tự viết thêm thoại.
+6. Chạy đủ 5 lệnh: npx tsc --noEmit · npx vitest run --pool=vmThreads · npm run validate:world · VERCEL_ENV=production npm run build · npx playwright test --workers=1. Ca E2E nào kẹt vì thoại mới thì thêm bước đọc hết thoại (xem hàm readThrough trong tests/e2e/world.spec.ts).
+7. Commit nhỏ, push nhánh. Báo cáo tiếng Việt ngắn: đã sửa gì, kết quả từng lệnh (số đạt/hỏng), chưa test gì. Không gộp vào feat/sprint-0412.
+```
+- **Xong khi:** unit test thứ tự thoại đạt; 5 lệnh đạt; Trang 1 không đổi hành vi.
 
-### UX-1 · Nhắc không ghi thông tin cá nhân ở Form
-- **File:** `src/ui/game/FeedbackForm.tsx` (+ test UI nếu có). Chữ nhắc để trong `src/config/` (không viết cứng).
-- **Nghiệm thu:** dòng nhắc nhỏ dưới ô góp ý; không đổi 4 câu hỏi + giới hạn 300 ký tự.
+### #4 UX-1 · Nhắc không ghi thông tin cá nhân — Claude Code · Sonnet
+- **File:** `src/ui/game/FeedbackForm.tsx`, một file chữ trong `src/config/` (vd. `src/config/feedback.ts` nếu đã có, không thì thêm hằng vào file config gần nhất), test UI liên quan nếu có.
+- **Prompt:**
+```
+Bạn là Claude Code làm task UX-1 cho repo KusaThaor/GAME-KNDMST.
+1. Đọc CLAUDE.md và thẻ "#4 UX-1" trong docs/handoff/SPRINT_TASKS_2026-11-26.md.
+2. Tạo nhánh task/UX-1-nhac-form từ origin/feat/sprint-0412.
+3. Thêm một dòng chữ nhỏ dưới ô góp ý của Form phản hồi: "Đừng ghi tên, số điện thoại hay thông tin cá nhân." Chữ để trong src/config/ (không viết cứng trong component).
+4. Không đổi 4 câu hỏi, không đổi giới hạn 300 ký tự, không đổi dữ liệu gửi đi.
+5. Thêm/sửa test nếu có test cho FeedbackForm. Chạy đủ 5 lệnh (như thẻ #3). Push nhánh, báo cáo tiếng Việt ngắn. Không gộp.
+```
+- **Xong khi:** dòng nhắc hiện; 5 lệnh đạt.
 
-### QA-1 · Chơi tay trọn Mốc 1 + đo FPS
-- **Ai:** ít nhất 2 người, 2 laptop khác nhau (1 máy yếu).
-- **Biên bản mẫu** (dán vào `docs/handoff/QA1_<ten>_<ngay>.md`): máy (CPU/GPU/RAM), trình duyệt, link, FPS trung bình phòng 2026 / sân trường / lúc mưa (F9 ở bản test), thời gian tải đến phòng 2026, danh sách lỗi (mô tả, bước tái hiện, ảnh).
-- **Kịch bản:** đúng Mục 4-B bước 3–6.
+### #5 INT-1 · Integrator gộp — Claude Code · Opus
+- **Prompt:**
+```
+Bạn là Integrator của repo KusaThaor/GAME-KNDMST (quyền push).
+1. Đọc CLAUDE.md và docs/handoff/SPRINT_TASKS_2026-11-26.md (Mục 3 "Quy trình Integrator").
+2. Với từng nhánh: task/R-D6-thoai-truoc-chup, task/UX-1-nhac-form (nhánh nào chưa có thì bỏ qua):
+   a. Đọc diff so với origin/feat/sprint-0412; kiểm nhánh chỉ sửa file trong thẻ; không có chữ [PLACEHOLDER] mới ở nội dung production; không có khóa bí mật.
+   b. Gộp thử (merge --no-ff) vào bản sao feat/sprint-0412 cục bộ, chạy đủ 5 lệnh Gatekeeper.
+   c. Đạt hết → push feat/sprint-0412. Hỏng → không gộp, ghi lý do + cách sửa.
+3. Sau khi gộp: merge --no-ff feat/sprint-0412 vào dev, push dev. Đợi Vercel build xong rồi gọi https://kndmst-git-dev-game-kndmst.vercel.app/api/health, kiểm server_build = SHA mới.
+4. KHÔNG đụng main. Không push --force.
+5. Cập nhật docs/DEV_SESSION_HANDOFF.md (mục mới ở đầu, 150–300 từ: đã gộp gì, kết quả từng lệnh, chưa test gì). Báo cáo tiếng Việt, tách "Báo cáo" và "Cần chủ dự án duyệt".
+```
+- **Xong khi:** `dev` có R-D6 + UX-1, `/api/health` trả SHA mới.
 
-### DEP-2 · Production (cần chủ dự án duyệt)
-- Chỉ làm khi Mục 4-B đạt và chủ dự án nói "lên main".
-- Ghi `docs/RELEASE_LOG.md`: ngày giờ, SHA, người duyệt, link production, ghi chú.
+### #6 QA-1 · Chơi tay + đo FPS — Cả nhóm
+- Ít nhất 2 người, 2 laptop khác nhau (1 máy yếu). Mỗi người làm đủ 6 bước của thẻ #2, chơi **liền một mạch** Mốc 1.
+- FPS: mở link **Preview** (bản test), bấm F9 để hiện đồng hồ FPS; ghi số ở Phòng 2026, sân trường, lúc mưa Trang 4.
+- **Mẫu biên bản** — tạo file `docs/handoff/QA1_<ten>_<ngay>.md`:
+```
+Máy: (CPU / GPU / RAM) · Trình duyệt + phiên bản · Mạng (wifi/4G)
+Thời gian từ bấm Chơi tới Phòng 2026: __ giây
+FPS: Phòng 2026 __ · Sân trường __ · Mưa Trang 4 __
+Tổng thời gian chơi hết Mốc 1: __ phút
+Lỗi:
+| # | Ở đâu (Trang/cảnh) | Chuyện gì xảy ra | Bước làm lại | Ảnh | Mức (chặn/khó chịu/nhỏ) |
+Cảm nhận chung (3 dòng):
+```
+- **Xong khi:** có ít nhất 2 biên bản; lỗi "chặn" được chuyển thành thẻ BUG.
+
+### #7 BUG-xx · Sửa lỗi QA-1 — Claude Code · Sonnet (lỗi nhỏ) / Opus (lỗi engine)
+- **Prompt (thay <...>):**
+```
+Bạn là Claude Code sửa lỗi BUG-<số> cho repo KusaThaor/GAME-KNDMST.
+1. Đọc CLAUDE.md, biên bản docs/handoff/QA1_<ten>_<ngay>.md dòng lỗi #<số>.
+2. Tạo nhánh task/BUG-<số>-<ten-ngan> từ origin/feat/sprint-0412.
+3. Tái hiện lỗi bằng một test (unit hoặc e2e) trước khi sửa — test phải đỏ.
+4. Sửa nhỏ nhất có thể. Không tự viết thoại mới; nếu lỗi do thiếu thoại thì dừng và báo.
+5. Chạy đủ 5 lệnh Gatekeeper, push nhánh, báo cáo tiếng Việt ngắn. Không gộp.
+```
+- Sau đó chạy lại INT-1 để gộp.
+
+### #8 DEP-2 · Production — Chủ dự án duyệt → Claude Code · Opus
+- **Điều kiện:** QA-1 không còn lỗi "chặn"; DEP-1b đạt; chủ dự án nhắn "lên main".
+- **Prompt:**
+```
+Bạn là Integrator repo KusaThaor/GAME-KNDMST. Chủ dự án ĐÃ DUYỆT đưa dev lên main hôm nay.
+1. Đọc CLAUDE.md, docs/handoff/SPRINT_TASKS_2026-11-26.md thẻ #8 và Mục 4.
+2. Chạy đủ 5 lệnh Gatekeeper trên origin/dev. Có lệnh hỏng → dừng, báo.
+3. merge --no-ff dev vào main, push main (không --force).
+4. Đợi Vercel build production. Kiểm: <domain production>/api/health có environment = "production" và server_build = SHA mới; trang chủ + ?play=1 tải không lỗi; ?lab= và F9 không có tác dụng; gửi KHÔNG lô test nào vào production.
+5. Tạo/ghi tiếp docs/RELEASE_LOG.md: ngày giờ (UTC+7), SHA, người duyệt, link, ghi chú. Commit + push lên dev và main.
+6. Báo cáo tiếng Việt: kết quả từng bước, cách rollback (Vercel → Deployments → Promote bản trước).
+```
+- **Xong khi:** production chạy; có dòng nhật ký phát hành.
 
 ---
 
-## Mục 3 — 5 lệnh Gatekeeper (bắt buộc trước mọi PR)
+## Mục 3 — Quy trình Integrator & 5 lệnh Gatekeeper
 ```bash
 npx tsc --noEmit
-npx vitest run --pool=vmThreads          # Windows/Node 24: bắt buộc --pool=vmThreads
+npx vitest run --pool=vmThreads          # Windows/Node 24 bắt buộc --pool=vmThreads
 npm run validate:world
 VERCEL_ENV=production npm run build
 npx playwright test --workers=1          # 47 test, ~30 phút; 1 bỏ qua (smoke cần Firestore Emulator)
 ```
+- Mỗi nhánh task chỉ được gộp khi đủ 5 lệnh đạt **trên bản gộp thử**.
+- Mỗi lần gộp dùng `merge --no-ff`, thông điệp `merge: <nhánh> vao feat/sprint-0412 [<mã>]`.
+- Trong kỳ đo 05–15/12: mọi lần lên `main` ghi `docs/RELEASE_LOG.md`.
 
-## Mục 4 — Checklist deploy
+## Mục 4 — Checklist Production (dùng ở thẻ #8)
+1. `/api/health` → `environment: "production"`, `firebase: "configured"`, `server_build` đúng SHA.
+2. Trang chủ, `?play=1`: 0 lỗi console, 0 tài nguyên 4xx/5xx.
+3. Chơi tay nhanh Phòng 2026 → Trang 1 (5 phút) để chắc chắn số liệu vào Firestore với `environment = "production"`.
+4. `?lab=`, F9 không có tác dụng.
+5. Theo dõi Firestore Usage ngày đầu (hạn mức Spark 20.000 lượt ghi/ngày).
+6. Rollback: Vercel → Deployments → Promote bản trước.
 
-**A. Trước Preview:** gộp vào `feat/sprint-0412` → 5 lệnh đạt → env `FIREBASE_SERVICE_ACCOUNT` (Preview + Production) → Firestore rules → đưa vào `dev`.
+---
 
-**B. Trên link Preview** (Chrome, cửa sổ ẩn danh, máy thật)
-1. `GET /api/health` trả OK.
-2. Trang chủ → Chơi → Phòng 2026; DevTools Network không có 404.
-3. Chơi: tên + ngoại hình → Hộp Kỷ Vật (bấm 2 đồ nền) → Trang 1 (4 trò, chụp 3 lần, câu Châu sau lần 1) → Trang 2 (gấp thuyền → chọn điều ước **một lần** → ghi; chụp 5 thuyền; đua) → Trang 3 (0/3, dọn trước, trang trí sau, tên khu đổi đúng lúc) → Trang 4 (3 kiểu ảnh, Đức giục lúc bấm hẹn giờ, mưa, cầu vồng ở khúc gỗ) → Album → `AloNhau` → gửi tin.
-4. Giữa chừng Esc → Thoát → Form hiện; gửi 1 phản hồi.
-5. Firestore: `event_batches` có bản ghi `environment = "test"`; có `choice_made` `c_m1_02_wish`; `feedback` có bản ghi; không có tên người chơi.
-6. Tải lại giữa Trang 2 → về đúng chỗ.
-7. FPS trên laptop thật.
-
-**C. Production (khi được duyệt):** PR `dev` → `main` → lặp B1, B2, B4, B5 trên domain production (`environment = "production"`, F9/`?lab=` không tác dụng) → theo dõi Firestore Usage ngày đầu → rollback bằng Vercel "Promote" bản trước.
+## Mục 5 — Thẻ Giai đoạn 2 & 3 (mở khi tới lượt)
+Mọi prompt dưới đây dùng chung phần đầu:
+```
+Bạn là Claude Code cho repo KusaThaor/GAME-KNDMST. Đọc CLAUDE.md và thẻ <MÃ> trong docs/handoff/SPRINT_TASKS_2026-11-26.md.
+Tạo nhánh <nhánh> từ origin/feat/sprint-0412. Không tự viết cốt truyện/thoại; thiếu chữ thì dừng và hỏi.
+Chạy đủ 5 lệnh Gatekeeper, push nhánh, báo cáo tiếng Việt (đã test gì, chưa test gì). Không gộp.
+```
+| Mã | Việc cụ thể (nối vào phần đầu prompt) | Xong khi |
+|---|---|---|
+| AN-1 | Viết script `scripts/export-events.ts` đọc Firestore (dùng `FIREBASE_SERVICE_ACCOUNT` từ biến môi trường), xuất CSV event + feedback, **chỉ** `environment = production`, bỏ lô `build_version` chứa `smoke`. | CSV mở được bằng Excel; không có cột tên/email/IP |
+| N-18 | Phát `free_photo_taken` khi chụp ảnh tự do; rà `EVENT_NAMES` trong `shared/events.ts`, event nào chưa có nơi phát thì thêm hoặc ghi lý do trong `docs/analytics`. | Test bridge phủ mọi event |
+| N-12 | Nhân vật phụ procedural qua `CharacterRigAdapter` (cô giáo, bác bảo vệ, chú tạp hóa, 4–6 học sinh nền) theo quy chuẩn 2.0 của `docs/NEXT_SPRINT_TASK_BOARD.md`. Không dùng Blender. | Không chặn đường đi; FPS tụt ≤ 10% (đo laptop thật) |
+| SQ-0 | *(Project thiết kế)* Viết thoại 6 nhiệm vụ phụ `q_m1_ai_side_*` + `q_m1_ai_daily_01` theo GDD; chủ dự án duyệt. | Có bản CONFIRMED |
+| SQ-1 | Thay `[PLACEHOLDER]` bằng thoại SQ-0, đổi nhãn sang `HUMAN_CANON`, khai vào production trong `release.ts`. | Validator production 0 lỗi; bundle 0 `[PLACEHOLDER]` |
+| SFX-1 | Âm thanh WebAudio: vở rơi, trống trường, tiếng "tách" máy ảnh, mưa; nút tắt tiếng trong Menu. | Có nút tắt; không tải file âm thanh nặng |
+| ANIM-1 | Hoạt ảnh: ngồi, cúi vớt thuyền, treo biển, chữ hiện dần trên buồm — đúng cảnh TONG_DUYET. | Không đổi luồng quest; E2E đạt |
+| PERF-1 | Tách chunk game (manualChunks cho three) + tải trước khi đang ở trang chủ. | Không còn cảnh báo > 900 KB |
+| M2-1 | Nối `HUB_QUESTS_M2`, `PDES_M2`, `ART_M2_01` vào pack bản **test** (chưa production). | Validator 0 lỗi; Mốc 1 không đổi |
+| M2-2 | Số hóa Trang <N> từ bản CONFIRMED của M2-0; tham khảo nhánh `task/N-15a-trang5`, `task/N-15c-trang7` nhưng **không gộp thẳng** (lệch nền). | File `d_g08_*`/`d_g09_*`; E2E chơi qua Trang <N> |
+| M2-3 | Minigame <tên> dùng khung minigame chung, có "Bỏ qua", có unit test. | Unit test + E2E bỏ qua đạt |
+| M2-4 | Biến thể bản đồ THCS lớp 8–9 (đổi trang trí theo năm, procedural). | `validate:world` 0 lỗi |
+| M2-5 | Album trang Mốc 2, kết Mốc 2, timeskip 2018 → 2026. | Lưu/tải đúng; E2E đạt |

@@ -1,5 +1,16 @@
 # DEV_SESSION_HANDOFF
 
+## Chốt phiên — 27/11/2026, trưa (ĐỌC TRƯỚC)
+- **Chủ dự án chốt 27/11:** ưu tiên **Mốc 1** cho bản đo 05–15/12 (Mốc 2 = Giai đoạn 3) → đã sửa `CLAUDE.md` §3.1 và §6. `FIREBASE_SERVICE_ACCOUNT` đã bật trên Vercel. R-D6 đưa vào sprint.
+- **Đã làm:** viết lại `docs/handoff/SPRINT_TASKS_2026-11-26.md`: mỗi task có cột **Agent** (Claude Code Sonnet/Opus, Project thiết kế, Chủ dự án, Cả nhóm), prompt dán được, tiêu chí xong; thẻ chi tiết GIT-1, DEP-1b, R-D6, UX-1, INT-1 (Integrator), QA-1 (mẫu biên bản), BUG-xx, DEP-2; Giai đoạn 2–3 có prompt rút gọn.
+- **DEP-1 — đã kiểm thật trên Preview** (`https://kndmst-git-dev-game-kndmst.vercel.app`, `dev` @ `14fa8b6`):
+  - `/api/health`: `ok`, `environment: test`, `server_build: 14fa8b6`, `firebase: configured`.
+  - `/api/collect`: lô `pipeline_test` ghi Firestore thật (`accepted:1`); gửi lại → `duplicate:true`; khóa `player_name` bị bỏ; Origin lạ → 403. Lô kiểm có `build_version = 20261127-dep1smoke`.
+  - Chrome headless: trang chủ + `?play=1` 0 lỗi console, 0 tài nguyên 4xx/5xx, 6 GLB 200; bấm "Đồng ý" → vào Phòng 2026, game tự gửi `/api/collect` 2 lần (200). Bundle có đủ 3 bản sửa (Trang 1, Trang 2 R-D5, Trang 4).
+- **Chưa test:** chơi tay trọn Mốc 1 bằng người · FPS laptop thật · `/api/feedback` thật · xem dữ liệu trong Firestore console (phiên không mở được console).
+- **Còn dở:** GIT-1 — xóa 15 nhánh cũ (proxy phiên chặn; chủ dự án chạy lệnh ở thẻ #1). `main` chưa đụng.
+- **Việc tiếp (theo thứ tự):** #1 GIT-1 → #2 DEP-1b chơi tay Preview → #3 R-D6 + #4 UX-1 (Claude Code · Sonnet) → #5 INT-1 gộp → #6 QA-1 → #7 BUG-xx → #8 DEP-2 khi chủ dự án nói "lên main".
+
 ## Audit Đợt 1–3 + R-D5 — 26/11/2026, tối (ĐỌC TRƯỚC)
 - **Chủ dự án duyệt 26/11:** (1) gộp bản vá audit · (2) Trang 2 chỉ chọn điều ước một lần · (3) dọn 15 nhánh cũ · (4) đưa lên `dev` (Preview). **Chưa** duyệt `main`.
 - **Đã làm & gộp vào `feat/sprint-0412`:**
