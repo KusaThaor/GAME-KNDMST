@@ -36,9 +36,9 @@ function CharacterPreviewCanvas({ gender, outfit }: { gender: 'male' | 'female';
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#f7efe0');
 
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 20);
-    camera.position.set(0, 0.92, 2.55);
-    camera.lookAt(0, 0.68, 0);
+    const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 20);
+    camera.position.set(0, 0.68, 2.9);
+    camera.lookAt(0, 0.62, 0);
 
     const hemi = new THREE.HemisphereLight('#ffffff', '#c5b89e', 1.15);
     const dir = new THREE.DirectionalLight('#fff7e8', 1.2);
@@ -46,10 +46,10 @@ function CharacterPreviewCanvas({ gender, outfit }: { gender: 'male' | 'female';
     scene.add(hemi, dir);
 
     const ped = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.55, 0.6, 0.06, 28),
+      new THREE.CylinderGeometry(0.52, 0.58, 0.05, 28),
       toon('#e6d5b8'),
     );
-    ped.position.y = -0.03;
+    ped.position.y = -0.025;
     scene.add(ped);
 
     let renderer: THREE.WebGLRenderer | null = null;
@@ -179,8 +179,14 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
   };
 
   return (
-    <Pop class="g-panel g-wardrobe-modal" testid="panel-wardrobe">
-      <header class="g-wardrobe-head">
+    <div
+      class="g-wardrobe-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) a.closePanel();
+      }}
+    >
+      <Pop class="g-panel g-wardrobe-modal" testid="panel-wardrobe">
+        <header class="g-wardrobe-head">
         <div class="g-wardrobe-title-wrap">
           <h2>👕 Tủ Đồ Thanh Xuân</h2>
           <span class="g-wardrobe-sub">Xem thử 3D &amp; thay trang phục ngay cho nhân vật</span>
@@ -387,5 +393,6 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
         </div>
       </div>
     </Pop>
-  );
+  </div>
+);
 }

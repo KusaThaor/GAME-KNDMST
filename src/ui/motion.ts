@@ -13,7 +13,7 @@ export const MOTION = {
 /** Hiện/ẩn phần tử giao diện (gợi ý phím, hộp thoại) — mờ dần + nhích nhẹ lên. */
 export function fadeIn(el: Element, opts: { y?: number; delay?: number } = {}) {
   return gsap.fromTo(el, { autoAlpha: 0, y: opts.y ?? 8 },
-    { autoAlpha: 1, y: 0, duration: MOTION.dur.ui, ease: MOTION.ease.soft, delay: opts.delay ?? 0 });
+    { autoAlpha: 1, y: 0, duration: MOTION.dur.ui, ease: MOTION.ease.soft, delay: opts.delay ?? 0, clearProps: 'transform' });
 }
 
 export function fadeOut(el: Element) {

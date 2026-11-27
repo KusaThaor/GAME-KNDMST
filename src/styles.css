@@ -1345,7 +1345,8 @@ body.game input, body.game textarea { user-select: text; -webkit-user-select: te
 .g-ui .g-decor-btn-done { padding: 6px 16px; font-size: 13px; background: #f2b53a; border: 2px solid var(--ink); border-radius: 10px; }
 
 /* ===== TỦ ĐỒ 3D (WARDROBE) ===== */
-.g-wardrobe-modal { width: min(820px, calc(100% - 28px)); max-height: calc(100% - 36px); background: #fdfaf2; overflow: hidden; }
+.g-wardrobe-backdrop { position: fixed; inset: 0; background: rgba(24, 18, 15, .52); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 50; pointer-events: auto; padding: 16px; }
+.g-ui .g-panel.g-wardrobe-modal { position: relative !important; left: auto !important; top: auto !important; transform: none !important; margin: 0 !important; width: min(840px, 100%); max-height: min(620px, calc(100vh - 36px)); background: #fdfaf2; overflow: hidden; display: flex; flex-direction: column; }
 .g-wardrobe-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1.5px solid rgba(58,44,38,.12); padding-bottom: 10px; }
 .g-wardrobe-title-wrap { display: flex; flex-direction: column; }
 .g-wardrobe-sub { font-size: 12.5px; opacity: .72; font-weight: 700; }
