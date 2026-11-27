@@ -19,7 +19,7 @@ const CONTRACT: Record<string, [MarkerKind, string]> = {
   'spot.thcs.notebook_drop': ['spot', 'yard'],
   ...Object.fromEntries(['', '_1', '_2'].map((n) => [`spot.thcs.shuttle_group${n}`, ['spot', 'yard'] as [MarkerKind, string]])),
   'spot.thcs.board_group': ['spot', 'classroom'], 'spot.thcs.board_group_1': ['spot', 'classroom'], 'spot.thcs.class_door_in': ['spot', 'classroom'],
-  'spot.thcs.grocery_group': ['spot', 'gate'],
+  'spot.thcs.grocery_group': ['spot', 'gate'], 'spot.thcs.grocery_watch': ['spot', 'gate'],
   'spot.thcs.gutter_photo': ['spot', 'yard'], 'itr.thcs.gutter_end': ['interact', 'yard'], 'spot.thcs.gutter_end_ref': ['spot', 'yard'],
   'cam.thcs.phuong_group': ['camera', 'yard'],
   ...Object.fromEntries(['', '_1', '_2', '_3', '_4'].map((n) => [`spot.thcs.phuong_group${n}`, ['spot', 'yard'] as [MarkerKind, string]])),

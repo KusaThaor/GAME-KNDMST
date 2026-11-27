@@ -199,11 +199,11 @@ export const quests: Quest[] = [
           }],
         },
         stage: [
-          // Cảnh 6 — trong lúc tối: chiều hoàng hôn tan học, cả ba ở bậc thềm tiệm tạp hóa trước cổng
+          // Cảnh 6 — trong lúc tối: chiều hoàng hôn tan học; Đức, Châu chờ trên bậc thềm tiệm, người chơi gần cổng nhìn về tiệm
           { cue: 'fade', on: true, at: 'start' },
           { cue: 'weather', preset: 'golden_sunset', at: 'start' },
           { cue: 'visible', actor: 'NPC_B', visible: true, at: 'start' },
-          { cue: 'teleport', actor: 'player', to: 'spot.thcs.grocery_group', at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.grocery_watch', at: 'start' },
           { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
           { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
           { cue: 'fade', on: false, at: 'start' },
@@ -254,13 +254,18 @@ export const quests: Quest[] = [
         // TONG_DUYET Trang 1 Cảnh 8, lần bấm 1. Câu này từng nằm cứng trong game.ts (N-14), bị rơi khi R-B3 chuyển sang dữ liệu.
         first_line: { speaker: 'NPC_B', text: 'Khoan! Đức, tóc ông dựng lọt hết vô khung kìa!' },
         stage: [
-          // như s06: giữ chỗ đứng + ánh sáng khi tải lại trang giữa chừng ở bước ảnh
+          // Cảnh 8 — người chơi vào giữa hai bạn trên bậc thềm (khuất sau màn tối); như s06 giữ chỗ đứng + ánh sáng khi tải lại giữa chừng
+          { cue: 'fade', on: true, at: 'start' },
           { cue: 'weather', preset: 'golden_sunset', at: 'start' },
+          { cue: 'teleport', actor: 'player', to: 'spot.thcs.grocery_group', at: 'start' },
           { cue: 'teleport', actor: 'NPC_A', to: 'spot.thcs.grocery_1', at: 'start' },
           { cue: 'teleport', actor: 'NPC_B', to: 'spot.thcs.grocery_2', at: 'start' },
+          { cue: 'fade', on: false, at: 'start' },
           { cue: 'prop', actor: 'player', prop: 'camera', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_peace', at: 'start' },
           { cue: 'prop', actor: 'player', prop: null, at: 'end' },
+          // hạ máy, quay sang Đức (câu đầu s08) — camera góc ba về phía cổng thay vì lọt vào trong tiệm sau lưng
+          { cue: 'face', actor: 'player', toward: 'NPC_A', at: 'end' },
         ],
         objective: 'Chụp ảnh tự sướng bộ ba (Chụp 3 lần và chọn tấm đẹp nhất)',
       },

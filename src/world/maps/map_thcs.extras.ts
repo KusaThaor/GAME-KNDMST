@@ -72,7 +72,9 @@ export const M1_MARKERS = [
   marker('spot', 'spot.thcs.board_group', Z.classroom, [-0.4, CORRIDOR_Y, -26.6], PI / 2),        // người chơi, nhìn đông vào bảng
   marker('spot', 'spot.thcs.board_group_1', Z.classroom, [-0.4, CORRIDOR_Y, -25.3], PI / 2),      // Đức, cạnh người chơi
   marker('spot', 'spot.thcs.class_door_in', Z.classroom, [-1.0, CORRIDOR_Y, -22.3], PI),          // Châu đeo cặp ở cửa (khe tường x −1,6…−0,4), ngoái về bảng
-  // Trang 1 — Cảnh 6–8 (BUG-T1-B): người chơi đứng giữa Đức (spot.thcs.grocery_1) và Châu (spot.thcs.grocery_2) trên bậc thềm,
+  // Trang 1 — Cảnh 6–7 (BUG-T1-B): người chơi đứng gần cổng nhìn về bậc thềm tiệm (itr.thcs.grocery_steps); camera góc ba ở phía cổng
+  marker('spot', 'spot.thcs.grocery_watch', Z.gate, [-5.6, 0, 24.0], -0.59),
+  // Trang 1 — Cảnh 8 (BUG-T1-B): người chơi đứng giữa Đức (spot.thcs.grocery_1) và Châu (spot.thcs.grocery_2) trên bậc thềm,
   // nhìn về máy cam.thcs.grocery (ảnh tự sướng bộ ba)
   marker('spot', 'spot.thcs.grocery_group', Z.gate, [-7.75, 0, 27.0], 2.45),
   // Trang 2 — Cảnh 4: đứng lùi 2,7 m chụp 5 thuyền ở mép rãnh; Cảnh 5–6: cuối rãnh (thuyền Hạ mắc lại)

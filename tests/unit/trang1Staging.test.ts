@@ -130,8 +130,12 @@ describe('BUG-T1-B — chạy cue Trang 1 trên bản đồ map_thcs thật', ()
       }
       if (n === 's05') {
         expect(ds.debug().weather).toBe('golden_sunset');
+        // Cảnh 6: người chơi đứng gần cổng nhìn về phía tiệm (camera góc ba ở phía cổng, không lọt vào trong tiệm)
         const steps = ds.markerSpot('itr.thcs.grocery_steps')!;
-        expect(dist(ds.playerPosition, steps.x, steps.z), 's05: người chơi ở bậc thềm tiệm').toBeLessThan(1.5);
+        expect(dist(ds.playerPosition, steps.x, steps.z), 's05: người chơi gần tiệm').toBeLessThan(4.5);
+        const facing = ds.debug().facing;
+        const toSteps = Math.atan2(steps.x - ds.playerPosition.x, steps.z - ds.playerPosition.z);
+        expect(Math.abs(Math.atan2(Math.sin(facing - toSteps), Math.cos(facing - toSteps))), 's05: nhìn về tiệm').toBeLessThan(0.4);
         expect(dist(npc('NPC_A'), -8.6, 27.5), 's05: Đức về spot.thcs.grocery_1').toBeLessThan(0.3);
         expect(dist(npc('NPC_B'), -6.9, 27.6), 's05: Châu về spot.thcs.grocery_2').toBeLessThan(0.3);
       }
@@ -154,6 +158,18 @@ describe('BUG-T1-B — tiếp tục Ngày giữa chừng (tải lại trang ở 
         expect(Math.hypot(at('NPC_A').x + 8.6, at('NPC_A').z - 27.5), 'Đức ở spot.thcs.grocery_1').toBeLessThan(0.3);
         expect(Math.hypot(at('NPC_B').x + 6.9, at('NPC_B').z - 27.6), 'Châu ở spot.thcs.grocery_2').toBeLessThan(0.3);
         expect(ds.debug().weather).toBe('golden_sunset');
+        if (n === 's07') {
+          // Cảnh 8: người chơi đứng giữa hai bạn trên bậc thềm cho ảnh tự sướng (cả khi tải lại giữa chừng)
+          const steps = ds.markerSpot('itr.thcs.grocery_steps')!;
+          expect(Math.hypot(ds.playerPosition.x - steps.x, ds.playerPosition.z - steps.z), 's07: người chơi ở bậc thềm').toBeLessThan(1);
+          // hết ảnh (s07 'end'): quay sang Đức và camera ra sau lưng (phía cổng), không nằm lại trong tiệm cho thoại s08
+          await runner.stage!(step(n), 'end');
+          const a = ds.targets.find((t) => t.id === 'NPC_A')!.position;
+          const { facing, yaw } = ds.debug();
+          const diff = (x: number, y: number) => Math.abs(Math.atan2(Math.sin(x - y), Math.cos(x - y)));
+          expect(diff(facing, Math.atan2(a.x - ds.playerPosition.x, a.z - ds.playerPosition.z)), 's07 end: nhìn Đức').toBeLessThan(0.05);
+          expect(diff(yaw, facing + Math.PI), 's07 end: camera sau lưng người chơi').toBeLessThan(0.05);
+        }
       } finally {
         ds.dispose();
       }

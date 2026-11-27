@@ -103,7 +103,7 @@ export interface DayScene {
   moveActor(actor: string, toMarkerId: string, pace?: 'walk' | 'run', opts?: MoveActorOptions): Promise<void>;
   /** Dịch chuyển tức thời actor tới marker, cập nhật collider & hướng mặt. */
   teleportActor(actor: string, toMarkerId: string): boolean;
-  /** Quay mặt actor về phía actor khác ('player' / 'NPC_*') hoặc marker ID. */
+  /** Quay mặt actor về phía actor khác ('player' / 'NPC_*') hoặc marker ID. Người chơi: camera đặt lại sau lưng nếu không bị khóa. */
   faceActor(actor: string, toward: string): void;
   /** Đặt motion cho actor ('idle' trả player về điều khiển tự do). */
   setActorMotion(actor: string, motion: string): void;
@@ -596,8 +596,11 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       const dx = tx - sx, dz = tz - sz;
       if (Math.hypot(dx, dz) < 1e-4) return;
       const yaw = Math.atan2(dx, dz);
-      if (actor === 'player') { ctl.facing = yaw; sync(); }
-      else av.root.rotation.y = yaw;
+      if (actor === 'player') {
+        ctl.facing = yaw; sync();
+        // BUG-T1-B: đạo diễn xoay người chơi thì đặt camera ra sau lưng (đang khóa cho cutscene/ảnh thì để nguyên)
+        if (!cam.isLocked) cam.snapBehind(ctl.facing, ctl);
+      } else av.root.rotation.y = yaw;
     },
     setActorMotion(actor, motion) {
       if (!VALID_MOTIONS.has(motion as Motion)) {
