@@ -8,6 +8,7 @@ import type { MinigameContext, MinigameResult } from './eventBus';
 import type { ContentIndex } from '../content/indexContent';
 import type { FlagValue, Gender, Tone } from '../content/types';
 import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../config/camera';
+import type { HairStyle } from '../actors/character/presets';
 
 export const SAVE_VERSION = 3;
 export const SAVE_KEY = 'htx.save';
@@ -71,7 +72,10 @@ export interface SaveState {
   /** Trang phục & phụ kiện hiện tại của nhân vật người chơi. */
   player_outfit?: {
     topKind: 'uniform' | 'hoodie' | 'cardigan' | 'denim' | 'sport';
-    shirtColor: string; trousersColor: string; shoeColor: string; hairColor: string | null;
+    shirtColor: string; trousersColor: string; shoeColor: string;
+    hairColor: string | null;
+    hairStyle?: HairStyle | null;
+    skinColor?: string | null;
     accessory: 'none' | 'glasses' | 'headphones' | 'cap' | 'ribbon_bow';
     scarfOverride?: boolean;
   };

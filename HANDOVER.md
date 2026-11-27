@@ -42,16 +42,14 @@
 
 ### 1.5. Tủ Đồ Nhân Vật 3D (Wardrobe & Customizer)
 - **Modal 3D tương tác:** Bấm nút `👕 Tủ đồ` trên HUD để mở màn hình thử đồ.
-- **Bệ xoay 360° (Turntable Canvas):** Nhân vật chibi 3D đứng trên bệ xoay, tự động cử động idle mượt mà, hỗ trợ kéo chuột xoay 360 độ hoặc nút bấm xoay.
-- **6 Bộ trang phục hoàn chỉnh:**
-  - Đồng phục trường THCS (sơ mi trắng, quần tây xanh đen, khăn quàng đỏ).
-  - Thể dục năng động.
-  - Áo len ấm áp ngày đông.
-  - Thám tử nhí mộng mơ.
-  - Bộ đồ ngủ sao đêm.
-  - Trang phục nghệ sĩ tí hon.
-- **Phụ kiện & Màu tóc:** Kính tròn Nobita, Tai nghe gaming, Mũ lưỡi trai, Nơ kẹp tóc, cùng 5 màu tóc thời thượng.
-- **Đồng bộ toàn diện:** Lưu vào SaveState và tự động làm mới avatar 3D cả khi ở Hub phòng lẫn khi ra thế giới trường học (`DayScene`).
+- **Bệ xoay 360° (Turntable Canvas):** Nhân vật chibi 3D đứng trên bệ xoay, tự động cử động idle mượt mà, hỗ trợ kéo chuột xoay 360 độ.
+- **5 Tab tùy biến toàn diện:**
+  1. **Trang phục:** 6 bộ (Đồng phục THCS, Thể dục năng động, Cardigan thu đông, Hoodie thanh xuân, Áo khoác Denim, Set Hồng Anh Đào VIP).
+  2. **Kiểu tóc:** 10 kiểu tóc chi tiết (Tóc nguyên bản, Tóc nhím năng động, Mái ngố thư sinh, Rẽ ngôi 7/3 học đường 2000s, Búi đôi củ tỏi Natra, Đuôi ngựa cao, Đuôi gà buộc thấp, Bob ngắn uốn lọn, Tóc dài kẹp hoa, Đầu đinh thể thao).
+  3. **Màu tóc:** Tóc nguyên bản, Nâu hạt dẻ, Vàng caramel, Xanh đêm navy.
+  4. **Màu da:** 8 tông da tự nhiên, chân thực (Nguyên bản, Trắng sáng tự nhiên, Trắng hồng đào, Sáng ấm tự nhiên, Bánh mật rám nắng, Vàng mật ong, Ngăm thể thao, Nâu ấm cá tính).
+  5. **Phụ kiện:** Kính tròn Nobita, Tai nghe chụp Gaming, Mũ lưỡi trai, Nơ kẹp tóc.
+- **Đồng bộ toàn diện:** Lưu vào `SaveState.player_outfit` và tự động làm mới avatar 3D cả khi ở Hub phòng lẫn khi ra thế giới trường học (`DayScene`).
 
 ---
 

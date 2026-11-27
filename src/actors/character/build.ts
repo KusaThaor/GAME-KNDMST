@@ -63,8 +63,15 @@ function dimsFor(grade: Grade, look: GradeLook): Dims {
 export function buildCharacter(id: CharacterId, grade: Grade, opts: { scarf?: boolean; outfit?: OutfitStyle } = {}): CharacterRig {
   const baseDef = CHARACTERS[id];
   const outfit = opts.outfit;
-  const def: CharacterDef = outfit?.hairColor ? { ...baseDef, hairColor: outfit.hairColor } : baseDef;
-  const look = grade === 6 ? def.g6 : def.g9;
+  const hairColor = outfit?.hairColor ?? baseDef.hairColor;
+  const skinColor = outfit?.skinColor ?? baseDef.skin;
+  const def: CharacterDef = {
+    ...baseDef,
+    hairColor,
+    skin: skinColor,
+  };
+  const baseLook = grade === 6 ? def.g6 : def.g9;
+  const look = outfit?.hairStyle ? { ...baseLook, hair: outfit.hairStyle } : baseLook;
   const d = dimsFor(grade, look);
   const skin = toon(def.skin, { emissive: shade(def.skin, 0.16) });
   const shirtHex = outfit?.shirtColor ?? UNIFORM.shirt;

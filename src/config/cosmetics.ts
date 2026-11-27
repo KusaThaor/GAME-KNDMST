@@ -1,6 +1,7 @@
 /**
  * Danh mục Trang Trí Phòng 2026 & Trang Phục Nhân Vật (hỗ trợ Xem thử 3D, Mở mốc chương, và Mở bằng Xu/Tem).
  */
+import type { HairStyle } from '../actors/character/presets';
 
 export type CosmeticUnlockRule =
   | { type: 'free' }
@@ -162,6 +163,8 @@ export interface OutfitStyle {
   trousersColor: string;
   shoeColor: string;
   hairColor: string | null;
+  hairStyle?: HairStyle | null;
+  skinColor?: string | null;
   accessory: OutfitAccessory;
   scarfOverride?: boolean;
 }
@@ -172,6 +175,8 @@ export const DEFAULT_OUTFIT: OutfitStyle = {
   trousersColor: '#24345a',
   shoeColor: '#f4f1ea',
   hairColor: null,
+  hairStyle: null,
+  skinColor: null,
   accessory: 'none',
 };
 
@@ -293,6 +298,48 @@ export const OUTFIT_HAIR_COLORS: readonly HairColorOption[] = [
   { id: 'hair_chestnut', title: 'Nâu hạt dẻ', color: '#5c3b28', swatch: '#5c3b28', unlock: { type: 'milestone', pagesRequired: 2, label: 'Mốc: 2 trang' } },
   { id: 'hair_caramel', title: 'Vàng caramel', color: '#a87844', swatch: '#a87844', unlock: { type: 'shop', currency: 'coin', price: 160 } },
   { id: 'hair_navy', title: 'Xanh đêm', color: '#2b3c5e', swatch: '#2b3c5e', unlock: { type: 'shop', currency: 'stamp', price: 40 } },
+];
+
+export interface HairStyleOption {
+  id: string;
+  style: HairStyle | null;
+  title: string;
+  subtitle: string;
+  swatch: string;
+  unlock: CosmeticUnlockRule;
+}
+
+export const OUTFIT_HAIR_STYLES: readonly HairStyleOption[] = [
+  { id: 'hs_default', style: null, title: 'Tóc nguyên bản', subtitle: 'Kiểu tóc mặc định của nhân vật', swatch: '#24201e', unlock: { type: 'free' } },
+  { id: 'hs_spiky', style: 'spiky', title: 'Tóc Nhím Năng Động', subtitle: 'Gai nhọn tinh nghịch tuổi học trò', swatch: '#e0702a', unlock: { type: 'free' } },
+  { id: 'hs_short_fringe', style: 'short_fringe', title: 'Mái Ngố Thư Sinh', subtitle: 'Tóc ngắn mái bằng hiền lành', swatch: '#2c2420', unlock: { type: 'free' } },
+  { id: 'hs_side_part', style: 'side_part', title: 'Rẽ Ngôi 7/3 Học Đường', subtitle: 'Lãng tử học sinh thập niên 2000s', swatch: '#3a2d28', unlock: { type: 'milestone', pagesRequired: 1, label: 'Mốc: 1 trang' } },
+  { id: 'hs_two_buns', style: 'two_buns', title: 'Búi Đôi Củ Tỏi (Natra)', subtitle: 'Hai búi đôi đáng yêu, năng nổ', swatch: '#e0608f', unlock: { type: 'milestone', pagesRequired: 2, label: 'Mốc: 2 trang' } },
+  { id: 'hs_ponytail_high', style: 'ponytail_high', title: 'Đuôi Ngựa Cao', subtitle: 'Cột cao tháo vát, hoạt bát', swatch: '#8a55c9', unlock: { type: 'free' } },
+  { id: 'hs_ponytail_low', style: 'ponytail_low', title: 'Đuôi Gà Buộc Thấp', subtitle: 'Buộc lơi dịu dàng sau gáy', swatch: '#455a64', unlock: { type: 'free' } },
+  { id: 'hs_wavy_bob', style: 'wavy_bob', title: 'Bob Ngắn Uốn Lọn', subtitle: 'Tóc ngắn ngang cằm bồng bềnh', swatch: '#6d597a', unlock: { type: 'shop', currency: 'coin', price: 180 } },
+  { id: 'hs_long_clip', style: 'long_clip', title: 'Tóc Dài Kẹp Hoa', subtitle: 'Dịu dàng buông xõa cài hoa', swatch: '#f48fb1', unlock: { type: 'shop', currency: 'coin', price: 220 } },
+  { id: 'hs_buzz', style: 'buzz', title: 'Đầu Đinh Thể Thao', subtitle: 'Húi cua khỏe khoắn, mát mẻ', swatch: '#4a7c59', unlock: { type: 'free' } },
+];
+
+export interface SkinColorOption {
+  id: string;
+  title: string;
+  subtitle: string;
+  color: string | null;
+  swatch: string;
+  unlock: CosmeticUnlockRule;
+}
+
+export const OUTFIT_SKIN_COLORS: readonly SkinColorOption[] = [
+  { id: 'skin_default', title: 'Nguyên bản', subtitle: 'Màu da gốc của nhân vật', color: null, swatch: '#f5d2b0', unlock: { type: 'free' } },
+  { id: 'skin_light', title: 'Trắng sáng tự nhiên', subtitle: 'Làn da trắng sáng mịn màng', color: '#fae1ce', swatch: '#fae1ce', unlock: { type: 'free' } },
+  { id: 'skin_peach', title: 'Trắng hồng đào', subtitle: 'Làn da trắng hồng tươi tắn', color: '#fcece4', swatch: '#fcece4', unlock: { type: 'free' } },
+  { id: 'skin_warm', title: 'Sáng ấm tự nhiên', subtitle: 'Tông ấm thân thuộc học trò Á Đông', color: '#f3cfab', swatch: '#f3cfab', unlock: { type: 'free' } },
+  { id: 'skin_tan', title: 'Bánh mật rám nắng', subtitle: 'Làn da bánh mật hay chạy nhảy', color: '#e2ad80', swatch: '#e2ad80', unlock: { type: 'free' } },
+  { id: 'skin_honey', title: 'Vàng mật ong', subtitle: 'Khỏe khoắn, ấm áp rạng rỡ', color: '#e8b98c', swatch: '#e8b98c', unlock: { type: 'free' } },
+  { id: 'skin_bronze', title: 'Ngăm thể thao', subtitle: 'Da ngăm nắng hè khỏe mạnh', color: '#c48a5c', swatch: '#c48a5c', unlock: { type: 'free' } },
+  { id: 'skin_deep', title: 'Nâu ấm cá tính', subtitle: 'Tông nâu đậm đà, ấm áp', color: '#a26a45', swatch: '#a26a45', unlock: { type: 'free' } },
 ];
 
 export function isCosmeticUnlocked(

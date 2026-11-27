@@ -5,7 +5,16 @@
  */
 export type CharacterId = 'duc' | 'quan' | 'chau' | 'ha' | 'player1' | 'player2';
 export type Grade = 6 | 9;
-export type HairStyle = 'spiky' | 'buzz' | 'ponytail_high' | 'long_clip' | 'short_fringe' | 'ponytail_low';
+export type HairStyle =
+  | 'spiky'
+  | 'buzz'
+  | 'ponytail_high'
+  | 'long_clip'
+  | 'short_fringe'
+  | 'ponytail_low'
+  | 'two_buns'
+  | 'wavy_bob'
+  | 'side_part';
 export type PropId = 'marble_pouch' | 'pen' | 'football' | 'water_bottle' | 'watch' | 'planner' | 'sketchbook' | 'backpack';
 
 export interface GradeLook {

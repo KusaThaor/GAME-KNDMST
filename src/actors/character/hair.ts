@@ -112,5 +112,90 @@ export function buildHair(face: THREE.Group, R: number, def: CharacterDef, look:
       rig.ponytail = sway;
       break;
     }
+    case 'two_buns': {
+      // Mũ tóc phủ đầu tròn trĩnh
+      add(hairCap(R, hm, Math.PI * 0.52, 0.32, 1.055));
+      // Mái bằng lưa thưa phía trước trán
+      for (const y of [-0.36, -0.12, 0.12, 0.36]) {
+        const b = mesh(sphere(R * 0.28), hm);
+        b.scale.set(1.05, 0.58, 0.38);
+        onSphere(b, R * 1.0, y, 0.38);
+        add(b);
+      }
+      // Hai búi củ tỏi natra 2 bên đỉnh đầu
+      for (const s of [-1, 1]) {
+        const tie = new THREE.Mesh(cached('tie_bun', () => new THREE.TorusGeometry(0.048, 0.02, 8, 16)), accent);
+        onSphere(tie, R * 1.05, s * 0.95, 0.72);
+        tie.rotation.y = s * 0.3;
+        add(tie);
+
+        const bun = mesh(sphere(R * 0.42, 16, 12), hm);
+        bun.scale.set(1.1, 0.95, 1.05);
+        onSphere(bun, R * 1.15, s * 0.95, 0.76);
+        add(bun);
+
+        const lock = mesh(capsule(0.032 * R / 0.3, R * 0.48 * L), hm, [s * R * 0.94, -R * 0.38, R * 0.08]);
+        lock.rotation.z = s * 0.08;
+        add(lock);
+      }
+      break;
+    }
+    case 'side_part': {
+      // Mũ tóc
+      add(hairCap(R, hm, Math.PI * 0.53, 0.34, 1.05));
+      // Mái rẽ 7/3: Lọn vuốt lớn (bên trái, chiếm 7 phần)
+      const partBig = mesh(sphere(R * 0.52), hm);
+      partBig.scale.set(1.25, 0.48, 0.45);
+      onSphere(partBig, R * 0.99, -0.32, 0.42);
+      partBig.rotateZ(-0.35);
+      add(partBig);
+
+      const swoop = mesh(cone(0.065 * R / 0.3, 0.18 * R / 0.3), hm);
+      onSphere(swoop, R * 1.02, -0.52, 0.4);
+      swoop.rotateZ(-0.7);
+      swoop.rotateX(Math.PI / 2 + 0.3);
+      add(swoop);
+
+      // Lọn nhỏ (bên phải, 3 phần vuốt gọn)
+      const partSmall = mesh(sphere(R * 0.38), hm);
+      partSmall.scale.set(1.0, 0.42, 0.4);
+      onSphere(partSmall, R * 0.99, 0.35, 0.44);
+      partSmall.rotateZ(0.28);
+      add(partSmall);
+
+      // Hai bên tai vuốt ôm gọn
+      for (const s of [-1, 1]) {
+        const side = mesh(capsule(0.04 * R / 0.3, R * 0.35), hm, [s * R * 0.92, -R * 0.22, 0]);
+        side.rotation.z = s * 0.05;
+        add(side);
+      }
+      break;
+    }
+    case 'wavy_bob': {
+      // Mũ tóc dày dặn
+      add(hairCap(R, hm, Math.PI * 0.56, 0.28, 1.065));
+      // Mái thưa nhẹ
+      for (const y of [-0.28, 0, 0.28]) {
+        const b = mesh(sphere(R * 0.32), hm);
+        b.scale.set(1.0, 0.5, 0.38);
+        onSphere(b, R * 1.01, y, 0.38);
+        add(b);
+      }
+      // Tóc uốn bồng bềnh 2 bên má
+      for (const s of [-1, 1]) {
+        const wave1 = mesh(sphere(R * 0.38, 14, 10), hm, [s * R * 0.95, -R * 0.25, R * 0.02]);
+        wave1.scale.set(0.65, 1.0, 0.85);
+        add(wave1);
+
+        const wave2 = mesh(sphere(R * 0.34, 14, 10), hm, [s * R * 0.98, -R * 0.48 * L, -R * 0.05]);
+        wave2.scale.set(0.72, 0.95, 0.9);
+        add(wave2);
+      }
+      // Đằng sau gáy bo tròn
+      const back = mesh(capsule(R * 0.85, R * 0.5 * L), hm, [0, -R * 0.35, -R * 0.45]);
+      back.scale.set(1.05, 1, 0.65);
+      add(back);
+      break;
+    }
   }
 }

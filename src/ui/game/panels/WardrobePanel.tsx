@@ -7,7 +7,9 @@ import {
   isCosmeticUnlocked,
   OUTFIT_ACCESSORIES,
   OUTFIT_HAIR_COLORS,
+  OUTFIT_HAIR_STYLES,
   OUTFIT_SETS,
+  OUTFIT_SKIN_COLORS,
   type CosmeticUnlockRule,
   type OutfitStyle,
 } from '../../../config/cosmetics';
@@ -120,13 +122,13 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
   const wallet = cos?.wallet ?? { coin: 450, stamp: 50 };
   const gender = cos?.gender ?? 'male';
 
-  const [tab, setTab] = useState<'sets' | 'accessory' | 'hair'>('sets');
+  const [tab, setTab] = useState<'sets' | 'hairstyle' | 'haircolor' | 'skin' | 'accessory'>('sets');
   const [draft, setDraft] = useState<OutfitStyle>(saved);
   const [lockedItems, setLockedItems] = useState<Map<string, LockMeta>>(() => new Map());
   const [notice, setNotice] = useState<string | null>(null);
 
   const selectSlot = (
-    slotKey: 'set' | 'accessory' | 'hair',
+    slotKey: 'set' | 'accessory' | 'haircolor' | 'hairstyle' | 'skin',
     patch: Partial<OutfitStyle>,
     meta: LockMeta,
     unlocked: boolean,
@@ -206,8 +208,10 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
         <div class="g-wardrobe-right">
           <div class="g-wardrobe-tabs">
             <button type="button" class={`g-decor-tab ${tab === 'sets' ? 'on' : ''}`} onClick={() => setTab('sets')}>Trang phục</button>
+            <button type="button" class={`g-decor-tab ${tab === 'hairstyle' ? 'on' : ''}`} onClick={() => setTab('hairstyle')}>Kiểu tóc</button>
+            <button type="button" class={`g-decor-tab ${tab === 'haircolor' ? 'on' : ''}`} onClick={() => setTab('haircolor')}>Màu tóc</button>
+            <button type="button" class={`g-decor-tab ${tab === 'skin' ? 'on' : ''}`} onClick={() => setTab('skin')}>Màu da</button>
             <button type="button" class={`g-decor-tab ${tab === 'accessory' ? 'on' : ''}`} onClick={() => setTab('accessory')}>Phụ kiện</button>
-            <button type="button" class={`g-decor-tab ${tab === 'hair' ? 'on' : ''}`} onClick={() => setTab('hair')}>Màu tóc</button>
           </div>
 
           {notice && <div class="g-decor-notice">{notice}</div>}
@@ -241,6 +245,90 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
               );
             })}
 
+            {tab === 'hairstyle' && OUTFIT_HAIR_STYLES.map((hs) => {
+              const unlocked = isCosmeticUnlocked(hs.id, hs.unlock, pagesRestored, unlockedIds);
+              const active = (draft.hairStyle ?? null) === hs.style;
+              return (
+                <button
+                  key={hs.id}
+                  type="button"
+                  class={`g-decor-theme-card ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
+                  onClick={() => selectSlot('hairstyle', { hairStyle: hs.style }, { id: hs.id, title: hs.title, rule: hs.unlock }, unlocked)}
+                >
+                  <span class="g-decor-swatch-lg" style={{ background: hs.swatch }} />
+                  <div class="g-decor-card-info">
+                    <strong>{hs.title}</strong>
+                    <small>{hs.subtitle}</small>
+                  </div>
+                  {!unlocked ? (
+                    <span class={`g-decor-badge ${hs.unlock.type === 'shop' ? hs.unlock.currency : 'milestone'}`}>
+                      {hs.unlock.type === 'milestone' ? `🔒 ${hs.unlock.pagesRequired}T` : hs.unlock.type === 'shop' ? (
+                        <>{hs.unlock.currency === 'coin' ? <CoinSvg size={12} /> : <StampSvg size={12} />} {hs.unlock.price}</>
+                      ) : null}
+                    </span>
+                  ) : active ? (
+                    <span class="g-decor-badge owned">✓ Đang chọn</span>
+                  ) : null}
+                </button>
+              );
+            })}
+
+            {tab === 'haircolor' && OUTFIT_HAIR_COLORS.map((h) => {
+              const unlocked = isCosmeticUnlocked(h.id, h.unlock, pagesRestored, unlockedIds);
+              const active = draft.hairColor === h.color;
+              return (
+                <button
+                  key={h.id}
+                  type="button"
+                  class={`g-decor-theme-card ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
+                  onClick={() => selectSlot('haircolor', { hairColor: h.color }, { id: h.id, title: h.title, rule: h.unlock }, unlocked)}
+                >
+                  <span class="g-decor-swatch-lg" style={{ background: h.swatch }} />
+                  <div class="g-decor-card-info">
+                    <strong>{h.title}</strong>
+                    <small>Đổi màu tóc nhân vật 3D</small>
+                  </div>
+                  {!unlocked ? (
+                    <span class={`g-decor-badge ${h.unlock.type === 'shop' ? h.unlock.currency : 'milestone'}`}>
+                      {h.unlock.type === 'milestone' ? `🔒 ${h.unlock.pagesRequired}T` : h.unlock.type === 'shop' ? (
+                        <>{h.unlock.currency === 'coin' ? <CoinSvg size={12} /> : <StampSvg size={12} />} {h.unlock.price}</>
+                      ) : null}
+                    </span>
+                  ) : active ? (
+                    <span class="g-decor-badge owned">✓ Đang chọn</span>
+                  ) : null}
+                </button>
+              );
+            })}
+
+            {tab === 'skin' && OUTFIT_SKIN_COLORS.map((sk) => {
+              const unlocked = isCosmeticUnlocked(sk.id, sk.unlock, pagesRestored, unlockedIds);
+              const active = (draft.skinColor ?? null) === sk.color;
+              return (
+                <button
+                  key={sk.id}
+                  type="button"
+                  class={`g-decor-theme-card ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
+                  onClick={() => selectSlot('skin', { skinColor: sk.color }, { id: sk.id, title: sk.title, rule: sk.unlock }, unlocked)}
+                >
+                  <span class="g-decor-swatch-lg" style={{ background: sk.swatch, border: '2px solid #ecdac6' }} />
+                  <div class="g-decor-card-info">
+                    <strong>{sk.title}</strong>
+                    <small>{sk.subtitle}</small>
+                  </div>
+                  {!unlocked ? (
+                    <span class={`g-decor-badge ${sk.unlock.type === 'shop' ? sk.unlock.currency : 'milestone'}`}>
+                      {sk.unlock.type === 'milestone' ? `🔒 ${sk.unlock.pagesRequired}T` : sk.unlock.type === 'shop' ? (
+                        <>{sk.unlock.currency === 'coin' ? <CoinSvg size={12} /> : <StampSvg size={12} />} {sk.unlock.price}</>
+                      ) : null}
+                    </span>
+                  ) : active ? (
+                    <span class="g-decor-badge owned">✓ Đang chọn</span>
+                  ) : null}
+                </button>
+              );
+            })}
+
             {tab === 'accessory' && OUTFIT_ACCESSORIES.map((acc) => {
               const accId = `acc_${acc.id}`;
               const unlocked = isCosmeticUnlocked(accId, acc.unlock, pagesRestored, unlockedIds);
@@ -265,34 +353,6 @@ export function WardrobePanel({ s, a }: { s: UiState; a: UiActions }) {
                     </span>
                   ) : active ? (
                     <span class="g-decor-badge owned">✓ Đang đeo</span>
-                  ) : null}
-                </button>
-              );
-            })}
-
-            {tab === 'hair' && OUTFIT_HAIR_COLORS.map((h) => {
-              const unlocked = isCosmeticUnlocked(h.id, h.unlock, pagesRestored, unlockedIds);
-              const active = draft.hairColor === h.color;
-              return (
-                <button
-                  key={h.id}
-                  type="button"
-                  class={`g-decor-theme-card ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''}`}
-                  onClick={() => selectSlot('hair', { hairColor: h.color }, { id: h.id, title: h.title, rule: h.unlock }, unlocked)}
-                >
-                  <span class="g-decor-swatch-lg" style={{ background: h.swatch }} />
-                  <div class="g-decor-card-info">
-                    <strong>{h.title}</strong>
-                    <small>Đổi màu tóc nhân vật 3D</small>
-                  </div>
-                  {!unlocked ? (
-                    <span class={`g-decor-badge ${h.unlock.type === 'shop' ? h.unlock.currency : 'milestone'}`}>
-                      {h.unlock.type === 'milestone' ? `🔒 ${h.unlock.pagesRequired}T` : h.unlock.type === 'shop' ? (
-                        <>{h.unlock.currency === 'coin' ? <CoinSvg size={12} /> : <StampSvg size={12} />} {h.unlock.price}</>
-                      ) : null}
-                    </span>
-                  ) : active ? (
-                    <span class="g-decor-badge owned">✓ Đang chọn</span>
                   ) : null}
                 </button>
               );
