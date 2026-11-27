@@ -63,6 +63,7 @@ export function createGameView(container: HTMLElement): GameView {
       renderer.setPixelRatio(prevRatio);
       renderer.setSize(prev.x, prev.y, false);
       c.aspect = prevAspect; c.updateProjectionMatrix();
+      if (!renderPaused && scene && camera) outline.render(scene, camera);
       return new Promise((resolve, reject) => out.toBlob((b) => (b ? resolve(b) : reject(new Error('không tạo được ảnh'))), 'image/jpeg', size.quality));
     },
     stats: () => ({ fps, drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures }),

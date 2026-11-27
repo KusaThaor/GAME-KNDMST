@@ -11,7 +11,16 @@ export type StickerKind =
   | 'clover'
   | 'heart'
   | 'chalk'
-  | 'note_pin';
+  | 'note_pin'
+  | 'ribbon'
+  | 'paper_plane'
+  | 'crown'
+  | 'sparkle'
+  | 'cat'
+  | 'butterfly'
+  | 'cassette'
+  | 'polaroid'
+  | 'stamp';
 
 export const ALL_STICKERS: readonly { kind: StickerKind; label: string }[] = [
   { kind: 'star', label: 'Ngôi sao' },
@@ -133,6 +142,75 @@ export function AlbumSticker({ kind, className = '', rotate = 0, label }: { kind
           <>
             <circle cx="32" cy="22" r="10" fill="#f2b53a" />
             <path d="M32 32v20" />
+          </>
+        )}
+        {kind === 'ribbon' && (
+          <>
+            <path d="M32 30c-9-12-20-12-20-2s11 8 20 2z" fill="#f58aa8" />
+            <path d="M32 30c9-12 20-12 20-2s-11 8-20 2z" fill="#f58aa8" />
+            <path d="M28 33l-8 20 8-5 4 5M36 33l8 20-8-5-4 5" fill="#f58aa8" />
+            <circle cx="32" cy="30" r="5" fill="#ffd95a" />
+          </>
+        )}
+        {kind === 'paper_plane' && (
+          <>
+            <path d="M9 32L55 12 41 52 29 37z" fill="#fffdf6" />
+            <path d="M29 37L55 12 34 43z" fill="#cfe4f7" />
+          </>
+        )}
+        {kind === 'crown' && (
+          <>
+            <path d="M10 46L14 20l11 11 7-15 7 15 11-11 4 26z" fill="#ffd95a" />
+            <rect x="10" y="46" width="44" height="6" rx="2" fill="#f2b53a" />
+            <circle cx="32" cy="14" r="3" fill="#e85845" />
+          </>
+        )}
+        {kind === 'sparkle' && (
+          <>
+            <path d="M32 8c2 14 10 22 24 24-14 2-22 10-24 24-2-14-10-22-24-24 14-2 22-10 24-24z" fill="#ffe77a" />
+            <circle cx="50" cy="14" r="3" fill="#ffd95a" />
+            <circle cx="14" cy="50" r="2.5" fill="#ffd95a" />
+          </>
+        )}
+        {kind === 'cat' && (
+          <>
+            <path d="M16 26l-2-14 11 8h14l11-8-2 14c4 5 5 13 0 19-4 5-10 7-16 7s-12-2-16-7c-5-6-4-14 0-19z" fill="#fde3b4" />
+            <circle cx="25" cy="34" r="2.5" fill="#3a2c26" />
+            <circle cx="39" cy="34" r="2.5" fill="#3a2c26" />
+            <path d="M29 40l3 3 3-3" />
+          </>
+        )}
+        {kind === 'butterfly' && (
+          <>
+            <path d="M32 32C22 14 8 14 10 28c2 9 14 10 22 4z" fill="#7dc9e8" />
+            <path d="M32 32C42 14 56 14 54 28c-2 9-14 10-22 4z" fill="#7dc9e8" />
+            <path d="M32 34c-8 4-16 14-10 18 6 4 10-6 10-18z" fill="#a7def5" />
+            <path d="M32 34c8 4 16 14 10 18-6 4-10-6-10-18z" fill="#a7def5" />
+            <path d="M32 18v30" />
+          </>
+        )}
+        {kind === 'cassette' && (
+          <>
+            <rect x="8" y="16" width="48" height="32" rx="4" fill="#4f5d75" />
+            <rect x="14" y="21" width="36" height="14" rx="2" fill="#fdfaf2" />
+            <circle cx="24" cy="28" r="4" fill="#3a2c26" />
+            <circle cx="40" cy="28" r="4" fill="#3a2c26" />
+            <path d="M18 48l3-6h22l3 6" fill="#bfc8d6" />
+          </>
+        )}
+        {kind === 'polaroid' && (
+          <>
+            <rect x="13" y="9" width="38" height="46" rx="3" fill="#fffdf6" />
+            <rect x="18" y="14" width="28" height="26" fill="#9bc7e5" />
+            <circle cx="26" cy="23" r="4" fill="#ffd95a" />
+            <path d="M18 36l9-7 7 5 5-4 7 6v4H18z" fill="#7ec876" />
+          </>
+        )}
+        {kind === 'stamp' && (
+          <>
+            <circle cx="32" cy="32" r="20" fill="#fdeef1" stroke="#d8332a" />
+            <circle cx="32" cy="32" r="14" stroke="#d8332a" stroke-dasharray="4 3" />
+            <path d="M24 32h16M32 24v16" stroke="#d8332a" />
           </>
         )}
       </svg>

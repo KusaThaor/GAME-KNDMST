@@ -1,4 +1,6 @@
 import { CAMERA_MODES } from '../../../config/camera';
+import { SHOP_DEMO_CONFIG } from '../../../config/shopDemo';
+import { CoinSvg, ShopBagSvg, StampSvg } from '../panels/shopIcons';
 import type { UiActions, UiState } from '../store';
 import { TouchInteract, TouchStick } from '../TouchControls';
 
@@ -8,27 +10,63 @@ function lookHint(s: UiState): string {
   return CAMERA_MODES[s.cameraMode].hint;
 }
 
+function CameraIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+      <circle cx="12" cy="13" r="4" />
+    </svg>
+  );
+}
+
 export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking: boolean }) {
   const touch = s.device === 'touch';
+  const canSelfie = !!(s.mode && !s.fade.on && !s.minigame && !s.consentAsk && !s.profile);
   return (
     <>
       {s.mode && !s.fade.on && (
         <div class="g-top">
-          {s.objective && (
-            <div class="hud-objective" data-testid="objective">
-              <span class="dot" />
-              <span>{s.objective}</span>
-              {s.collectProgress && (
-                <span class="tag" data-testid="collect-counter">
-                  {s.collectProgress.done}/{s.collectProgress.total}
-                </span>
-              )}
-            </div>
-          )}
+          <div class="g-top-left">
+            {s.objective && (
+              <div class="hud-objective" data-testid="objective">
+                <span class="dot" />
+                <span>{s.objective}</span>
+                {s.collectProgress && (
+                  <span class="tag" data-testid="collect-counter">
+                    {s.collectProgress.done}/{s.collectProgress.total}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
           <div class="g-buttons">
+            {canSelfie && (
+              <button
+                class="g-btn-icon"
+                data-act="selfie"
+                title="Chụp ảnh tự sướng lưu về máy (C)"
+                aria-label="Chụp ảnh tự sướng"
+                onClick={a.takeSelfie}
+              >
+                <CameraIcon />
+                <kbd>C</kbd>
+              </button>
+            )}
             {s.mode === 'day' && s.device !== 'touch' && s.camOptions.modeSwitch && (
               <button data-act="camera-mode" data-mode={s.cameraMode} title={CAMERA_MODES[s.cameraMode].hint} onClick={a.toggleCameraMode}>
                 Camera {CAMERA_MODES[s.cameraMode].label.replace('Kiểu ', '')} <kbd>V</kbd>
+              </button>
+            )}
+            {s.shopDemo && (
+              <button
+                class="g-shop-hud-btn"
+                data-act="shop-demo"
+                title={SHOP_DEMO_CONFIG.ui.panel_title}
+                onClick={() => a.openPanel('shop')}
+              >
+                <span class="g-hud-cur"><CoinSvg size={15} /> {SHOP_DEMO_CONFIG.demo_wallet.coin}</span>
+                <span class="g-hud-cur"><StampSvg size={15} /> {SHOP_DEMO_CONFIG.demo_wallet.stamp}</span>
+                <span class="g-shop-hud-label"><ShopBagSvg size={14} /> {SHOP_DEMO_CONFIG.ui.hud_button_label}</span>
               </button>
             )}
             {s.mode === 'day' && <button data-act="journal" onClick={() => a.openPanel('journal')}>Sổ tay <kbd>J</kbd></button>}

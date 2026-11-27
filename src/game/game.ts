@@ -6,6 +6,8 @@ import { CAMERA_OPTIONS, DEFAULT_CAMERA_MODE, isCameraMode, isControl } from '..
 import { DRAFT_QUESTS, GAME_CONFIG } from '../config/game';
 import { ALBUM_CONFIG } from '../config/album';
 import { HUB_CONFIG } from '../config/hub';
+import { PHOTO_CONFIG } from '../config/photo';
+import { isShopDemoEnabled } from '../config/shopDemo';
 import { attachAnalytics } from '../analytics/bridge';
 import { ActivePlaytime } from '../analytics/heartbeat';
 import { Tracker } from '../analytics/tracker';
@@ -37,7 +39,7 @@ import { createStepReactions } from './runtime/stepReactions';
 import { formatGameText } from './runtime/uiAdapters';
 import type { DayScene } from './scenes/dayScene';
 import type { BoxItemView, HubPlayer } from './scenes/hubScene';
-import { playTransitionSound } from './sfx';
+import { playSfx, playTransitionSound } from './sfx';
 import { createGameView, type GameView } from './view';
 
 export type TransitionHook = (kind: 'to_day' | 'to_hub', info: { day?: MemoryDay }) => void | Promise<void>;
@@ -142,6 +144,19 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   /** Rời game = về trang chủ (bỏ `?play=1`). Tiến trình đã lưu ở `save_requested`; analytics tự gửi nốt khi `pagehide`. */
   const leaveGame = () => { location.href = location.pathname; };
 
+  let capturingSelfie = false;
+  function downloadBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   const actions: GameHandle['actions'] = {
     consent: (granted) => { tracker.setConsent(granted ? 'granted' : 'denied'); ui.set({ consentAsk: false }); queue.signal('consent'); },
     next: () => queue.signal('next'),
@@ -162,14 +177,16 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     hubClick: (id) => hubCtrl.hubClick(id, actions.openPanel),
     openPanel(p) {
       const s = ui.get();
+      if (p === 'shop' && !s.shopDemo) return;
       if (s.minigame) { if (p === 'menu') s.minigame.toggleOverlay('menu'); return; }
       if (p === 'menu' ? (s.fade.on || s.profile || s.consentAsk || s.feedback || s.panel) : (s.fade.on || s.dialogue || s.choice || s.profile || s.notice || s.dayEnd || s.feedback || s.photo)) return;
-      if ((s.mode === 'day' && p !== 'menu' && p !== 'journal') || (s.mode === 'hub' && p === 'journal')) return;
-      ui.set({ panel: p, wipeArmed: false, prompt: null }); promptId = null; hubCtrl.onOpenPanel(p);
+      if (p !== 'shop' && ((s.mode === 'day' && p !== 'menu' && p !== 'journal') || (s.mode === 'hub' && p === 'journal'))) return;
+      ui.set({ panel: p, mapOpen: false, wipeArmed: false, prompt: null }); promptId = null; hubCtrl.onOpenPanel(p);
     },
     closePanel: () => { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubCtrl.onClosePanel(); },
     openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
     albumPlaceSticker: hubCtrl.albumPlaceSticker, albumMoveSticker: hubCtrl.albumMoveSticker, albumRemoveSticker: hubCtrl.albumRemoveSticker,
+    albumSetStyle: hubCtrl.albumSetStyle, albumBuyIap: hubCtrl.albumBuyIap, albumResetIap: hubCtrl.albumResetIap,
     phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend, phoneSendCustom: hubCtrl.phoneSendCustom,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },
@@ -200,6 +217,38 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     feedbackCancel: () => { if (ui.get().feedback === 'exit') ui.set({ feedback: false }); },
     toggleCameraMode: dayCtrl.toggleCameraMode, toggleFreeLook: dayCtrl.toggleFreeLook, stick: (v) => input.setStick(v),
+    toggleMap: () => {
+      const s = ui.get();
+      if (s.mode !== 'day' || s.fade.on || s.profile || s.consentAsk || s.minigame || s.feedback || s.panel || s.photo || s.dayEnd || s.endPrompt) return;
+      ui.set({ mapOpen: !s.mapOpen });
+    },
+    takeSelfie: async () => {
+      const s = ui.get();
+      if (capturingSelfie || !s.mode || s.fade.on || s.consentAsk || s.profile || s.minigame) return;
+      const day = dayCtrl.scene();
+      const hubSc = hubCtrl.scene();
+      const target = s.mode === 'day' ? day : hubSc;
+      if (!target) return;
+      capturingSelfie = true;
+      try {
+        if (s.mode === 'day' && day) day.setGizmosVisible(false);
+        const cam = s.mode === 'day' && day ? day.selfieCamera() : hubSc!.camera;
+        const shot = view.capture(target.scene, cam, PHOTO_CONFIG.jpeg);
+        if (s.mode === 'day' && day) day.setGizmosVisible(true);
+        playSfx('sfx_camera_shutter');
+        ui.set({ shutterFlash: true });
+        window.setTimeout(() => ui.set({ shutterFlash: false }), 180);
+        const blob = await shot;
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        downloadBlob(blob, `vung-ky-uc-${stamp}.jpg`);
+        dayCtrl.toast('Đã chụp & lưu ảnh tự sướng về máy!', 2200);
+      } catch {
+        if (s.mode === 'day' && day) day.setGizmosVisible(true);
+        dayCtrl.toast('Không chụp được ảnh lúc này', 2200);
+      } finally {
+        capturingSelfie = false;
+      }
+    },
   };
 
   bus.on('day_end_prompt', (e) => ui.set({ endPrompt: { open: e.open_side_quests.length } }));
@@ -210,7 +259,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
 
   function continueKey(): boolean {
     const s = ui.get();
-    if ((s.panel && s.panel !== 'box3d') || s.fade.on) return false;
+    if ((s.panel && s.panel !== 'box3d') || s.mapOpen || s.fade.on) return false;
     if (s.dialogue || s.narrator || s.notice) { actions.next(); return true; }
     if (s.dayEnd) { actions.continueDayEnd(); return true; }
     if (s.minigame) return false;
@@ -221,16 +270,17 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   input.onKey((code) => {
     const s = ui.get();
     if (code === 'Space' || code === 'Enter') return continueKey();
+    if (isControl('film_camera', code)) { void actions.takeSelfie(); return true; }
+    if (isControl('map', code) && s.mode === 'day') { actions.toggleMap(); return true; }
     if (isControl('interact', code)) interact();
     else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.choice && !s.panel) { const o = s.choice.options[Number(code.slice(-1)) - 1]; if (o) actions.choose(o.id); }
     else if (/^(Digit|Numpad)[1-9]$/.test(code) && s.photo?.phase === 'pick' && !s.panel) actions.photoPick(Number(code.slice(-1)) - 1);
-    else if (isControl('menu', code)) { if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
+    else if (isControl('menu', code)) { if (s.mapOpen) ui.set({ mapOpen: false }); else if (s.panel) actions.closePanel(); else actions.openPanel('menu'); }
     else if (isControl('journal', code) && s.mode === 'day') { if (s.panel === 'journal') actions.closePanel(); else actions.openPanel('journal'); }
     else if (isControl('camera_mode', code) && !queue.locked()) dayCtrl.toggleCameraMode();
     else if (isControl('free_look', code) && s.mode === 'day' && !queue.locked()) dayCtrl.toggleFreeLook();
-    // Phím C (film_camera) để dành cho máy ảnh cầm tay/cuộn phim — chưa làm, không gán việc khác.
   });
-  input.setLockGuard(() => ui.get().mode === 'day' && !queue.locked());
+  input.setLockGuard(() => ui.get().mode === 'day' && !queue.locked() && !ui.get().mapOpen);
   input.onLockChange((isLocked, byUser) => { ui.set({ pointerLocked: isLocked }); if (!isLocked && byUser && ui.get().mode === 'day' && !ui.get().panel) actions.openPanel('menu'); });
   input.onLockError(() => { if (ui.get().mode === 'day') dayCtrl.toast('Trình duyệt không cho khóa chuột — vẫn xoay được bằng cách bấm giữ rồi kéo', 5000); });
   input.setFreeLook(!!save.settings.free_look);
@@ -256,7 +306,12 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     dayCtrl.tick(dt, t, moveIntent);
     hubCtrl.tick(dt, t, moveIntent);
   });
-  ui.set({ ready: true, placeholderBanner: idx.releaseDays.some((d) => d.main_chain.some((q) => idx.quests.get(q)?.ownership_label === 'AI_PROPOSED')) });
+  const shopDemo = isShopDemoEnabled(__APP_ENV__, location.search);
+  ui.set({
+    ready: true,
+    shopDemo,
+    placeholderBanner: idx.releaseDays.some((d) => d.main_chain.some((q) => idx.quests.get(q)?.ownership_label === 'AI_PROPOSED')),
+  });
 
   void (async () => {
     if (tracker.consent === 'unknown') { ui.set({ consentAsk: true }); await queue.wait('consent'); }

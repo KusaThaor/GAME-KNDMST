@@ -82,6 +82,10 @@ export interface DayScene {
   portalPrompt(): { id: string; label: string } | null;
   usePortal(): boolean;
   setHighlights(ids: string[]): void;
+  setPrimaryTarget(id: string | null): void;
+  mapRegions(): { zone: string; open: boolean; cx: number; cz: number; hx: number; hz: number; rot: number }[];
+  navState(): { x: number; z: number; facing: number; cameraYaw: number; locked: boolean };
+  selfieCamera(): THREE.PerspectiveCamera;
   /** Vòng đứng khi chụp ảnh, đã đổi từ ID marker ra tọa độ. */
   standSpot(zone: StandZone | null | undefined): StandSpot | null;
   setStandZone(spot: StandSpot | null): void;
@@ -221,6 +225,20 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   }
   const standRing = new THREE.Mesh(new THREE.RingGeometry(0.85, 1, 40), flat('#ffe27a', { transparent: true, opacity: 0.9 }));
   standRing.rotation.x = -Math.PI / 2; standRing.visible = false; gizmos.add(standRing);
+  const arrowShape = new THREE.Shape();
+  arrowShape.moveTo(0, 0.28);
+  arrowShape.lineTo(0.24, -0.14);
+  arrowShape.lineTo(0, -0.04);
+  arrowShape.lineTo(-0.24, -0.14);
+  arrowShape.closePath();
+  const arrowGeo = new THREE.ExtrudeGeometry(arrowShape, { depth: 0.05, bevelEnabled: false });
+  arrowGeo.rotateX(Math.PI / 2);
+  arrowGeo.translate(0, 0.025, 0);
+  const questArrow = new THREE.Mesh(arrowGeo, toon('#f2b53a', { emissive: '#9a6200' }));
+  questArrow.visible = false;
+  gizmos.add(questArrow);
+  let primaryTargetId: string | null = null;
+  const selfieCam = new THREE.PerspectiveCamera(48, 4 / 3, 0.1, 400);
 
   // ---- Player: hình (Avatar) + điều khiển + camera + theo dõi khu ----
   const player = rigAdapter.create({ id: rigOf('player'), grade, scarf: decor.scarf, seed: 0 });
@@ -477,6 +495,10 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       atmosphere.update(dt);
       followSun();
       for (const m of marks.values()) if (m.gem.visible) { m.gem.rotation.y = t * 1.6; m.gem.position.y = m.baseY + Math.sin(t * 2.4) * 0.08; }
+      const primaryTgt = primaryTargetId ? targets.find((x) => x.id === primaryTargetId) : null;
+      void primaryTgt;
+      // Tạm ẩn mũi tên 3D theo yêu cầu
+      questArrow.visible = false;
       fx.update(dt);
       for (const fn of updaters) fn(dt, t);
     },
@@ -497,6 +519,33 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       return true;
     },
     setHighlights(ids) { for (const [id, m] of marks) m.gem.visible = ids.includes(id); },
+    setPrimaryTarget(id) { primaryTargetId = id; },
+    mapRegions() {
+      return world.regions().map((r) => ({ zone: r.zone, open: world.isOpen(r.zone), cx: r.cx, cz: r.cz, hx: r.hx, hz: r.hz, rot: r.rot }));
+    },
+    navState() {
+      return { x: ctl.x, z: ctl.z, facing: ctl.facing, cameraYaw: cam.yaw, locked: cam.isLocked };
+    },
+    selfieCamera() {
+      if (cam.isLocked) return cam.camera;
+      const fx = Math.sin(ctl.facing), fz = Math.cos(ctl.facing);
+      const rx = -fz, rz = fx;
+      const hx = ctl.x, hy = ctl.y + player.height * 0.82, hz = ctl.z;
+      let cx = ctl.x + fx * 1.75 + rx * 0.28;
+      let cy = ctl.y + player.height * 0.96;
+      let cz = ctl.z + fz * 1.75 + rz * 0.28;
+      const hit = world.segmentHit([hx, hy, hz], [cx, cy, cz], 0.18);
+      if (hit !== null) {
+        const k = Math.max(0.45, hit);
+        cx = hx + (cx - hx) * k;
+        cy = hy + (cy - hy) * k;
+        cz = hz + (cz - hz) * k;
+      }
+      selfieCam.position.set(cx, cy, cz);
+      selfieCam.lookAt(ctl.x, ctl.y + player.height * 0.72, ctl.z);
+      selfieCam.updateMatrixWorld(true);
+      return selfieCam;
+    },
     standSpot(zone) { return bindStandZone(zone, world); },
     setStandZone(spot) {
       standRing.visible = !!spot;

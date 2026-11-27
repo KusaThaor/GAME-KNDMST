@@ -173,6 +173,7 @@ export class World {
     return null;
   }
   allMarkers(): Marker[] { return [...this.markers.values()]; }
+  regions(): readonly ZoneRegion[] { return this.zoneRegions; }
 
   /** Điểm xuất hiện. Không thấy → dùng điểm mặc định của bản đồ → điểm xuất hiện bất kỳ. */
   spawn(id?: string | null): Marker | null {

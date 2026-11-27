@@ -9,6 +9,7 @@ import { ChoiceBox } from './overlays/ChoiceBox';
 import { DialogueBox } from './overlays/DialogueBox';
 import { HudBar } from './overlays/HudBar';
 import { KeyHintCard } from './overlays/KeyHintCard';
+import { MinimapOverlay } from './overlays/MinimapOverlay';
 import { NarratorBanner } from './overlays/NarratorBanner';
 import { ConsentModal, DayEndModal, EndPromptModal, FeedbackModal, NoticeModal } from './overlays/NoticeModal';
 import { PhotoOverlay } from './overlays/PhotoOverlay';
@@ -19,6 +20,7 @@ import { JournalPanel } from './panels/JournalPanel';
 import { MenuModal } from './panels/MenuModal';
 import { PhonePanel } from './panels/PhonePanel';
 import { ProfileCard } from './panels/ProfileCard';
+import { ShopDemoPanel } from './panels/ShopDemoPanel';
 import type { UiActions, UiStore } from './store';
 
 function Ui({ store, a }: { store: UiStore; a: UiActions }) {
@@ -26,13 +28,15 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
   // đăng ký xong thì đọc lại ngay: trạng thái có thể đã đổi giữa lần vẽ đầu và lúc effect chạy (vd. câu hỏi đồng ý lúc mở game)
   useEffect(() => { const off = store.subscribe(setS); setS(store.get()); return off; }, []);
   const touch = s.device === 'touch';
-  const blocking = !!(s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.photo?.phase === 'pick' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel);
-  const canClickAdvance = !!(s.dialogue || s.narrator) && !s.panel && !s.choice && !s.profile && !s.endPrompt && !s.dayEnd && !s.minigame && !s.notice && !s.feedback && !s.consentAsk && !s.fade.on;
+  const blocking = !!(s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.photo?.phase === 'pick' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel || s.mapOpen);
+  const canClickAdvance = !!(s.dialogue || s.narrator) && !s.panel && !s.mapOpen && !s.choice && !s.profile && !s.endPrompt && !s.dayEnd && !s.minigame && !s.notice && !s.feedback && !s.consentAsk && !s.fade.on;
   return (
     <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''} data-device={s.device}>
       {canClickAdvance && <div class="g-next-backdrop" data-act="next-backdrop" onClick={a.next} />}
       {s.placeholderBanner && <div class="g-banner">Bản khung — nội dung [PLACEHOLDER], không phải cốt truyện</div>}
       <HudBar s={s} a={a} blocking={blocking} />
+      <MinimapOverlay s={s} a={a} blocking={blocking} />
+      {s.shutterFlash && <div class="g-shutter-flash" data-testid="shutter-flash" />}
       {s.keyHint && !s.titleCard && !blocking && <KeyHintCard keyHint={s.keyHint} />}
       {s.panel === 'box3d' && s.boxView && <Box3dBar boxView={s.boxView} touch={touch} a={a} />}
       {s.dialogue && <DialogueBox dialogue={s.dialogue} touch={touch} a={a} />}
@@ -52,6 +56,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.panel === 'album' && <AlbumPanel s={s} a={a} />}
       {s.panel === 'phone' && <PhonePanel s={s} a={a} />}
       {s.panel === 'journal' && <JournalPanel s={s} a={a} />}
+      {s.shopDemo && s.panel === 'shop' && <ShopDemoPanel a={a} />}
       {s.panel === 'menu' && <MenuModal s={s} a={a} />}
       {s.feedback && <FeedbackModal a={a} placement={s.feedback} />}
       {s.consentAsk && <ConsentModal a={a} />}

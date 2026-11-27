@@ -15,6 +15,14 @@ import { formatProblems } from '../../world/validate';
 import type { GameInput } from '../input';
 import { buildDayScene, type DayControl, type DayScene } from '../scenes/dayScene';
 import type { GameView } from '../view';
+import {
+  computeCompass,
+  computeMapBounds,
+  resolvePrimaryTargetId,
+  type MapBounds,
+  type MapTargetPin,
+  type MapZoneRegion,
+} from './navigationHud';
 import type { PresentationQueue } from './presentationQueue';
 import { resolveZoneName } from './zoneNames';
 
@@ -46,6 +54,11 @@ export function createDayController(deps: DayControllerDeps) {
   let keyHintInteracted = false;
   let lastZoneName: string | null = null;
   let unsubStepCompleted: (() => void) | null = null;
+  let cachedRegions: MapZoneRegion[] = [];
+  let cachedBounds: MapBounds = { minX: -20, minZ: -20, maxX: 20, maxZ: 20 };
+  let activeHighlightIds: string[] = [];
+  let lastNavEmit = 0;
+  let lastNavSnap: { x: number; z: number; facing: number; yaw: number; primary: string | null; zone: string | null } | null = null;
 
   function toast(text: string | null, ms = 2600) {
     window.clearTimeout(toastTimer);
@@ -70,6 +83,49 @@ export function createDayController(deps: DayControllerDeps) {
     keyHintTimer = window.setTimeout(hideKeyHint, 5000);
   }
 
+  function syncNavHud(force = false) {
+    if (!dayScene || !currentDay) return;
+    const now = performance.now();
+    if (!force && now - lastNavEmit < 50) return;
+    const nav = dayScene.navState();
+    const primaryId = resolvePrimaryTargetId(engine, dayScene.targets, nav, new Set(activeHighlightIds));
+    dayScene.setPrimaryTarget(primaryId);
+    const zone = dayScene.zone;
+    if (
+      !force &&
+      lastNavSnap &&
+      Math.abs(nav.x - lastNavSnap.x) < 0.02 &&
+      Math.abs(nav.z - lastNavSnap.z) < 0.02 &&
+      Math.abs(nav.facing - lastNavSnap.facing) < 0.015 &&
+      Math.abs(nav.cameraYaw - lastNavSnap.yaw) < 0.015 &&
+      lastNavSnap.primary === primaryId &&
+      lastNavSnap.zone === zone
+    ) return;
+    lastNavEmit = now;
+    lastNavSnap = { x: nav.x, z: nav.z, facing: nav.facing, yaw: nav.cameraYaw, primary: primaryId, zone };
+    const primaryTarget = primaryId ? dayScene.targets.find((t) => t.id === primaryId) ?? null : null;
+    const questCompass = primaryTarget ? computeCompass(nav, nav.cameraYaw, { label: fmt(primaryTarget.label), position: primaryTarget.position }) : null;
+    const pinIds = new Set<string>(activeHighlightIds);
+    if (primaryId) pinIds.add(primaryId);
+    const targets: MapTargetPin[] = [];
+    for (const id of pinIds) {
+      const t = dayScene.targets.find((x) => x.id === id);
+      if (!t) continue;
+      targets.push({ id: t.id, label: fmt(t.label), x: t.position.x, z: t.position.z, primary: t.id === primaryId, kind: t.kind });
+    }
+    const zoneLabel = zone ? (resolveZoneName(currentDay, zone, engine, idx) ?? zone) : null;
+    ui.set({
+      questCompass,
+      minimap: {
+        zones: cachedRegions,
+        bounds: cachedBounds,
+        player: { x: nav.x, z: nav.z, facing: nav.facing, cameraYaw: nav.cameraYaw },
+        targets,
+        currentZone: zoneLabel,
+      },
+    });
+  }
+
   function refreshHud() {
     const steps = engine.activeSteps();
     const main = engine.mainStep() ?? steps[0];
@@ -82,12 +138,14 @@ export function createDayController(deps: DayControllerDeps) {
       else nonAiTargets.add(target);
     }
     const highlights = engine.targetsOfInterest().filter((id) => nonAiTargets.has(id) || !aiTargets.has(id) && engine.optionalQuests().some((q) => q.quest.ownership_label !== 'AI_PROPOSED'));
+    activeHighlightIds = highlights;
     ui.set({
       objective: main?.step.objective ? fmt(main.step.objective) : main ? fmt(main.quest.title) : null,
       quests: engine.optionalQuests().map((q) => ({ title: fmt(q.quest.title), type: q.quest.type, state: q.state })),
       canEndDay: engine.phase === 'free_after_main',
     });
     dayScene?.setHighlights(highlights);
+    syncNavHud(true);
   }
 
   function nearestUseful() {
@@ -193,11 +251,15 @@ export function createDayController(deps: DayControllerDeps) {
       }
     });
     scene.onZoneChange = (to) => { enterZone(to, true); bus.emit('save_requested', { reason: 'zone' }); };
-    ui.set({ mode: 'day', inReplay: replay, panel: null, cameraMode: save.settings.camera_mode, fade: { on: false, label: '' } });
+    cachedRegions = scene.mapRegions().map((r) => ({ ...r, name: zoneName(r.zone) ?? r.zone }));
+    cachedBounds = computeMapBounds(cachedRegions, scene.targets.map((t) => ({ x: t.position.x, z: t.position.z })));
+    lastNavSnap = null;
+    ui.set({ mode: 'day', inReplay: replay, panel: null, mapOpen: false, cameraMode: save.settings.camera_mode, fade: { on: false, label: '' } });
     if (scene.zone) enterZone(scene.zone, !resume);
     if (scene.placeholder) toast('[Bản đồ chưa tải được — đang dùng mặt bằng tạm]', 6000);
     if (flow.state === 'to_day') flow.dispatch('scene_ready');
     if (day.id === 'd.g06.01' && !replay && !resume && engine.mainStep()?.step.id === 'q_m1_main_01.s01') showKeyHint();
+    syncNavHud(true);
     void queue.enqueue(queue.drain);
   }
 
@@ -207,6 +269,10 @@ export function createDayController(deps: DayControllerDeps) {
     window.clearTimeout(toastTimer);
     window.clearTimeout(keyHintTimer);
     lastZoneName = null;
+    cachedRegions = [];
+    activeHighlightIds = [];
+    lastNavSnap = null;
+    ui.set({ questCompass: null, minimap: null, mapOpen: false });
     dayScene?.dispose();
     dayScene = null;
     currentDay = null;
@@ -252,6 +318,7 @@ export function createDayController(deps: DayControllerDeps) {
     if (!free && input.pointerLocked) input.releasePointer();
     dayScene.update(dt, t, ctl);
     proximity();
+    syncNavHud(false);
   }
 
   return {

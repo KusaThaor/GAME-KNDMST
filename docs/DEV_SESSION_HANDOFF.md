@@ -1,5 +1,15 @@
 # DEV_SESSION_HANDOFF
 
+## Phiên bổ sung Tiệm Ký Ức (Demo) — 28/11/2026, rạng sáng (ĐỌC TRƯỚC)
+- **Đã làm:** thêm giao diện **Tiệm Ký Ức** (chế độ trưng bày mô hình tiền tệ kép & vật phẩm, bấm vào trả thông báo *"Tính năng đang cập nhật"* hoặc chuyển sang màn **Nạp Tem** khi thiếu Xu/Tem, tham khảo mô hình kim cương hồng/tím NSTT):
+  - `src/config/shopDemo.ts`: cờ `SHOP_DEMO_CONFIG` (**BẬT** ở `test`, **TẮT** ở `production`, hỗ trợ `?shopdemo=1`/`?shopdemo=0`), ví minh họa (`450 Xu Kỷ Niệm`, `50 Tem Thanh Xuân`), danh mục 5 nhóm (Trang trí không gian, Trang phục & Album, Tiện ích, Túi Mù Gacha, Ngoại truyện, Hoạt động sắp tới) và gói Nạp Tem / Đổi Xu / Quảng cáo.
+  - `src/ui/game/panels/shopIcons.tsx`, `src/ui/game/panels/ShopDemoPanel.tsx`, `src/styles.css`: bộ icon SVG nội tuyến (Xu, Tem, túi cửa hàng, vật phẩm), chia rõ từng phân khu, thẻ căn đều, không ghi VNĐ trực tiếp trên thẻ đồ (chỉ hiện giá VNĐ trong tab **Nạp Tem** khi thiếu tiền hoặc bấm `+` trên ví).
+  - Nối vào `src/ui/game/store.ts`, `src/game/game.ts`, `src/ui/game/GameUi.tsx`, `src/ui/game/overlays/HudBar.tsx`, `src/ui/game/panels/MenuModal.tsx`.
+  - `tests/unit/shopDemo.test.ts`: 3 unit test kiểm tra cờ `production`/`test` và dữ liệu danh mục.
+- **Đã kiểm thật (trên cây mã hiện tại, gồm cả các sửa đổi đang mở ở `src/` như minimap, selfie, album IAP):** `npx tsc --noEmit` ✓ · `npx vitest run --pool=vmThreads` **45/46 file đạt (634 đạt / 2 bỏ qua)** · `npm run validate:world` **0 lỗi** · `VERCEL_ENV=production npm run build` ✓.
+- **Chưa kiểm:** Playwright E2E (`npx playwright test --workers=1`) và chơi tay kiểm tra giao diện trực tiếp trên trình duyệt sau lần sửa mới nhất.
+- **Lưu ý:** Không đụng `main`. Bản `production` tự động tắt Tiệm Ký Ức (`enabled_in_production = false`).
+
 ## Chốt phiên — 27/11/2026, trưa (ĐỌC TRƯỚC)
 - **Chủ dự án chốt 27/11:** ưu tiên **Mốc 1** cho bản đo 05–15/12 (Mốc 2 = Giai đoạn 3) → đã sửa `CLAUDE.md` §3.1 và §6. `FIREBASE_SERVICE_ACCOUNT` đã bật trên Vercel. R-D6 đưa vào sprint.
 - **Đã làm:** viết lại `docs/handoff/SPRINT_TASKS_2026-11-26.md`: mỗi task có cột **Agent** (Claude Code Sonnet/Opus, Project thiết kế, Chủ dự án, Cả nhóm), prompt dán được, tiêu chí xong; thẻ chi tiết GIT-1, DEP-1b, R-D6, UX-1, INT-1 (Integrator), QA-1 (mẫu biên bản), BUG-xx, DEP-2; Giai đoạn 2–3 có prompt rút gọn.

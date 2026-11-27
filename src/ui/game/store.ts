@@ -1,4 +1,5 @@
 import type { MinigameHost } from '../../game/minigames/host';
+import type { MinimapView, QuestCompassView } from '../../game/runtime/navigationHud';
 /** Trạng thái giao diện của game. UI (Preact) chỉ ĐỌC trạng thái này và gọi `UiActions`; không tự đổi tiến trình. */
 import type { Gender } from '../../content/types';
 import { DEFAULT_CAMERA_MODE, type CameraModeId } from '../../config/camera';
@@ -13,11 +14,20 @@ export interface AlbumEntryView {
 export interface PlacedStickerView {
   id: string; kind: string; x: number; y: number; rotate: number;
 }
+export interface AlbumStyle {
+  paperColor: string;
+  paperPattern: string;
+  coverTheme: string;
+  washiStyle: string;
+}
 export interface AlbumView {
   progress: string;
+  pagesRestored: number;
   coverUrl: string | null;
   pages: { page_id: string; title: string; state: string; entries: AlbumEntryView[]; back: { entry_id: string; text: string } | null; flipped: boolean }[];
   placedStickers?: Record<string, PlacedStickerView[]>;
+  albumStyle?: AlbumStyle;
+  iapPacks?: string[];
 }
 export interface PhoneView {
   app: string;
@@ -79,7 +89,9 @@ export interface UiState {
   free: { text: string } | null;
   notice: { title: string; text: string; effect: string } | null;
   /** 'box3d' = đang nhìn cận cảnh vào Hộp Kỷ Vật ở phòng 2026; 'box' = bảng kỷ vật trên kệ (xem lại ký ức). */
-  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | null;
+  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | 'shop' | null;
+  /** Bật chế độ Demo Tiệm Ký Ức / Hệ thống vật phẩm (chỉ bật ở bản test hoặc khi cấu hình cho phép). */
+  shopDemo: boolean;
   box: BoxView | null;
   /** Lớp chữ khi đang nhìn vào Hộp Kỷ Vật: dòng hướng dẫn + tên món dưới con trỏ. */
   boxView: { hint: string; hover: string | null; first: boolean } | null;
@@ -91,12 +103,17 @@ export interface UiState {
   inReplay: boolean;
   wipeArmed: boolean;
   placeholderBanner: boolean;
+  questCompass?: QuestCompassView | null;
+  minimap?: MinimapView | null;
+  mapOpen?: boolean;
+  shutterFlash?: boolean;
 }
 
 export const initialUi: UiState = {
   ready: false, consentAsk: false, fade: { on: true, label: '' }, mode: null, objective: null, collectProgress: null, quests: [], prompt: null, toast: null, cameraMode: DEFAULT_CAMERA_MODE, device: 'keyboard', freeLook: false, pointerLocked: false, camOptions: { modeSwitch: false, freeLook: false },
   dialogue: null, narrator: null, titleCard: null, keyHint: null, choice: null, profile: false, endPrompt: null, dayEnd: null, photo: null, minigame: null, free: null, notice: null,
-  panel: null, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
+  panel: null, shopDemo: false, box: null, boxView: null, album: null, phone: null, feedback: false, canEndDay: false, inReplay: false, wipeArmed: false, placeholderBanner: false,
+  questCompass: null, minimap: null, mapOpen: false, shutterFlash: false,
 };
 
 export interface UiActions {
@@ -122,6 +139,9 @@ export interface UiActions {
   albumPlaceSticker(pageId: string, kind: string, x: number, y: number): void;
   albumMoveSticker(pageId: string, stickerId: string, x: number, y: number): void;
   albumRemoveSticker(pageId: string, stickerId: string): void;
+  albumSetStyle(patch: Partial<AlbumStyle>): void;
+  albumBuyIap(packId: string): void;
+  albumResetIap(): void;
   phoneOpenThread(id: string | null): void;
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void; phoneSendCustom(text: string): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
@@ -138,6 +158,10 @@ export interface UiActions {
   interact(): void;
   /** Nút tròn ảo: ý định di chuyển, null = thả tay. */
   stick(v: { forward: number; strafe: number; run: boolean } | null): void;
+  /** Bật/tắt toàn map định vị (phím M hoặc bấm minimap). */
+  toggleMap(): void;
+  /** Chụp ảnh tự sướng mọi lúc và tải về máy (phím C hoặc nút máy ảnh). */
+  takeSelfie(): void;
 }
 
 export interface UiStore {

@@ -106,7 +106,16 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   function currentAlbumView() {
-    return albumView({ idx, album, photoUrls: photo.photoUrls, flipped, placedStickers: save.album_stickers, fmt });
+    return albumView({
+      idx,
+      album,
+      photoUrls: photo.photoUrls,
+      flipped,
+      placedStickers: save.album_stickers,
+      albumStyle: save.album_style,
+      iapPacks: save.album_iap_packs,
+      fmt,
+    });
   }
 
   function currentPhoneView() {
@@ -328,6 +337,32 @@ export function createHubController(deps: HubControllerDeps) {
     refreshPanels();
   }
 
+  function albumSetStyle(patch: Partial<{ paperColor: string; paperPattern: string; coverTheme: string; washiStyle: string }>) {
+    save.album_style = {
+      paperColor: save.album_style?.paperColor ?? 'cream',
+      paperPattern: save.album_style?.paperPattern ?? 'dots',
+      coverTheme: save.album_style?.coverTheme ?? 'classic',
+      washiStyle: save.album_style?.washiStyle ?? 'amber',
+      ...patch,
+    };
+    bus.emit('save_requested', { reason: 'album_style' });
+    refreshPanels();
+  }
+
+  function albumBuyIap(packId: string) {
+    const list = (save.album_iap_packs ??= []);
+    if (!list.includes(packId)) list.push(packId);
+    bus.emit('save_requested', { reason: 'album_iap' });
+    refreshPanels();
+  }
+
+  function albumResetIap() {
+    save.album_iap_packs = [];
+    save.album_style = { paperColor: 'cream', paperPattern: 'dots', coverTheme: 'classic', washiStyle: 'amber' };
+    bus.emit('save_requested', { reason: 'album_iap_reset' });
+    refreshPanels();
+  }
+
   function phoneOpenThread(id: string | null) {
     phoneThread = id; phoneDraft = null;
     if (id) {
@@ -398,6 +433,7 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   return {
+    scene: () => hubScene,
     mount,
     dispose,
     hubSettle,
@@ -416,6 +452,9 @@ export function createHubController(deps: HubControllerDeps) {
     albumPlaceSticker,
     albumMoveSticker,
     albumRemoveSticker,
+    albumSetStyle,
+    albumBuyIap,
+    albumResetIap,
     phoneOpenThread,
     phonePick,
     phoneErase,

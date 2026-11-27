@@ -1,15 +1,27 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Pop } from '../overlays/NoticeModal';
-import type { AlbumEntryView, AlbumView, PlacedStickerView, UiActions, UiState } from '../store';
-import { ALL_STICKERS, AlbumSticker, pageDecoStickers, pickStickerKind, type StickerKind } from './albumStickers';
+import type { AlbumEntryView, AlbumStyle, AlbumView, PlacedStickerView, UiActions, UiState } from '../store';
+import { AlbumSticker, pageDecoStickers, pickStickerKind, type StickerKind } from './albumStickers';
+import {
+  COVER_THEMES,
+  IAP_PACKS,
+  isUnlocked,
+  PAPER_COLORS,
+  PAPER_PATTERNS,
+  STICKER_CATALOG,
+  WASHI_STYLES,
+  type IapPackId,
+  type StyleOption,
+  type UnlockRule,
+} from './albumCatalog';
 
 const SLOT_LABEL: Record<string, string> = {
   main_photo: 'Ảnh kỷ niệm', free_photo: 'Ảnh tự chọn', sticker: 'Sticker', note: 'Ghi chú', artifact: 'Kỷ vật',
   quest_record: 'Dấu đã làm', personal_memory: 'Ký ức riêng', back_note: 'Mặt sau ảnh',
 };
-const PAGE_LABEL: Record<string, string> = { locked: 'Trang trắng', faded: 'Còn mờ', restored: 'Đã phục hồi', enriched: 'Thêm kỷ niệm', complete: 'Trọn vẹn' };
-const PHOTO_TILTS = [-2.2, 2.4, -1.5, 1.8];
-const NOTE_TILTS = [1.8, -2.1, 2.6, -1.4];
+const PAGE_LABEL: Record<string, string> = { faded: 'Còn mờ', restored: 'Đã phục hồi', enriched: 'Thêm kỷ niệm', complete: 'Trọn vẹn' };
+const PHOTO_TILTS = [-1.2, 1.0, -0.8, 1.2];
+const NOTE_TILTS = [1.0, -1.2, 0.9, -1.0];
 const STICKER_TILTS = [-9, 8, -6, 11, -12];
 
 type PageData = AlbumView['pages'][number];
@@ -20,16 +32,28 @@ function ScrapPage({
   dragging,
   onStartMoveSticker,
   a,
+  pageIdx,
 }: {
   p: PageData;
   placed: PlacedStickerView[];
   dragging: boolean;
   onStartMoveSticker: (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => void;
   a: UiActions;
+  pageIdx: number;
 }) {
   const items = p.entries.filter((e) => e.slot_type !== 'back_note');
   const photos = items.filter((e) => e.isPhoto);
-  const notes = items.filter((e) => !e.isPhoto && (e.slot_type === 'note' || e.slot_type === 'personal_memory'));
+  const directNotes = items.filter((e) => !e.isPhoto && (e.slot_type === 'note' || e.slot_type === 'personal_memory'));
+  const notes = directNotes.length > 0 ? directNotes : (p.back ? [{
+    id: p.back.entry_id,
+    slot_type: 'note',
+    owned: p.state !== 'locked',
+    text: p.back.text,
+    url: null,
+    isPhoto: false,
+    variants: 0,
+    selected: 0,
+  }] : []);
   const stickers = items.filter((e) => !e.isPhoto && e.slot_type !== 'note' && e.slot_type !== 'personal_memory');
   const decos = p.state !== 'locked' && p.state !== 'faded' ? pageDecoStickers(p.page_id) : [];
 
@@ -42,7 +66,7 @@ function ScrapPage({
     >
       <div class="g-page-head">
         <h3>{p.title}</h3>
-        <span class="tag">{PAGE_LABEL[p.state]}</span>
+        {PAGE_LABEL[p.state] && <span class="tag">{PAGE_LABEL[p.state]}</span>}
       </div>
       {decos.length > 0 && (
         <div class="g-page-decos" aria-hidden="true">
@@ -69,18 +93,14 @@ function ScrapPage({
           >×</button>
         </div>
       ))}
-      {p.state === 'locked' ? (
-        <div class="g-page-blank">
-          <AlbumSticker kind="note_pin" rotate={-8} />
-          <p>Trang ký ức này vẫn còn trắng…</p>
-        </div>
-      ) : (
-        <div class="g-scrapbook">
-          {photos.map((e, i) => (
+      <div class={`g-scrapbook layout-${pageIdx % 4}`}>
+        {photos.map((e, i) => {
+          const tilt = PHOTO_TILTS[(pageIdx * 2 + i) % PHOTO_TILTS.length];
+          return (
             <div
               key={e.id}
-              class={`g-scrap-photo ${e.owned ? 'owned' : ''}`}
-              style={{ transform: `rotate(${PHOTO_TILTS[i % PHOTO_TILTS.length]}deg)` }}
+              class={`g-scrap-photo ${e.owned ? 'owned' : 'is-faded'}`}
+              style={{ transform: `rotate(${tilt}deg)` }}
               data-entry={e.id}
               data-owned={String(e.owned)}
             >
@@ -94,16 +114,22 @@ function ScrapPage({
                   <div class="g-loading">Đang dựng lại ảnh…</div>
                 )
               ) : (
-                <div class="g-photo-blank">Khung ảnh mờ</div>
+                <div class="g-photo-blank">
+                  <svg class="g-photo-blank-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  <span class="g-photo-blank-title">Khung ảnh kỷ niệm</span>
+                  <small class="g-photo-blank-sub">Chơi xong để hiện rõ</small>
+                </div>
               )}
-              <div class="g-scrap-caption">
-                <small>{SLOT_LABEL[e.slot_type] ?? e.slot_type}</small>
-                {e.owned && p.back && (
+              {e.owned && p.back && (
+                <div class="g-scrap-caption">
                   <button data-act={`flip-${p.page_id}`} onClick={() => a.albumFlip(p.page_id)}>
                     {p.flipped ? 'Xem mặt trước' : 'Lật mặt sau'}
                   </button>
-                )}
-              </div>
+                </div>
+              )}
               {e.owned && e.variants > 1 && (
                 <div class="g-row">
                   {Array.from({ length: e.variants }, (_, k) => (
@@ -112,38 +138,52 @@ function ScrapPage({
                 </div>
               )}
             </div>
-          ))}
-          <div class="g-scrap-extras">
-            {notes.map((e, i) => (
-              <div
-                key={e.id}
-                class={`g-scrap-note ${e.owned ? 'owned' : ''}`}
-                style={{ transform: `rotate(${NOTE_TILTS[i % NOTE_TILTS.length]}deg)` }}
-                data-entry={e.id}
-                data-owned={String(e.owned)}
-              >
-                <small>{SLOT_LABEL[e.slot_type] ?? e.slot_type}</small>
-                {e.owned ? <p>{e.text ?? '✓'}</p> : <p class="g-hint">…</p>}
-              </div>
-            ))}
-            {stickers.map((e: AlbumEntryView, i: number) => (
-              <div
-                key={e.id}
-                class={`g-scrap-badge ${e.owned ? 'owned' : ''}`}
-                style={{ transform: `rotate(${STICKER_TILTS[i % STICKER_TILTS.length]}deg)` }}
-                data-entry={e.id}
-                data-owned={String(e.owned)}
-              >
-                <AlbumSticker kind={pickStickerKind(e.id, e.slot_type, i)} label={e.owned ? (e.text ?? SLOT_LABEL[e.slot_type]) : undefined} />
-                <div class="g-scrap-badge-text">
-                  <small>{SLOT_LABEL[e.slot_type] ?? e.slot_type}</small>
-                  <span>{e.owned ? (e.text ?? '✓') : 'Chưa mở'}</span>
+          );
+        })}
+        {notes.length > 0 && (
+          <div class="g-scrap-notes">
+            {notes.map((e, i) => {
+              const tilt = NOTE_TILTS[(pageIdx * 2 + i) % NOTE_TILTS.length];
+              const quote = e.text ?? 'Ký ức đẹp của một thời học sinh…';
+              return (
+                <div
+                  key={e.id}
+                  class={`g-scrap-note ${e.owned ? 'owned' : 'is-faded'}`}
+                  style={{ transform: `rotate(${tilt}deg)` }}
+                  data-entry={e.id}
+                  data-owned={String(e.owned)}
+                >
+                  <p class={`g-scrap-note-text ${e.owned ? 'owned' : 'is-faded'}`} title={!e.owned ? 'Chơi xong để hiện rõ quote' : undefined}>
+                    “{quote}”
+                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </div>
-      )}
+        )}
+        {stickers.length > 0 && (
+          <div class="g-scrap-extras">
+            {stickers.map((e: AlbumEntryView, i: number) => {
+              const tilt = STICKER_TILTS[(pageIdx * 3 + i) % STICKER_TILTS.length];
+              return (
+                <div
+                  key={e.id}
+                  class={`g-scrap-badge ${e.owned ? 'owned' : 'is-faded'}`}
+                  style={{ transform: `rotate(${tilt}deg)` }}
+                  data-entry={e.id}
+                  data-owned={String(e.owned)}
+                >
+                  <AlbumSticker kind={pickStickerKind(e.id, e.slot_type, i)} label={e.owned ? (e.text ?? SLOT_LABEL[e.slot_type]) : undefined} />
+                  <div class="g-scrap-badge-text">
+                    <small>{SLOT_LABEL[e.slot_type] ?? e.slot_type}</small>
+                    <span>{e.owned ? (e.text ?? '✓') : 'Chưa mở'}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -167,7 +207,7 @@ function CoverPage({
       <div class="g-cover">
         {al.coverUrl ? <img src={al.coverUrl} alt="Ảnh bìa" /> : <span>Bìa Album — chưa có ảnh</span>}
       </div>
-      <p class="g-cover-title">Những Ngày Mình Còn Nhỏ</p>
+      <p class="g-cover-title">Vùng Ký Ức</p>
       <div class="g-cover-stickers" aria-hidden="true">
         <AlbumSticker kind="star" rotate={-12} />
         <AlbumSticker kind="camera" rotate={8} />
@@ -219,11 +259,23 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const [spread, setSpread] = useState(0);
   const [flip, setFlip] = useState<{ dir: 'next' | 'prev'; key: number } | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
+  const [toolTab, setToolTab] = useState<'stickers' | 'paper'>('stickers');
+  const [shopOpen, setShopOpen] = useState(false);
+  const [highlightPack, setHighlightPack] = useState<IapPackId | null>(null);
+  const [buyingPack, setBuyingPack] = useState<IapPackId | null>(null);
+  const [lockNotice, setLockNotice] = useState<string | null>(null);
+  const [previewStyle, setPreviewStyle] = useState<Partial<AlbumStyle> | null>(null);
+  const [previewMeta, setPreviewMeta] = useState<{ label: string; rule: UnlockRule } | null>(null);
+  const [previewSticker, setPreviewSticker] = useState<{ kind: StickerKind; label: string; rule: UnlockRule } | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const timerRef = useRef<number>(0);
+  const noticeTimerRef = useRef<number>(0);
 
-  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(timerRef.current);
+    window.clearTimeout(noticeTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -337,7 +389,7 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   };
 
   const placedMap = al.placedStickers ?? {};
-  const renderLeaf = (leaf: Leaf | undefined) => {
+  const renderLeaf = (leaf: Leaf | undefined, side: 'left' | 'right') => {
     if (!leaf) return null;
     if (leaf.kind === 'cover') {
       return <CoverPage al={al} placed={placedMap['cover'] ?? []} dragging={!!drag} onStartMoveSticker={startMoveStickerDrag} a={a} />;
@@ -346,6 +398,7 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     return (
       <ScrapPage
         p={leaf.page}
+        pageIdx={cur * 2 + (side === 'right' ? 1 : 0)}
         placed={placedMap[leaf.page.page_id] ?? []}
         dragging={!!drag}
         onStartMoveSticker={startMoveStickerDrag}
@@ -354,29 +407,240 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     );
   };
 
-  return (
-    <Pop class="g-panel g-album g-album-book" testid="panel-album">
-      <header>
-        <h2>Album Kỷ Niệm</h2>
-        <span class="g-progress" data-testid="album-progress">{al.progress}</span>
-        <button data-act="close" onClick={a.closePanel}>Đóng</button>
-      </header>
-      <div class="g-sticker-bar" data-testid="sticker-tray">
-        <span class="g-sticker-bar-label">Kho sticker (kéo thả lên trang):</span>
-        <div class="g-sticker-bar-list">
-          {ALL_STICKERS.map((st) => (
+  const pagesRestored = al.pagesRestored ?? 0;
+  const iapPacks = al.iapPacks ?? [];
+  const savedStyle: AlbumStyle = al.albumStyle ?? {
+    paperColor: 'cream',
+    paperPattern: 'dots',
+    coverTheme: 'classic',
+    washiStyle: 'amber',
+  };
+  const effectiveStyle: AlbumStyle = previewStyle ? { ...savedStyle, ...previewStyle } : savedStyle;
+
+  const clearPreview = () => {
+    setPreviewStyle(null);
+    setPreviewMeta(null);
+    setPreviewSticker(null);
+  };
+
+  const handleBuyPack = (packId: IapPackId) => {
+    if (buyingPack) return;
+    setBuyingPack(packId);
+    window.setTimeout(() => {
+      a.albumBuyIap(packId);
+      // Nếu đang xem thử gói vừa mua thì tự động lưu thành kiểu đang dùng luôn!
+      if (previewStyle) {
+        a.albumSetStyle(previewStyle);
+      }
+      clearPreview();
+      setBuyingPack(null);
+      window.clearTimeout(noticeTimerRef.current);
+      const packName = IAP_PACKS.find((p) => p.id === packId)?.title ?? 'Gói vật phẩm';
+      setLockNotice(`✨ Thanh toán thành công! Đã mở khóa "${packName}"`);
+      noticeTimerRef.current = window.setTimeout(() => setLockNotice(null), 3200);
+    }, 550);
+  };
+
+  const handlePreviewPack = (packId: IapPackId) => {
+    const pack = IAP_PACKS.find((p) => p.id === packId);
+    if (!pack) return;
+    if (pack.previewStyle) {
+      setPreviewStyle(pack.previewStyle);
+    }
+    if (pack.previewStickers && pack.previewStickers.length > 0) {
+      setPreviewSticker({
+        kind: pack.previewStickers[0],
+        label: pack.title,
+        rule: { type: 'iap', packId, priceLabel: pack.price },
+      });
+    } else {
+      setPreviewSticker(null);
+    }
+    setPreviewMeta({
+      label: `Gói "${pack.title}"`,
+      rule: { type: 'iap', packId, priceLabel: pack.price },
+    });
+    setShopOpen(false);
+  };
+
+  const renderStyleOptions = (
+    title: string,
+    options: readonly StyleOption[],
+    activeId: string,
+    key: keyof AlbumStyle,
+    isPattern = false,
+  ) => (
+    <div class="g-style-group">
+      <span class="g-style-group-label">{title}</span>
+      <div class="g-style-options">
+        {options.map((opt) => {
+          const unlocked = isUnlocked(opt.unlock, pagesRestored, iapPacks);
+          const active = activeId === opt.id;
+          return (
             <button
-              key={st.kind}
+              key={opt.id}
               type="button"
-              class="g-sticker-chip"
-              title={`Kéo ${st.label} thả vào trang`}
-              onPointerDown={(e) => startNewStickerDrag(st.kind, e)}
+              class={`g-style-chip ${active ? 'active' : ''} ${!unlocked ? 'locked' : ''} ${active && !unlocked ? 'previewing' : ''}`}
+              title={unlocked ? opt.label : `${opt.label} — Bấm để xem thử`}
+              onClick={() => {
+                if (!unlocked) {
+                  setPreviewStyle((prev) => ({ ...(prev ?? {}), [key]: opt.id }));
+                  setPreviewMeta({ label: opt.label, rule: opt.unlock });
+                  return;
+                }
+                if (previewStyle && key in previewStyle) {
+                  const next = { ...previewStyle };
+                  delete next[key];
+                  if (Object.keys(next).length === 0) {
+                    setPreviewStyle(null);
+                    setPreviewMeta(null);
+                  } else {
+                    setPreviewStyle(next);
+                  }
+                }
+                a.albumSetStyle({ [key]: opt.id });
+              }}
             >
-              <AlbumSticker kind={st.kind} />
+              <span
+                class={`g-style-swatch ${isPattern ? 'pattern' : ''}`}
+                style={{ background: opt.swatch, backgroundSize: isPattern ? '10px 10px' : undefined }}
+              />
+              <span class="g-style-name">{opt.label}</span>
+              {!unlocked && (
+                <span class={`g-lock-tag ${opt.unlock.type === 'iap' ? 'iap' : 'milestone'}`}>
+                  {opt.unlock.type === 'iap' ? '💎' : `🔒${opt.unlock.type === 'milestone' ? `${opt.unlock.pagesRequired}T` : ''}`}
+                </span>
+              )}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
+    </div>
+  );
+
+  const bookClasses = [
+    'g-panel g-album g-album-book',
+    `theme-${effectiveStyle.coverTheme}`,
+    `paper-${effectiveStyle.paperColor}`,
+    `pattern-${effectiveStyle.paperPattern}`,
+    `washi-${effectiveStyle.washiStyle}`,
+  ].join(' ');
+
+  return (
+    <>
+      <Pop class={bookClasses} testid="panel-album">
+        <header class="g-album-head">
+          <div class="g-album-title-group">
+            <h2>Album Kỷ Niệm</h2>
+            <span class="g-progress" data-testid="album-progress">{al.progress}</span>
+          </div>
+          <div class="g-album-header-actions">
+            <div class="g-tool-tabs" role="tablist">
+              <button
+                type="button"
+                class={`g-tool-tab ${toolTab === 'stickers' ? 'is-active' : ''}`}
+                onClick={() => setToolTab('stickers')}
+              >
+                Sticker
+              </button>
+              <button
+                type="button"
+                class={`g-tool-tab ${toolTab === 'paper' ? 'is-active' : ''}`}
+                onClick={() => setToolTab('paper')}
+              >
+                Giấy &amp; Bìa
+              </button>
+            </div>
+            <button
+              type="button"
+              class="g-iap-shop-btn"
+              data-act="open-iap-shop"
+              onClick={() => { setHighlightPack(null); setShopOpen(true); }}
+            >
+              ✨ Cửa hàng
+            </button>
+            <button type="button" class="g-album-close-btn" data-act="close" onClick={a.closePanel}>Đóng</button>
+          </div>
+        </header>
+        {lockNotice && (
+          <div class="g-album-lock-banner" role="status">
+            <span>{lockNotice}</span>
+          </div>
+        )}
+        {previewMeta && (
+          <div class="g-preview-banner" role="status">
+            <span class="g-preview-text">
+              👁️ Đang xem thử: <strong>{previewMeta.label}</strong> (Chưa sở hữu)
+            </span>
+            <div class="g-preview-actions">
+              {previewMeta.rule.type === 'iap' ? (
+                <button
+                  type="button"
+                  class="g-preview-buy"
+                  onClick={() => {
+                    if (previewMeta.rule.type === 'iap') {
+                      setHighlightPack(previewMeta.rule.packId);
+                      setShopOpen(true);
+                    }
+                  }}
+                >
+                  💎 Mở khóa / Mua gói
+                </button>
+              ) : previewMeta.rule.type === 'milestone' ? (
+                <span class="g-preview-milestone">
+                  🔒 Hoàn thành {previewMeta.rule.pagesRequired} trang để dùng ({pagesRestored}/{previewMeta.rule.pagesRequired})
+                </span>
+              ) : null}
+              <button type="button" class="g-preview-exit" onClick={clearPreview}>Thoát xem thử</button>
+            </div>
+          </div>
+        )}
+        {toolTab === 'stickers' ? (
+          <div class="g-sticker-bar" data-testid="sticker-tray">
+            <div class="g-sticker-bar-list">
+              {STICKER_CATALOG.map((st) => {
+                const unlocked = isUnlocked(st.unlock, pagesRestored, iapPacks);
+                const isPreviewing = previewSticker?.kind === st.kind;
+                return (
+                  <button
+                    key={st.kind}
+                    type="button"
+                    class={`g-sticker-chip ${!unlocked ? 'locked' : ''} ${isPreviewing ? 'previewing' : ''}`}
+                    title={
+                      unlocked
+                        ? `Kéo ${st.label} thả vào trang`
+                        : `${st.label} — Bấm để xem thử`
+                    }
+                    onPointerDown={(e) => {
+                      if (!unlocked) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setPreviewSticker({ kind: st.kind, label: st.label, rule: st.unlock });
+                        setPreviewMeta({ label: `Sticker "${st.label}"`, rule: st.unlock });
+                        return;
+                      }
+                      startNewStickerDrag(st.kind, e);
+                    }}
+                  >
+                    <AlbumSticker kind={st.kind} />
+                    {!unlocked && (
+                      <span class={`g-chip-lock ${st.unlock.type === 'iap' ? 'iap' : 'milestone'}`}>
+                        {st.unlock.type === 'iap' ? '💎' : `🔒${st.unlock.type === 'milestone' ? `${st.unlock.pagesRequired}T` : ''}`}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div class="g-paper-bar" data-testid="paper-customizer">
+            {renderStyleOptions('Màu giấy:', PAPER_COLORS, effectiveStyle.paperColor, 'paperColor')}
+            {renderStyleOptions('Kiểu giấy:', PAPER_PATTERNS, effectiveStyle.paperPattern, 'paperPattern', true)}
+            {renderStyleOptions('Bìa sổ:', COVER_THEMES, effectiveStyle.coverTheme, 'coverTheme')}
+            {renderStyleOptions('Băng dính:', WASHI_STYLES, effectiveStyle.washiStyle, 'washiStyle')}
+          </div>
+        )}
       <div
         class="g-album-spread"
         onPointerDown={onSpreadPointerDown}
@@ -387,7 +651,7 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
           onClick={(e) => onLeafClick('left', e)}
           title={canPrev ? 'Bấm hoặc kéo sang phải để lật lại' : undefined}
         >
-          {renderLeaf(left)}
+          {renderLeaf(left, 'left')}
           {canPrev && <span class="g-page-corner prev" data-act="album-prev" aria-label="Lật lại trang trước" />}
         </div>
         <div class="g-album-spine" aria-hidden="true" />
@@ -396,9 +660,16 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
           onClick={(e) => onLeafClick('right', e)}
           title={canNext ? 'Bấm hoặc kéo sang trái để lật tiếp' : undefined}
         >
-          {renderLeaf(right)}
+          {renderLeaf(right, 'right')}
           {canNext && <span class="g-page-corner next" data-act="album-next" aria-label="Lật sang trang sau" />}
         </div>
+        {previewSticker && (
+          <div class="g-sticker-preview-float" aria-live="polite">
+            <span class="g-sticker-preview-badge">Xem thử</span>
+            <AlbumSticker kind={previewSticker.kind} rotate={-8} />
+            <span class="g-sticker-preview-name">{previewSticker.label}</span>
+          </div>
+        )}
         {flip && (
           <div key={flip.key} class={`g-album-flipper ${flip.dir}`} aria-hidden="true">
             <div class="g-album-flipper-face" />
@@ -415,5 +686,93 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
         </div>
       )}
     </Pop>
+    {shopOpen && (
+      <div class="g-iap-backdrop" onClick={() => !buyingPack && setShopOpen(false)}>
+        <div class="g-iap-modal" onClick={(e) => e.stopPropagation()} data-testid="iap-shop-modal">
+          <div class="g-iap-head">
+            <div class="g-iap-head-title">
+              <span class="g-iap-store-icon" aria-hidden="true">🛍️</span>
+              <div>
+                <h3>Cửa Hàng Trang Trí Sổ</h3>
+                <p>Xem thử trực tiếp trên sổ hoặc mở khóa gói vật phẩm kỷ niệm</p>
+              </div>
+            </div>
+            <button type="button" class="g-iap-close" aria-label="Đóng cửa hàng" onClick={() => !buyingPack && setShopOpen(false)}>✕</button>
+          </div>
+          <div class="g-iap-packs">
+            {IAP_PACKS.map((pack) => {
+              const owned = iapPacks.includes('pack_vip') || iapPacks.includes(pack.id);
+              const isHighlighted = highlightPack === pack.id;
+              const isBuying = buyingPack === pack.id;
+              return (
+                <div key={pack.id} class={`g-iap-card ${owned ? 'owned' : ''} ${isHighlighted ? 'highlight' : ''} ${pack.id === 'pack_vip' ? 'vip' : ''}`}>
+                  {pack.badge && <span class="g-iap-badge">{pack.badge}</span>}
+                  <div class="g-iap-card-top">
+                    <strong>{pack.title}</strong>
+                    <span class="g-iap-subtitle">{pack.subtitle}</span>
+                  </div>
+                  <div class="g-iap-preview-strip">
+                    {pack.previewStickers?.map((k) => (
+                      <span key={k} class="g-iap-mini-item"><AlbumSticker kind={k} /></span>
+                    ))}
+                    {pack.previewSwatches?.map((sw) => (
+                      <span key={sw.label} class="g-iap-mini-swatch" style={{ background: sw.bg }} title={sw.label} />
+                    ))}
+                  </div>
+                  <ul class="g-iap-features">
+                    {pack.features.map((f, i) => <li key={i}>{f}</li>)}
+                  </ul>
+                  <div class="g-iap-card-foot">
+                    <div class="g-iap-price-col">
+                      {pack.originalPrice && <del class="g-iap-old-price">{pack.originalPrice}</del>}
+                      <span class="g-iap-price">{pack.price}</span>
+                    </div>
+                    {owned ? (
+                      <span class="g-iap-owned-pill">✓ Đã sở hữu</span>
+                    ) : (
+                      <div class="g-iap-card-btns">
+                        <button
+                          type="button"
+                          class="g-iap-try-btn"
+                          onClick={() => handlePreviewPack(pack.id)}
+                        >
+                          Xem thử
+                        </button>
+                        <button
+                          type="button"
+                          class="g-iap-buy-btn"
+                          disabled={!!buyingPack}
+                          data-act={`buy-${pack.id}`}
+                          onClick={() => handleBuyPack(pack.id)}
+                        >
+                          {isBuying ? 'Đang xử lý...' : 'Mua ngay'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div class="g-iap-foot">
+            <span class="g-iap-demo-note">Chế độ Demo IAP: Xem thử thoải mái trước khi bấm Mua ngay (không trừ tiền thật).</span>
+            {iapPacks.length > 0 && (
+              <button
+                type="button"
+                class="g-iap-reset-btn"
+                onClick={() => {
+                  a.albumResetIap();
+                  clearPreview();
+                  setLockNotice('Đã đặt lại trạng thái IAP về mặc định để demo lại.');
+                }}
+              >
+                Đặt lại Demo IAP
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

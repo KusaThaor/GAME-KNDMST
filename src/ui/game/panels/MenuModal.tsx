@@ -1,4 +1,5 @@
 import { CAMERA_MODES } from '../../../config/camera';
+import { SHOP_DEMO_CONFIG } from '../../../config/shopDemo';
 import { Pop } from '../overlays/NoticeModal';
 import type { UiActions, UiState } from '../store';
 
@@ -22,6 +23,7 @@ export function MenuModal({ s, a }: { s: UiState; a: UiActions }) {
         </button>
       )}
       {s.mode === 'day' && s.inReplay && <button data-act="leave-day" onClick={a.menuLeaveDay}>Về phòng (thôi xem lại)</button>}
+      {s.shopDemo && <button data-act="menu-shop-demo" onClick={() => a.openPanel('shop')}>{SHOP_DEMO_CONFIG.ui.menu_button_label}</button>}
       <button data-act="menu-exit" onClick={a.menuExit}>Thoát</button>
       <button class="danger" data-act="wipe" onClick={a.menuWipe}>{s.wipeArmed ? 'Bấm lần nữa để xóa hết' : 'Xóa tiến trình'}</button>
       <p class="g-hint">Tiến trình và ảnh lưu trong trình duyệt này. Xóa dữ liệu trình duyệt sẽ mất cả hai.</p>

@@ -108,6 +108,7 @@ export const CONTROLS = {
   /** Bật/tắt "Nhìn tự do" (khóa con trỏ, rê touchpad/chuột để nhìn). */
   free_look: ['KeyL'],
   journal: ['KeyJ', 'Tab'],
+  map: ['KeyM'],
   film_camera: ['KeyC'],
   menu: ['Escape'],
 } as const;

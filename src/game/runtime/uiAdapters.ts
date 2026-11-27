@@ -46,17 +46,22 @@ export function albumView(deps: {
   photoUrls: ReadonlyMap<string, string>;
   flipped: ReadonlySet<string>;
   placedStickers?: SaveState['album_stickers'];
+  albumStyle?: SaveState['album_style'];
+  iapPacks?: SaveState['album_iap_packs'];
   fmt: (text: string) => string;
 }): AlbumView {
-  const { idx, album, photoUrls, flipped, placedStickers, fmt } = deps;
+  const { idx, album, photoUrls, flipped, placedStickers, albumStyle, iapPacks, fmt } = deps;
   const prog = album.progress();
   const frag = (id: string) => idx.pack.fragments.find((f) => f.id === id);
   const coverId = album.coverEntryId();                  // Trang 4: ảnh cầu vồng (alb.d.g07.03.cover)
   const cover = coverId ? photoUrls.get(coverId) ?? null : null;
   return {
     progress: prog.display === 'pages' ? `${prog.pages_restored}/${prog.pages_total} trang` : `${prog.percent}%`,
+    pagesRestored: prog.pages_restored,
     coverUrl: cover,
     placedStickers: placedStickers ?? {},
+    albumStyle: albumStyle ?? { paperColor: 'cream', paperPattern: 'dots', coverTheme: 'classic', washiStyle: 'amber' },
+    iapPacks: iapPacks ?? [],
     pages: album.pages().map((p) => {
       const back = p.entries.find((e) => e.entry.slot_type === 'back_note' && e.owned);
       return {

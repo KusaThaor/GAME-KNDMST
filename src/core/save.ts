@@ -59,6 +59,10 @@ export interface SaveState {
   album: Record<string, AlbumRecord>;
   /** Sticker người chơi tự kéo thả trang trí lên từng trang Album (lưu cục bộ theo page_id). */
   album_stickers?: Record<string, { id: string; kind: string; x: number; y: number; rotate: number }[]>;
+  /** Tùy chỉnh giao diện sổ Album (màu giấy, kiểu giấy, bìa sổ, băng dính). */
+  album_style?: { paperColor: string; paperPattern: string; coverTheme: string; washiStyle: string };
+  /** Các gói vật phẩm IAP đã mở khóa (demo IAP). */
+  album_iap_packs?: string[];
   relationships: Record<string, RelationshipState>;
   pde_done: string[];
   phone: Record<string, PhoneMessage[]>;
