@@ -8,7 +8,9 @@ export function MenuModal({ s, a }: { s: UiState; a: UiActions }) {
       <h2>Tạm dừng</h2>
       <button class="primary" data-act="resume" onClick={a.closePanel}>Chơi tiếp</button>
       {s.mode === 'day' && <button data-act="restart-day" onClick={a.menuRestartDay}>Chơi lại Ngày từ đầu</button>}
-      {s.mode === 'day' && <button data-act="safe-spot" onClick={a.menuSafeSpot}>Về chỗ an toàn</button>}
+      {s.mode === 'day' && s.photo?.phase !== 'pick' && s.photo?.phase !== 'preview' && (
+        <button data-act="safe-spot" onClick={a.menuSafeSpot}>Về chỗ an toàn</button>
+      )}
       {s.mode === 'day' && s.device !== 'touch' && s.camOptions.freeLook && (
         <button data-act="menu-free-look" data-on={String(s.freeLook)} onClick={a.toggleFreeLook}>
           Nhìn tự do bằng touchpad: {s.freeLook ? 'BẬT' : 'TẮT'} <kbd>L</kbd>

@@ -35,7 +35,7 @@ import { disposeScene } from '../view';
 export interface DayTarget { id: string; label: string; position: THREE.Vector3; kind: 'npc' | 'object' | 'marker'; radius: number; zone: string | null }
 /** Ý định của người chơi trong một khung hình. `null` = đang khóa (thoại, bảng, ảnh xem trước…). */
 export interface DayControl { move: MoveIntent | null; look: LookInput | null }
-export interface StandSpot { center: [number, number]; y: number; radius: number }
+export interface StandSpot { center: [number, number]; y: number; radius: number; facing?: number }
 export interface MarkerSpot { x: number; y: number; z: number; facing: number }
 export interface MoveActorOptions {
   /** Dẫn đường: tạm dừng chờ nếu người chơi tụt lại quá ngưỡng (không khóa điều khiển player, có timeout an toàn). */
@@ -86,6 +86,7 @@ export interface DayScene {
   standSpot(zone: StandZone | null | undefined): StandSpot | null;
   setStandZone(spot: StandSpot | null): void;
   setPlayerMotion(m: Motion | null): void;
+  setPlayerFacing(facing: number): void;
   /** Máy ảnh ảo đặt sẵn (khai trong nội dung của Ngày). null = bản đồ không có marker máy ảnh đó. */
   cameraFor(point: CameraPoint): THREE.PerspectiveCamera | null;
   /** Giữ camera của người chơi ở khung của một máy ảnh đặt sẵn (khung ngắm, cutscene); null = trả lại camera bám theo. */
@@ -237,7 +238,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
   const handle = (events: TravelEvent[]): void => {
     for (const e of events) {
       if (e.type === 'zone') {
-        world.setViewerZone(e.to);
+        world.setViewerZone(e.to === 'zone.thcs.corridor' ? null : e.to);
         cam.setPreset(presetOf(e.to));
         onZoneChange?.(e.to, e.from);
       } else {
@@ -500,6 +501,7 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       if (spot) { standRing.position.set(spot.center[0], spot.y + 0.035, spot.center[1]); standRing.scale.setScalar(spot.radius); }
     },
     setPlayerMotion(m) { forcedMotion = m; },
+    setPlayerFacing(facing) { ctl.facing = facing; sync(); },
     cameraFor(point) {
       const b = bindCamera(point, world);
       if (!b) return null;

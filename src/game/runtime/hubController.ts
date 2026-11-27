@@ -207,11 +207,11 @@ export function createHubController(deps: HubControllerDeps) {
     if (queue.locked() || engine.context?.kind !== 'hub') return;
     const r = engine.trigger('interact', id);
     if (r) { hub.refresh(); void queue.enqueue(hubSettle); }
+    if (id === 'itr.hub.album') { openPanel('album'); return; }
+    if (id === 'itr.hub.phone') { openPanel('phone'); return; }
     if (!introDone()) return;
     if (id === 'itr.hub.memory_box') openPanel('box3d');
     else if (id === 'itr.hub.shelf') openPanel('box');           // kệ: danh sách kỷ vật đã xong, xem lại ký ức
-    else if (id === 'itr.hub.album') openPanel('album');
-    else if (id === 'itr.hub.phone') openPanel('phone');
   }
 
   function interact(openPanel: (p: NonNullable<UiState['panel']>) => void) {
@@ -326,8 +326,9 @@ export function createHubController(deps: HubControllerDeps) {
 
   const hubActionable = (id: string | null) => {
     if (!id) return false;
+    if (id === 'itr.hub.album' || id === 'itr.hub.phone') return true;
     if (!introDone()) return id === 'itr.hub.memory_box';
-    return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || id === 'itr.hub.album' || id === 'itr.hub.phone' || engine.peek('interact', id);
+    return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || engine.peek('interact', id);
   };
 
   function handlePointer(kind: 'move' | 'click', x: number, y: number, onInteract: () => void): boolean {

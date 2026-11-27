@@ -25,12 +25,12 @@ export function PhotoOverlay({ photo, touch, a }: { photo: NonNullable<UiState['
     return (
       <Pop class="g-card g-photo g-photo-pick" testid="photo-pick">
         <h2>Chọn một tấm để giữ</h2>
-        {chosen && <img src={chosen.url} alt={`Tấm ${(photo.picked ?? 0) + 1}`} data-testid="photo-picked" data-index={photo.picked ?? 0} style={{ maxHeight: 'min(38vh, 320px)' }} />}
+        {chosen && <img src={chosen.url} alt={`Tấm ${(photo.picked ?? 0) + 1}`} data-testid="photo-picked" data-index={photo.picked ?? 0} style={{ maxHeight: 'min(32vh, 260px)' }} />}
         <div class="g-row g-picks" style={{ justifyContent: 'center' }}>
           {photo.picks.map((p, i) => (
-            <button class={i === photo.picked ? 'on' : ''} data-act={`photo-pick-${i}`} aria-pressed={i === photo.picked} onClick={() => a.photoPick(i)}>
-              <img src={p.url} alt="" style={{ width: '96px', height: '72px', objectFit: 'cover', borderWidth: '3px', marginBottom: '4px' }} />
-              {!touch && <kbd>{i + 1}</kbd>} Tấm {i + 1}
+            <button type="button" class={i === photo.picked ? 'on' : ''} data-act={`photo-pick-${i}`} aria-pressed={i === photo.picked} onClick={() => a.photoPick(i)}>
+              <img src={p.url} alt="" style={{ width: '92px', height: '68px', objectFit: 'cover', borderWidth: '3px', marginBottom: '4px', pointerEvents: 'none' }} />
+              <span>{!touch && <kbd>{i + 1}</kbd>} Tấm {i + 1}</span>
             </button>
           ))}
         </div>

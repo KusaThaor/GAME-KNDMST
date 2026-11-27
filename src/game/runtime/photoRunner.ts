@@ -127,6 +127,7 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
   const photoUrls = new Map<string, string>();
   let photoPosed = false;
   let photoPicked = 0;
+  let activePhotoFacing: number | null = null;
 
   async function runPhoto(s: Extract<Step, { kind: 'photo' }>, alive: () => boolean): Promise<void> {
     const scene = getDayScene(), day = getCurrentDay();
@@ -139,6 +140,7 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
       return;
     }
     const spot = scene.standSpot(s.stand_zone);
+    activePhotoFacing = spot?.facing ?? (spot ? Math.atan2(cam.position.x - spot.center[0], cam.position.z - spot.center[1]) : Math.atan2(cam.position.x - scene.playerPosition.x, cam.position.z - scene.playerPosition.z));
     const base = { mode: s.mode, url: null, marks: [], score: 0, display: PHOTO_CONFIG.quality_display, posed: false } as const;
     const marksOf = (c: PhotoCriteria) => (Object.keys(CRITERIA_LABELS) as (keyof PhotoCriteria)[]).map((k) => ({ label: CRITERIA_LABELS[k], ok: c[k] }));
     const total = photoShots(s);
@@ -193,9 +195,11 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
           }
         }
         const shotCam = aimed(n);
+        const inZone = spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true;
+        if (s.mode === 'timer' && inZone && activePhotoFacing !== null) scene.setPlayerFacing?.(activePhotoFacing);
         const criteria: PhotoCriteria = {
           all_in_frame: scene.allInFrame(shotCam, s.subjects),
-          player_in_zone: spot ? Math.hypot(scene.playerPosition.x - spot.center[0], scene.playerPosition.z - spot.center[1]) <= spot.radius : true,
+          player_in_zone: inZone,
           posed_in_time: s.mode === 'timer' && !hidePose ? photoPosed : true,
         };
         scene.setGizmosVisible(false);
@@ -313,7 +317,11 @@ export function createPhotoRunner(deps: PhotoRunnerDeps) {
     const p = ui.get().photo;
     if (p?.phase === 'countdown' && !p.hidePose && !photoPosed) {
       photoPosed = true;
-      getDayScene()?.setPlayerMotion('pose_peace');
+      const scene = getDayScene();
+      if (scene) {
+        if (activePhotoFacing !== null) scene.setPlayerFacing?.(activePhotoFacing);
+        scene.setPlayerMotion('pose_peace');
+      }
       ui.set({ photo: { ...p, posed: true } });
     }
   }
