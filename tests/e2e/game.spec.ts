@@ -192,10 +192,15 @@ test.describe('phần khung game', () => {
     await page.evaluate(() => window.__game!.hubClick('itr.hub.album'));
     await expect(page.locator('[data-testid="panel-album"]')).toBeVisible();
     await expect(page.locator('[data-testid="album-progress"]')).toHaveText(`${DAYS.length}/${DAYS.length} trang`);
-    for (const d of DAYS) await expect(page.locator(`[data-page="page.${d}"] [data-testid="album-photo"]`).first(), `ảnh trang ${d}`).toBeVisible({ timeout: 30_000 });
+    // Bìa + Trang 1 (mở mặc định); sau đó lật sang các trang tiếp theo
     await expect(page.locator('.g-cover img')).toBeVisible();
-    // ghi chú hiện trong Album (nội dung thật Trang 1–4 không có ghi chú mang tên Player; tên Player đã kiểm ở hội thoại phía trên)
+    await expect(page.locator('[data-page="page.d.g06.01"] [data-testid="album-photo"]').first()).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('[data-page="page.d.g06.01"]')).toContainText('bắt đầu từ một mẩu giấy mật lệnh');
+    await page.locator('[data-act="album-next"]').click();
+    await expect(page.locator('[data-page="page.d.g07.01"] [data-testid="album-photo"]').first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('[data-page="page.d.g07.02"] [data-testid="album-photo"]').first()).toBeVisible({ timeout: 30_000 });
+    await page.locator('[data-act="album-next"]').click();
+    await expect(page.locator('[data-page="page.d.g07.03"] [data-testid="album-photo"]').first()).toBeVisible({ timeout: 30_000 });
     await page.waitForTimeout(400);
     await page.screenshot({ path: `${SHOTS}/90-album.png` });
     await page.locator('[data-act="flip-page.d.g07.03"]').first().click();   // N-01: Trang 4 có 2 ảnh (nhóm s05 + cầu vồng s07)
