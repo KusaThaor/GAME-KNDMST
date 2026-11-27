@@ -109,8 +109,10 @@ export interface DayScene {
   setActorMotion(actor: string, motion: string): void;
   /** Ẩn/hiện actor; nếu là NPC thì đồng thời vô hiệu hóa/kích hoạt lại tương tác & collider. */
   setActorVisible(actor: string, visible: boolean): void;
-  /** Trạng thái camera/điều khiển — cho công cụ test. */
-  debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number };
+  /** Đổi ánh sáng/thời tiết sang preset có sẵn (LIGHTING_PRESETS), chuyển trong `tweenSec` giây (0 = ngay). BUG-T1-B. */
+  setWeather(preset: string, tweenSec?: number): boolean;
+  /** Trạng thái camera/điều khiển — cho công cụ test. `weather` = preset ánh sáng đang dùng. */
+  debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number; weather: string };
   setActorProp(actor: string, propId: string | null): void;
   dispose(): void;
 }
@@ -625,7 +627,12 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
         syncNpcColliders();
       }
     },
-    debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing }),
+    setWeather(preset, tweenSec = 0) {
+      const ok = atmosphere.set(preset, tweenSec);
+      if (!ok) console.warn(`[dayScene] setWeather: không có preset "${preset}"`);
+      return ok;
+    },
+    debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing, weather: atmosphere.preset }),
     setActorProp(actor, propId) { actors.get(actor)?.setProp?.(propId); },
     dispose() {
       disposed = true;
