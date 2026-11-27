@@ -45,9 +45,10 @@ export function albumView(deps: {
   album: AlbumModel;
   photoUrls: ReadonlyMap<string, string>;
   flipped: ReadonlySet<string>;
+  placedStickers?: SaveState['album_stickers'];
   fmt: (text: string) => string;
 }): AlbumView {
-  const { idx, album, photoUrls, flipped, fmt } = deps;
+  const { idx, album, photoUrls, flipped, placedStickers, fmt } = deps;
   const prog = album.progress();
   const frag = (id: string) => idx.pack.fragments.find((f) => f.id === id);
   const coverId = album.coverEntryId();                  // Trang 4: ảnh cầu vồng (alb.d.g07.03.cover)
@@ -55,6 +56,7 @@ export function albumView(deps: {
   return {
     progress: prog.display === 'pages' ? `${prog.pages_restored}/${prog.pages_total} trang` : `${prog.percent}%`,
     coverUrl: cover,
+    placedStickers: placedStickers ?? {},
     pages: album.pages().map((p) => {
       const back = p.entries.find((e) => e.entry.slot_type === 'back_note' && e.owned);
       return {

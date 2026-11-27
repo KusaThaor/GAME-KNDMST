@@ -106,7 +106,7 @@ export function createHubController(deps: HubControllerDeps) {
   }
 
   function currentAlbumView() {
-    return albumView({ idx, album, photoUrls: photo.photoUrls, flipped, fmt });
+    return albumView({ idx, album, photoUrls: photo.photoUrls, flipped, placedStickers: save.album_stickers, fmt });
   }
 
   function currentPhoneView() {
@@ -295,6 +295,39 @@ export function createHubController(deps: HubControllerDeps) {
     refreshPanels();
   }
 
+  function albumPlaceSticker(pageId: string, kind: string, x: number, y: number) {
+    const list = (save.album_stickers ??= {})[pageId] ??= [];
+    const tilts = [-14, -7, 6, 12, -10, 8];
+    list.push({
+      id: `stk_${crypto.randomUUID().slice(0, 8)}`,
+      kind,
+      x: Math.max(4, Math.min(92, Math.round(x * 10) / 10)),
+      y: Math.max(4, Math.min(90, Math.round(y * 10) / 10)),
+      rotate: tilts[list.length % tilts.length],
+    });
+    bus.emit('save_requested', { reason: 'album_sticker' });
+    refreshPanels();
+  }
+
+  function albumMoveSticker(pageId: string, stickerId: string, x: number, y: number) {
+    const item = save.album_stickers?.[pageId]?.find((s) => s.id === stickerId);
+    if (!item) return;
+    item.x = Math.max(4, Math.min(92, Math.round(x * 10) / 10));
+    item.y = Math.max(4, Math.min(90, Math.round(y * 10) / 10));
+    bus.emit('save_requested', { reason: 'album_sticker' });
+    refreshPanels();
+  }
+
+  function albumRemoveSticker(pageId: string, stickerId: string) {
+    const list = save.album_stickers?.[pageId];
+    if (!list) return;
+    const next = list.filter((s) => s.id !== stickerId);
+    if (next.length === list.length) return;
+    save.album_stickers![pageId] = next;
+    bus.emit('save_requested', { reason: 'album_sticker' });
+    refreshPanels();
+  }
+
   function phoneOpenThread(id: string | null) {
     phoneThread = id; phoneDraft = null;
     if (id) {
@@ -380,6 +413,9 @@ export function createHubController(deps: HubControllerDeps) {
     refreshPanels,
     albumFlip,
     albumSelect,
+    albumPlaceSticker,
+    albumMoveSticker,
+    albumRemoveSticker,
     phoneOpenThread,
     phonePick,
     phoneErase,

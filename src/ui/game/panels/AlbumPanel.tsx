@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Pop } from '../overlays/NoticeModal';
-import type { AlbumEntryView, AlbumView, UiActions, UiState } from '../store';
-import { AlbumSticker, pageDecoStickers, pickStickerKind } from './albumStickers';
+import type { AlbumEntryView, AlbumView, PlacedStickerView, UiActions, UiState } from '../store';
+import { ALL_STICKERS, AlbumSticker, pageDecoStickers, pickStickerKind, type StickerKind } from './albumStickers';
 
 const SLOT_LABEL: Record<string, string> = {
   main_photo: 'Ảnh kỷ niệm', free_photo: 'Ảnh tự chọn', sticker: 'Sticker', note: 'Ghi chú', artifact: 'Kỷ vật',
@@ -14,7 +14,19 @@ const STICKER_TILTS = [-9, 8, -6, 11, -12];
 
 type PageData = AlbumView['pages'][number];
 
-function ScrapPage({ p, a }: { p: PageData; a: UiActions }) {
+function ScrapPage({
+  p,
+  placed,
+  dragging,
+  onStartMoveSticker,
+  a,
+}: {
+  p: PageData;
+  placed: PlacedStickerView[];
+  dragging: boolean;
+  onStartMoveSticker: (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => void;
+  a: UiActions;
+}) {
   const items = p.entries.filter((e) => e.slot_type !== 'back_note');
   const photos = items.filter((e) => e.isPhoto);
   const notes = items.filter((e) => !e.isPhoto && (e.slot_type === 'note' || e.slot_type === 'personal_memory'));
@@ -22,7 +34,12 @@ function ScrapPage({ p, a }: { p: PageData; a: UiActions }) {
   const decos = p.state !== 'locked' && p.state !== 'faded' ? pageDecoStickers(p.page_id) : [];
 
   return (
-    <section class={`g-album-page g-page st-${p.state}`} data-page={p.page_id} data-state={p.state}>
+    <section
+      class={`g-album-page g-page st-${p.state} ${dragging ? 'drop-ready' : ''}`}
+      data-page={p.page_id}
+      data-drop-page={p.page_id}
+      data-state={p.state}
+    >
       <div class="g-page-head">
         <h3>{p.title}</h3>
         <span class="tag">{PAGE_LABEL[p.state]}</span>
@@ -32,6 +49,26 @@ function ScrapPage({ p, a }: { p: PageData; a: UiActions }) {
           {decos.map((d, i) => <AlbumSticker key={i} kind={d.kind} rotate={d.rotate} />)}
         </div>
       )}
+      {placed.map((stk) => (
+        <div
+          key={stk.id}
+          class="g-placed-sticker"
+          style={{ left: `${stk.x}%`, top: `${stk.y}%` }}
+          onPointerDown={(e) => {
+            if ((e.target as HTMLElement).closest('button')) return;
+            onStartMoveSticker(p.page_id, stk, e);
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <AlbumSticker kind={stk.kind as StickerKind} rotate={stk.rotate} />
+          <button
+            type="button"
+            class="g-placed-sticker-del"
+            aria-label="Gỡ sticker"
+            onClick={(e) => { e.stopPropagation(); a.albumRemoveSticker(p.page_id, stk.id); }}
+          >×</button>
+        </div>
+      ))}
       {p.state === 'locked' ? (
         <div class="g-page-blank">
           <AlbumSticker kind="note_pin" rotate={-8} />
@@ -111,9 +148,21 @@ function ScrapPage({ p, a }: { p: PageData; a: UiActions }) {
   );
 }
 
-function CoverPage({ al }: { al: AlbumView }) {
+function CoverPage({
+  al,
+  placed,
+  dragging,
+  onStartMoveSticker,
+  a,
+}: {
+  al: AlbumView;
+  placed: PlacedStickerView[];
+  dragging: boolean;
+  onStartMoveSticker: (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => void;
+  a: UiActions;
+}) {
   return (
-    <section class="g-album-page g-album-cover-page">
+    <section class={`g-album-page g-album-cover-page ${dragging ? 'drop-ready' : ''}`} data-drop-page="cover">
       <div class="g-cover-badge">ALBUM KỶ NIỆM</div>
       <div class="g-cover">
         {al.coverUrl ? <img src={al.coverUrl} alt="Ảnh bìa" /> : <span>Bìa Album — chưa có ảnh</span>}
@@ -124,6 +173,26 @@ function CoverPage({ al }: { al: AlbumView }) {
         <AlbumSticker kind="camera" rotate={8} />
         <AlbumSticker kind="flower" rotate={-6} />
       </div>
+      {placed.map((stk) => (
+        <div
+          key={stk.id}
+          class="g-placed-sticker"
+          style={{ left: `${stk.x}%`, top: `${stk.y}%` }}
+          onPointerDown={(e) => {
+            if ((e.target as HTMLElement).closest('button')) return;
+            onStartMoveSticker('cover', stk, e);
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <AlbumSticker kind={stk.kind as StickerKind} rotate={stk.rotate} />
+          <button
+            type="button"
+            class="g-placed-sticker-del"
+            aria-label="Gỡ sticker"
+            onClick={(e) => { e.stopPropagation(); a.albumRemoveSticker('cover', stk.id); }}
+          >×</button>
+        </div>
+      ))}
     </section>
   );
 }
@@ -143,10 +212,14 @@ function BackEndPage({ al }: { al: AlbumView }) {
   );
 }
 
+type DragState = { kind: StickerKind; x: number; y: number; fromPageId?: string; stickerId?: string };
+
 export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
   const al = s.album;
   const [spread, setSpread] = useState(0);
   const [flip, setFlip] = useState<{ dir: 'next' | 'prev'; key: number } | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const dragRef = useRef<DragState | null>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const timerRef = useRef<number>(0);
 
@@ -160,6 +233,41 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   });
+
+  useEffect(() => {
+    if (!drag) return;
+    const onMove = (e: PointerEvent) => {
+      const next = { ...dragRef.current!, x: e.clientX, y: e.clientY };
+      dragRef.current = next;
+      setDrag(next);
+    };
+    const onUp = (e: PointerEvent) => {
+      const curDrag = dragRef.current;
+      dragRef.current = null;
+      setDrag(null);
+      if (!curDrag) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>('[data-drop-page]');
+      const pageId = el?.dataset.dropPage;
+      if (!el || !pageId) return;
+      const r = el.getBoundingClientRect();
+      const px = ((e.clientX - r.left) / Math.max(1, r.width)) * 100;
+      const py = ((e.clientY - r.top) / Math.max(1, r.height)) * 100;
+      if (curDrag.stickerId && curDrag.fromPageId === pageId) {
+        a.albumMoveSticker(pageId, curDrag.stickerId, px, py);
+      } else {
+        if (curDrag.stickerId && curDrag.fromPageId) a.albumRemoveSticker(curDrag.fromPageId, curDrag.stickerId);
+        a.albumPlaceSticker(pageId, curDrag.kind, px, py);
+      }
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [!!drag]);
 
   if (!al) return null;
 
@@ -183,21 +291,43 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     timerRef.current = window.setTimeout(() => setFlip(null), 460);
   }
 
+  const startNewStickerDrag = (kind: StickerKind, e: PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next: DragState = { kind, x: e.clientX, y: e.clientY };
+    dragRef.current = next;
+    setDrag(next);
+  };
+
+  const startMoveStickerDrag = (pageId: string, sticker: PlacedStickerView, e: PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const next: DragState = {
+      kind: sticker.kind as StickerKind,
+      x: e.clientX,
+      y: e.clientY,
+      fromPageId: pageId,
+      stickerId: sticker.id,
+    };
+    dragRef.current = next;
+    setDrag(next);
+  };
+
   const onLeafClick = (side: 'left' | 'right', e: MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button')) return;
+    if (dragRef.current || (e.target as HTMLElement).closest('button, .g-placed-sticker')) return;
     if (side === 'right' && canNext) go(cur + 1);
     else if (side === 'left' && canPrev) go(cur - 1);
   };
 
   const onSpreadPointerDown = (e: PointerEvent) => {
-    if ((e.target as HTMLElement).closest('button')) return;
+    if (dragRef.current || (e.target as HTMLElement).closest('button, .g-placed-sticker')) return;
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
 
   const onSpreadPointerUp = (e: PointerEvent) => {
     const start = dragStart.current;
     dragStart.current = null;
-    if (!start) return;
+    if (!start || dragRef.current) return;
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
     if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)) {
@@ -206,11 +336,22 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
     }
   };
 
+  const placedMap = al.placedStickers ?? {};
   const renderLeaf = (leaf: Leaf | undefined) => {
     if (!leaf) return null;
-    if (leaf.kind === 'cover') return <CoverPage al={al} />;
+    if (leaf.kind === 'cover') {
+      return <CoverPage al={al} placed={placedMap['cover'] ?? []} dragging={!!drag} onStartMoveSticker={startMoveStickerDrag} a={a} />;
+    }
     if (leaf.kind === 'end') return <BackEndPage al={al} />;
-    return <ScrapPage p={leaf.page} a={a} />;
+    return (
+      <ScrapPage
+        p={leaf.page}
+        placed={placedMap[leaf.page.page_id] ?? []}
+        dragging={!!drag}
+        onStartMoveSticker={startMoveStickerDrag}
+        a={a}
+      />
+    );
   };
 
   return (
@@ -220,6 +361,22 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
         <span class="g-progress" data-testid="album-progress">{al.progress}</span>
         <button data-act="close" onClick={a.closePanel}>Đóng</button>
       </header>
+      <div class="g-sticker-bar" data-testid="sticker-tray">
+        <span class="g-sticker-bar-label">Kho sticker (kéo thả lên trang):</span>
+        <div class="g-sticker-bar-list">
+          {ALL_STICKERS.map((st) => (
+            <button
+              key={st.kind}
+              type="button"
+              class="g-sticker-chip"
+              title={`Kéo ${st.label} thả vào trang`}
+              onPointerDown={(e) => startNewStickerDrag(st.kind, e)}
+            >
+              <AlbumSticker kind={st.kind} />
+            </button>
+          ))}
+        </div>
+      </div>
       <div
         class="g-album-spread"
         onPointerDown={onSpreadPointerDown}
@@ -250,8 +407,13 @@ export function AlbumPanel({ s, a }: { s: UiState; a: UiActions }) {
       </div>
       <div class="g-album-hint">
         <span>Trang {cur * 2 + 1}–{cur * 2 + 2} / {leaves.length}</span>
-        <span>· Chạm hoặc kéo trang để lật</span>
+        <span>· Chạm/kéo trang để lật · Kéo sticker để trang trí</span>
       </div>
+      {drag && (
+        <div class="g-sticker-ghost" style={{ left: `${drag.x}px`, top: `${drag.y}px` }}>
+          <AlbumSticker kind={drag.kind} rotate={-6} />
+        </div>
+      )}
     </Pop>
   );
 }

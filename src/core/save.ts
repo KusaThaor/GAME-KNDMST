@@ -57,6 +57,8 @@ export interface SaveState {
   flags: Record<string, FlagValue>;
   artifacts: Record<string, ArtifactState>;
   album: Record<string, AlbumRecord>;
+  /** Sticker người chơi tự kéo thả trang trí lên từng trang Album (lưu cục bộ theo page_id). */
+  album_stickers?: Record<string, { id: string; kind: string; x: number; y: number; rotate: number }[]>;
   relationships: Record<string, RelationshipState>;
   pde_done: string[];
   phone: Record<string, PhoneMessage[]>;

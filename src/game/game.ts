@@ -169,6 +169,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     },
     closePanel: () => { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubCtrl.onClosePanel(); },
     openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
+    albumPlaceSticker: hubCtrl.albumPlaceSticker, albumMoveSticker: hubCtrl.albumMoveSticker, albumRemoveSticker: hubCtrl.albumRemoveSticker,
     phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend, phoneSendCustom: hubCtrl.phoneSendCustom,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },

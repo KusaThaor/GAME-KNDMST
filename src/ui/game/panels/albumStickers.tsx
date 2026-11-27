@@ -13,6 +13,19 @@ export type StickerKind =
   | 'chalk'
   | 'note_pin';
 
+export const ALL_STICKERS: readonly { kind: StickerKind; label: string }[] = [
+  { kind: 'star', label: 'Ngôi sao' },
+  { kind: 'flower', label: 'Hoa phượng' },
+  { kind: 'shuttle', label: 'Quả cầu' },
+  { kind: 'boat', label: 'Thuyền giấy' },
+  { kind: 'chalk', label: 'Viên phấn' },
+  { kind: 'camera', label: 'Máy ảnh' },
+  { kind: 'rainbow', label: 'Cầu vồng' },
+  { kind: 'clover', label: 'Cỏ 4 lá' },
+  { kind: 'heart', label: 'Trái tim' },
+  { kind: 'note_pin', label: 'Đinh ghim' },
+];
+
 /** Ánh xạ ID ô Album hoặc loại ô sang sticker phù hợp trong kho. */
 export function pickStickerKind(entryId: string, slotType: string, index: number): StickerKind {
   if (entryId.includes('g06.01')) {

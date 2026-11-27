@@ -10,10 +10,14 @@ export interface AlbumEntryView {
   id: string; slot_type: string; owned: boolean; text: string | null; url: string | null; isPhoto: boolean;
   variants: number; selected: number;
 }
+export interface PlacedStickerView {
+  id: string; kind: string; x: number; y: number; rotate: number;
+}
 export interface AlbumView {
   progress: string;
   coverUrl: string | null;
   pages: { page_id: string; title: string; state: string; entries: AlbumEntryView[]; back: { entry_id: string; text: string } | null; flipped: boolean }[];
+  placedStickers?: Record<string, PlacedStickerView[]>;
 }
 export interface PhoneView {
   app: string;
@@ -115,6 +119,9 @@ export interface UiActions {
   boxPick(id: string): void;
   albumFlip(pageId: string): void;
   albumSelect(entryId: string, index: number): void;
+  albumPlaceSticker(pageId: string, kind: string, x: number, y: number): void;
+  albumMoveSticker(pageId: string, stickerId: string, x: number, y: number): void;
+  albumRemoveSticker(pageId: string, stickerId: string): void;
   phoneOpenThread(id: string | null): void;
   phonePick(id: string): void; phoneErase(): void; phoneSend(): void; phoneSendCustom(text: string): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
