@@ -78,10 +78,10 @@ export function bindCamera(point: CameraPoint, world: MarkerSource): BoundCamera
   return null;
 }
 
-export function bindStandZone(zone: StandZone | null | undefined, world: MarkerSource): { center: [number, number]; y: number; radius: number } | null {
+export function bindStandZone(zone: StandZone | null | undefined, world: MarkerSource): { center: [number, number]; y: number; radius: number; facing?: number } | null {
   if (!zone) return null;
   const m = zone.marker ? world.marker('spot', zone.marker) : null;
-  if (m) return { center: [m.position[0], m.position[2]], y: m.position[1], radius: zone.radius };
+  if (m) return { center: [m.position[0], m.position[2]], y: m.position[1], radius: zone.radius, facing: m.facing };
   if (zone.center) return { center: zone.center, y: 0, radius: zone.radius };
   return null;
 }

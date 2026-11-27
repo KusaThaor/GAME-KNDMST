@@ -73,12 +73,21 @@ export function createDayController(deps: DayControllerDeps) {
   function refreshHud() {
     const steps = engine.activeSteps();
     const main = engine.mainStep() ?? steps[0];
+    const aiTargets = new Set<string>();
+    const nonAiTargets = new Set<string>();
+    for (const r of steps) {
+      const target = r.step.kind === 'talk' ? r.step.with : (r.step.kind === 'goto' || r.step.kind === 'interact' || r.step.kind === 'place') ? r.step.target : null;
+      if (!target) continue;
+      if (r.quest.ownership_label === 'AI_PROPOSED') aiTargets.add(target);
+      else nonAiTargets.add(target);
+    }
+    const highlights = engine.targetsOfInterest().filter((id) => nonAiTargets.has(id) || !aiTargets.has(id) && engine.optionalQuests().some((q) => q.quest.ownership_label !== 'AI_PROPOSED'));
     ui.set({
       objective: main?.step.objective ? fmt(main.step.objective) : main ? fmt(main.quest.title) : null,
       quests: engine.optionalQuests().map((q) => ({ title: fmt(q.quest.title), type: q.quest.type, state: q.state })),
       canEndDay: engine.phase === 'free_after_main',
     });
-    dayScene?.setHighlights(engine.targetsOfInterest());
+    dayScene?.setHighlights(highlights);
   }
 
   function nearestUseful() {
@@ -222,6 +231,8 @@ export function createDayController(deps: DayControllerDeps) {
   }
 
   function menuSafeSpot() {
+    const ph = ui.get().photo?.phase;
+    if (ph === 'pick' || ph === 'preview') { ui.set({ panel: null }); return; }
     dayScene?.toSpawn();
     ui.set({ panel: null });
   }

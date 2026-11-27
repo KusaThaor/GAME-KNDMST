@@ -49,9 +49,9 @@ export const HUB_CONFIG: HubConfig = {
   presets: {
     cold: { background: '#2b3442', ambient: '#c9d6e8', ground: '#8f949c', ambientIntensity: 0.8, key: '#e6eefa', keyIntensity: 1.0, window: 'rain', lamp: 0 },
     cool: { background: '#3a4250', ambient: '#e6ebf2', ground: '#9a978f', ambientIntensity: 0.9, key: '#f6f3ee', keyIntensity: 1.15, window: 'cloudy', lamp: 0 },
-    evening: { background: '#9fb2cc', ambient: '#f2f5fa', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff3e3', keyIntensity: 1.25, window: 'twilight', lamp: 0.55 },
-    dusk: { background: '#d9c9b8', ambient: '#f3f3f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff2e1', keyIntensity: 1.28, window: 'dusk', lamp: 0.8 },
-    warm: { background: '#1f2a48', ambient: '#f4f4f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff3e5', keyIntensity: 1.3, window: 'night', lamp: 1 },
+    evening: { background: '#9fb2cc', ambient: '#f2f5fa', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff9f2', keyIntensity: 1.25, window: 'twilight', lamp: 0.55 },
+    dusk: { background: '#d9c9b8', ambient: '#f3f3f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff8f0', keyIntensity: 1.28, window: 'dusk', lamp: 0.8 },
+    warm: { background: '#1f2a48', ambient: '#f4f4f2', ground: '#9c968e', ambientIntensity: 0.9, key: '#fff9f2', keyIntensity: 1.3, window: 'night', lamp: 1 },
   },
   // 'sunny' = trời ban ngày #cfdbe8 (gợi ý K2) — để sẵn, đổi một hàng lighting_by_days_done là dùng được.
   window_colors: { rain: '#7d90ad', cloudy: '#c9d3e0', sunny: '#cfdbe8', twilight: '#9fb2cc', dusk: '#d9c9b8', night: '#1f2a48' },

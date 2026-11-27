@@ -12,24 +12,21 @@
 | 4 | Lag/giựt khi chơi minigame (đá cầu, v.v.) | Thêm `setRenderPaused(true)` ở `GameView` và bỏ qua `dayCtrl.tick`/`hubCtrl.tick` khi `ui.minigame` đang mở | `src/game/view.ts`, `src/game/game.ts` |
 | 5 | `PhonePanel`: bỏ sắc thái, thêm ô tự gõ, sửa background | Bỏ tag sắc thái trên nút gợi ý, dựng lại khung điện thoại viền tối + màn hình chat nền sáng, thêm ô nhập tin tự do lưu cục bộ (`custom_text`, `tone: null` ở analytics) | `src/ui/game/panels/PhonePanel.tsx`, `src/styles.css`, `src/core/save.ts`, `src/systems/questEngine.ts`, `src/systems/hub.ts`, `src/game/runtime/hubController.ts`, `src/ui/game/store.ts` |
 | 6 | Khung hoàn thành minigame xấu, thiếu hiệu ứng Thắng/Thua cộp xuống | Thiết kế lại thẻ kết quả với huy hiệu đóng dấu `THẮNG!` / `THUA RỒI` / `HÒA` / `HOÀN THÀNH!` có animation `@keyframes g-stamp-slam`, hiển thị sao (`★`/`☆`) và điểm | `src/ui/game/MinigameFrame.tsx`, `src/styles.css` |
+| 7 | Bấm `Về chỗ an toàn` lúc chọn ảnh làm giao diện chọn ảnh đi theo & kẹt điều khiển | Ẩn `Về chỗ an toàn` khi `photo.phase` là `'pick'`/`'preview'` và chặn teleport trong `menuSafeSpot()` | `src/ui/game/panels/MenuModal.tsx`, `src/game/runtime/dayController.ts` |
+| 8 | Chọn ảnh bộ ba khó bấm / dễ tràn khung | Thu gọn chiều cao ảnh xem trước, xếp nút chọn thumbnail theo cột, chặn `pointer-events` trên `img` bên trong nút | `src/ui/game/overlays/PhotoOverlay.tsx`, `src/styles.css` |
+| 9 | Chụp hình hẹn giờ nhân vật không quay mặt lại máy ảnh | Lưu `facing` từ `bindStandZone()`, tự xoay player quay về hướng chụp khi `pose()` hoặc trước lúc chụp hẹn giờ | `src/world/dayBindings.ts`, `src/game/scenes/dayScene.ts`, `src/game/runtime/photoRunner.ts` |
+| 10 | Cục vàng hiện ở `itr.thcs.duty_spot` khi đang tìm bảng phân lớp | Lọc bỏ highlight từ quest `AI_PROPOSED` ở `dayController.refreshHud()` | `src/game/runtime/dayController.ts` |
+| 11 | Đi tới hành lang bị mất tầng 2 / mất nóc nhà | Không ẩn `htxHideIn` ở `zone.thcs.corridor` ngoài trời; chỉ ẩn khi thực sự vào trong `zone.thcs.classroom` | `src/game/scenes/dayScene.ts` |
+| 12 | Đầu game không tương tác được Album / Điện thoại; màu đèn phòng còn hơi ngả vàng | Cho mở `album` và `phone` ngay từ đầu game ở Hub + bật con trỏ bàn tay; chỉnh ánh sáng `key` trong `HUB_CONFIG.presets` về trắng trung tính `#fff9f2`/`#fff8f0` | `src/game/runtime/hubController.ts`, `src/config/hub.ts` |
 
 ## 2. Kiểm tra đã chạy sau khi gộp `feat/sprint-0412`
 
 - `npm run typecheck` (`tsc --noEmit`): đạt.
-- `npm test` (`vitest run`): 41/42 file đạt (1 file `firestore.int.test.ts` skip), 609 passed / 2 skipped (đã thêm 2 unit test trong `tests/unit/hub.test.ts` cho tin nhắn tự gõ và `setBoxHint`).
+- `npm test` (`vitest run`): 41/42 file đạt (1 file `firestore.int.test.ts` skip), 610 passed / 2 skipped.
 - `npm run build`: đạt.
 - Chưa chạy lại Playwright E2E trên trình duyệt thật.
 
-## 3. Việc còn lại từ feedback (gợi ý đợt tiếp theo)
+## 3. Việc còn lại từ feedback (Nhóm B / C — cần chốt hoặc làm sau)
 
-### Nhóm A (fix nhanh, nên làm trước 04/12)
-- Chống kẹt giao diện chọn ảnh khi bấm `Về chỗ an toàn` (`dayController.ts`).
-- Kiểm tra chọn ảnh tấm chụp 3 người đầu tiên (`d_g06_01.ts` / `PhotoOverlay.tsx`).
-- Tự quay mặt nhân vật về máy ảnh khi chụp (`bindStandZone` + `dayScene`).
-- Ẩn/tách màu gem vàng ở `itr.thcs.duty_spot` (`questEngine.ts` `targetsOfInterest()`).
-- Tinh chỉnh ẩn tầng 2 / nóc nhà (`world.ts` `setViewerZone`) và màu UI còn hơi ngả vàng (`styles.css` / `hub.ts`).
-- Cho tương tác Album / Điện thoại ở đầu game (`hubController.ts`).
-
-### Nhóm B / C (chờ chốt hoặc làm sau)
 - Chờ chủ dự án duyệt thoại mới cho 2 dòng đầu, khúc gõ tên, thoại sau mở hộp và thoại dẫn còn trống.
 - Mũi tên chỉ đường nhiệm vụ, minimap định vị, nút chụp ảnh tự sướng lưu máy, Album lật trang, che kín khu Căn cứ bằng `map_thcs.extras.ts`.

@@ -127,6 +127,8 @@ body.game canvas { display: block; }
 .g-countdown b { font-size: 72px; font-weight: 800; line-height: 1; }
 .g-card { max-height: calc(100% - 32px); overflow: auto; }
 .g-photo img { display: block; margin: 0 auto; max-width: 100%; max-height: min(52vh, 420px); border-radius: 8px; border: 6px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.g-picks button { display: flex; flex-direction: column; align-items: center; padding: 6px 8px; }
+.g-picks button.on { border-color: var(--accent); background: #fff3c4; }
 .g-marks { display: flex; gap: 14px; font-weight: 700; opacity: .9; }
 .g-marks span { opacity: .5; } .g-marks span.ok { opacity: 1; color: #2f7d3b; }
 .g-free { pointer-events: auto; position: absolute; left: 50%; bottom: 120px; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; background: rgba(255,250,238,.95); padding: 8px 14px; border-radius: 12px; font-weight: 700; z-index: 2; }
