@@ -46,6 +46,7 @@ function makeMockScene(): StageSceneApi & { calls: string[]; resolveMove: (idx?:
     faceActor(actor, toward) { calls.push(`face:${actor}:${toward}`); },
     setActorMotion(actor, motion) { calls.push(`motion:${actor}:${motion}`); },
     setActorVisible(actor, visible) { calls.push(`visible:${actor}:${visible}`); },
+    setWeather(preset, tweenSec) { calls.push(`weather:${preset}:${tweenSec}`); return true; },
   };
 }
 
@@ -64,7 +65,7 @@ describe('stageRunner (R-B1)', () => {
     expect(matchesStageAt({ line: 0 }, 'start')).toBe(false);
   });
 
-  it('thực thi move/teleport/face/motion/visible và bỏ qua lặng lẽ cue của nhánh khác', async () => {
+  it('thực thi move/teleport/face/motion/visible/weather và bỏ qua lặng lẽ cue của nhánh khác', async () => {
     const mock = makeMockScene();
     const runner = createStageRunner({ getDayScene: () => mock });
     const step: Step = {
@@ -86,13 +87,52 @@ describe('stageRunner (R-B1)', () => {
     };
 
     await runner.stage!(step, 'start');
-    expect(mock.calls).toEqual(['teleport:NPC_A:spot.a', 'face:NPC_A:player', 'motion:NPC_A:pose_wave']);
+    expect(mock.calls).toEqual(['weather:rain_light:0', 'teleport:NPC_A:spot.a', 'face:NPC_A:player', 'motion:NPC_A:pose_wave']);
 
     await runner.stage!(step, { line: 0 });
     expect(mock.calls).toContain('move:NPC_B:spot.b:run');
 
     await runner.stage!(step, 'end');
     expect(mock.calls).toContain('visible:NPC_B:false');
+  });
+
+  it('fade (BUG-T1-B): bật màn tối và chờ tối hẳn rồi mới dời; tự tắt nếu dữ liệu quên tắt', async () => {
+    const mock = makeMockScene();
+    const log = mock.calls;
+    const runner = createStageRunner({ getDayScene: () => mock, setFade: (on) => { log.push(`fade:${on}`); }, fadeMs: 30 });
+    const step: Step = {
+      id: 'q_m1_main_01.s02', kind: 'cutscene', lines: [{ speaker: 'NPC_A', text: 'x' }],
+      stage: [
+        { cue: 'fade', on: true },
+        { cue: 'teleport', actor: 'player', to: 'spot.p' },
+        { cue: 'fade', on: false },
+        { cue: 'fade', on: true, at: { line: 0 } },
+        { cue: 'teleport', actor: 'NPC_A', to: 'spot.a', at: { line: 0 } },
+      ],
+    };
+    let done = false;
+    const p = Promise.resolve(runner.stage!(step, 'start')).then(() => { done = true; });
+    await Promise.resolve();
+    expect(log).toEqual(['fade:true']);                       // chưa dời khi màn còn đang tối dần
+    expect(done).toBe(false);
+    await p;
+    expect(log).toEqual(['fade:true', 'teleport:player:spot.p', 'fade:false']);
+    log.length = 0;
+    await runner.stage!(step, { line: 0 });
+    expect(log).toEqual(['fade:true', 'teleport:NPC_A:spot.a', 'fade:false']);   // quên tắt → tự tắt
+  });
+
+  it('fade: cảnh đã đổi giữa chừng thì không tắt màn tối của lần chuyển cảnh', async () => {
+    const a = makeMockScene();
+    let scene: StageSceneApi | null = a;
+    const fades: boolean[] = [];
+    const runner = createStageRunner({ getDayScene: () => scene, setFade: (on) => { fades.push(on); }, fadeMs: 20 });
+    const step: Step = { id: 'q.s01', kind: 'cutscene', lines: [], stage: [{ cue: 'fade', on: true }, { cue: 'teleport', actor: 'player', to: 'spot.p' }, { cue: 'fade', on: false }] };
+    const p = runner.stage!(step, 'start');
+    scene = makeMockScene();
+    await p;
+    expect(fades).toEqual([true]);
+    expect(a.calls).toEqual([]);
   });
 
   it('wait: true chặn tới khi move xong; không đặt wait thì chạy song song không chặn', async () => {

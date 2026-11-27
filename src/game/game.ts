@@ -113,7 +113,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
   const stepHooks = createStepHooks();
   stepHooks.register(createStepReactions({ idx, bus, engine, ui, getQueue: () => queue, getDayScene: dayCtrl.scene }));
   stepHooks.register(createPropHook(dayCtrl.scene));
-  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene }));
+  stepHooks.register(createStageRunner({ getDayScene: dayCtrl.scene, setFade: (on) => ui.set({ fade: { on, label: '' } }) }));
   stepHooks.register(createNarrativeRunner({ ui, fmt, conditions: engine.conditions, getQueue: () => queue, getDayScene: dayCtrl.scene, getCurrentDay: dayCtrl.currentDay }));
   queue = createPresentationQueue({
     idx, save, engine, ui, introId, profile, fmt, getDayScene: dayCtrl.scene, refreshHud: dayCtrl.refreshHud,

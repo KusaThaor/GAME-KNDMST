@@ -104,14 +104,16 @@ export interface DayScene {
   moveActor(actor: string, toMarkerId: string, pace?: 'walk' | 'run', opts?: MoveActorOptions): Promise<void>;
   /** Dịch chuyển tức thời actor tới marker, cập nhật collider & hướng mặt. */
   teleportActor(actor: string, toMarkerId: string): boolean;
-  /** Quay mặt actor về phía actor khác ('player' / 'NPC_*') hoặc marker ID. */
+  /** Quay mặt actor về phía actor khác ('player' / 'NPC_*') hoặc marker ID. Người chơi: camera đặt lại sau lưng nếu không bị khóa. */
   faceActor(actor: string, toward: string): void;
   /** Đặt motion cho actor ('idle' trả player về điều khiển tự do). */
   setActorMotion(actor: string, motion: string): void;
   /** Ẩn/hiện actor; nếu là NPC thì đồng thời vô hiệu hóa/kích hoạt lại tương tác & collider. */
   setActorVisible(actor: string, visible: boolean): void;
-  /** Trạng thái camera/điều khiển — cho công cụ test. */
-  debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number };
+  /** Đổi ánh sáng/thời tiết sang preset có sẵn (LIGHTING_PRESETS), chuyển trong `tweenSec` giây (0 = ngay). BUG-T1-B. */
+  setWeather(preset: string, tweenSec?: number): boolean;
+  /** Trạng thái camera/điều khiển — cho công cụ test. `weather` = preset ánh sáng đang dùng. */
+  debug(): { yaw: number; pitch: number; distance: number; cameraDistance: number; locked: boolean; preset: string; state: string; y: number; facing: number; weather: string };
   setActorProp(actor: string, propId: string | null): void;
   dispose(): void;
 }
@@ -596,8 +598,11 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
       const dx = tx - sx, dz = tz - sz;
       if (Math.hypot(dx, dz) < 1e-4) return;
       const yaw = Math.atan2(dx, dz);
-      if (actor === 'player') { ctl.facing = yaw; sync(); }
-      else av.root.rotation.y = yaw;
+      if (actor === 'player') {
+        ctl.facing = yaw; sync();
+        // BUG-T1-B: đạo diễn xoay người chơi thì đặt camera ra sau lưng (đang khóa cho cutscene/ảnh thì để nguyên)
+        if (!cam.isLocked) cam.snapBehind(ctl.facing, ctl);
+      } else av.root.rotation.y = yaw;
     },
     setActorMotion(actor, motion) {
       if (!VALID_MOTIONS.has(motion as Motion)) {
@@ -627,7 +632,12 @@ export async function buildDayScene(day: MemoryDay, idx: ContentIndex, gender: G
         syncNpcColliders();
       }
     },
-    debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing }),
+    setWeather(preset, tweenSec = 0) {
+      const ok = atmosphere.set(preset, tweenSec);
+      if (!ok) console.warn(`[dayScene] setWeather: không có preset "${preset}"`);
+      return ok;
+    },
+    debug: () => ({ yaw: cam.yaw, pitch: cam.pitch, distance: cam.distance, cameraDistance: cam.current, locked: cam.isLocked, preset: presetName(tracker.zone), state: ctl.state, y: ctl.y, facing: ctl.facing, weather: atmosphere.preset }),
     setActorProp(actor, propId) { actors.get(actor)?.setProp?.(propId); },
     dispose() {
       disposed = true;
