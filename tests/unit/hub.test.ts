@@ -121,6 +121,14 @@ describe('Present-day Event', () => {
       ['NPC_A', '[PLACEHOLDER] trả lời', 'reply'],
     ]);
   });
+  it('tự gõ tin nhắn ở compose_message: hiện trong thread, không đẩy nội dung vào event', () => {
+    const t = setup(); t.intro(); t.playDay1(); t.hub.runPdes(); t.playDay2(); t.hub.runPdes();
+    t.engine.complete('q_hub_pd_02.s01');
+    expect(t.engine.complete('q_hub_pd_02.s02', { text: '   ' })).toBe(false);
+    expect(t.engine.complete('q_hub_pd_02.s02', { text: 'Cuối tuần này gặp lại nha!' })).toBe(true);
+    expect(t.of('message_sent')).toEqual([{ quest_id: 'q_hub_pd_02', step_id: 'q_hub_pd_02.s02', tone: null }]);
+    expect(t.hub.threadMessages('thread.group').at(-1)).toEqual({ speaker: 'player', text: 'Cuối tuần này gặp lại nha!', origin: 'sent' });
+  });
   it('REUNION để trống: không văng lỗi, không làm gì', () => {
     const pack = makePack();
     pack.pdes.push({ id: 'pde_08', type: 'REUNION', trigger: { always: true }, effects: [], once: true });
@@ -557,6 +565,10 @@ describe('Phòng 2026 — đồ procedural (PX-50)', () => {
   });
   it('hộp phấn (shape "box") lên kệ: đáy nằm trên ván kệ, không lọt xuống', () => {
     const s = hubScene();
+    s.setBoxHint(true);
+    expect(s.scene.getObjectByName('hub:box-hint')?.visible).toBe(true);
+    s.setBoxHint(false);
+    expect(s.scene.getObjectByName('hub:box-hint')?.visible).toBe(false);
     s.setShelf([ART_M2_01]);
     let shelfItems: THREE.Object3D | null = null;
     const sz = -HUB_ROOM.size.d / 2 + 0.16;

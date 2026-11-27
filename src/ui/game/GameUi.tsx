@@ -27,8 +27,10 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
   useEffect(() => { const off = store.subscribe(setS); setS(store.get()); return off; }, []);
   const touch = s.device === 'touch';
   const blocking = !!(s.dialogue || s.choice || s.profile || s.endPrompt || s.dayEnd || s.photo?.phase === 'preview' || s.photo?.phase === 'pick' || s.minigame || s.notice || s.feedback || s.consentAsk || s.panel);
+  const canClickAdvance = !!(s.dialogue || s.narrator) && !s.panel && !s.choice && !s.profile && !s.endPrompt && !s.dayEnd && !s.minigame && !s.notice && !s.feedback && !s.consentAsk && !s.fade.on;
   return (
     <div class="g-ui" data-ready={String(s.ready)} data-mode={s.mode ?? ''} data-device={s.device}>
+      {canClickAdvance && <div class="g-next-backdrop" data-act="next-backdrop" onClick={a.next} />}
       {s.placeholderBanner && <div class="g-banner">Bản khung — nội dung [PLACEHOLDER], không phải cốt truyện</div>}
       <HudBar s={s} a={a} blocking={blocking} />
       {s.keyHint && !s.titleCard && !blocking && <KeyHintCard keyHint={s.keyHint} />}

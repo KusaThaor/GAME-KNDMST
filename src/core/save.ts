@@ -30,8 +30,8 @@ export interface RelationshipState {
 }
 /** Lượt chơi lại một Ngày: trạng thái quest và flag riêng, không ghi đè câu chuyện của lần đầu. */
 export interface ReplayState { memory_day_id: string; quests: Record<string, QuestRecord>; flags: Record<string, FlagValue> }
-/** Tin trong điện thoại lưu bằng ID (bước + lựa chọn, hoặc PDE) — không lưu chữ. */
-export type PhoneMessage = { kind: 'sent'; step_id: string; option_id: string } | { kind: 'pde'; pde_id: string };
+/** Tin trong điện thoại lưu bằng ID (bước + lựa chọn, hoặc PDE), kèm chữ tự gõ cục bộ nếu có. */
+export type PhoneMessage = { kind: 'sent'; step_id: string; option_id: string; custom_text?: string } | { kind: 'pde'; pde_id: string };
 
 export interface MinigameStats {
   wins: number; losses: number; draws: number; last_played: string | null;

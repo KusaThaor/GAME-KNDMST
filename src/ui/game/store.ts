@@ -116,7 +116,7 @@ export interface UiActions {
   albumFlip(pageId: string): void;
   albumSelect(entryId: string, index: number): void;
   phoneOpenThread(id: string | null): void;
-  phonePick(id: string): void; phoneErase(): void; phoneSend(): void;
+  phonePick(id: string): void; phoneErase(): void; phoneSend(): void; phoneSendCustom(text: string): void;
   menuRestartDay(): void; menuLeaveDay(): void; menuSafeSpot(): void; menuWipe(): void;
   /** Nút Thoát (Menu tạm dừng, cả phòng 2026, Ngày ký ức lẫn lúc đang chơi minigame): hiện Form phản hồi rồi rời game. */
   menuExit(): void;
