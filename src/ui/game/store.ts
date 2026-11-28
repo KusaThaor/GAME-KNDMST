@@ -112,8 +112,8 @@ export interface UiState {
   /** Bật chế độ Demo Tiệm Ký Ức / Hệ thống vật phẩm (chỉ bật ở bản test hoặc khi cấu hình cho phép). */
   shopDemo: boolean;
   box: BoxView | null;
-  /** Lớp chữ khi đang nhìn vào Hộp Kỷ Vật: dòng hướng dẫn + tên món dưới con trỏ. */
-  boxView: { hint: string; hover: string | null; first: boolean; hasRulebook?: boolean } | null;
+  /** Lớp chữ khi đang nhìn vào Hộp Kỷ Vật: dòng hướng dẫn + tên món dưới con trỏ + chú thích. */
+  boxView: { hint: string; hover: string | null; hoverDesc?: string | null; hoverIcon?: string | null; first: boolean; hasRulebook?: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
   cosmetics?: CosmeticsView | null;

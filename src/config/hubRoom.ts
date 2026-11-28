@@ -8,7 +8,7 @@
 import type { DialogueLine, OwnershipLabel } from '../content/types';
 
 export type HubDecorShape = 'notebooks' | 'scarf' | 'class_photo' | 'pencil_case' | 'eraser' | 'ruler';
-export interface HubDecor { id: string; name: string; shape: HubDecorShape; ownership_label: OwnershipLabel; lines: DialogueLine[] }
+export interface HubDecor { id: string; name: string; desc: string; shape: HubDecorShape; ownership_label: OwnershipLabel; lines: DialogueLine[] }
 
 const me = (text: string): DialogueLine => ({ speaker: 'player', text });
 const narr = (text: string): DialogueLine => ({ speaker: 'narrator', text });
@@ -87,18 +87,102 @@ export const HUB_BOX_LINES = {
   locked: [me('Món này còn mờ quá… để mình nhớ lại từ từ đã.')],
 };
 
+/** Lời thoại riêng biệt khi bấm vào từng kỷ vật chưa mở (màu mờ) trong hộp */
+export const HUB_ARTIFACT_LOCKED_LINES: Record<string, DialogueLine[]> = {
+  art_m1_02: [
+    narr('Một chiếc thuyền giấy gấp bằng giấy vở ô ly cũ, nếp gấp vẫn còn ngay ngắn dù giấy đã ngả màu.'),
+    me('Chiếc thuyền giấy tụi mình từng thả dưới mương nước sau trường những chiều mưa lớp 7... Mình cần nhớ lại Trang 1 trước đã.'),
+  ],
+  art_m1_03: [
+    narr('Tấm biển gỗ nhỏ khắc vụng về cùng cuốn sổ tay ghi chép những luật lệ bí mật của nhóm.'),
+    me('Tấm biển Căn cứ và sổ quy ước lớp 7! Hồi đó cả đám bày ra bao nhiêu trò nghịch ngợm. Để khi nào tới lượt mình sẽ xem kỹ lại.'),
+  ],
+  art_m1_05: [
+    narr('Bức ảnh chụp nhóm bạn thân trong buổi cắm trại, nắng hè rực rỡ trên những nụ cười vô tư.'),
+    me('Tấm ảnh chụp chung cả bọn... Nhiều năm rồi mỗi đứa một nơi. Để từ từ nhớ lại từng trang đã nhé.'),
+  ],
+};
+
 /** Dòng hướng dẫn trên màn hình (không phải thoại). */
 export const HUB_BOX_HINTS = {
-  first: 'Bấm vào mẩu giấy gấp tư đang sáng',
+  first: 'Bấm vào mẩu giấy gấp tư đang sáng · hoặc rê chuột khám phá các đồ vật trong thùng',
   normal: 'Bấm vào một món để xem · món đang sáng sẽ đưa bạn về quá khứ · Esc để đóng hộp',
 };
 
-/** Đồ linh tinh trong hộp: bấm chỉ nói một câu, không chuyển cảnh. */
+/** Chú thích gợi nhớ và lời thoại riêng cho từng món kỷ vật chính */
+export const HUB_ARTIFACT_DESCRIPTIONS: Record<string, { desc: string; icon?: string }> = {
+  art_m1_01: { desc: 'Mảnh giấy mật mã phát sáng kỳ lạ · Bấm để quay về quá khứ', icon: '📜' },
+  art_m1_02: { desc: 'Chiếc thuyền giấy ngày mưa lớp 7 · Cần nhớ lại Trang 1', icon: '⛵' },
+  art_m1_03: { desc: 'Tấm biển Căn cứ & Sổ luật mật · Kỷ vật chưa mở', icon: '🪵' },
+  art_m1_05: { desc: 'Tấm ảnh chụp chung cả nhóm hè lớp 7 · Kỷ vật chưa mở', icon: '📷' },
+};
+
+/** Đồ linh tinh trong hộp: có tên, chú thích khác nhau và lời thoại hoài niệm riêng biệt (giữ đúng thứ tự 6 món canonical). */
 export const HUB_DECOR: HubDecor[] = [
-  { id: 'deco.notebooks', name: 'Mấy cuốn vở cũ', shape: 'notebooks', ownership_label: 'HUMAN_CANON', lines: [narr('Mấy cuốn vở ô ly từ hồi cấp hai, mép quăn queo, trang bìa dán nhãn nắn nót tên lớp.'), me('Vở bài tập lớp 6… Chữ mình hồi đó viết nghệch ngoạc ghê.')] },
-  { id: 'deco.scarf', name: 'Khăn quàng đỏ', shape: 'scarf', ownership_label: 'HUMAN_CANON', lines: [narr('Chiếc khăn quàng đỏ đã bạc màu viền, vải nhăn nhúm nằm cuộn tròn dưới đáy thùng.'), me('Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là bị sao đỏ ghi tên.')] },
-  { id: 'deco.class_photo', name: 'Tấm ảnh lớp đã phai', shape: 'class_photo', ownership_label: 'HUMAN_CANON', lines: [me('Tấm ảnh lớp hồi đó… màu phai gần hết, nhìn hồi lâu mới nhận ra từng đứa.')] },
-  { id: 'deco.pencil_case', name: 'Hộp bút sắt', shape: 'pencil_case', ownership_label: 'HUMAN_CANON', lines: [me('Hộp bút cũ lắc lên còn kêu lạch cạch. Nắp hộp vẫn còn mấy vết xước hồi đi học.')] },
-  { id: 'deco.eraser', name: 'Cục gôm mòn', shape: 'eraser', ownership_label: 'HUMAN_CANON', lines: [me('Cục gôm mòn vẹt một góc, hồi đó đứa nào cũng hay mượn rồi quên trả.')] },
-  { id: 'deco.ruler', name: 'Cây thước kẻ', shape: 'ruler', ownership_label: 'HUMAN_CANON', lines: [me('Cây thước nhựa tróc hết vạch số, trên mép còn khắc mấy chữ mờ tịt.')] },
+  {
+    id: 'deco.notebooks',
+    name: 'Mấy cuốn vở cũ',
+    desc: 'Vở bài tập ô ly lớp 6 bìa hoa, dán nhãn nắn nót tên lớp',
+    shape: 'notebooks',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Mấy cuốn vở ô ly từ hồi cấp hai, mép quăn queo, trang bìa dán nhãn nắn nót tên lớp.'),
+      me('Vở bài tập lớp 6… Nhìn nét chữ nắn nót từng nét thanh nét đậm hồi đó, so với chữ viết vội bây giờ đúng là khác một trời một vực.'),
+    ],
+  },
+  {
+    id: 'deco.scarf',
+    name: 'Khăn quàng đỏ',
+    desc: 'Khăn quàng Đội viên bạc màu viền, vải nhăn nhúm thân quen',
+    shape: 'scarf',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Chiếc khăn quàng đỏ đã bạc màu viền, vải nhăn nhúm nằm cuộn tròn dưới đáy thùng.'),
+      me('Khăn quàng đỏ nè… Hồi đó sáng nào quên đeo là sợ bị Đội cờ đỏ ghi tên vào sổ đầu bài, phải chạy đi mượn khắp nơi.'),
+    ],
+  },
+  {
+    id: 'deco.class_photo',
+    name: 'Tấm ảnh lớp đã phai',
+    desc: 'Ảnh chụp tập thể lớp 6 khai giảng, màu phim đã ngả vàng',
+    shape: 'class_photo',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Bức ảnh tập thể chụp trước cổng trường năm khai giảng lớp 6, màu ảnh đã ngả sang tông nâu ấm áp.'),
+      me('Tấm ảnh lớp hồi đó… Mắt đứa nào cũng mở to ngơ ngác trước ống kính. Nhiều đứa trong này giờ đã lập gia đình rồi.'),
+    ],
+  },
+  {
+    id: 'deco.pencil_case',
+    name: 'Hộp bút sắt',
+    desc: 'Hộp bút hai tầng sơn xanh tróc góc, lắc lên kêu lạch cạch',
+    shape: 'pencil_case',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Hộp bút bằng sắt sơn xanh tróc sơn ở các góc, mở ra còn vương mùi mực tím và những mẩu tẩy vụn.'),
+      me('Hộp bút sắt hồi lớp 6 nè… Lắc lên kêu lạch cạch vui tai. Nhớ hồi đó ai có hộp bút hai tầng là oách nhất lớp!'),
+    ],
+  },
+  {
+    id: 'deco.eraser',
+    name: 'Cục gôm mòn',
+    desc: 'Cục gôm thơm bị gặm mất góc, từng chuyền tay cả bàn',
+    shape: 'eraser',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Cục gôm hình chữ nhật thơm mùi hoa quả, góc bị bấm lỗ kim và vẹt hẳn một đầu.'),
+      me('Cục gôm thơm huyền thoại! Hồi đó đứa nào trong bàn cũng mượn rồi tiện tay cắn một góc, chuyền qua chuyền lại mòn vẹt.'),
+    ],
+  },
+  {
+    id: 'deco.ruler',
+    name: 'Cây thước kẻ',
+    desc: 'Thước kẻ dẻo in bảng cửu chương mờ nét, mép khắc chi chít',
+    shape: 'ruler',
+    ownership_label: 'HUMAN_CANON',
+    lines: [
+      narr('Cây thước nhựa dẻo 20cm, các vạch chia độ đã mờ theo năm tháng, trên mặt thước còn chi chít nét khắc bút bi.'),
+      me('Cây thước kẻ này chuyên dùng để kẻ khung bài kiểm tra và… gõ bàn mỗi lần cả đám ồn ào. Vẫn còn nguyên vẹn ghê.'),
+    ],
+  },
 ];

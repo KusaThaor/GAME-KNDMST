@@ -6,16 +6,40 @@ import type { UiActions, UiState } from '../store';
 const ART_LABEL: Record<string, string> = { hidden: '', dim: 'Chưa nhớ ra', glowing: 'Đang sáng', visited: 'Đã ghé lại', on_shelf: 'Trên kệ' };
 
 export function Box3dBar({ boxView, touch, a }: { boxView: NonNullable<UiState['boxView']>; touch: boolean; a: UiActions }) {
+  const hasHover = !!boxView.hover;
   return (
-    <div class="g-box3d" data-testid="panel-box3d" data-first={String(boxView.first)}>
-      <b>Hộp Kỷ Vật</b>
-      <span class="g-box3d-hint" data-testid="box-hint">{boxView.hint}</span>
-      <span class="g-box3d-hover" data-testid="box-hover">{boxView.hover ?? ''}</span>
-      {boxView.hasRulebook && (
-        <button data-act="open-rulebook" onClick={a.openRulebook}>Sổ Căn cứ</button>
-      )}
-      <button data-act="close" onClick={a.closePanel}>Đóng hộp{!touch && <> <kbd>Esc</kbd></>}</button>
-    </div>
+    <>
+      <div class="g-box3d" data-testid="panel-box3d" data-first={String(boxView.first)}>
+        <span class="g-box3d-title">📦 Hộp Kỷ Vật</span>
+        <span class="g-box3d-hint" data-testid="box-hint">{boxView.hint}</span>
+        <span class="g-box3d-hover" data-testid="box-hover">
+          {boxView.hover ? `${boxView.hover}${boxView.hoverDesc ? ` · ${boxView.hoverDesc}` : ''}` : ''}
+        </span>
+        {boxView.hasRulebook && (
+          <button data-act="open-rulebook" onClick={a.openRulebook}>Sổ Căn cứ</button>
+        )}
+        <button data-act="close" onClick={a.closePanel}>Đóng hộp{!touch && <> <kbd>Esc</kbd></>}</button>
+      </div>
+
+      <div class={`g-box3d-card ${hasHover ? 'active' : ''}`} data-testid="box-item-card">
+        {hasHover ? (
+          <>
+            <div class="g-box3d-card-header">
+              <span class="g-box3d-card-icon">{boxView.hoverIcon ?? '🔍'}</span>
+              <strong class="g-box3d-card-name">{boxView.hover}</strong>
+            </div>
+            {boxView.hoverDesc && <p class="g-box3d-card-desc">{boxView.hoverDesc}</p>}
+            <div class="g-box3d-card-action">
+              <span>{touch ? 'Chạm để tương tác' : 'Bấm chuột để xem ký ức'}</span>
+            </div>
+          </>
+        ) : (
+          <div class="g-box3d-card-idle">
+            <span>💡 Rê chuột lên các đồ vật trong thùng để xem chú thích · Bấm vào món đồ để xem ký ức</span>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

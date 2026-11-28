@@ -21,11 +21,11 @@ function CameraIcon() {
 
 export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking: boolean }) {
   const touch = s.device === 'touch';
-  const canSelfie = !!(s.mode && !s.fade.on && !s.minigame && !s.consentAsk && !s.profile);
+  const canSelfie = !!(s.mode && !s.fade.on && !s.minigame && !s.consentAsk && !s.profile && s.panel !== 'box3d');
   const wallet = s.cosmetics?.wallet ?? SHOP_DEMO_CONFIG.demo_wallet;
   return (
     <>
-      {s.mode && !s.fade.on && (
+      {s.mode && !s.fade.on && s.panel !== 'box3d' && (
         <div class="g-top">
           <div class="g-top-left">
             {s.objective && (

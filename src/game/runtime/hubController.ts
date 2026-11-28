@@ -5,7 +5,7 @@
 import { DEFAULT_OUTFIT, DEFAULT_ROOM_DECOR, type OutfitStyle, type RoomDecorStyle } from '../../config/cosmetics';
 import { HUB_CONFIG } from '../../config/hub';
 import { SHOP_DEMO_CONFIG } from '../../config/shopDemo';
-import { HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../../config/hubRoom';
+import { HUB_ARTIFACT_DESCRIPTIONS, HUB_ARTIFACT_LOCKED_LINES, HUB_BOX_HINTS, HUB_BOX_LINES, HUB_DECOR } from '../../config/hubRoom';
 import type { ContentIndex } from '../../content/indexContent';
 import type { AlbumEntry, DialogueLine } from '../../content/types';
 import type { EventBus } from '../../core/eventBus';
@@ -72,19 +72,35 @@ export function createHubController(deps: HubControllerDeps) {
   const boxFirstTime = () => { const id = firstArtifactId(); return !!id && hub.canOpen(id) === 'first'; };
 
   /** Các món đang nằm trong hộp: kỷ vật chưa lên kệ (theo thứ tự Trang) + đồ linh tinh. */
-  function boxItems(): (BoxItemView & { clickable: boolean; name: string })[] {
-    const first = boxFirstTime();
+  function boxItems(): (BoxItemView & { clickable: boolean; name: string; desc: string; icon?: string })[] {
     const arts = hub.compartments().filter((c) => c.open).flatMap((c) => c.artifacts)
       .filter((x) => x.state === 'glowing' || x.state === 'dim')
-      .map(({ artifact, state }) => ({
-        id: artifact.id,
-        kind: 'artifact' as const,
-        shape: artifact.shape ?? 'box',
-        name: fmt(artifact.name),
-        state: state === 'glowing' ? 'glow' as const : 'dim' as const,
-        clickable: state === 'glowing' || !first,                       // lần đầu: món mờ không bấm được
-      }));
-    const decor = HUB_DECOR.map((d) => ({ id: d.id, kind: 'decor' as const, shape: d.shape, name: d.name, state: 'normal' as const, clickable: !first }));
+      .map(({ artifact, state }) => {
+        const meta = HUB_ARTIFACT_DESCRIPTIONS[artifact.id] ?? {
+          desc: state === 'glowing' ? 'Kỷ vật đang sáng · Bấm để quay về quá khứ' : 'Kỷ vật chưa mở · Cần nhớ lại các trang trước',
+          icon: state === 'glowing' ? '✨' : '📦',
+        };
+        return {
+          id: artifact.id,
+          kind: 'artifact' as const,
+          shape: artifact.shape ?? 'box',
+          name: fmt(artifact.name),
+          desc: meta.desc,
+          icon: meta.icon ?? (state === 'glowing' ? '✨' : '📦'),
+          state: state === 'glowing' ? 'glow' as const : 'dim' as const,
+          clickable: true, // Mọi vật trong hộp đều có thể tương tác xem chú thích và độc thoại
+        };
+      });
+    const decor = HUB_DECOR.map((d) => ({
+      id: d.id,
+      kind: 'decor' as const,
+      shape: d.shape,
+      name: d.name,
+      desc: d.desc,
+      icon: d.shape === 'pencil_case' ? '✏️' : d.shape === 'eraser' ? '🧼' : d.shape === 'ruler' ? '📐' : d.shape === 'scarf' ? '🧣' : d.shape === 'notebooks' ? '📓' : '📷',
+      state: 'normal' as const,
+      clickable: true,
+    }));
     return [...arts, ...decor];
   }
 
@@ -95,6 +111,8 @@ export function createHubController(deps: HubControllerDeps) {
       boxView: {
         hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal,
         hover: ui.get().boxView?.hover ?? null,
+        hoverDesc: ui.get().boxView?.hoverDesc ?? null,
+        hoverIcon: ui.get().boxView?.hoverIcon ?? null,
         first,
         hasRulebook: rulebookView({ save, fmt }).unlocked,
       },
@@ -276,9 +294,17 @@ export function createHubController(deps: HubControllerDeps) {
     const s = ui.get();
     if (s.panel !== 'box3d' || s.dialogue || s.notice || s.choice || s.fade.on || boxBusy) return;
     const item = boxItems().find((x) => x.id === id);
-    if (!item?.clickable) return;                                       // lần đầu: chỉ mẩu giấy mật lệnh bấm được
-    if (item.kind === 'decor') { const d = HUB_DECOR.find((x) => x.id === id); if (d) void queue.enqueue(async () => { await sayBox(d.lines); }); return; }
-    if (!hub.canOpen(id)) { void queue.enqueue(async () => { await sayBox(HUB_BOX_LINES.locked); }); return; }   // chưa tới lượt: chỉ nói, không chuyển cảnh
+    if (!item) return;
+    if (item.kind === 'decor') {
+      const d = HUB_DECOR.find((x) => x.id === id);
+      if (d) void queue.enqueue(async () => { await sayBox(d.lines); });
+      return;
+    }
+    if (!hub.canOpen(id)) {
+      const lockedLines = HUB_ARTIFACT_LOCKED_LINES[id] ?? HUB_BOX_LINES.locked;
+      void queue.enqueue(async () => { await sayBox(lockedLines); });
+      return;
+    }
     if (flow.state !== 'hub_idle') return;
     // Kỷ vật đang sáng: Player nói câu móc (hook_2026) rồi về quá khứ — cùng một đường với trước đây (hub.openArtifact → goDay).
     const art = idx.artifacts.get(id);
@@ -307,10 +333,20 @@ export function createHubController(deps: HubControllerDeps) {
     if (p === 'box3d') {
       hubMouseHover = null;
       hubScene?.setBoxItems(boxItems());
-      ui.set({ boxView: { hint: '', hover: null, first: false } });
+      const first = boxFirstTime();
+      ui.set({
+        boxView: {
+          hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal,
+          hover: null,
+          hoverDesc: null,
+          hoverIcon: null,
+          first,
+          hasRulebook: rulebookView({ save, fmt }).unlocked,
+        },
+      });
       if (!boxLinesSaid) {
         boxLinesSaid = true;
-        const lines = boxFirstTime() ? HUB_BOX_LINES.open_first : HUB_BOX_LINES.open_again;
+        const lines = first ? HUB_BOX_LINES.open_first : HUB_BOX_LINES.open_again;
         void queue.enqueue(async () => { if (ui.get().panel === 'box3d') await sayBox(lines); });
       }
     }
@@ -490,13 +526,20 @@ export function createHubController(deps: HubControllerDeps) {
     if (!hubScene || engine.context?.kind !== 'hub') return false;
     const s = ui.get();
     if (s.panel === 'box3d') {
-      // cận cảnh hộp: rê chuột lên món nào thì món đó sáng + hiện tên; bấm để chọn
+      // cận cảnh hộp: rê chuột lên món nào thì món đó sáng + hiện tên và chú thích; bấm để chọn
       const busy = !!(s.dialogue || s.notice || s.choice || s.fade.on) || boxBusy;
       const id = busy ? null : hubScene.pick(x, y);
-      const item = id ? boxItems().find((i) => i.id === id && i.clickable) ?? null : null;
+      const item = id ? boxItems().find((i) => i.id === id) ?? null : null;
       hubScene.setHover(item?.id ?? null);
       setCursor(item ? 'pointer' : '');
-      if ((item?.name ?? null) !== (s.boxView?.hover ?? null) && s.boxView) ui.set({ boxView: { ...s.boxView, hover: item?.name ?? null } });
+      if (s.boxView) {
+        const hoverName = item?.name ?? null;
+        const hoverDesc = item?.desc ?? null;
+        const hoverIcon = item?.icon ?? null;
+        if (hoverName !== s.boxView.hover || hoverDesc !== s.boxView.hoverDesc) {
+          ui.set({ boxView: { ...s.boxView, hover: hoverName, hoverDesc, hoverIcon } });
+        }
+      }
       if (kind === 'click' && item) boxPick(item.id);
       return true;
     }
@@ -571,7 +614,7 @@ export function createHubController(deps: HubControllerDeps) {
         nearest: hubScene.nearest(),
         boxOpen: hubScene.boxOpen,
         boxBlend: hubScene.boxBlend,
-        items: boxItems().map(({ id, kind, shape, state, clickable }) => ({ id, kind, shape, state, clickable })),
+        items: boxItems().map(({ id, kind, shape, state, clickable, name, desc }) => ({ id, kind, shape, state, clickable, name, desc })),
       }
       : null),
     hubTeleport: (x: number, z: number, yaw?: number) => {

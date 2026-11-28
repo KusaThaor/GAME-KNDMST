@@ -273,11 +273,92 @@ body.game canvas { display: block; }
 .g-mg-actions { display: flex; gap: 10px; justify-content: center; width: 100%; padding-top: 4px; }
 .g-mg-actions button { min-width: 120px; }
 .g-quest { display: flex; gap: 8px; align-items: center; font-size: 15px; }
-.g-box3d { position: absolute; left: 50%; top: calc(16px + env(safe-area-inset-top)); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); background: rgba(255,250,238,.92); border: 3px solid var(--ink); border-radius: 14px; padding: 8px 14px; font-size: 15px; pointer-events: none; }
+.g-box3d {
+  position: absolute;
+  left: 50%;
+  top: calc(16px + env(safe-area-inset-top));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: calc(100% - 32px);
+  background: rgba(255, 250, 238, .96);
+  border: 2px solid var(--ink);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  padding: 8px 16px;
+  font-size: 15px;
+  pointer-events: none;
+  z-index: 12;
+}
 .g-box3d button { pointer-events: auto; }
-.g-box3d-hint { opacity: .8; }
-.g-box3d-hover { font-weight: 800; min-width: 1em; }
-.g-box3d[data-first="true"] .g-box3d-hint { font-weight: 800; color: #9a5a00; opacity: 1; }
+.g-box3d-title { font-weight: 800; color: #2c2018; }
+.g-box3d-hint { opacity: .85; color: #4a382c; }
+.g-box3d-hover { font-weight: 700; color: #8e4b10; }
+.g-box3d[data-first="true"] .g-box3d-hint { font-weight: 700; color: #9a5a00; opacity: 1; }
+
+/* Card chú thích chi tiết hiển thị dưới đáy màn hình cận cảnh thùng đồ */
+.g-box3d-card {
+  position: absolute;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  pointer-events: none;
+  background: rgba(30, 24, 20, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fffaf0;
+  border: 1.5px solid rgba(255, 220, 160, 0.35);
+  border-radius: 16px;
+  padding: 12px 24px;
+  max-width: min(560px, calc(100vw - 32px));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.g-box3d-card.active {
+  background: rgba(28, 22, 17, 0.94);
+  border-color: rgba(255, 210, 120, 0.7);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45), 0 0 20px rgba(245, 180, 80, 0.2);
+  transform: translateX(-50%) translateY(-2px);
+}
+.g-box3d-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 17px;
+  color: #ffe6a3;
+}
+.g-box3d-card-icon {
+  font-size: 20px;
+}
+.g-box3d-card-name {
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.g-box3d-card-desc {
+  margin: 6px 0 8px 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #f3ede2;
+  font-style: italic;
+  font-family: var(--font-handwriting, inherit);
+}
+.g-box3d-card-action {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e5b364;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.g-box3d-card-idle {
+  font-size: 13.5px;
+  color: rgba(255, 245, 230, 0.75);
+}
 .g-menu { min-width: 300px; z-index: 4; }   /* Esc mở được cả khi đang có thoại: menu luôn nằm trên khung thoại */
 .g-notice.fx-album_restore { animation: g-restore 1.2s ease-out; }
 @keyframes g-restore { from { filter: blur(6px) grayscale(1); opacity: .2; } to { filter: none; opacity: 1; } }
