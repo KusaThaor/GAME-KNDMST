@@ -595,9 +595,16 @@ export function createHubController(deps: HubControllerDeps) {
     if (!hubScene) return;
     const free = !queue.locked();
     const drag = input.takeLook();                    // luôn đọc để chuyển động lúc đang khóa không dồn lại
+    // Phím mũi tên Left / Right dùng để xoay người (Arrow turn), còn WASD dùng để di chuyển
     const turnKey = (input.down.has('ArrowLeft') ? 1 : 0) - (input.down.has('ArrowRight') ? 1 : 0);
+    const mv = moveIntent();
+    const move = free && mv ? {
+      forward: mv.forward,
+      strafe: (input.down.has('KeyD') ? 1 : 0) - (input.down.has('KeyA') ? 1 : 0) || (input.stick ? mv.strafe : 0),
+      run: mv.run,
+    } : null;
     hubScene.update(dt, t, {
-      move: free ? moveIntent() : null,
+      move,
       cursor: free ? hubCursor : null,
       drag: free && (drag.dx || drag.dy) ? drag : null,
       turn: free ? turnKey : 0,

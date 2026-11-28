@@ -405,7 +405,9 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   ];
   const body = R.move.body_radius;
   const p: HubPlayer = { x: R.spawn.x, z: R.spawn.z, yaw: 0, pitch: R.look.base_pitch_deg * D2R };
+  let bodyYaw = p.yaw;
   let yawT = p.yaw, pitchT = p.pitch;
+  let pitchBase = p.pitch;
   function settle(x: number, z: number) {
     let nx = clamp(x, -W + body, W - body), nz = clamp(z, -Dz + body, Dz - body);
     for (const r of rects) {
@@ -431,11 +433,14 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
     sitting = sit;
     if (sit) {
       settle(L.bed.x - 0.55, L.bed.z);
+      bodyYaw = -Math.PI / 2;
       yawT = -Math.PI / 2;
+      pitchBase = -0.05;
       pitchT = -0.05;
       eyeHeight = 0.98;
     } else {
       eyeHeight = R.eye_height;
+      pitchBase = base;
     }
   }
 
@@ -489,21 +494,25 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
     },
     get isSitting() { return sitting; },
     update(dt, t, ctl) {
+      // 1. Kéo chuột hoặc chạm cảm ứng (drag): xoay góc nhìn 360 độ tự do
+      if (ctl?.drag && (ctl.drag.dx || ctl.drag.dy)) {
+        bodyYaw -= ctl.drag.dx * lookCfg.touch_deg_per_px * D2R;
+        pitchBase = clamp(pitchBase - ctl.drag.dy * lookCfg.touch_deg_per_px * D2R, pDown, pUp);
+      }
+      // 2. Phím mũi tên (ArrowLeft / ArrowRight): xoay người 360 độ mượt mà
+      if (ctl?.turn) {
+        bodyYaw += ctl.turn * 2.5 * dt;
+      }
+      // 3. Rê chuột (cursor): liếc nhìn tự nhiên theo vị trí con trỏ chuột trong góc cố định (±35°),
+      // TUYỆT ĐỐI KHÔNG quay vòng vòng liên tục khi chuột ở mép màn hình.
       if (ctl?.cursor && !boxOpen) {
         const cy = curve(ctl.cursor.y);
-        pitchT = cy >= 0 ? base + cy * (pUp - base) : base + cy * (base - pDown);
-        // Khi rê chuột về phía mép màn hình, tự động quay người 360 độ liên tục
-        if (Math.abs(ctl.cursor.x) > 0.35) {
-          const speed = Math.sign(ctl.cursor.x) * (Math.abs(ctl.cursor.x) - 0.35) / 0.65 * 2.8;
-          yawT -= speed * dt;
-        }
-      }
-      if (ctl?.drag && (ctl.drag.dx || ctl.drag.dy)) {
-        yawT -= ctl.drag.dx * lookCfg.touch_deg_per_px * D2R;
-        pitchT = clamp(pitchT - ctl.drag.dy * lookCfg.touch_deg_per_px * D2R, pDown, pUp);
-      }
-      if (ctl?.turn) {
-        yawT += ctl.turn * 2.5 * dt;
+        pitchT = cy >= 0 ? pitchBase + cy * (pUp - pitchBase) : pitchBase + cy * (pitchBase - pDown);
+        const headYaw = -curve(ctl.cursor.x) * (35 * D2R);
+        yawT = bodyYaw + headYaw;
+      } else {
+        yawT = bodyYaw;
+        pitchT = pitchBase;
       }
       const k = 1 - Math.exp(-lookCfg.follow * dt);
       p.yaw += (yawT - p.yaw) * k; p.pitch += (pitchT - p.pitch) * k;
@@ -567,7 +576,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
     reachable(id) { return distTo(id) <= R.reach; },
     teleport(x, z, yaw) {
       settle(x, z);
-      if (yaw !== undefined) { p.yaw = yawT = yaw; }
+      if (yaw !== undefined) { p.yaw = yawT = bodyYaw = yaw; }
       placeCamera();
     },
     setLighting(name) {

@@ -94,8 +94,8 @@ export function HudBar({ s, a, blocking }: { s: UiState; a: UiActions; blocking:
       )}
       {s.mode === 'hub' && !s.fade.on && !blocking && (
         touch
-          ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để nhìn quanh</div>
-          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · rê chuột để nhìn quanh · <kbd>E</kbd> hoặc bấm chuột để tương tác</div>
+          ? <div class="hud-keys" data-testid="keys" data-device="touch">Kéo nút tròn để đi · Kéo màn hình để nhìn quanh 360°</div>
+          : <div class="hud-keys" data-testid="keys" data-device="keyboard"><kbd>WASD</kbd> đi · <kbd>Shift</kbd> chạy · kéo chuột hoặc <kbd>←</kbd> <kbd>→</kbd> xoay 360° · <kbd>E</kbd> hoặc bấm chuột để tương tác</div>
       )}
       {s.prompt && !blocking && !(touch && (s.mode === 'day' || s.mode === 'hub')) && (
         <div class="hud-prompt" data-testid="prompt"><kbd>{s.prompt.key}</kbd>{s.prompt.text}</div>
