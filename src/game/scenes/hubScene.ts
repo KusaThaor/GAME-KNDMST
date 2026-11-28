@@ -30,8 +30,10 @@ export interface HubControl {
   move: HubMove | null;
   /** Vị trí con trỏ chuột (NDC, -1..1): nhìn về phía con trỏ. */
   cursor: { x: number; y: number } | null;
-  /** Kéo trên màn hình cảm ứng (px, cộng dồn từ khung trước). */
+  /** Kéo chuột hoặc cảm ứng (px, cộng dồn từ khung trước). */
   drag: { dx: number; dy: number } | null;
+  /** Xoay góc nhìn bằng phím mũi tên (-1 quay phải, +1 quay trái). */
+  turn?: number;
 }
 /** Một món trong Hộp Kỷ Vật. `glow` = món kế tiếp (bấm được để về quá khứ); `dim` = chưa tới lượt. */
 export interface BoxItemView { id: string; kind: 'artifact' | 'decor'; shape: string; state: 'glow' | 'normal' | 'dim' }
@@ -66,6 +68,12 @@ export interface HubScene {
   setBoxHint(visible: boolean): void;
   /** Áp dụng gói/màu trang trí phòng 2026 theo thời gian thực. */
   setRoomDecor(decor: RoomDecorStyle): void;
+  /** Bật / tắt đèn bàn làm việc. */
+  toggleLamp(): boolean;
+  readonly lampOn: boolean;
+  /** Ngồi lên / đứng dậy khỏi giường. */
+  toggleSitting(): boolean;
+  readonly isSitting: boolean;
   dispose(): void;
 }
 
@@ -310,6 +318,14 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   lampGlow.name = 'lamp:glow'; lampGlow.rotation.x = -Math.PI / 2;
   lampGlow.position.set(L.desk.x + 0.55, 0.823, L.desk.z - 0.05); lampGlow.scale.set(1, 0.85, 1); lampGlow.renderOrder = 1;
   room.add(lampGlow);
+  let lampOn = true;
+  function setLampState(on: boolean) {
+    lampOn = on;
+    shadeMat.emissiveIntensity = on ? 1 : 0;
+    bulbMat.color.copy(on ? BULB_ON : BULB_OFF);
+    lampGlow.visible = on;
+    glowMat.opacity = on ? 0.22 : 0;
+  }
   // đồ trang trí K2 (kệ sách, tủ áo, ghế, cửa, cây, đèn trần, bảng ghim, móc balo) — gộp riêng một nhóm
   room.add(mergeStatic(buildHubDecor(R.decor)));
 
@@ -345,6 +361,19 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   const rulebook = put(makeRulebook(), L.rulebook.x, 1.45 + 0.025, -Dz + 0.18);
   rulebook.rotation.y = 0.3;
   items.set('itr.hub.rulebook', rulebook); spots.set('itr.hub.rulebook', L.rulebook);
+  // Đèn bàn có thể bật / tắt
+  items.set('itr.hub.lamp', lamp); spots.set('itr.hub.lamp', { x: L.desk.x + 0.7, z: L.desk.z - 0.2 });
+  // Giường ngủ có thể nằm / ngồi nghỉ
+  const bedHit = put(box(1.5, 0.5, 2.2, '#000000', 0), L.bed.x, 0.25, L.bed.z);
+  bedHit.visible = false;
+  items.set('itr.hub.bed', bedHit); spots.set('itr.hub.bed', { x: L.bed.x - 0.55, z: L.bed.z });
+  // Sách lưu bút trên kệ sách tường trái (decor.bookshelf x = -3.34)
+  const bookProp = makeRulebook();
+  bookProp.scale.setScalar(0.85);
+  bookProp.rotation.y = Math.PI / 2 + 0.15;
+  const bookItem = put(bookProp, -3.22, 1.05, -0.6);
+  items.set('itr.hub.book', bookItem); spots.set('itr.hub.book', { x: -2.85, z: -0.6 });
+
   for (const it of hub.interactables) if (!items.has(it.id)) {
     const p = { x: it.position?.[0] ?? 0, z: it.position?.[1] ?? 0 };
     items.set(it.id, put(box(0.3, 0.3, 0.3, '#c0b090'), p.x, 0.15, p.z)); spots.set(it.id, p);
@@ -396,12 +425,26 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
   // lookAt của camera quay trục −Z về phía mục tiêu (Object3D thường quay +Z) → phải dùng một camera tạm
   const boxCamQ = (() => { const o = new THREE.PerspectiveCamera(); o.position.copy(boxCamPos); o.lookAt(L.memory_box.x, 0.12, L.memory_box.z); return o.quaternion.clone(); })();
   let boxOpen = false, blend = 0;
+  let eyeHeight: number = R.eye_height;
+  let sitting = false;
+  function setSittingState(sit: boolean) {
+    sitting = sit;
+    if (sit) {
+      settle(L.bed.x - 0.55, L.bed.z);
+      yawT = -Math.PI / 2;
+      pitchT = -0.05;
+      eyeHeight = 0.98;
+    } else {
+      eyeHeight = R.eye_height;
+    }
+  }
+
   const lookCfg = R.look;
-  const maxYaw = lookCfg.max_yaw_deg * D2R, pUp = lookCfg.pitch_up_deg * D2R, pDown = -lookCfg.pitch_down_deg * D2R, base = lookCfg.base_pitch_deg * D2R;
+  const pUp = lookCfg.pitch_up_deg * D2R, pDown = -lookCfg.pitch_down_deg * D2R, base = lookCfg.base_pitch_deg * D2R;
   const curve = (v: number) => { const a = Math.abs(v); return a <= lookCfg.dead_zone ? 0 : Math.sign(v) * Math.min(1, (a - lookCfg.dead_zone) / (1 - lookCfg.dead_zone)); };
   const forwardOf = (yaw: number) => ({ x: -Math.sin(yaw), z: -Math.cos(yaw) });
   function placeCamera() {
-    fpPos.set(p.x, R.eye_height, p.z);
+    fpPos.set(p.x, eyeHeight, p.z);
     fpE.set(p.pitch, p.yaw, 0, 'YXZ'); fpQ.setFromEuler(fpE);
     const e = blend * blend * (3 - 2 * blend);
     camera.position.lerpVectors(fpPos, boxCamPos, e);
@@ -435,19 +478,39 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
     get player() { return { ...p }; },
     get boxOpen() { return boxOpen; },
     get boxBlend() { return blend; },
+    toggleLamp() {
+      setLampState(!lampOn);
+      return lampOn;
+    },
+    get lampOn() { return lampOn; },
+    toggleSitting() {
+      setSittingState(!sitting);
+      return sitting;
+    },
+    get isSitting() { return sitting; },
     update(dt, t, ctl) {
-      if (ctl?.cursor) {
-        yawT = -curve(ctl.cursor.x) * maxYaw;
+      if (ctl?.cursor && !boxOpen) {
         const cy = curve(ctl.cursor.y);
         pitchT = cy >= 0 ? base + cy * (pUp - base) : base + cy * (base - pDown);
+        // Khi rê chuột về phía mép màn hình, tự động quay người 360 độ liên tục
+        if (Math.abs(ctl.cursor.x) > 0.35) {
+          const speed = Math.sign(ctl.cursor.x) * (Math.abs(ctl.cursor.x) - 0.35) / 0.65 * 2.8;
+          yawT -= speed * dt;
+        }
       }
       if (ctl?.drag && (ctl.drag.dx || ctl.drag.dy)) {
-        yawT = clamp(yawT - ctl.drag.dx * lookCfg.touch_deg_per_px * D2R, -maxYaw, maxYaw);
+        yawT -= ctl.drag.dx * lookCfg.touch_deg_per_px * D2R;
         pitchT = clamp(pitchT - ctl.drag.dy * lookCfg.touch_deg_per_px * D2R, pDown, pUp);
+      }
+      if (ctl?.turn) {
+        yawT += ctl.turn * 2.5 * dt;
       }
       const k = 1 - Math.exp(-lookCfg.follow * dt);
       p.yaw += (yawT - p.yaw) * k; p.pitch += (pitchT - p.pitch) * k;
       const mv = ctl?.move;
+      if (mv && sitting && (mv.forward || mv.strafe)) {
+        setSittingState(false);
+      }
       if (mv && !boxOpen && (mv.forward || mv.strafe)) {
         const f = forwardOf(p.yaw), r = { x: -f.z, z: f.x };
         const len = Math.hypot(mv.forward, mv.strafe) || 1;
@@ -504,7 +567,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
     reachable(id) { return distTo(id) <= R.reach; },
     teleport(x, z, yaw) {
       settle(x, z);
-      if (yaw !== undefined) { p.yaw = yawT = clamp(yaw, -maxYaw, maxYaw); }
+      if (yaw !== undefined) { p.yaw = yawT = yaw; }
       placeCamera();
     },
     setLighting(name) {
@@ -516,6 +579,7 @@ export function buildHubScene(hub: HubContent, config: HubConfig): HubScene {
       win.pane.material.color.set(config.window_colors[pr.window]);
       win.sky.visible = pr.window === 'night';
       const lampK = clamp(pr.lamp, 0, 1);
+      lampOn = lampK > 0;
       shadeMat.emissiveIntensity = lampK;
       bulbMat.color.copy(BULB_OFF).lerp(BULB_ON, lampK);
       glowMat.opacity = 0.22 * lampK; lampGlow.visible = lampK > 0;

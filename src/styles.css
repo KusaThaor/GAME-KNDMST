@@ -359,6 +359,175 @@ body.game canvas { display: block; }
   font-size: 13.5px;
   color: rgba(255, 245, 230, 0.75);
 }
+
+/* --- Sổ Lưu Bút Kỷ Niệm & Sách Kệ Tủ (Book Reader Modal) --- */
+.g-book-modal {
+  max-width: min(860px, calc(100vw - 32px));
+  width: 100%;
+  background: #fbf7ee;
+  border-radius: 20px;
+  border: 3px solid var(--ink);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+}
+.g-book-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed #ded4c1;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.g-book-title-box {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.g-book-title-box h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #3b2816;
+}
+.g-book-page-counter {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #8c6f4e;
+  background: #eee4d1;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.g-book-container {
+  position: relative;
+  background: #faf4e6;
+  border: 2px solid #cfbe9e;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.06);
+  min-height: 380px;
+  display: flex;
+}
+.g-book-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 18px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.01) 45%, rgba(0, 0, 0, 0.01) 55%, rgba(0, 0, 0, 0.08));
+  pointer-events: none;
+  z-index: 2;
+}
+.g-book-spread {
+  display: flex;
+  width: 100%;
+}
+.g-book-page {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.g-book-page-left {
+  border-right: 1px solid #e2d5bd;
+}
+.g-book-page-right {
+  border-left: 1px solid #fdfbf7;
+}
+.g-book-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #a46d33;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.g-book-chapter-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #36281a;
+  font-weight: 800;
+}
+.g-book-body {
+  flex: 1;
+  font-family: var(--font-handwriting, 'Patrick Hand', 'Caveat', cursive, sans-serif);
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: #2b1f14;
+}
+.g-book-body p {
+  margin: 0 0 10px 0;
+}
+.g-book-signature {
+  margin-top: 10px;
+  font-style: italic;
+  font-size: 15px;
+  color: #8b3a3a;
+  font-family: var(--font-handwriting, inherit);
+  text-align: right;
+}
+.g-book-note {
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: #5d4a36;
+  background: #f1e7d2;
+  border-left: 3px solid #b89565;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+.g-book-page-number {
+  position: absolute;
+  bottom: 8px;
+  font-size: 12px;
+  color: #a4917a;
+  font-weight: 700;
+}
+.g-book-page-left .g-book-page-number { left: 24px; }
+.g-book-page-right .g-book-page-number { right: 24px; }
+.g-book-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 10px;
+}
+.g-book-btn {
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 2px solid var(--ink);
+  background: #f2e6cf;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.g-book-btn:hover:not(:disabled) {
+  background: #e5d4b5;
+  transform: translateY(-1px);
+}
+.g-book-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.g-book-hint {
+  font-size: 13px;
+  color: #7d6b56;
+  font-style: italic;
+}
+@media (max-width: 640px) {
+  .g-book-spread {
+    flex-direction: column;
+  }
+  .g-book-spine {
+    display: none;
+  }
+  .g-book-page-left {
+    border-right: none;
+    border-bottom: 1px dashed #e2d5bd;
+  }
+}
 .g-menu { min-width: 300px; z-index: 4; }   /* Esc mở được cả khi đang có thoại: menu luôn nằm trên khung thoại */
 .g-notice.fx-album_restore { animation: g-restore 1.2s ease-out; }
 @keyframes g-restore { from { filter: blur(6px) grayscale(1); opacity: .2; } to { filter: none; opacity: 1; } }

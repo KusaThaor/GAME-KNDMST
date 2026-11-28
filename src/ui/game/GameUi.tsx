@@ -15,6 +15,7 @@ import { ConsentModal, DayEndModal, EndPromptModal, FeedbackModal, NoticeModal }
 import { PhotoOverlay } from './overlays/PhotoOverlay';
 import { TitleCardOverlay } from './overlays/TitleCardOverlay';
 import { AlbumPanel } from './panels/AlbumPanel';
+import { BookModal } from './panels/BookModal';
 import { Box3dBar, BoxPanel } from './panels/BoxPanel';
 import { JournalPanel } from './panels/JournalPanel';
 import { MenuModal } from './panels/MenuModal';
@@ -58,6 +59,7 @@ function Ui({ store, a }: { store: UiStore; a: UiActions }) {
       {s.panel === 'album' && <AlbumPanel s={s} a={a} />}
       {s.panel === 'phone' && <PhonePanel s={s} a={a} />}
       {s.panel === 'journal' && <JournalPanel s={s} a={a} />}
+      {s.panel === 'book' && <BookModal s={s} a={a} />}
       {s.panel === 'room_decor' && <RoomDecorPanel s={s} a={a} />}
       {s.panel === 'wardrobe' && <WardrobePanel s={s} a={a} />}
       {s.shopDemo && s.panel === 'shop' && <ShopDemoPanel s={s} a={a} />}

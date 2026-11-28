@@ -253,7 +253,13 @@ export function createHubController(deps: HubControllerDeps) {
     hubScene = null;
   }
 
-  const hubLabel = (id: string | null) => (id ? idx.pack.hub.interactables.find((i) => i.id === id)?.label ?? null : null);
+  const hubLabel = (id: string | null) => {
+    if (!id) return null;
+    if (id === 'itr.hub.lamp') return hubScene?.lampOn ? 'Tắt đèn bàn' : 'Bật đèn bàn';
+    if (id === 'itr.hub.bed') return hubScene?.isSitting ? 'Đứng dậy khỏi giường' : 'Nằm / Ngồi lên giường nghỉ';
+    if (id === 'itr.hub.book') return 'Lật xem cuốn sách trên kệ';
+    return idx.pack.hub.interactables.find((i) => i.id === id)?.label ?? null;
+  };
 
   /** Mỗi khung hình: vật trong tầm với + đang nhìn về phía nó → gợi ý "E"; vật dưới con trỏ (trong tầm) được ưu tiên. */
   function hubProximity() {
@@ -270,6 +276,38 @@ export function createHubController(deps: HubControllerDeps) {
     if (r) { hub.refresh(); void queue.enqueue(hubSettle); }
     if (id === 'itr.hub.album') { openPanel('album'); return; }
     if (id === 'itr.hub.phone') { openPanel('phone'); return; }
+    if (id === 'itr.hub.lamp') {
+      const on = hubScene?.toggleLamp() ?? true;
+      ui.set({ lampOn: on });
+      void queue.enqueue(async () => {
+        await queue.playLines([
+          on
+            ? { speaker: 'player', text: 'Ánh đèn bàn vàng ấm áp… Cảm giác như lúc còn thức khuya ôn bài thi ngày xưa.' }
+            : { speaker: 'player', text: 'Tắt bớt đèn cho dịu mắt một chút.' },
+        ]);
+      });
+      return;
+    }
+    if (id === 'itr.hub.bed') {
+      const sitting = hubScene?.toggleSitting() ?? false;
+      ui.set({ hubSitting: sitting });
+      if (sitting) {
+        void queue.enqueue(async () => {
+          await queue.playLines([
+            { speaker: 'narrator', text: 'Bạn ngồi tựa vào mép giường. Không gian căn phòng trọ nhỏ bỗng trở nên thật yên ả.' },
+            { speaker: 'player', text: 'Nằm nghỉ một lát… Nhớ lại hồi cấp hai, phòng ngủ ở nhà lúc nào cũng bừa bộn sách vở.' },
+          ]);
+        });
+      } else {
+        ui.set({ toast: 'Đã đứng dậy khỏi giường' });
+      }
+      return;
+    }
+    if (id === 'itr.hub.book') {
+      ui.set({ bookPage: 0 });
+      openPanel('book');
+      return;
+    }
     if (!introDone()) return;
     if (id === 'itr.hub.memory_box') openPanel('box3d');
     else if (id === 'itr.hub.shelf') openPanel('box');           // kệ: danh sách kỷ vật đã xong, xem lại ký ức
@@ -517,7 +555,7 @@ export function createHubController(deps: HubControllerDeps) {
 
   const hubActionable = (id: string | null) => {
     if (!id) return false;
-    if (id === 'itr.hub.album' || id === 'itr.hub.phone') return true;
+    if (id === 'itr.hub.album' || id === 'itr.hub.phone' || id === 'itr.hub.lamp' || id === 'itr.hub.bed' || id === 'itr.hub.book') return true;
     if (!introDone()) return id === 'itr.hub.memory_box';
     return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || id === 'itr.hub.rulebook' || engine.peek('interact', id);
   };
@@ -557,8 +595,16 @@ export function createHubController(deps: HubControllerDeps) {
     if (!hubScene) return;
     const free = !queue.locked();
     const drag = input.takeLook();                    // luôn đọc để chuyển động lúc đang khóa không dồn lại
-    const touch = input.device === 'touch';
-    hubScene.update(dt, t, { move: free ? moveIntent() : null, cursor: free && !touch ? hubCursor : null, drag: free && touch ? drag : null });
+    const turnKey = (input.down.has('ArrowLeft') ? 1 : 0) - (input.down.has('ArrowRight') ? 1 : 0);
+    hubScene.update(dt, t, {
+      move: free ? moveIntent() : null,
+      cursor: free ? hubCursor : null,
+      drag: free && (drag.dx || drag.dy) ? drag : null,
+      turn: free ? turnKey : 0,
+    });
+    if (ui.get().hubSitting !== hubScene.isSitting) {
+      ui.set({ hubSitting: hubScene.isSitting });
+    }
     hubProximity();
   }
 

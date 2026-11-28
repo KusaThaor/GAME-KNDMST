@@ -195,6 +195,11 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
     unlockCosmetic: hubCtrl.unlockCosmetic,
     topupWallet: hubCtrl.topupWallet,
     resetCosmeticsDemo: hubCtrl.resetCosmeticsDemo,
+    turnBookPage: (delta) => {
+      const cur = ui.get().bookPage ?? 0;
+      const next = Math.max(0, Math.min(2, cur + delta));
+      ui.set({ bookPage: next });
+    },
     phoneOpenThread: hubCtrl.phoneOpenThread, phonePick: hubCtrl.phonePick, phoneErase: hubCtrl.phoneErase, phoneSend: hubCtrl.phoneSend, phoneSendCustom: hubCtrl.phoneSendCustom,
     menuRestartDay: dayCtrl.menuRestartDay, menuLeaveDay: dayCtrl.menuLeaveDay, menuSafeSpot: dayCtrl.menuSafeSpot,
     menuWipe: () => { if (!ui.get().wipeArmed) ui.set({ wipeArmed: true }); else void store.wipe(photos).then(() => { location.href = `${location.pathname}?play=1`; }); },

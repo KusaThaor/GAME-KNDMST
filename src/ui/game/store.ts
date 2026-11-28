@@ -107,8 +107,8 @@ export interface UiState {
   minigame: MinigameHost | null;
   free: { text: string } | null;
   notice: { title: string; text: string; effect: string } | null;
-  /** 'box3d' = đang nhìn cận cảnh vào Hộp Kỷ Vật ở phòng 2026; 'box' = bảng kỷ vật trên kệ (xem lại ký ức). */
-  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | 'shop' | 'room_decor' | 'wardrobe' | null;
+  /** 'box3d' = đang nhìn cận cảnh vào Hộp Kỷ Vật ở phòng 2026; 'box' = bảng kỷ vật trên kệ (xem lại ký ức); 'book' = lật xem sách trên kệ. */
+  panel: 'box' | 'box3d' | 'album' | 'phone' | 'menu' | 'journal' | 'shop' | 'room_decor' | 'wardrobe' | 'book' | null;
   /** Bật chế độ Demo Tiệm Ký Ức / Hệ thống vật phẩm (chỉ bật ở bản test hoặc khi cấu hình cho phép). */
   shopDemo: boolean;
   box: BoxView | null;
@@ -117,6 +117,12 @@ export interface UiState {
   album: AlbumView | null;
   phone: PhoneView | null;
   cosmetics?: CosmeticsView | null;
+  /** Số trang sách hiện tại khi mở Sổ lưu bút / sách cũ trên kệ. */
+  bookPage?: number;
+  /** Trạng thái nhân vật đang ngồi nghỉ trên giường tại phòng 2026. */
+  hubSitting?: boolean;
+  /** Trạng thái bật/tắt đèn bàn phòng 2026. */
+  lampOn?: boolean;
   /** Form phản hồi đang mở: 'demo_end' = sau màn kết bản thử; 'exit' = người chơi bấm Thoát (xong form thì rời game). */
   feedback: false | 'demo_end' | 'exit';
   canEndDay: boolean;
@@ -167,6 +173,8 @@ export interface UiActions {
   roomSetDecor(decor: RoomDecorStyle, persist: boolean): void;
   outfitSet(outfit: OutfitStyle, persist: boolean): void;
   unlockCosmetic(id: string, currency: 'coin' | 'stamp', price: number): boolean;
+  /** Lật trang trước (-1) hoặc trang sau (+1) của cuốn sách / sổ lưu bút trên kệ. */
+  turnBookPage(delta: number): void;
   topupWallet(currency: 'coin' | 'stamp', amount: number): void;
   resetCosmeticsDemo(): void;
   phoneOpenThread(id: string | null): void;

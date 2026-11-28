@@ -21,13 +21,12 @@ export const HUB_ROOM = {
   spawn: { x: 0, z: 1.7 },
   move: { walk: 1.5, run: 2.4, body_radius: 0.25 },
   /**
-   * Góc nhìn thứ nhất, chỉ quay trong một khoảng (chủ dự án chốt 22/11): rê chuột về phía nào thì nhìn về phía đó,
-   * tới mép màn hình là hết góc. Không quay vòng, không bay quanh phòng. Cảm ứng: kéo màn hình, cũng bị chặn ở giới hạn.
+   * Góc nhìn thứ nhất 360 độ tự do từ tầm mắt cố định: xoay người nhìn mọi hướng trong phòng (kéo chuột/chạm, rê mép, phím mũi tên).
    */
-  look: { max_yaw_deg: 65, pitch_up_deg: 18, pitch_down_deg: 45, base_pitch_deg: -10, dead_zone: 0.15, follow: 7, touch_deg_per_px: 0.25 },
+  look: { max_yaw_deg: 360, pitch_up_deg: 28, pitch_down_deg: 45, base_pitch_deg: -6, dead_zone: 0.08, follow: 10, touch_deg_per_px: 0.32 },
   /** Lại gần trong khoảng này (m) và vật nằm trong góc nhìn (độ) thì hiện gợi ý tương tác. */
-  reach: 1.5,
-  view_cone_deg: 60,
+  reach: 1.7,
+  view_cone_deg: 75,
   /** Vị trí đồ đạc (tâm, mét). Hộp Kỷ Vật nằm ở góc trong cùng bên trái. */
   layout: {
     memory_box: { x: -2.75, z: -1.85 },
@@ -41,6 +40,8 @@ export const HUB_ROOM = {
     /** Tâm ô kính cửa sổ trên tường z âm. */
     window: { x: -0.6, z: -2.5 },
     rug: { x: -0.9, z: 0.0 },
+    lamp: { x: 2.6, z: -2.25 },
+    book: { x: -3.0, z: -0.6 },
   },
   /**
    * Đồ trang trí K2 (world/props/hub): tâm đáy, mét; `rot_deg` quay quanh trục Y (mặt trước +z: 90 = quay ra +x, −90 = ra −x).
