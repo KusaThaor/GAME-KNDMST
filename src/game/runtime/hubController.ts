@@ -257,7 +257,7 @@ export function createHubController(deps: HubControllerDeps) {
     if (!id) return null;
     if (id === 'itr.hub.lamp') return hubScene?.lampOn ? 'Tắt đèn bàn' : 'Bật đèn bàn';
     if (id === 'itr.hub.bed') return hubScene?.isSitting ? 'Đứng dậy khỏi giường' : 'Nằm / Ngồi lên giường nghỉ';
-    if (id === 'itr.hub.book') return 'Lật xem cuốn sách trên kệ';
+    if (id === 'itr.hub.book') return 'Mở tập hồ sơ báo cáo tài chính (Q4/2026)';
     return idx.pack.hub.interactables.find((i) => i.id === id)?.label ?? null;
   };
 
@@ -304,6 +304,9 @@ export function createHubController(deps: HubControllerDeps) {
       return;
     }
     if (id === 'itr.hub.book') {
+      sayBox([
+        { speaker: 'player', text: 'Tập hồ sơ tài chính năm 2026... Số liệu, KPI, deadline ngập đầu.' },
+      ]);
       ui.set({ bookPage: 0 });
       openPanel('book');
       return;
