@@ -59,7 +59,7 @@ export const quests: Quest[] = [
         kind: 'talk',
         with: 'NPC_A',
         objective: 'Tới nói chuyện với Đức và nhóm bạn giữa sân trường',
-        title_card: { id: 'tc_p3_c1', title: 'Đầu học kỳ II', subtitle: 'Lớp 7 · Giờ về', duration_ms: 3000 },
+        title_card: { id: 'tc_p3_c1', title: 'Đầu học kỳ II', subtitle: 'Lớp 7 · Giờ về', duration_ms: 3000, backdrop: 'assets/backdrops/yard_afternoon.jpg' },
         stage: [
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'cheer', at: { line: 4 } },
@@ -114,7 +114,7 @@ export const quests: Quest[] = [
         measured: true,
         about: ['NPC_A', 'NPC_B', 'NPC_C', 'NPC_D'],
         objective: 'Chọn 1 trong 3 phong cách trang trí: Giấy màu · Hoa dại · Dây ảnh',
-        title_card: { id: 'zone_p3_c4_new_name', title: 'Căn cứ Bí mật', subtitle: 'Địa bàn chính thức của nhóm năm đứa', duration_ms: 3500 },
+        title_card: { id: 'zone_p3_c4_new_name', title: 'Căn cứ Bí mật', subtitle: 'Địa bàn chính thức của nhóm năm đứa', duration_ms: 3500, backdrop: 'assets/backdrops/base_secret.jpg' },
         prompt: {
           speaker: 'NPC_C',
           text: 'Căn cứ còn trống quá, {player_name} chọn kiểu trang trí giùm Hạ nha.',

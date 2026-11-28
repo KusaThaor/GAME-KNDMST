@@ -52,7 +52,7 @@ export const quests: Quest[] = [
         kind: 'talk',
         with: 'NPC_A',
         objective: 'Chạy vào dưới mái hiên tránh mưa cùng bạn bè',
-        title_card: { id: 'tc_p2_c1', title: 'Lớp 7. Một chiều mưa.', subtitle: 'Giờ ra chơi, mưa đổ ào xuống sân.', duration_ms: 3000 },
+        title_card: { id: 'tc_p2_c1', title: 'Lớp 7. Một chiều mưa.', subtitle: 'Giờ ra chơi, mưa đổ ào xuống sân.', duration_ms: 3000, backdrop: 'assets/backdrops/corridor_rain.jpg' },
         stage: [{ cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: 'start' }],
         lines: [
           { speaker: 'NPC_A', text: 'Vô lẹ mày! Ướt như chuột lột bây giờ!' },

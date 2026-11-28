@@ -290,16 +290,90 @@ body.game canvas { display: block; }
 .g-fade { z-index: 5; }
 
 /* --- R-B2: thẻ chữ, dải dẫn chuyện, gợi ý thao tác --- */
-.g-title-card { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: rgba(20, 16, 13, .45); pointer-events: none; animation: g-title-card var(--tc-duration, 3000ms) ease-in-out forwards; }
-.g-title-card-box { text-align: center; color: #fffdf6; padding: 20px 32px; max-width: min(640px, calc(100% - 48px)); text-shadow: 0 2px 12px rgba(0,0,0,.55); }
+.g-title-card { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: rgba(20, 16, 13, .45); pointer-events: none; overflow: hidden; animation: g-title-card var(--tc-duration, 3000ms) ease-in-out forwards; }
+.g-title-card.has-backdrop { background: rgba(18, 14, 11, .56); }
+.g-title-card-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(3px) brightness(.52) saturate(.92); transform: scale(1.05); z-index: 0; pointer-events: none; }
+.g-title-card-box { position: relative; z-index: 1; text-align: center; color: #fffdf6; padding: 22px 34px; max-width: min(640px, calc(100% - 48px)); text-shadow: 0 2px 14px rgba(0,0,0,.65); border-radius: 16px; }
+.g-title-card.has-backdrop .g-title-card-box { background: radial-gradient(ellipse at center, rgba(16, 12, 9, .55) 0%, rgba(16, 12, 9, 0) 78%); }
 .g-title-card-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; line-height: 1.25; }
-.g-title-card-sub { margin-top: 8px; font-size: clamp(15px, 2.2vw, 20px); font-style: italic; opacity: .9; }
+.g-title-card-sub { margin-top: 8px; font-size: clamp(15px, 2.2vw, 20px); font-style: italic; opacity: .92; }
 @keyframes g-title-card { 0% { opacity: 0; } 17% { opacity: 1; } 83% { opacity: 1; } 100% { opacity: 0; } }
 
-.g-narrator { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); width: min(760px, calc(100% - 48px)); background: rgba(24, 20, 17, .82); color: #f6efe1; border: 1px solid rgba(255, 250, 238, .22); border-radius: 14px; padding: 12px 24px 20px; text-align: center; box-shadow: 0 4px 18px rgba(0,0,0,.28); cursor: pointer; z-index: 2; }
-.g-narrator.is-world-event { border-color: rgba(242, 181, 58, .48); background: rgba(28, 22, 18, .86); }
-.g-narrator .text { font-style: italic; font-size: 18px; line-height: 1.45; }
-.g-narrator .next { position: absolute; right: 16px; bottom: 6px; font-size: 12px; opacity: .65; font-weight: 700; font-style: normal; }
+.g-narrator-backdrop { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: rgba(18, 14, 11, .42); animation: g-narrator-bg-in .35s ease-out forwards; }
+.g-narrator-backdrop img { width: 100%; height: 100%; object-fit: cover; filter: blur(2.5px) brightness(.58) saturate(.94); transform: scale(1.04); opacity: .92; }
+@keyframes g-narrator-bg-in { from { opacity: 0; } to { opacity: 1; } }
+.g-narrator-screen-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 24px;
+  background: radial-gradient(ellipse at center, rgba(16, 12, 10, .52) 0%, rgba(16, 12, 10, .24) 55%, transparent 80%);
+}
+.g-narrator {
+  position: relative;
+  width: min(880px, 94vw);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.g-narrator.is-world-event { background: transparent; border: none; }
+.g-narrator .text {
+  font-family: 'Patrick Hand', 'Caveat', cursive, sans-serif;
+  font-size: clamp(24px, 3.4vw, 36px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.6px;
+  color: #fffdf7;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.95),
+    0 4px 16px rgba(0, 0, 0, 0.9),
+    0 0 28px rgba(0, 0, 0, 0.8),
+    0 1px 2px #000;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.g-narrator.is-world-event .text {
+  color: #ffe699;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.95),
+    0 4px 16px rgba(0, 0, 0, 0.9),
+    0 0 24px rgba(242, 181, 58, 0.6),
+    0 1px 2px #000;
+}
+.g-narrator-cursor {
+  display: inline-block;
+  margin-left: 3px;
+  font-weight: 300;
+  font-family: Nunito, sans-serif;
+  color: #f2b53a;
+  animation: g-cursor-blink 0.75s infinite ease-in-out;
+  text-shadow: 0 0 8px rgba(242, 181, 58, 0.85);
+}
+@keyframes g-cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.g-narrator .next {
+  position: static;
+  margin-top: 24px;
+  font-family: Nunito, sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: rgba(255, 253, 246, 0.82);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.95);
+  animation: g-pulse-hint 1.8s infinite ease-in-out;
+}
+@keyframes g-pulse-hint { 0%, 100% { opacity: 0.55; transform: translateY(0); } 50% { opacity: 0.95; transform: translateY(3px); } }
 
 .g-key-hint { position: absolute; left: calc(24px + env(safe-area-inset-left)); top: calc(68px + env(safe-area-inset-top)); background: rgba(255, 250, 238, .92); border: 2px solid var(--ink); border-radius: 12px; padding: 7px 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 0 rgba(58,44,38,.22); pointer-events: none; max-width: calc(100% - 48px); }
 .g-key-hint-badge { background: #f2b53a; border: 1.5px solid var(--ink); border-radius: 6px; padding: 1px 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
@@ -1368,3 +1442,14 @@ body.game input, body.game textarea { user-select: text; -webkit-user-select: te
   .g-wardrobe-stage-wrap { height: 220px; }
   .g-decor-drawer { width: calc(100% - 24px); right: 12px; top: auto; max-height: 55vh; }
 }
+
+/* ===== CUỐN SỔ MẬT MÃ & QUY TẮC CĂN CỨ (2026 MODAL) ===== */
+.g-rulebook-book { display: flex; border: 2.5px solid var(--ink); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 0 rgba(58,44,38,.18); }
+.g-rulebook-spine { width: 42px; flex: none; background: #3d6fa8; color: #fff; font-weight: 800; font-size: 14px; writing-mode: vertical-rl; text-align: center; padding: 12px 0; letter-spacing: 4px; border-right: 2px solid var(--ink); }
+.g-rulebook-sheet { flex: 1; background: #fffaf0 repeating-linear-gradient(transparent 0 29px, #dce8f5 29px 30px); padding: 14px 18px; display: flex; flex-direction: column; gap: 14px; }
+.g-rulebook-sec h4 { margin: 0 0 6px; font-size: 15px; font-weight: 800; color: #2b4566; }
+.g-rulebook-cipher { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff7e2; border: 1.5px solid rgba(58,44,38,.35); border-radius: 10px; padding: 6px 12px; margin-bottom: 4px; }
+.g-rulebook-syms { font-size: 20px; letter-spacing: 4px; }
+.g-rulebook-arrow { font-weight: 800; opacity: .65; }
+.g-rulebook-list, .g-rulebook-notes { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; line-height: 1.5; }
+.g-rulebook-notes li { background: rgba(255, 255, 255, .72); border: 1px dashed rgba(58,44,38,.25); border-radius: 8px; padding: 6px 10px; }

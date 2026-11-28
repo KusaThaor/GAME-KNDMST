@@ -76,6 +76,8 @@ export interface NarrativeLine {
   sfx?: string;
   /** Giữ trên màn hình ít nhất bao lâu (ms) trước khi cho qua / tự qua. */
   duration_ms?: number;
+  /** Ảnh nền tĩnh (đường dẫn tương đối trong public/, vd. `assets/backdrops/yard_morning.jpg`). */
+  backdrop?: string;
   when?: Condition;
   fallback?: string;
 }
@@ -86,6 +88,8 @@ export interface TitleCard {
   subtitle?: string;
   /** Tổng thời gian hiện (ms), mặc định do UI quyết (~3000). */
   duration_ms?: number;
+  /** Ảnh nền tĩnh (đường dẫn tương đối trong public/). */
+  backdrop?: string;
 }
 
 /** Mốc kích hoạt một cue đạo diễn: đầu bước, cuối bước (sau thoại), hoặc khi dòng thoại thứ `line` (đếm từ 0) của bước hiện ra. */

@@ -62,7 +62,7 @@ export const quests: Quest[] = [
         kind: 'talk',
         with: 'NPC_A',
         objective: 'Tới gặp Đức đang cầm máy ảnh giữa sân trường',
-        title_card: { id: 'tc_p4_c1', title: 'Cuối năm lớp 7.', subtitle: 'Phượng vừa chớm đỏ.', duration_ms: 3000 },
+        title_card: { id: 'tc_p4_c1', title: 'Cuối năm lớp 7.', subtitle: 'Phượng vừa chớm đỏ.', duration_ms: 3000, backdrop: 'assets/backdrops/phuong_bloom.jpg' },
         stage: [
           { cue: 'prop', actor: 'NPC_A', prop: 'camera', at: 'start' },
           { cue: 'motion', actor: 'NPC_A', motion: 'pose_wave', at: { line: 2 } },
@@ -183,12 +183,14 @@ export const quests: Quest[] = [
             channel: 'narrator',
             text: 'Một cơn mưa rào mùa hạ bất chợt ào ào trút xuống. Lá phượng rơi lả tả trên nền đất đỏ.',
             sfx: 'sfx_summer_rain_thunder',
+            backdrop: 'assets/backdrops/phuong_bloom.jpg',
           }],
           after: [{
             id: 'narr_p4_c7_rainbow',
             channel: 'narrator',
             text: 'Mưa rào tạnh nhanh như lúc đến. Bầu trời sau mưa trong vắt, một dải cầu vồng rực rỡ vắt ngang qua khoảng sân sau.',
             sfx: 'sfx_birds_after_rain',
+            backdrop: 'assets/backdrops/rainbow_field.jpg',
           }],
         },
         stage: [
@@ -230,7 +232,7 @@ export const quests: Quest[] = [
         id: 'q_m1_main_05.s08',
         kind: 'cutscene',
         objective: 'Tiến lại bức tường gỗ Căn cứ dán bức ảnh cầu vồng năm đứa',
-        title_card: { id: 'tc_p4_c8', title: 'Mấy hôm sau.', subtitle: 'Ảnh vừa in xong.', duration_ms: 3000 },
+        title_card: { id: 'tc_p4_c8', title: 'Mấy hôm sau.', subtitle: 'Ảnh vừa in xong.', duration_ms: 3000, backdrop: 'assets/backdrops/base_secret.jpg' },
         stage: [
           { cue: 'prop', actor: 'player', prop: 'photo_print', at: 'start' },
           { cue: 'prop', actor: 'player', prop: null, at: 'end' },

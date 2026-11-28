@@ -51,6 +51,12 @@
   5. **Phụ kiện:** Kính tròn Nobita, Tai nghe chụp Gaming, Mũ lưỡi trai, Nơ kẹp tóc.
 - **Đồng bộ toàn diện:** Lưu vào `SaveState.player_outfit` và tự động làm mới avatar 3D cả khi ở Hub phòng lẫn khi ra thế giới trường học (`DayScene`).
 
+### 1.6. Dẫn Truyện Điện Ảnh (Cinematic Narrative & Handwriting Typewriter)
+- **Chính giữa màn hình, không khung hộp:** Bỏ toàn bộ viền hộp và khung chữ nhật cũ. Câu chuyện xuất hiện thanh thoát ngay giữa trung tâm màn hình, kèm lớp nền radial vignette mềm mại.
+- **Font chữ viết tay chuẩn tiếng Việt:** Sử dụng font *Patrick Hand* & *Caveat* hỗ trợ đầy đủ bộ ký tự có dấu tiếng Việt, mang đậm phong cách nhật ký / lưu bút học trò.
+- **Chữ nổi bật trên mọi bối cảnh:** Áp dụng hệ thống đa lớp bóng chữ (`text-shadow`), đảm bảo chữ đọc sắc nét trên cả cảnh ngày, chiều tà hay đêm tối.
+- **Hiệu ứng gõ chữ (Typewriter):** Từng ký tự hiện ra từ từ kèm con trỏ nhấp nháy. Người chơi có thể nhấn Space hoặc nhấp chuột bất kỳ đâu để hiện ngay toàn bộ câu chữ nếu muốn đọc nhanh.
+
 ---
 
 ## 2. KIẾN TRÚC & CÁC FILE ĐÃ TÁC ĐỘNG

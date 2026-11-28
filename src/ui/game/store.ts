@@ -13,8 +13,18 @@ export interface CosmeticsView {
   gender: Gender;
   wallet: { coin: number; stamp: number };
 }
+export interface RulebookView {
+  unlocked: boolean;
+  cipherUnlocked: boolean;
+  rulesUnlocked: boolean;
+  cipher: { title: string; solution: string; symbols: string[]; note: string };
+  rules: { index: number; by: string; text: string }[];
+  notes: { label: string; value: string }[];
+}
 export interface BoxView {
   compartments: { title: string; open: boolean; artifacts: { id: string; name: string; hook: string; state: string; action: 'first' | 'replay' | null }[] }[];
+  rulebook?: RulebookView;
+  rulebookOpen?: boolean;
 }
 export interface AlbumEntryView {
   id: string; slot_type: string; owned: boolean; text: string | null; url: string | null; isPhoto: boolean;
@@ -86,8 +96,8 @@ export interface UiState {
   camOptions: { modeSwitch: boolean; freeLook: boolean };
   pointerLocked: boolean;
   dialogue: { who: string; color: string; text: string } | null;
-  narrator: { text: string; channel: 'narrator' | 'world_event' } | null;
-  titleCard: { title: string; subtitle: string | null; durationMs: number } | null;
+  narrator: { text: string; channel: 'narrator' | 'world_event'; backdrop?: string | null } | null;
+  titleCard: { title: string; subtitle: string | null; durationMs: number; backdrop?: string | null } | null;
   keyHint: { text: string } | null;
   choice: { who: string; prompt: string | null; options: { id: string; text: string; tone: string | null }[] } | null;
   profile: boolean;
@@ -103,7 +113,7 @@ export interface UiState {
   shopDemo: boolean;
   box: BoxView | null;
   /** Lớp chữ khi đang nhìn vào Hộp Kỷ Vật: dòng hướng dẫn + tên món dưới con trỏ. */
-  boxView: { hint: string; hover: string | null; first: boolean } | null;
+  boxView: { hint: string; hover: string | null; first: boolean; hasRulebook?: boolean } | null;
   album: AlbumView | null;
   phone: PhoneView | null;
   cosmetics?: CosmeticsView | null;
@@ -144,6 +154,8 @@ export interface UiActions {
   openArtifact(id: string): void;
   /** Bấm một món trong Hộp Kỷ Vật (cận cảnh): đồ linh tinh nói một câu; kỷ vật đang sáng đưa về quá khứ. */
   boxPick(id: string): void;
+  /** Mở modal xem lại Cuốn sổ mật mã & Quy tắc Căn cứ từ Hộp Kỷ Vật / Kệ 2026. */
+  openRulebook(): void;
   albumFlip(pageId: string): void;
   albumSelect(entryId: string, index: number): void;
   albumPlaceSticker(pageId: string, kind: string, x: number, y: number): void;

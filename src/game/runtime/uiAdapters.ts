@@ -4,13 +4,14 @@
  */
 import { GAME_CONFIG } from '../../config/game';
 import { HUB_CONFIG, fillCaroScore } from '../../config/hub';
+import { RULEBOOK_CONFIG } from '../../config/rulebook';
 import type { ContentIndex } from '../../content/indexContent';
 import type { SaveState } from '../../core/save';
 import type { AlbumModel } from '../../systems/album';
 import { formatText, speakerName, type PlayerProfile } from '../../systems/dialogue';
 import type { HubModel } from '../../systems/hub';
 import type { QuestEngine } from '../../systems/questEngine';
-import type { AlbumView, BoxView, PhoneView } from '../../ui/game/store';
+import type { AlbumView, BoxView, PhoneView, RulebookView } from '../../ui/game/store';
 
 /** Định dạng chuỗi thoại/nhãn: thay `{player_name}`, `{g:...|...}` và tỉ số caro `{quan}–{duc}`. */
 export function formatGameText(text: string, save: Pick<SaveState, 'player_name' | 'appearance' | 'caro'>): string {
@@ -21,9 +22,50 @@ export function formatGameText(text: string, save: Pick<SaveState, 'player_name'
   );
 }
 
+/** Dựng dữ liệu Cuốn sổ mật mã & Quy tắc Căn cứ (xem lại ở Phòng 2026). */
+export function rulebookView(deps: { save?: Pick<SaveState, 'days' | 'flags' | 'story' | 'player_name'>; fmt: (text: string) => string }): RulebookView {
+  const { save, fmt } = deps;
+  const dayDone = (id: string) => save?.days?.[id]?.state === 'completed';
+  const cipherUnlocked = dayDone('d.g06.01');
+  const rulesUnlocked = dayDone('d.g07.02');
+  const notes: { label: string; value: string }[] = [];
+
+  for (const [flagKey, cfg] of Object.entries(RULEBOOK_CONFIG.flag_labels)) {
+    const raw = save?.flags?.[flagKey];
+    if (typeof raw === 'string' && cfg.values[raw]) {
+      notes.push({ label: cfg.label, value: fmt(cfg.values[raw]) });
+    }
+  }
+  const rb = save?.story?.rulebook;
+  for (const f of RULEBOOK_CONFIG.extra_fields) {
+    const raw = rb?.[f.key] ?? save?.flags?.[f.flag];
+    if (typeof raw === 'string' && raw.trim()) {
+      notes.push({ label: f.label, value: fmt(raw.trim()) });
+    }
+  }
+
+  return {
+    unlocked: cipherUnlocked || rulesUnlocked || notes.length > 0,
+    cipherUnlocked,
+    rulesUnlocked,
+    cipher: {
+      title: RULEBOOK_CONFIG.cipher.title,
+      solution: RULEBOOK_CONFIG.cipher.solution,
+      symbols: [...RULEBOOK_CONFIG.cipher.symbols],
+      note: RULEBOOK_CONFIG.cipher.note,
+    },
+    rules: RULEBOOK_CONFIG.rules.map((l, i) => ({
+      index: i + 1,
+      by: l.by ?? (save?.player_name ? save.player_name : 'Bạn'),
+      text: `${l.head} ${l.tail}`,
+    })),
+    notes,
+  };
+}
+
 /** Dựng dữ liệu bảng Kỷ vật trên kệ (xem lại ký ức). */
-export function boxView(deps: { hub: HubModel; fmt: (text: string) => string }): BoxView {
-  const { hub, fmt } = deps;
+export function boxView(deps: { hub: HubModel; fmt: (text: string) => string; save?: Pick<SaveState, 'days' | 'flags' | 'story' | 'player_name'>; rulebookOpen?: boolean }): BoxView {
+  const { hub, fmt, save, rulebookOpen } = deps;
   return {
     compartments: hub.compartments().map((c) => ({
       title: fmt(c.milestone.title),
@@ -36,6 +78,8 @@ export function boxView(deps: { hub: HubModel; fmt: (text: string) => string }):
         action: hub.canOpen(x.artifact.id),
       })),
     })),
+    ...(save ? { rulebook: rulebookView({ save, fmt }) } : {}),
+    ...(rulebookOpen ? { rulebookOpen: true } : {}),
   };
 }
 

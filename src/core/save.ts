@@ -40,6 +40,15 @@ export interface MinigameStats {
 interface StoryResult { result: MinigameResult; stars: number | null }
 type DuelResult = 'win' | 'lose' | 'draw';
 
+export interface RulebookRecord {
+  cipher_symbol?: string;
+  nickname?: string;
+  base_name?: string;
+  base_symbol?: string;
+  custom_rule?: string;
+  promise?: string;
+}
+
 export interface SaveState {
   v: typeof SAVE_VERSION;
   attempt_id: string;
@@ -91,12 +100,16 @@ export interface SaveState {
   minigames_story: Record<string, StoryResult>;
   caro: { series: { quan: number; duc: number }; story_result: { result: DuelResult; opponent: string } | null };
   sudoku: { best: Record<string, { time_s: number; stars: number }>; story_result: 'win' | 'lose' | null };
-  story: { valentine: {
-    recipient?: 'duc' | 'chau' | 'quan' | 'ha' | 'group';
-    kind?: 'thanks' | 'tease' | 'invite' | 'group_text' | 'group_drawing';
-    /** Mã câu viết sẵn, kiểu hòm thư và kết quả nhánh trong dữ liệu nội dung. */
-    groupMsg?: string; boxStyle?: string; branch_result?: string;
-  } };
+  story: {
+    valentine: {
+      recipient?: 'duc' | 'chau' | 'quan' | 'ha' | 'group';
+      kind?: 'thanks' | 'tease' | 'invite' | 'group_text' | 'group_drawing';
+      /** Mã câu viết sẵn, kiểu hòm thư và kết quả nhánh trong dữ liệu nội dung. */
+      groupMsg?: string; boxStyle?: string; branch_result?: string;
+    };
+    /** Ghi chú Cuốn sổ mật mã / Quy tắc Căn cứ (Mốc 1 → xem lại ở Phòng 2026). */
+    rulebook?: RulebookRecord;
+  };
   hub: { unlocked: boolean };
   /** Kiểu điều khiển camera (chỉ lưu cục bộ, không vào analytics). Bản lưu cũ có 'A'/'B' giữ nguyên lựa chọn. */
   /** free_look: tùy chọn "Nhìn tự do" (khóa con trỏ, rê touchpad để nhìn); thiếu = tắt. */

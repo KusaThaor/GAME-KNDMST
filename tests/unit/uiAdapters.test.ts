@@ -5,7 +5,7 @@ import { HUB_CONFIG } from '../../src/config/hub';
 import { indexContent } from '../../src/content/indexContent';
 import { EventBus } from '../../src/core/eventBus';
 import { newSave } from '../../src/core/save';
-import { albumView, boxView, formatGameText, phoneView } from '../../src/game/runtime/uiAdapters';
+import { albumView, boxView, formatGameText, phoneView, rulebookView } from '../../src/game/runtime/uiAdapters';
 import { AlbumModel } from '../../src/systems/album';
 import { HubModel } from '../../src/systems/hub';
 import { QuestEngine } from '../../src/systems/questEngine';
@@ -175,5 +175,39 @@ describe('uiAdapters', () => {
     });
     expect(emptyThread.thread?.status).toBe(HUB_CONFIG.old_chat_last_label);
     expect(emptyThread.thread?.compose).toBeNull();
+  });
+
+  it('rulebookView mở khóa đúng theo Trang 1/Trang 3 và đọc lựa chọn từ flags + story.rulebook', () => {
+    const t = setup();
+    const initial = rulebookView({ save: t.save, fmt: t.fmt });
+    expect(initial.unlocked).toBe(false);
+    expect(initial.cipherUnlocked).toBe(false);
+    expect(initial.rulesUnlocked).toBe(false);
+    expect(initial.rules).toHaveLength(5);
+
+    t.save.days['d.g06.01'] = { state: 'completed', replayed: false };
+    t.save.days['d.g07.02'] = { state: 'completed', replayed: false };
+    t.save.flags['m1.wish'] = 'friendship';
+    t.save.flags['m1.base_decor'] = 'flowers';
+    t.save.flags['m1.group_photo_style'] = 'gentle';
+    t.save.story.rulebook = { nickname: 'Thợ ảnh', promise: 'Hè năm sau gặp lại ở Căn cứ' };
+
+    const unlocked = rulebookView({ save: t.save, fmt: t.fmt });
+    expect(unlocked.unlocked).toBe(true);
+    expect(unlocked.cipherUnlocked).toBe(true);
+    expect(unlocked.cipher.solution).toBe('RA CHƠI');
+    expect(unlocked.rulesUnlocked).toBe(true);
+    expect(unlocked.rules[4].by).toBe('Minh');
+    expect(unlocked.notes.map((n) => n.value)).toEqual([
+      'Mai mốt vẫn chơi chung vầy.',
+      'Hoa dại',
+      'Đứng tự nhiên, khoác vai cười tươi',
+      'Thợ ảnh',
+      'Hè năm sau gặp lại ở Căn cứ',
+    ]);
+
+    const box = boxView({ hub: t.hub, save: t.save, fmt: t.fmt, rulebookOpen: true });
+    expect(box.rulebook?.unlocked).toBe(true);
+    expect(box.rulebookOpen).toBe(true);
   });
 });

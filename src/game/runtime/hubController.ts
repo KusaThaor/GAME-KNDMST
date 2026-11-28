@@ -24,7 +24,7 @@ import type { PresentationQueue } from './presentationQueue';
 
 /** Cờ trong bản lưu: đã gửi Form phản hồi (ở màn kết hoặc khi bấm Thoát) → không hiện form lần nữa. */
 export const FEEDBACK_SENT_FLAG = 'hub.feedback_sent';
-import { albumView, boxView, phoneView } from './uiAdapters';
+import { albumView, boxView, phoneView, rulebookView } from './uiAdapters';
 
 export interface HubControllerDeps {
   idx: ContentIndex;
@@ -65,6 +65,7 @@ export function createHubController(deps: HubControllerDeps) {
   let hubMouseHover: string | null = null;
   let boxBusy = false;
   let boxLinesSaid = false;
+  let rulebookOpenRequest = false;
 
   const firstArtifactId = () => idx.artifactOfDay(idx.releaseDays[0]?.id ?? '')?.id ?? null;
   /** Lần đầu = kỷ vật của Trang đầu tiên đang sáng (chưa chơi Trang 1): chỉ món đó bấm được. */
@@ -90,7 +91,14 @@ export function createHubController(deps: HubControllerDeps) {
   function refreshBox() {
     if (ui.get().panel !== 'box3d') return;
     const first = boxFirstTime();
-    ui.set({ boxView: { hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal, hover: ui.get().boxView?.hover ?? null, first } });
+    ui.set({
+      boxView: {
+        hint: first ? HUB_BOX_HINTS.first : HUB_BOX_HINTS.normal,
+        hover: ui.get().boxView?.hover ?? null,
+        first,
+        hasRulebook: rulebookView({ save, fmt }).unlocked,
+      },
+    });
   }
 
   function ensureWallet() {
@@ -159,7 +167,7 @@ export function createHubController(deps: HubControllerDeps) {
 
   function refreshPanels() {
     const p = ui.get().panel;
-    if (p === 'box') ui.set({ box: boxView({ hub, fmt }) });
+    if (p === 'box') ui.set({ box: boxView({ hub, save, fmt, rulebookOpen: rulebookOpenRequest }) });
     if (p === 'box3d') { refreshBox(); hubScene?.setBoxItems(boxItems()); }
     if (p === 'album') { ui.set({ album: currentAlbumView(), cosmetics: currentCosmeticsView() }); loadAlbumPhotos(); }
     if (p === 'phone') ui.set({ phone: currentPhoneView() });
@@ -247,6 +255,7 @@ export function createHubController(deps: HubControllerDeps) {
     if (!introDone()) return;
     if (id === 'itr.hub.memory_box') openPanel('box3d');
     else if (id === 'itr.hub.shelf') openPanel('box');           // kệ: danh sách kỷ vật đã xong, xem lại ký ức
+    else if (id === 'itr.hub.rulebook' && !r) { rulebookOpenRequest = true; openPanel('box'); }
   }
 
   function interact(openPanel: (p: NonNullable<UiState['panel']>) => void) {
@@ -290,6 +299,7 @@ export function createHubController(deps: HubControllerDeps) {
   function onOpenPanel(p: NonNullable<UiState['panel']>) {
     setCursor('');
     if (p === 'box') hub.refresh();
+    else rulebookOpenRequest = false;
     if (p === 'album') album.markViewed();
     if (p === 'phone') { phoneThread = null; phoneDraft = null; }
     hubScene?.setBoxOpen(p === 'box3d');
@@ -309,6 +319,7 @@ export function createHubController(deps: HubControllerDeps) {
 
   function onClosePanel() {
     setCursor('');
+    rulebookOpenRequest = false;
     hubScene?.setBoxOpen(false);
     hubScene?.setBoxHint(!introDone());
     hubScene?.setRoomDecor(save.room_decor ?? DEFAULT_ROOM_DECOR);
@@ -472,7 +483,7 @@ export function createHubController(deps: HubControllerDeps) {
     if (!id) return false;
     if (id === 'itr.hub.album' || id === 'itr.hub.phone') return true;
     if (!introDone()) return id === 'itr.hub.memory_box';
-    return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || engine.peek('interact', id);
+    return id === 'itr.hub.memory_box' || id === 'itr.hub.shelf' || id === 'itr.hub.rulebook' || engine.peek('interact', id);
   };
 
   function handlePointer(kind: 'move' | 'click', x: number, y: number, onInteract: () => void): boolean {
@@ -520,6 +531,10 @@ export function createHubController(deps: HubControllerDeps) {
     hubClick,
     interact,
     openArtifact,
+    openRulebook: (openPanel: (p: NonNullable<UiState['panel']>) => void) => {
+      rulebookOpenRequest = true;
+      openPanel('box');
+    },
     onOpenPanel,
     onClosePanel,
     refreshPanels,

@@ -1,6 +1,9 @@
 import '@fontsource/nunito/400.css';
 import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/800.css';
+import '@fontsource/patrick-hand/400.css';
+import '@fontsource/caveat/600.css';
+import '@fontsource/caveat/700.css';
 import './styles.css';
 import { Tracker } from './analytics/tracker';
 import { RELEASES } from './content/release';

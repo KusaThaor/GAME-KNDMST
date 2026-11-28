@@ -38,6 +38,13 @@ function resolveNarrativeText(line: NarrativeLine, conditions: ConditionContext)
   return line.fallback || null;
 }
 
+function resolveBackdropUrl(path?: string): string | null {
+  if (!path) return null;
+  if (/^(https?:|data:|blob:|\/)/.test(path)) return path;
+  const base = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL ? import.meta.env.BASE_URL : '/';
+  return `${base.endsWith('/') ? base : `${base}/`}${path}`;
+}
+
 export function createNarrativeRunner(deps: NarrativeRunnerDeps): StepHookPart {
   const { ui, fmt, conditions, getQueue, getDayScene, getCurrentDay } = deps;
 
@@ -66,7 +73,13 @@ export function createNarrativeRunner(deps: NarrativeRunnerDeps): StepHookPart {
       if (!alive()) return false;
       const text = resolveNarrativeText(line, conditions);
       if (!text) continue;
-      ui.set({ narrator: { text: fmt(text), channel: line.channel ?? 'narrator' } });
+      ui.set({
+        narrator: {
+          text: fmt(text),
+          channel: line.channel ?? 'narrator',
+          backdrop: resolveBackdropUrl(line.backdrop),
+        },
+      });
       const ok = await waitOrSkip('next', line.duration_ms ?? DEFAULT_NARRATOR_MS, alive);
       if (!ok) {
         ui.set({ narrator: null });
@@ -88,6 +101,7 @@ export function createNarrativeRunner(deps: NarrativeRunnerDeps): StepHookPart {
             title: fmt(step.title_card.title),
             subtitle: step.title_card.subtitle ? fmt(step.title_card.subtitle) : null,
             durationMs,
+            backdrop: resolveBackdropUrl(step.title_card.backdrop),
           },
         });
         const ok = await waitOrSkip('title_card', durationMs, alive);

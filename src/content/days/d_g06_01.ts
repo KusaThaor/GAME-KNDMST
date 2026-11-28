@@ -61,13 +61,14 @@ export const quests: Quest[] = [
         kind: 'talk',
         with: 'NPC_A',
         objective: 'Nói chuyện với bạn vừa nhặt vở giúp bạn',
-        title_card: { id: 'tc_p1_c1', title: 'Ngày đầu lớp 6', subtitle: 'Một buổi sáng tháng Chín, năm 2014', duration_ms: 3000 },
+        title_card: { id: 'tc_p1_c1', title: 'Ngày đầu lớp 6', subtitle: 'Một buổi sáng tháng Chín, năm 2014', duration_ms: 3000, backdrop: 'assets/backdrops/yard_morning.jpg' },
         narrative: {
           before: [{
             id: 'narr_p1_c1_drop',
             channel: 'narrator',
             text: 'Một tiếng "bịch" vang lên phía sau. Cuốn vở bài tập trượt trên nền xi măng, dừng ngay trước mũi giày một cậu bạn đang chạy hớt hải.',
             sfx: 'sfx_book_drop',
+            backdrop: 'assets/backdrops/yard_morning.jpg',
           }],
         },
         stage: [
@@ -190,12 +191,13 @@ export const quests: Quest[] = [
         id: 'q_m1_main_01.s05',
         kind: 'cutscene',
         objective: 'Thời gian trôi qua tới cuối học kỳ',
-        title_card: { id: 'tc_p1_c6', title: 'Mấy tháng sau…', subtitle: 'Bảng lớp đã ghi "Ôn tập học kỳ I".', duration_ms: 3000 },
+        title_card: { id: 'tc_p1_c6', title: 'Mấy tháng sau…', subtitle: 'Bảng lớp đã ghi "Ôn tập học kỳ I".', duration_ms: 3000, backdrop: 'assets/backdrops/gate_sunset.jpg' },
         narrative: {
           before: [{
             id: 'world_p1_c6_sunset',
             channel: 'world_event',
             text: 'Ánh nắng chuyển hẳn sang sắc vàng rực của buổi hoàng hôn tan học. Bóng cây đổ dài trên sân trường.',
+            backdrop: 'assets/backdrops/gate_sunset.jpg',
           }],
         },
         stage: [

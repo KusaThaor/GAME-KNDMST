@@ -184,7 +184,7 @@ export async function runGame(container: HTMLElement, opts: RunOptions = {}): Pr
       ui.set({ panel: p, mapOpen: false, wipeArmed: false, prompt: null }); promptId = null; hubCtrl.onOpenPanel(p);
     },
     closePanel: () => { ui.set({ panel: null, wipeArmed: false, boxView: null }); hubCtrl.onClosePanel(); },
-    openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
+    openArtifact: hubCtrl.openArtifact, boxPick: hubCtrl.boxPick, openRulebook: () => hubCtrl.openRulebook(actions.openPanel), albumFlip: hubCtrl.albumFlip, albumSelect: hubCtrl.albumSelect,
     albumPlaceSticker: hubCtrl.albumPlaceSticker, albumMoveSticker: hubCtrl.albumMoveSticker, albumRemoveSticker: hubCtrl.albumRemoveSticker,
     albumSetStyle: hubCtrl.albumSetStyle, albumBuyIap: hubCtrl.albumBuyIap, albumResetIap: hubCtrl.albumResetIap,
     roomSetDecor: hubCtrl.roomSetDecor,
